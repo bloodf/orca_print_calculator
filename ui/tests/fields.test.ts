@@ -29,6 +29,16 @@ const key = async (input: HTMLInputElement, k: string, init: KeyboardEventInit =
 const money = { label: "Price", digits: 2, currency: "BRL", step: 100 };
 
 describe("MoneyField", () => {
+  test("typed text is never rewritten: not while typing, not on blur, not on Enter", async () => {
+    const { model, input } = mount(MoneyField, money, 1000);
+    for (const step of ["5", "50", "50.", "50.5"]) { await type(input(), step); await nextTick(); expect(input().value).toBe(step); }
+    expect(model.value).toBe(5050);
+    await key(input(), "Enter");
+    expect(input().value).toBe("50.5");
+    input().dispatchEvent(new Event("blur"));
+    await nextTick();
+    expect(input().value).toBe("50.5");
+  });
   test("shows the locale text and a currency prefix", () => {
     setLocale("pt-BR");
     const { input } = mount(MoneyField, money, 123450);
@@ -53,12 +63,12 @@ describe("MoneyField", () => {
     expect(root.querySelector("[role=alert]")?.textContent).toBe("Use at most 2 decimals.");
     expect(input().getAttribute("aria-invalid")).toBe("true");
   });
-  test("blur reformats a valid value; invalid text keeps its error", async () => {
+  test("blur keeps a valid value as typed; invalid text keeps its error", async () => {
     const { input } = mount(MoneyField, money, 1000);
     await type(input(), "5");
     input().dispatchEvent(new Event("blur"));
     await nextTick();
-    expect(input().value).toBe("5.00");
+    expect(input().value).toBe("5");
     await type(input(), "zzz");
     input().dispatchEvent(new Event("blur"));
     await nextTick();

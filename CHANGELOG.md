@@ -3,6 +3,12 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Number and money fields no longer rewrite what you type. The text stays as typed while typing, on Enter and when leaving the field; only its punctuation is checked.
+
 ## [0.1.0] - Unreleased
 
 First version. Not yet run inside OrcaSlicer; see `docs/live-run.md`.

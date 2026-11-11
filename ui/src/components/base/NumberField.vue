@@ -35,7 +35,8 @@ watch(() => props.modelValue, (v) => {
 });
 
 // The currency (digits) changed under a mounted field: show the same stored value in the new format.
-watch(spec, () => { text.value = fmt(props.modelValue); localError.value = null; });
+// Watch the primitives: MoneyField passes a fresh `money` object on every render, and watching that rewrote the text on each keystroke.
+watch([() => props.scale, () => props.money?.digits], () => { text.value = fmt(props.modelValue); localError.value = null; });
 
 const overridden = computed(() => props.defaultValue !== undefined && props.modelValue !== props.defaultValue);
 const defaultText = computed(() => (props.defaultValue == null ? t("a11y.unknown") : `${props.prefix ?? ""}${fmt(props.defaultValue)}${props.unit ? ` ${props.unit}` : ""}`.trim()));
@@ -61,8 +62,7 @@ function onInput(e: Event): void {
 function onBlur(): void {
   focused.value = false;
   clearTimeout(idle);
-  showError.value = true;
-  if (!localError.value) text.value = fmt(props.modelValue);
+  showError.value = true; // typed text stays as typed: only its punctuation is checked, never rewritten
 }
 function setModel(v: number): void {
   text.value = fmt(v);
@@ -71,7 +71,7 @@ function setModel(v: number): void {
 }
 function onKey(e: KeyboardEvent): void {
   if (props.readonly) return;
-  if (e.key === "Enter") { commitText(); if (!localError.value) text.value = fmt(props.modelValue); return; }
+  if (e.key === "Enter") { commitText(); showError.value = true; return; }
   if (e.key === "Escape") { text.value = fmt(props.modelValue); localError.value = null; (e.target as HTMLElement).blur(); return; }
   const d = keyDelta(e, props.step, true);
   if (d === null) return;
