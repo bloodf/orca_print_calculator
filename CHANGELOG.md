@@ -31,4 +31,4 @@ First version. Not yet run inside OrcaSlicer; see `docs/live-run.md`.
 - Plate thumbnails are not shown.
 - Out-of-date detection does not see mirroring, centering, unsaved setting changes or plates reordered by drag.
 - The first slice of a plate relies on the selected plate when slicing ends.
-- Not available on the OrcaCloud hub.
+- Published on the OrcaCloud hub as 0.1.0, not yet verified inside OrcaSlicer.

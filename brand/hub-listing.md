@@ -1,6 +1,6 @@
 # OrcaCloud hub listing
 
-Status: draft. The plugin is not released and has not been run inside OrcaSlicer yet (see docs/live-run.md). Do not publish before the live run passes.
+Status: 0.1.0 published on the OrcaCloud hub (https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f). Not yet run inside OrcaSlicer (see docs/live-run.md).
 
 Screenshots to upload (all in `docs/screenshots/`, sample data in a browser with a mock host, not captured inside OrcaSlicer, so say so in the listing): `calculator.png`, `calculator-expanded.png`, `quotes.png`, `quote-preview.png`, `settings.png`. Add `calculator-pt-BR.png` to the Portuguese listing. Replace them with captures from inside OrcaSlicer after the live run. The `brand/listing-*.png` files are design mockups, not screenshots.
 

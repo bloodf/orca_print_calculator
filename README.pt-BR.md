@@ -52,7 +52,9 @@ Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na ja
 
 ## Instalação
 
-Ainda não existe versão no hub. Para testar um build local no macOS:
+A versão 0.1.0 está no hub de plugins do OrcaCloud: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f. Assine por lá e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. Ele ainda não foi verificado dentro do OrcaSlicer, então espere arestas.
+
+Para testar um build local no macOS:
 
 1. Instale Python 3.12 e pnpm.
 2. Rode `scripts/dev-install.sh`. Ele gera o wheel (`dist/orca_print_calculator_any.whl`) e copia para `~/Library/Application Support/OrcaSlicer/orca_plugins/orca_print_calculator/`.
