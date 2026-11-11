@@ -58,8 +58,8 @@ describe("hero states", () => {
     expect(el.querySelector(AMBER)).toBeNull();
     const h = el.querySelector("[data-testid=hero-impossible]")!;
     expect(txt(h)).toContain("No price works on Online store");
-    expect(txt(h)).toContain("Fees, tax and your target margin add up to 100% or more. Lower the target margin or the channel fees.");
-    expect([...h.querySelectorAll("button")].map(txt)).toEqual(["Lower target margin", "Edit channel fees"]);
+    expect(txt(h)).toContain("Fees, tax and your markup leave no price that works. Lower the markup or the channel fees.");
+    expect([...h.querySelectorAll("button")].map(txt)).toEqual(["Lower markup", "Edit channel fees"]);
     expect(el.querySelector(".tiles")).toBeNull();
     expect(el.querySelector("[data-row]")).toBeNull();
   });
@@ -176,7 +176,7 @@ describe("flags", () => {
     const el = await show(PriceFlags);
     const f = flagsOf(el);
     expect(f.map((x) => x.id)).toEqual(["belowTarget", "discount"]);
-    expect(f[0]!.text).toMatch(/^Note: Margin \d+\.\d% is under your 30% target after discount or minimum\.$/);
+    expect(f[0]!.text).toMatch(/^Note: Margin \d+\.\d% is under the 30% your markup aims for, after discount or minimum\.$/);
     expect(f.every((x) => x.tone === "info")).toBe(true);
   });
   test("minimum order", async () => {
@@ -197,7 +197,7 @@ describe("flags", () => {
     const el = await show(PriceFlags);
     const f = flagsOf(el).find((x) => x.id === "notCounted")!;
     expect(f.tone).toBe("info");
-    expect(f.text).toBe("Note: Not counted yet: energy, labor, printer wear.");
+    expect(f.text).toBe("Note: Not counted yet: energy, labor.");
   });
   test("unknown print time and grams are named", async () => {
     load("unknown");
@@ -250,7 +250,7 @@ describe("flags", () => {
       const f = build(sel({ belowTarget: true, minimumApplied: true, deadZoneJumped: true, discounted: true }, { price: 8000 }));
       expect(f.map((x) => x.id)).toEqual(["belowTarget", "minimum", "deadZone", "discount"]);
       expect(f.map((x) => x.text)).toEqual([
-        "Margin 15% is under your 30% target after discount or minimum.",
+        "Margin 15% is under the 30% your markup aims for, after discount or minimum.",
         "Price per piece raised so the order reaches the $9900 minimum.",
         "Raised to $8000: between $4000 and $4999 Shop's next fee step leaves you less.", // first zone ending below the price
         "12.5% volume discount from 10 pieces.", // effective discount, the tier that applies at q = 12

@@ -184,7 +184,8 @@ export async function fetchSpoolman(silent = false): Promise<void> {
 function applyState(s: HostState): void {
   store.host = s.host ?? EMPTY_HOST;
   store.unreadable = Array.isArray(s.unreadable) ? s.unreadable.filter((x) => typeof x === "string") : [];
-  const fresh = defaultSettings(null, t("channel.directName"));
+  const savedCurrency = s.settings && typeof s.settings.currency === "string" ? s.settings.currency : null;
+  const fresh = defaultSettings(null, t("channel.directName"), savedCurrency ?? guessCurrency());
   let merged = fresh;
   let reset: string[] = [];
   try {

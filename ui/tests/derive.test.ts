@@ -133,10 +133,18 @@ describe("price sources and not-counted items", () => {
     const pla = deriveQuote(input({ settings: settings({ manualPrices: { "Generic PLA @U1": 1 } }) })).slotMatches[0]![0]!;
     expect(pla.source).toBe("spooler");
   });
-  test("first run: energy, labor and printer wear are listed", () => {
+  test("no built-in values: energy and labor are listed; a known currency still has printer wear", () => {
     const s = defaultSettings("BRL", "Direct");
     const d = deriveQuote(input({ settings: s, draft: newDraft(s) }));
-    expect(d.notCounted.map((n) => n.kind)).toEqual(["energy", "labor", "wear"]);
+    expect(d.notCounted.map((n) => n.kind)).toEqual(["energy", "labor"]);
+    expect(deriveQuote(input({ settings: s, draft: newDraft(s), currency: "JPY" })).notCounted.map((n) => n.kind)).toEqual(["energy", "labor", "wear"]);
+  });
+  test("built-in values for BRL: nothing left out, printer R$5.000 over 5.000 h, 100% markup", () => {
+    const s = defaultSettings(null, "Direct", "BRL");
+    const d = deriveQuote(input({ settings: { ...s, printers: {} }, draft: newDraft(s) }));
+    expect(d.notCounted).toEqual([]);
+    expect(d.quoteInput.costs.machine).toMatchObject({ acquisitionCents: 500000, lifetimeHours: 5000 });
+    expect([s.defaults.energyPerKwh, s.defaults.laborPerHourMinor, d.quoteInput.targetMarginBp]).toEqual(["0.95", 3000, 5000]);
   });
   test("depreciation off removes the wear item", () => {
     const s = defaultSettings("BRL", "Direct");

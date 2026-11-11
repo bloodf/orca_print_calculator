@@ -51,7 +51,10 @@ describe("boot", () => {
     expect(S.store.settings.onboarded).toBe(false);
     expect(S.store.settings.channels.map((c) => c.id)).toEqual(["direct"]);
     expect(S.store.spoolman.state).toBe("unset");
-    expect(S.notCounted.value.map((n) => n.kind)).toEqual(["energy", "labor", "wear"]);
+    expect(S.notCounted.value.map((n) => n.kind)).toEqual([]); // every cost starts from a built-in value
+    expect(S.store.settings.defaults.energyPerKwh).not.toBeNull();
+    expect(S.store.settings.defaults.laborPerHourMinor).not.toBeNull();
+    expect(S.store.settings.defaults.targetMarginBp).toBe(5000);
   });
   test("offline: Spoolman marked offline with the host code, preset prices used", async () => {
     await boot("offline");

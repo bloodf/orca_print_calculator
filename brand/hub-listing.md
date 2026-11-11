@@ -23,7 +23,7 @@ What it calculates:
 - Electricity from a power value suggested for your printer model, marked "Estimated". Many models have no entry and get a generic 120 W. Calibrate it with a smart plug and enter your own value.
 - Labor, depreciation, failure rate, extras, shipping and tax.
 - A suggested selling price, with a side-by-side comparison of your own sales channels. For each channel you enter a percent fee, a fixed fee, tax and optional price tiers.
-- Target margin, a minimum order and rounding to Exact, 3 digits, ending in 9 or ending in 0 or 5.
+- Markup over cost, a minimum order and rounding to Exact, 3 digits, ending in 9 or ending in 0 or 5.
 - Batch pricing at each quantity tier, with spare pieces charged to the order.
 
 Saved quotes keep their own inputs and currency. You can print a quote or save it as PDF from the print dialog, and export CSV or HTML to the plugin data folder. The interface is in English and Brazilian Portuguese, works in any currency and follows the Orca dark and light themes.
@@ -51,7 +51,7 @@ O que ele calcula:
 - Energia a partir de uma potência sugerida para o modelo da sua impressora, com o selo "Estimado". Muitos modelos não têm entrada e recebem 120 W genéricos. Calibre com uma tomada inteligente e digite o seu valor.
 - Mão de obra, depreciação, taxa de falha, extras, frete e imposto.
 - Preço de venda sugerido, com comparação lado a lado dos seus próprios canais de venda. Em cada canal você informa taxa percentual, taxa fixa, imposto e faixas de preço opcionais.
-- Margem desejada, pedido mínimo e arredondamento: Exato, 3 dígitos, termina em 9 ou termina em 0 ou 5.
+- Markup sobre o custo, pedido mínimo e arredondamento: Exato, 3 dígitos, termina em 9 ou termina em 0 ou 5.
 - Preço por lote em cada faixa de quantidade, com as peças a mais entrando no custo do pedido.
 
 Os orçamentos salvos guardam os próprios dados e a moeda. Você imprime o orçamento ou salva em PDF pela janela de impressão e exporta CSV ou HTML para a pasta de dados do plugin. A interface é em português do Brasil e em inglês, funciona em qualquer moeda e segue os temas escuro e claro do Orca.

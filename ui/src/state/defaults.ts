@@ -3,15 +3,17 @@ import { DEFAULT_CHANNELS } from "../engine/channels";
 import type { ChannelDef } from "../engine/channels";
 import { PRETTY_MODES } from "../engine/quotePricing";
 import type { CatalogExtra, Defaults, Draft, HostPlate, PrinterProfile, Settings } from "./types";
+import { MAX_MARGIN_BP, presetFor } from "./markup";
 import { isRec } from "./validate";
 
 export const DEFAULT_PRETTY = "round" as const; // engine exports no PRETTY_DEFAULT; "round" is the closest to the spec's "whole"
 
-export const defaultDefaults = (): Defaults => ({
-  energyPerKwh: null, failureBp: 500, failureMode: "expected_waste", failureIncludesMachine: false,
+/** `currency`: fill energy and labor with typical values for it (BRL, USD, EUR); other currencies start not set. */
+export const defaultDefaults = (currency?: string | null): Defaults => ({
+  energyPerKwh: presetFor(currency)?.energyPerKwh ?? null, failureBp: 500, failureMode: "expected_waste", failureIncludesMachine: false,
   depreciationEnabled: true, maintenancePerHourMinor: 0, fixedPerPrintHourMinor: 0,
-  laborPerHourMinor: null, laborMinutes: 10, setupMinutes: 0,
-  targetMarginBp: 3000, pretty: DEFAULT_PRETTY, minOrderMinor: 0,
+  laborPerHourMinor: presetFor(currency)?.laborPerHourMinor ?? null, laborMinutes: 10, setupMinutes: 0,
+  targetMarginBp: 5000 /* 100% markup */, pretty: DEFAULT_PRETTY, minOrderMinor: 0,
   shipping: { mode: "none", minor: 0 }, discountTiers: [],
 });
 
@@ -21,9 +23,9 @@ export const directChannel = (name: string) => {
   return { ...base, name, tiers: base.tiers.map((t) => ({ ...t })) };
 };
 
-export const defaultSettings = (currency: string | null, directName: string): Settings => ({
-  version: 1, onboarded: false, language: "auto", currency, defaultsCurrency: null,
-  spoolman: { url: "" }, defaults: defaultDefaults(),
+export const defaultSettings = (currency: string | null, directName: string, presetCurrency?: string | null): Settings => ({
+  version: 1, onboarded: false, language: "auto", currency, defaultsCurrency: presetFor(presetCurrency) ? presetCurrency! : null,
+  spoolman: { url: "" }, defaults: defaultDefaults(presetCurrency),
   channels: [directChannel(directName)], comparedChannelIds: ["direct"], defaultChannelId: "direct",
   printers: {}, slotOverrides: {}, manualPrices: {}, extrasCatalog: [],
   sheet: { shopName: "", footer: "", validityDays: 15, nextNo: 1 },
@@ -86,7 +88,7 @@ const SHAPES: { [K in keyof Defaults]: (v: unknown) => boolean } = {
   energyPerKwh: (v) => v === null || (typeof v === "string" && /^\d{1,9}(\.\d{1,9})?$/.test(v)),
   failureBp: int(0, 9500), failureMode: (v) => v === "markup" || v === "expected_waste", failureIncludesMachine: bool, depreciationEnabled: bool,
   maintenancePerHourMinor: int(0, BIG), fixedPerPrintHourMinor: int(0, BIG), laborPerHourMinor: (v) => v === null || int(0, BIG)(v),
-  laborMinutes: int(0, 6000), setupMinutes: int(0, 6000), targetMarginBp: int(0, 9500),
+  laborMinutes: int(0, 6000), setupMinutes: int(0, 6000), targetMarginBp: int(0, MAX_MARGIN_BP),
   pretty: (v) => (PRETTY_MODES as readonly unknown[]).includes(v), minOrderMinor: int(0, BIG),
   shipping: (v) => isRec(v) && (v.mode === "none" || v.mode === "customer" || v.mode === "absorbed") && int(0, BIG)(v.minor),
   discountTiers: (v) => Array.isArray(v) && v.length <= 20 && v.every((t) => isRec(t) && int(1, 1_000_000)(t.minQty) && int(0, 10000)(t.discountBp)),
@@ -172,7 +174,8 @@ export function mergeSettings(raw: unknown, base: Settings): Settings {
   const channels = saved.channels?.length ? saved.channels : base.channels;
   return {
     ...base, ...saved, version: 1, channels,
-    defaults: { ...base.defaults, ...saved.defaults },
+    // A saved "not set" energy or labor rate takes the built-in value when the currency has one.
+    defaults: { ...base.defaults, ...saved.defaults, energyPerKwh: saved.defaults?.energyPerKwh ?? base.defaults.energyPerKwh, laborPerHourMinor: saved.defaults?.laborPerHourMinor ?? base.defaults.laborPerHourMinor },
     spoolman: { ...base.spoolman, ...saved.spoolman },
     sheet: { ...base.sheet, ...saved.sheet },
     ui: { ...base.ui, ...saved.ui },

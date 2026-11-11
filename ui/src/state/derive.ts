@@ -5,6 +5,7 @@ import { decimalString } from "../format";
 import { matchSlot, type SpoolmanFilament, type SpoolmanSpool } from "../engine/match";
 import { resolveWatts, type ResolvedWatts } from "../engine/printerMatch";
 import { computeQuote, type ChannelQuote, type QuoteChannel, type QuoteInput, type QuotePlate, type QuoteResult, type QuoteSlot } from "../engine/quote";
+import { presetFor } from "./markup";
 import type { Defaults, Draft, HostInfo, HostPlate, HostSlot, NotCounted, PlateSnapshot, Settings, SlotMatchView, SpoolerInfo } from "./types";
 
 export type DeriveInput = {
@@ -98,10 +99,17 @@ function channelsFor(i: DeriveInput, selectedId: string): { list: QuoteChannel[]
 
 const shippingOf = (s: Defaults["shipping"]): QuoteInput["shipping"] => (s.mode === "absorbed" ? { mode: "absorbed", minor: s.minor } : { mode: "customer", minor: s.mode === "none" ? 0 : s.minor });
 
-function costsOf(i: DeriveInput, d: Defaults, digits: number, watts: number): QuoteInput["costs"] {
+/** Printer price and lifetime: the saved profile, else the built-in value for the currency, else not set. */
+export function machineOf(i: Pick<DeriveInput, "host" | "settings" | "currency">): { acquisitionMinor: number | null; lifetimeHours: number | null } {
   const profile = i.host.printerModel ? i.settings.printers[i.host.printerModel] : undefined;
+  const preset = profile || i.host.printerModel ? presetFor(i.currency) : null; // no printer, no fields to edit it: nothing hidden is charged
+  return { acquisitionMinor: profile?.acquisitionMinor ?? preset?.printerMinor ?? null, lifetimeHours: profile?.lifetimeHours ?? preset?.lifetimeHours ?? null };
+}
+
+function costsOf(i: DeriveInput, d: Defaults, digits: number, watts: number): QuoteInput["costs"] {
+  const m = machineOf(i);
   return {
-    machine: { wattsW10: Math.round(watts * 10), acquisitionCents: profile?.acquisitionMinor ?? 0, lifetimeHours: Math.round(profile?.lifetimeHours ?? 0) },
+    machine: { wattsW10: Math.round(watts * 10), acquisitionCents: m.acquisitionMinor ?? 0, lifetimeHours: Math.round(m.lifetimeHours ?? 0) },
     kwhE4: (d.energyPerKwh === null ? null : kwhE4(d.energyPerKwh, digits)) ?? 0,
     failure: { bp: d.failureBp, mode: d.failureMode, includesMachine: d.failureIncludesMachine },
     depreciationEnabled: d.depreciationEnabled,
@@ -116,8 +124,8 @@ function notCountedOf(i: DeriveInput, d: Defaults, plates: readonly HostPlate[],
   // A saved quote cannot tell "not set" from an explicit 0, so it raises no energy or labor flag; its wear flag reads its own frozen printer.
   if (!fi && d.energyPerKwh === null) out.push({ kind: "energy" });
   if (!fi && d.laborPerHourMinor === null) out.push({ kind: "labor" });
-  const p = i.host.printerModel ? i.settings.printers[i.host.printerModel] : undefined;
-  const hasWear = fi ? !!fi.costs.machine.acquisitionCents && !!fi.costs.machine.lifetimeHours : !!p?.acquisitionMinor && !!p.lifetimeHours;
+  const p = machineOf(i);
+  const hasWear = fi ? !!fi.costs.machine.acquisitionCents && !!fi.costs.machine.lifetimeHours : !!p.acquisitionMinor && !!p.lifetimeHours;
   if (d.depreciationEnabled && !hasWear) out.push({ kind: "wear" });
   for (const pl of plates) {
     if (!(i.draft.plates[pl.index]?.include ?? true)) continue;

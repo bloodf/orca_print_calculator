@@ -6,6 +6,7 @@ import { matchPrinter } from "../../engine/printerMatch";
 import { t } from "../../i18n";
 import { currency, digits, patchSettings, store } from "../../state/store";
 import { toast } from "../../state/toast";
+import { presetFor } from "../../state/markup";
 import type { PrinterProfile } from "../../state/types";
 import Badge from "../base/Badge.vue";
 import Icon from "../base/Icon.vue";
@@ -56,10 +57,10 @@ function remove(model: string): void {
             <p class="sm muted pp-sug">{{ t("printer.suggested", { watts: match(m).watts, how: t(`printer.how.${match(m).how}`) }) }} <Badge v-if="match(m).estimated" tone="neutral" :text="t('printer.estimated')" /></p>
           </div>
           <MoneyField
-            :model-value="profile(m)?.acquisitionMinor ?? null" :label="t('field.printerPrice')" :digits="digits" :currency="currency" :step="major" :max="10 ** 9 * major" nullable
+            :model-value="profile(m)?.acquisitionMinor ?? presetFor(currency)?.printerMinor ?? null" :label="t('field.printerPrice')" :digits="digits" :currency="currency" :step="major" :max="10 ** 9 * major" nullable
             @update:model-value="(v) => patchPrinter(m, { acquisitionMinor: v })"
           />
-          <NumberField :model-value="profile(m)?.lifetimeHours ?? null" :label="t('field.lifetime')" :scale="1" :step="100" :max="200000" :unit="UNIT.hours" nullable @update:model-value="(v) => patchPrinter(m, { lifetimeHours: v })" />
+          <NumberField :model-value="profile(m)?.lifetimeHours ?? presetFor(currency)?.lifetimeHours ?? null" :label="t('field.lifetime')" :scale="1" :step="100" :max="200000" :unit="UNIT.hours" nullable @update:model-value="(v) => patchPrinter(m, { lifetimeHours: v })" />
         </div>
       </li>
     </ul>

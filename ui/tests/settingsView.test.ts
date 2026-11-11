@@ -77,14 +77,14 @@ describe("Cost defaults", () => {
 });
 
 describe("Pricing defaults", () => {
-  test("target margin, rounding and minimum order write the defaults", async () => {
-    await type("Target margin", "40");
+  test("markup, rounding and minimum order write the defaults", async () => {
+    await type("Markup", "40");
     const pretty = input("Price rounding") as HTMLSelectElement;
     pretty.value = "step5";
     pretty.dispatchEvent(new Event("change", { bubbles: true }));
     await type("Minimum order", "50");
     await flush();
     const d = store.settings.defaults;
-    expect([d.targetMarginBp, d.pretty, d.minOrderMinor]).toEqual([4000, "step5", 5000]);
+    expect([d.targetMarginBp, d.pretty, d.minOrderMinor]).toEqual([2857, "step5", 5000]); // 40% markup = 28.57% margin
   });
 });

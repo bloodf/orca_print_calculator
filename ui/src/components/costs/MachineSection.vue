@@ -4,6 +4,7 @@ import { computed } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { money } from "../../format";
 import { currency, derived, digits, store } from "../../state/store";
+import { machineOf } from "../../state/derive";
 import type { OverridableKey } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
@@ -25,12 +26,12 @@ const wear = useDefault("depreciationEnabled");
 
 const { open, set: setOpen } = useOpen("machine", () => store.settings.onboarded && store.settings.defaults.energyPerKwh === null);
 const model = computed(() => store.host.printerModel);
-const profile = computed(() => (model.value ? store.settings.printers[model.value] : undefined));
+const machine = computed(() => machineOf({ host: store.host, settings: store.settings, currency: currency.value }));
 // An open saved quote shows (read-only) the printer it was priced with, not today's profile.
 const frozen = computed(() => store.draft.frozenInput?.costs.machine ?? null);
 const watts = computed(() => (frozen.value ? frozen.value.wattsW10 / 10 : p.value.watts));
-const price = computed(() => (frozen.value ? frozen.value.acquisitionCents || null : profile.value?.acquisitionMinor ?? null));
-const life = computed(() => (frozen.value ? frozen.value.lifetimeHours || null : profile.value?.lifetimeHours ?? null));
+const price = computed(() => (frozen.value ? frozen.value.acquisitionCents || null : machine.value.acquisitionMinor));
+const life = computed(() => (frozen.value ? frozen.value.lifetimeHours || null : machine.value.lifetimeHours));
 const p = computed(() => derived.value.printer);
 const step = computed(() => 10 ** digits.value);
 const e = computed(() => ({ digits: digits.value + 2 }));

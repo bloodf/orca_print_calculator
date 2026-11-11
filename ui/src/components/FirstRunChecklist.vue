@@ -5,10 +5,11 @@ import { computed, nextTick, reactive, ref, watch } from "vue";
 import { money, percent, perKwh } from "../format";
 import { t } from "../i18n";
 import { currency, digits, finishOnboarding, locale, patchDefaults, store } from "../state/store";
+import { markupOf } from "../state/markup";
 import { toast } from "../state/toast";
 import Icon from "./base/Icon.vue";
 import MoneyField from "./base/MoneyField.vue";
-import PercentField from "./base/PercentField.vue";
+import MarkupField from "./base/MarkupField.vue";
 import { energyText, energyUnits } from "./costs/shared";
 import { EXAMPLE_URL, useSpoolmanUrl } from "./settings/useSpoolmanUrl";
 import { UNIT } from "./settings/units";
@@ -42,7 +43,7 @@ const summary = (row: Row): string => {
   if (row === "filament") return store.settings.spoolman.url ? t("setup.filamentDone", { url: store.settings.spoolman.url }) : t("setup.skipped");
   if (row === "energy") { const u = energyUnits(d.value.energyPerKwh, digits.value); return u === null ? "" : perKwh(u, currency.value, locale.value); }
   const rate = d.value.laborPerHourMinor;
-  return rate === null ? "" : t("setup.timeDone", { rate: money(rate, currency.value, locale.value), margin: percent(d.value.targetMarginBp, locale.value) });
+  return rate === null ? "" : t("setup.timeDone", { rate: money(rate, currency.value, locale.value), margin: percent(markupOf(d.value.targetMarginBp), locale.value) });
 };
 // Connecting Spoolman can switch the currency (a guessed USD becomes the spools'). Typed amounts keep their digits, so say so.
 watch(currency, (now, was) => {
@@ -84,7 +85,7 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
             />
             <div v-else class="row fr-time">
               <MoneyField :model-value="d.laborPerHourMinor" :label="t('field.laborRate')" :digits="digits" :currency="currency" :step="10 ** digits" :unit="UNIT.hour" nullable width="md" @update:model-value="(v) => patchDefaults({ laborPerHourMinor: v })" />
-              <PercentField :model-value="d.targetMarginBp" :label="t('field.margin')" width="sm" @update:model-value="(v) => v !== null && patchDefaults({ targetMarginBp: v })" />
+              <MarkupField :model-value="d.targetMarginBp" :label="t('field.margin')" width="sm" @update:model-value="(v) => patchDefaults({ targetMarginBp: v })" />
             </div>
           </template>
         </div>

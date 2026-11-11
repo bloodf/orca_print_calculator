@@ -6,7 +6,7 @@ import { t } from "../../i18n";
 import { currency, digits, patchDefaults, store } from "../../state/store";
 import type { DiscountTier, PrettyMode, ShippingMode } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
-import PercentField from "../base/PercentField.vue";
+import MarkupField from "../base/MarkupField.vue";
 import Segmented from "../base/Segmented.vue";
 import SelectField from "../costs/SelectField.vue";
 import DiscountTierEditor from "../price/DiscountTierEditor.vue";
@@ -21,7 +21,7 @@ const setShipping = (mode: ShippingMode): void => patchDefaults({ shipping: { mo
 <template>
   <div class="stack">
     <div class="form-grid">
-      <PercentField :model-value="d.targetMarginBp" :label="t('field.margin')" :max="9500" @update:model-value="(v) => v !== null && patchDefaults({ targetMarginBp: v })" />
+      <MarkupField :model-value="d.targetMarginBp" :label="t('field.margin')" :helper="t('field.marginHelp')" @update:model-value="(v) => patchDefaults({ targetMarginBp: v })" />
       <SelectField :model-value="d.pretty" :label="t('field.pretty')" :options="prettyOptions()" :helper="t('pretty.help')" @update:model-value="(v) => patchDefaults({ pretty: v as PrettyMode })" />
       <MoneyField
         :model-value="d.minOrderMinor" :label="t('field.minOrder')" :digits="digits" :currency="currency" :step="major" :helper="t('field.minOrderHelp')"

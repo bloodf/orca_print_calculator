@@ -2,7 +2,7 @@
 // Channel (2+ channels only), quantity and target margin; the spare-pieces note sits under the quantity.
 import { computed } from "vue";
 import { t } from "../../i18n";
-import PercentField from "../base/PercentField.vue";
+import MarkupField from "../base/MarkupField.vue";
 import Stepper from "../base/Stepper.vue";
 import { derived, patchDraft, result, store } from "../../state/store";
 import { useDefault } from "../costs/shared";
@@ -23,8 +23,8 @@ const onMargin = (v: number | null): void => { if (v !== null) margin.set(v); };
         <Stepper :model-value="store.draft.quantity" :min="1" :max="100000" :label="t('field.quantity')" @update:model-value="(v) => patchDraft({ quantity: v })" />
         <p v-if="spare > 0" class="sm muted num oc-spare" :title="t('price.spareWhy', { set: store.draft.unitsPerSet, n: spare })">{{ t("price.spare", { n: spare }) }}</p>
       </div>
-      <PercentField
-        id="price-margin" :model-value="derived.defaults.targetMarginBp" :label="t('field.margin')" :min="0" :max="9500" :step="100"
+      <MarkupField
+        id="price-margin" :model-value="derived.defaults.targetMarginBp" :label="t('field.margin')" :helper="t('field.marginHelp')"
         :default-value="store.settings.defaults.targetMarginBp" @update:model-value="onMargin" @reset="margin.reset"
       />
     </div>

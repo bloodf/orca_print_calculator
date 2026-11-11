@@ -132,7 +132,7 @@ describe("F6/F7 first run", () => {
     el.querySelector<HTMLElement>('[data-row="time"]')!.dispatchEvent(new FocusEvent("focusout", { relatedTarget: document.body }));
     await flush();
     const row = txt(el.querySelector('[data-row="time"]'));
-    expect(row).toMatch(/R\$30\.00\/h · margin \d+(\.\d)?%/);
+    expect(row).toMatch(/R\$30\.00\/h · markup \d+(\.\d)?%/);
     expect(row).not.toContain("Labor rate BRL");
   });
   test("a currency change with money defaults set says so once", async () => {

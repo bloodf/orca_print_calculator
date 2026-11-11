@@ -3,7 +3,7 @@
 import { onBeforeUnmount, ref } from "vue";
 import { t } from "../../i18n";
 import { defaultSettings } from "../../state/defaults";
-import { fetchSpoolman, patchSettings, store } from "../../state/store";
+import { fetchSpoolman, liveCurrency, patchSettings, store } from "../../state/store";
 import { toast } from "../../state/toast";
 import CopyValue from "./CopyValue.vue";
 
@@ -26,7 +26,7 @@ function reset(): void {
   clearTimeout(timer);
   armed.value = false;
   const before = store.settings;
-  patchSettings(() => defaultSettings(null, t("channel.directName")));
+  patchSettings(() => defaultSettings(null, t("channel.directName"), liveCurrency.value));
   void fetchSpoolman(true);
   toast({ text: t("about.resetDone"), action: { label: t("common.undo"), run: () => restore(before) } });
 }
