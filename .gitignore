@@ -1,0 +1,10 @@
+node_modules/
+dist/
+ui/dist/
+_assets.py
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+.omc/
+coverage/

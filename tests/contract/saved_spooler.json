@@ -1,0 +1,790 @@
+[
+ {
+  "in": {
+   "type": "ready"
+  },
+  "out": []
+ },
+ {
+  "in": {
+   "args": {},
+   "cmd": "get_state",
+   "id": 1,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "host": {
+      "pluginVersion": "0.0.0-dev",
+      "printerModel": "Snapmaker U1",
+      "printerVendor": "Snapmaker",
+      "projectName": "Desk organizer"
+     },
+     "plates": [],
+     "quotes": [
+      {
+       "channelId": "store",
+       "createdAt": "2026-11-03T12:00:00Z",
+       "currency": "BRL",
+       "customer": "Ana Souza",
+       "id": "q-a",
+       "input": {
+        "channels": [
+         {
+          "id": "direct",
+          "name": "Direct",
+          "surchargeCents": 0,
+          "taxBp": 0,
+          "tiers": [
+           {
+            "fixedCents": 0,
+            "minPriceCents": 0,
+            "pctBp": 0,
+            "shippingCents": 0
+           }
+          ]
+         },
+         {
+          "id": "store",
+          "name": "Online store",
+          "surchargeCents": 0,
+          "taxBp": 600,
+          "tiers": [
+           {
+            "fixedCents": 100,
+            "minPriceCents": 0,
+            "pctBp": 500,
+            "shippingCents": 0
+           }
+          ]
+         }
+        ],
+        "costs": {
+         "depreciationEnabled": true,
+         "failure": {
+          "bp": 500,
+          "includesMachine": false,
+          "mode": "expected_waste"
+         },
+         "fixedCostPerPrintHourCents": 0,
+         "kwhE4": 9500,
+         "labor": {
+          "minutes": 10,
+          "perHourCents": 3000
+         },
+         "machine": {
+          "acquisitionCents": 450000,
+          "lifetimeHours": 5000,
+          "wattsW10": 1200
+         },
+         "maintenancePerHourCents": 0
+        },
+        "discountTiers": [],
+        "extras": [],
+        "minOrderMinor": 0,
+        "plates": [
+         {
+          "copies": 1,
+          "include": true,
+          "index": 0,
+          "name": "Tray",
+          "seconds": 8040,
+          "slots": [
+           {
+            "gramsMg": 88000,
+            "key": "sm:3:3",
+            "label": "Generic PLA @U1",
+            "n": 1,
+            "pricePerKgMinor": 9990
+           },
+           {
+            "gramsMg": 41000,
+            "key": "sm:12:5",
+            "label": "Generic PETG (#12)",
+            "n": 2,
+            "pricePerKgMinor": 12400
+           }
+          ]
+         },
+         {
+          "copies": 1,
+          "include": true,
+          "index": 1,
+          "name": "Lid",
+          "seconds": 9300,
+          "slots": [
+           {
+            "gramsMg": 150000,
+            "key": "sm:3:3",
+            "label": "Generic PLA @U1",
+            "n": 1,
+            "pricePerKgMinor": 9990
+           }
+          ]
+         },
+         {
+          "copies": 1,
+          "include": true,
+          "index": 2,
+          "seconds": 8700,
+          "slots": [
+           {
+            "gramsMg": 80000,
+            "key": "sm:3:3",
+            "label": "Generic PLA @U1",
+            "n": 1,
+            "pricePerKgMinor": 9990
+           },
+           {
+            "gramsMg": 42000,
+            "key": "sm:12:5",
+            "label": "Generic PETG (#12)",
+            "n": 2,
+            "pricePerKgMinor": 12400
+           }
+          ]
+         }
+        ],
+        "pretty": "round",
+        "quantity": 10,
+        "setup": {
+         "minutes": 0,
+         "ratePerHourMinor": 3000
+        },
+        "shipping": {
+         "minor": 0,
+         "mode": "customer"
+        },
+        "targetMarginBp": 3000,
+        "unitsPerSet": 1
+       },
+       "no": 41,
+       "note": "",
+       "plates": [
+        {
+         "index": 0,
+         "name": "Tray",
+         "seconds": 8040,
+         "slots": [
+          {
+           "color": "#E8E8E8",
+           "filamentId": 3,
+           "gramsMg": 88000,
+           "key": "sm:3:3",
+           "label": "Generic PLA @U1",
+           "n": 1,
+           "pricePerKgMinor": 9990,
+           "source": "spooler"
+          },
+          {
+           "color": "#2E6FBF",
+           "filamentId": 12,
+           "gramsMg": 41000,
+           "key": "sm:12:5",
+           "label": "Generic PETG (#12)",
+           "n": 2,
+           "pricePerKgMinor": 12400,
+           "source": "name"
+          }
+         ]
+        },
+        {
+         "index": 1,
+         "name": "Lid",
+         "seconds": 9300,
+         "slots": [
+          {
+           "color": "#E8E8E8",
+           "filamentId": 3,
+           "gramsMg": 150000,
+           "key": "sm:3:3",
+           "label": "Generic PLA @U1",
+           "n": 1,
+           "pricePerKgMinor": 9990,
+           "source": "spooler"
+          }
+         ]
+        },
+        {
+         "index": 2,
+         "name": null,
+         "seconds": 8700,
+         "slots": [
+          {
+           "color": "#E8E8E8",
+           "filamentId": 3,
+           "gramsMg": 80000,
+           "key": "sm:3:3",
+           "label": "Generic PLA @U1",
+           "n": 1,
+           "pricePerKgMinor": 9990,
+           "source": "spooler"
+          },
+          {
+           "color": "#2E6FBF",
+           "filamentId": 12,
+           "gramsMg": 42000,
+           "key": "sm:12:5",
+           "label": "Generic PETG (#12)",
+           "n": 2,
+           "pricePerKgMinor": 12400,
+           "source": "name"
+          }
+         ]
+        }
+       ],
+       "summary": {
+        "channelName": "Online store",
+        "grandTotal": 97800,
+        "marginBp": 3005,
+        "price": 9780,
+        "quantity": 10
+       },
+       "title": "Desk organizer",
+       "updatedAt": "2026-11-03T12:00:00Z"
+      }
+     ],
+     "settings": {
+      "channels": [
+       {
+        "id": "direct",
+        "name": "Direct",
+        "surchargeMinor": 0,
+        "taxBp": 0,
+        "tiers": [
+         {
+          "fixedMinor": 0,
+          "minMinor": 0,
+          "pctBp": 0,
+          "shippingMinor": 0
+         }
+        ]
+       },
+       {
+        "id": "store",
+        "name": "Online store",
+        "surchargeMinor": 0,
+        "taxBp": 600,
+        "tiers": [
+         {
+          "fixedMinor": 100,
+          "minMinor": 0,
+          "pctBp": 500,
+          "shippingMinor": 0
+         }
+        ]
+       }
+      ],
+      "comparedChannelIds": [
+       "direct",
+       "store"
+      ],
+      "currency": "BRL",
+      "defaultChannelId": "store",
+      "defaults": {
+       "depreciationEnabled": true,
+       "discountTiers": [],
+       "energyPerKwh": "0.95",
+       "failureBp": 500,
+       "failureIncludesMachine": false,
+       "failureMode": "expected_waste",
+       "fixedPerPrintHourMinor": 0,
+       "laborMinutes": 10,
+       "laborPerHourMinor": 3000,
+       "maintenancePerHourMinor": 0,
+       "minOrderMinor": 0,
+       "pretty": "round",
+       "setupMinutes": 0,
+       "shipping": {
+        "minor": 0,
+        "mode": "none"
+       },
+       "targetMarginBp": 3000
+      },
+      "defaultsCurrency": null,
+      "extrasCatalog": [],
+      "language": "auto",
+      "manualPrices": {},
+      "onboarded": true,
+      "printers": {
+       "Snapmaker U1": {
+        "acquisitionMinor": 450000,
+        "lifetimeHours": 5000,
+        "watts": 120
+       }
+      },
+      "sheet": {
+       "footer": "Payment on delivery. Lead time 5 days.",
+       "nextNo": 43,
+       "shopName": "Studio Layer",
+       "validityDays": 15
+      },
+      "slotOverrides": {},
+      "spoolman": {
+       "url": "http://192.168.1.10:7912"
+      },
+      "ui": {
+       "open": {},
+       "sheetMode": "summary"
+      },
+      "version": 1
+     },
+     "spooler": {
+      "presetToFilament": {
+       "Generic PETG (#12)": 12,
+       "Generic PLA @U1": 3
+      },
+      "url": "http://192.168.1.10:7912"
+     },
+     "unreadable": []
+    },
+    "id": 1,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "settings": {
+     "channels": [
+      {
+       "id": "direct",
+       "name": "Direct",
+       "surchargeMinor": 0,
+       "taxBp": 0,
+       "tiers": [
+        {
+         "fixedMinor": 0,
+         "minMinor": 0,
+         "pctBp": 0,
+         "shippingMinor": 0
+        }
+       ]
+      },
+      {
+       "id": "store",
+       "name": "Online store",
+       "surchargeMinor": 0,
+       "taxBp": 600,
+       "tiers": [
+        {
+         "fixedMinor": 100,
+         "minMinor": 0,
+         "pctBp": 500,
+         "shippingMinor": 0
+        }
+       ]
+      }
+     ],
+     "comparedChannelIds": [
+      "direct",
+      "store"
+     ],
+     "currency": "BRL",
+     "defaultChannelId": "store",
+     "defaults": {
+      "depreciationEnabled": true,
+      "discountTiers": [],
+      "energyPerKwh": "0.95",
+      "failureBp": 500,
+      "failureIncludesMachine": false,
+      "failureMode": "expected_waste",
+      "fixedPerPrintHourMinor": 0,
+      "laborMinutes": 10,
+      "laborPerHourMinor": 3000,
+      "maintenancePerHourMinor": 0,
+      "minOrderMinor": 0,
+      "pretty": "round",
+      "setupMinutes": 0,
+      "shipping": {
+       "minor": 0,
+       "mode": "none"
+      },
+      "targetMarginBp": 3000
+     },
+     "defaultsCurrency": null,
+     "extrasCatalog": [],
+     "language": "en",
+     "manualPrices": {},
+     "onboarded": true,
+     "printers": {
+      "Snapmaker U1": {
+       "acquisitionMinor": 450000,
+       "lifetimeHours": 5000,
+       "watts": 120
+      }
+     },
+     "sheet": {
+      "footer": "Payment on delivery. Lead time 5 days.",
+      "nextNo": 43,
+      "shopName": "Studio Layer",
+      "validityDays": 15
+     },
+     "slotOverrides": {},
+     "spoolman": {
+      "url": "http://192.168.1.10:7912"
+     },
+     "ui": {
+      "open": {},
+      "sheetMode": "summary"
+     },
+     "version": 1
+    }
+   },
+   "cmd": "save_settings",
+   "id": 2,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {},
+    "id": 2,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {},
+   "cmd": "get_state",
+   "id": 3,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "host": {
+      "pluginVersion": "0.0.0-dev",
+      "printerModel": "Snapmaker U1",
+      "printerVendor": "Snapmaker",
+      "projectName": "Desk organizer"
+     },
+     "plates": [],
+     "quotes": [
+      {
+       "channelId": "store",
+       "createdAt": "2026-11-03T12:00:00Z",
+       "currency": "BRL",
+       "customer": "Ana Souza",
+       "id": "q-a",
+       "input": {
+        "channels": [
+         {
+          "id": "direct",
+          "name": "Direct",
+          "surchargeCents": 0,
+          "taxBp": 0,
+          "tiers": [
+           {
+            "fixedCents": 0,
+            "minPriceCents": 0,
+            "pctBp": 0,
+            "shippingCents": 0
+           }
+          ]
+         },
+         {
+          "id": "store",
+          "name": "Online store",
+          "surchargeCents": 0,
+          "taxBp": 600,
+          "tiers": [
+           {
+            "fixedCents": 100,
+            "minPriceCents": 0,
+            "pctBp": 500,
+            "shippingCents": 0
+           }
+          ]
+         }
+        ],
+        "costs": {
+         "depreciationEnabled": true,
+         "failure": {
+          "bp": 500,
+          "includesMachine": false,
+          "mode": "expected_waste"
+         },
+         "fixedCostPerPrintHourCents": 0,
+         "kwhE4": 9500,
+         "labor": {
+          "minutes": 10,
+          "perHourCents": 3000
+         },
+         "machine": {
+          "acquisitionCents": 450000,
+          "lifetimeHours": 5000,
+          "wattsW10": 1200
+         },
+         "maintenancePerHourCents": 0
+        },
+        "discountTiers": [],
+        "extras": [],
+        "minOrderMinor": 0,
+        "plates": [
+         {
+          "copies": 1,
+          "include": true,
+          "index": 0,
+          "name": "Tray",
+          "seconds": 8040,
+          "slots": [
+           {
+            "gramsMg": 88000,
+            "key": "sm:3:3",
+            "label": "Generic PLA @U1",
+            "n": 1,
+            "pricePerKgMinor": 9990
+           },
+           {
+            "gramsMg": 41000,
+            "key": "sm:12:5",
+            "label": "Generic PETG (#12)",
+            "n": 2,
+            "pricePerKgMinor": 12400
+           }
+          ]
+         },
+         {
+          "copies": 1,
+          "include": true,
+          "index": 1,
+          "name": "Lid",
+          "seconds": 9300,
+          "slots": [
+           {
+            "gramsMg": 150000,
+            "key": "sm:3:3",
+            "label": "Generic PLA @U1",
+            "n": 1,
+            "pricePerKgMinor": 9990
+           }
+          ]
+         },
+         {
+          "copies": 1,
+          "include": true,
+          "index": 2,
+          "seconds": 8700,
+          "slots": [
+           {
+            "gramsMg": 80000,
+            "key": "sm:3:3",
+            "label": "Generic PLA @U1",
+            "n": 1,
+            "pricePerKgMinor": 9990
+           },
+           {
+            "gramsMg": 42000,
+            "key": "sm:12:5",
+            "label": "Generic PETG (#12)",
+            "n": 2,
+            "pricePerKgMinor": 12400
+           }
+          ]
+         }
+        ],
+        "pretty": "round",
+        "quantity": 10,
+        "setup": {
+         "minutes": 0,
+         "ratePerHourMinor": 3000
+        },
+        "shipping": {
+         "minor": 0,
+         "mode": "customer"
+        },
+        "targetMarginBp": 3000,
+        "unitsPerSet": 1
+       },
+       "no": 41,
+       "note": "",
+       "plates": [
+        {
+         "index": 0,
+         "name": "Tray",
+         "seconds": 8040,
+         "slots": [
+          {
+           "color": "#E8E8E8",
+           "filamentId": 3,
+           "gramsMg": 88000,
+           "key": "sm:3:3",
+           "label": "Generic PLA @U1",
+           "n": 1,
+           "pricePerKgMinor": 9990,
+           "source": "spooler"
+          },
+          {
+           "color": "#2E6FBF",
+           "filamentId": 12,
+           "gramsMg": 41000,
+           "key": "sm:12:5",
+           "label": "Generic PETG (#12)",
+           "n": 2,
+           "pricePerKgMinor": 12400,
+           "source": "name"
+          }
+         ]
+        },
+        {
+         "index": 1,
+         "name": "Lid",
+         "seconds": 9300,
+         "slots": [
+          {
+           "color": "#E8E8E8",
+           "filamentId": 3,
+           "gramsMg": 150000,
+           "key": "sm:3:3",
+           "label": "Generic PLA @U1",
+           "n": 1,
+           "pricePerKgMinor": 9990,
+           "source": "spooler"
+          }
+         ]
+        },
+        {
+         "index": 2,
+         "name": null,
+         "seconds": 8700,
+         "slots": [
+          {
+           "color": "#E8E8E8",
+           "filamentId": 3,
+           "gramsMg": 80000,
+           "key": "sm:3:3",
+           "label": "Generic PLA @U1",
+           "n": 1,
+           "pricePerKgMinor": 9990,
+           "source": "spooler"
+          },
+          {
+           "color": "#2E6FBF",
+           "filamentId": 12,
+           "gramsMg": 42000,
+           "key": "sm:12:5",
+           "label": "Generic PETG (#12)",
+           "n": 2,
+           "pricePerKgMinor": 12400,
+           "source": "name"
+          }
+         ]
+        }
+       ],
+       "summary": {
+        "channelName": "Online store",
+        "grandTotal": 97800,
+        "marginBp": 3005,
+        "price": 9780,
+        "quantity": 10
+       },
+       "title": "Desk organizer",
+       "updatedAt": "2026-11-03T12:00:00Z"
+      }
+     ],
+     "settings": {
+      "channels": [
+       {
+        "id": "direct",
+        "name": "Direct",
+        "surchargeMinor": 0,
+        "taxBp": 0,
+        "tiers": [
+         {
+          "fixedMinor": 0,
+          "minMinor": 0,
+          "pctBp": 0,
+          "shippingMinor": 0
+         }
+        ]
+       },
+       {
+        "id": "store",
+        "name": "Online store",
+        "surchargeMinor": 0,
+        "taxBp": 600,
+        "tiers": [
+         {
+          "fixedMinor": 100,
+          "minMinor": 0,
+          "pctBp": 500,
+          "shippingMinor": 0
+         }
+        ]
+       }
+      ],
+      "comparedChannelIds": [
+       "direct",
+       "store"
+      ],
+      "currency": "BRL",
+      "defaultChannelId": "store",
+      "defaults": {
+       "depreciationEnabled": true,
+       "discountTiers": [],
+       "energyPerKwh": "0.95",
+       "failureBp": 500,
+       "failureIncludesMachine": false,
+       "failureMode": "expected_waste",
+       "fixedPerPrintHourMinor": 0,
+       "laborMinutes": 10,
+       "laborPerHourMinor": 3000,
+       "maintenancePerHourMinor": 0,
+       "minOrderMinor": 0,
+       "pretty": "round",
+       "setupMinutes": 0,
+       "shipping": {
+        "minor": 0,
+        "mode": "none"
+       },
+       "targetMarginBp": 3000
+      },
+      "defaultsCurrency": null,
+      "extrasCatalog": [],
+      "language": "en",
+      "manualPrices": {},
+      "onboarded": true,
+      "printers": {
+       "Snapmaker U1": {
+        "acquisitionMinor": 450000,
+        "lifetimeHours": 5000,
+        "watts": 120
+       }
+      },
+      "sheet": {
+       "footer": "Payment on delivery. Lead time 5 days.",
+       "nextNo": 43,
+       "shopName": "Studio Layer",
+       "validityDays": 15
+      },
+      "slotOverrides": {},
+      "spoolman": {
+       "url": "http://192.168.1.10:7912"
+      },
+      "ui": {
+       "open": {},
+       "sheetMode": "summary"
+      },
+      "version": 1
+     },
+     "spooler": {
+      "presetToFilament": {
+       "Generic PETG (#12)": 12,
+       "Generic PLA @U1": 3
+      },
+      "url": "http://192.168.1.10:7912"
+     },
+     "unreadable": []
+    },
+    "id": 3,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ }
+]

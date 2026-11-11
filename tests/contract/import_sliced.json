@@ -1,0 +1,189 @@
+[
+ {
+  "in": {
+   "args": {
+    "b64": "<1212 chars>",
+    "name": "desk.gcode.3mf"
+   },
+   "cmd": "import_sliced",
+   "id": 1,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "plates": [
+      {
+       "fileName": "desk.gcode.3mf",
+       "index": 0,
+       "name": null,
+       "seconds": 4180,
+       "slicedAt": null,
+       "slots": [
+        {
+         "color": "#FF0000",
+         "costPerKg": 25.5,
+         "grams": 14.92,
+         "material": "PLA",
+         "n": 1,
+         "notes": "Spoolman filament 7",
+         "preset": "Bambu PLA Basic @BBL X1C"
+        },
+        {
+         "color": "#00FF00",
+         "costPerKg": null,
+         "grams": 3.67,
+         "material": "PETG",
+         "n": 2,
+         "notes": "",
+         "preset": "Generic PETG"
+        }
+       ],
+       "source": "file",
+       "stale": false,
+       "thumb": null
+      },
+      {
+       "fileName": "desk.gcode.3mf",
+       "index": 1,
+       "name": null,
+       "seconds": 600,
+       "slicedAt": null,
+       "slots": [
+        {
+         "color": "#FF0000",
+         "costPerKg": 25.5,
+         "grams": 1.19,
+         "material": "PLA",
+         "n": 1,
+         "notes": "Spoolman filament 7",
+         "preset": "Bambu PLA Basic @BBL X1C"
+        }
+       ],
+       "source": "file",
+       "stale": false,
+       "thumb": null
+      }
+     ]
+    },
+    "id": 1,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "b64": "<12 chars>",
+    "name": "x.gcode.3mf"
+   },
+   "cmd": "import_sliced",
+   "id": 2,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "not_zip",
+    "id": 2,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "b64": "<380 chars>",
+    "name": "plain.3mf"
+   },
+   "cmd": "import_sliced",
+   "id": 3,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "no_slice_info",
+    "id": 3,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "b64": "<139810140 chars>",
+    "name": "x.gcode.3mf"
+   },
+   "cmd": "import_sliced",
+   "id": 4,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "too_big",
+    "id": 4,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "b64": "<13 chars>",
+    "name": "x.gcode.3mf"
+   },
+   "cmd": "import_sliced",
+   "id": 5,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "bad_b64",
+    "id": 5,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "b64": "<380 chars>",
+    "name": "x.gcode.3mf"
+   },
+   "cmd": "import_sliced",
+   "id": 6,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "bad_xml",
+    "id": 6,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "b64": "<7208 chars>",
+    "name": "x.gcode.3mf"
+   },
+   "cmd": "import_sliced",
+   "id": 7,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "too_large",
+    "id": 7,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ }
+]

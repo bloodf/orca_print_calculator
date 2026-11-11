@@ -1,0 +1,134 @@
+[
+ {
+  "in": {
+   "args": {},
+   "cmd": "get_state",
+   "id": 1,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "host": {
+      "pluginVersion": "0.0.0-dev",
+      "printerModel": "Snapmaker U1",
+      "printerVendor": "Snapmaker",
+      "projectName": "Desk organizer"
+     },
+     "plates": [],
+     "quotes": null,
+     "settings": {
+      "channels": [
+       {
+        "id": "direct",
+        "name": "Direct",
+        "surchargeMinor": 0,
+        "taxBp": 0,
+        "tiers": [
+         {
+          "fixedMinor": 0,
+          "minMinor": 0,
+          "pctBp": 0,
+          "shippingMinor": 0
+         }
+        ]
+       },
+       {
+        "id": "store",
+        "name": "Online store",
+        "surchargeMinor": 0,
+        "taxBp": 600,
+        "tiers": [
+         {
+          "fixedMinor": 100,
+          "minMinor": 0,
+          "pctBp": 500,
+          "shippingMinor": 0
+         }
+        ]
+       }
+      ],
+      "comparedChannelIds": [
+       "direct",
+       "store"
+      ],
+      "currency": "BRL",
+      "defaultChannelId": "store",
+      "defaults": {
+       "depreciationEnabled": true,
+       "discountTiers": [],
+       "energyPerKwh": "0.95",
+       "failureBp": 500,
+       "failureIncludesMachine": false,
+       "failureMode": "expected_waste",
+       "fixedPerPrintHourMinor": 0,
+       "laborMinutes": 10,
+       "laborPerHourMinor": 3000,
+       "maintenancePerHourMinor": 0,
+       "minOrderMinor": 0,
+       "pretty": "round",
+       "setupMinutes": 0,
+       "shipping": {
+        "minor": 0,
+        "mode": "none"
+       },
+       "targetMarginBp": 3000
+      },
+      "defaultsCurrency": null,
+      "extrasCatalog": [],
+      "language": "auto",
+      "manualPrices": {},
+      "onboarded": true,
+      "printers": {
+       "Snapmaker U1": {
+        "acquisitionMinor": 450000,
+        "lifetimeHours": 5000,
+        "watts": 120
+       }
+      },
+      "sheet": {
+       "footer": "Payment on delivery. Lead time 5 days.",
+       "nextNo": 43,
+       "shopName": "Studio Layer",
+       "validityDays": 15
+      },
+      "slotOverrides": {},
+      "spoolman": {
+       "url": "http://192.168.1.10:7912"
+      },
+      "ui": {
+       "open": {},
+       "sheetMode": "summary"
+      },
+      "version": 1
+     },
+     "spooler": null,
+     "unreadable": [
+      "quotes"
+     ]
+    },
+    "id": 1,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "quotes": []
+   },
+   "cmd": "save_quotes",
+   "id": 2,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "unreadable",
+    "id": 2,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ }
+]

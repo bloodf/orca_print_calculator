@@ -1,0 +1,33 @@
+// @vitest-environment node
+// The shipped single file: its CSP meta must come before the first script, and the policy must be the exact one we mean.
+import { describe, expect, test } from "vitest";
+import { build } from "vite";
+
+type Out = { output: { fileName: string; type: string; source?: unknown }[] };
+async function built(): Promise<string> {
+  const r = (await build({ configFile: "vite.config.ts", logLevel: "silent", build: { write: false } })) as Out | Out[];
+  const out = Array.isArray(r) ? r[0]! : r;
+  const page = out.output.find((o) => o.fileName === "index.html");
+  expect(page?.type).toBe("asset");
+  return String(page!.source);
+}
+
+describe("built index.html", () => {
+  test("carries the CSP meta, before the first <script", async () => {
+    const html = await built();
+    const csp = html.indexOf('http-equiv="Content-Security-Policy"');
+    expect(csp > -1).toBe(true);
+    expect(csp < html.indexOf("<script")).toBe(true);
+    expect(html.includes("default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'")).toBe(true);
+  }, 60_000);
+  test("is one self-contained file: no external script, style or image reference", async () => {
+    const html = await built();
+    expect(/<script[^>]+src=/.test(html)).toBe(false);
+    expect(/<link[^>]+rel="stylesheet"/.test(html)).toBe(false);
+    expect(/https?:\/\/(?!www\.w3\.org)[^"'\s)]+\.(png|jpg|svg|css|js)/.test(html)).toBe(false);
+  }, 60_000);
+  test("does not rewrite scope ids behind our back (data-v ids are the framework's own 8 hex digits)", async () => {
+    const html = await built();
+    expect(/data-v-[0-9a-f]{8}/.test(html)).toBe(true);
+  }, 60_000);
+});

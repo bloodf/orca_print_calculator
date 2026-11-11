@@ -1,0 +1,8 @@
+[project]
+name = "orca-print-calculator"
+version = "0.1.0"
+description = "Prices every build plate of the open OrcaSlicer project: filament, energy, labor, fees and a suggested selling price."
+authors = [{ name = "bloodf" }]
+license = "MIT"
+requires-python = ">=3.12"
+dependencies = []

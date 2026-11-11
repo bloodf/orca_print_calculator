@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "onboarded": true,
+  "language": "auto",
+  "currency": "BRL",
+  "defaultsCurrency": null,
+  "spoolman": {
+    "url": "http://192.168.1.10:7912"
+  },
+  "defaults": {
+    "energyPerKwh": "0.95",
+    "failureBp": 500,
+    "failureMode": "expected_waste",
+    "failureIncludesMachine": false,
+    "depreciationEnabled": true,
+    "maintenancePerHourMinor": 0,
+    "fixedPerPrintHourMinor": 0,
+    "laborPerHourMinor": 3000,
+    "laborMinutes": 10,
+    "setupMinutes": 0,
+    "targetMarginBp": 3000,
+    "pretty": "round",
+    "minOrderMinor": 0,
+    "shipping": {
+      "mode": "none",
+      "minor": 0
+    },
+    "discountTiers": []
+  },
+  "channels": [
+    {
+      "id": "direct",
+      "name": "Direct",
+      "taxBp": 0,
+      "surchargeMinor": 0,
+      "tiers": [
+        {
+          "minMinor": 0,
+          "pctBp": 0,
+          "fixedMinor": 0,
+          "shippingMinor": 0
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "name": "Online store",
+      "taxBp": 600,
+      "surchargeMinor": 0,
+      "tiers": [
+        {
+          "minMinor": 0,
+          "pctBp": 500,
+          "fixedMinor": 100,
+          "shippingMinor": 0
+        }
+      ]
+    }
+  ],
+  "comparedChannelIds": [
+    "direct",
+    "store"
+  ],
+  "defaultChannelId": "store",
+  "printers": {
+    "Snapmaker U1": {
+      "watts": 120,
+      "acquisitionMinor": 450000,
+      "lifetimeHours": 5000
+    }
+  },
+  "slotOverrides": {},
+  "manualPrices": {},
+  "extrasCatalog": [],
+  "sheet": {
+    "shopName": "Studio Layer",
+    "footer": "Payment on delivery. Lead time 5 days.",
+    "validityDays": 15,
+    "nextNo": 43
+  },
+  "ui": {
+    "open": {},
+    "sheetMode": "summary"
+  }
+}

@@ -1,0 +1,36 @@
+[
+ {
+  "in": {
+   "type": "ready"
+  },
+  "out": []
+ },
+ {
+  "in": {
+   "args": {},
+   "cmd": "get_state",
+   "id": 1,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "host": {
+      "pluginVersion": "0.0.0-dev",
+      "printerModel": "Snapmaker U1",
+      "printerVendor": "Snapmaker",
+      "projectName": "Desk organizer"
+     },
+     "plates": [],
+     "quotes": null,
+     "settings": null,
+     "spooler": null,
+     "unreadable": []
+    },
+    "id": 1,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ }
+]

@@ -1,0 +1,166 @@
+/* Orca Print Calculator tokens and base classes (docs/ux.md §4). Host --orca-* values win; fallbacks serve the dev harness.
+   Theme = html[data-orca-theme]. Never prefers-color-scheme. color-mix only inside @supports. */
+:root {
+  /* host-mapped */
+  --opc-bg: var(--orca-bg, #FFFFFF);
+  --opc-fg: var(--orca-fg, #2B2B2B);
+  --opc-muted: var(--orca-muted, #5C6664);
+  --opc-border: var(--orca-border, #D9D9D9);
+  --opc-accent: var(--orca-accent, #009688); /* fills + borders only, never text on dark */
+  --opc-accent-fg: var(--orca-accent-fg, #FFFFFF);
+  --opc-primary-bg: #00675B; /* light: deep teal so the white label is 6.79:1 */
+  --opc-font: var(--orca-font, -apple-system, "Segoe UI", system-ui, sans-serif);
+  /* brand rules */
+  --opc-accent-text: #00675B; /* links, accent text, focus, ok status */
+  --opc-price: #8A5800; /* the one amber number */
+  /* derived surfaces (fallback hex) */
+  --opc-raised: #F4F4F4;
+  --opc-hover: #EBEBEB;
+  --opc-selected: #E6F5F3;
+  --opc-selected-border: #66C0B8;
+  --opc-track: #E3E3E3;
+  --opc-bar: #8A9290;
+  --opc-bar-profit: #009688;
+  /* status */
+  --opc-ok: var(--opc-accent-text);
+  --opc-warn: #A63D0F;
+  --opc-bad: #B42318;
+  --opc-warn-bg: #FBEDE6;
+  --opc-bad-bg: #F8E9E8;
+  /* focus, shadow */
+  --opc-focus: 0 0 0 2px var(--opc-bg), 0 0 0 4px var(--opc-accent-text);
+  --opc-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  /* scale */
+  --opc-s1: 4px; --opc-s2: 8px; --opc-s3: 12px; --opc-s4: 16px; --opc-s5: 24px; --opc-s6: 32px;
+  --opc-r-control: 4px; --opc-r-surface: 6px; --opc-r-pill: 999px;
+  --opc-fs-xs: 11px; --opc-fs-sm: 12px; --opc-fs-md: 13px; --opc-fs-lg: 15px; --opc-fs-xl: 20px; --opc-fs-price: 40px;
+  /* motion tokens: the only place durations and curves are written (T4.8). 120-240 ms, transform and opacity only. */
+  --opc-dur-fast: 120ms; --opc-dur: 180ms; --opc-dur-slow: 240ms;
+  --opc-ease: cubic-bezier(0.2, 0, 0, 1);          /* standard: hover, press, exits */
+  --opc-ease-out: cubic-bezier(0.23, 1, 0.32, 1);  /* entrances: fast start, soft landing */
+  --opc-header-h: 44px;
+}
+html[data-orca-theme="dark"] {
+  --opc-bg: var(--orca-bg, #2B2B2B);
+  --opc-fg: var(--orca-fg, #FAFAFA);
+  --opc-muted: var(--orca-muted, #A8A8A8);
+  --opc-border: var(--orca-border, #4A4A4A);
+  --opc-accent: var(--orca-accent, #00675B);
+  --opc-accent-fg: var(--orca-accent-fg, #FFFFFF);
+  --opc-primary-bg: var(--opc-accent);
+  --opc-accent-text: #2EBBAA;
+  --opc-price: #F5A524;
+  --opc-raised: #353535;
+  --opc-hover: #3B3B3B;
+  --opc-selected: #2B403E;
+  --opc-selected-border: #2EBBAA;
+  --opc-track: #404040;
+  --opc-bar: #8C8C8C;
+  --opc-bar-profit: #2EBBAA;
+  --opc-warn: #F0875F;
+  --opc-bad: #FF8B85;
+  --opc-warn-bg: #44342D;
+  --opc-bad-bg: #463333;
+  --opc-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  :root, html[data-orca-theme="dark"] {
+    --opc-raised: color-mix(in srgb, var(--opc-fg) 5%, var(--opc-bg));
+    --opc-hover: color-mix(in srgb, var(--opc-fg) 8%, var(--opc-bg));
+    --opc-track: color-mix(in srgb, var(--opc-fg) 10%, var(--opc-bg));
+    --opc-selected: color-mix(in srgb, var(--opc-accent-text) 12%, var(--opc-bg));
+    --opc-warn-bg: color-mix(in srgb, var(--opc-warn) 12%, var(--opc-bg));
+    --opc-bad-bg: color-mix(in srgb, var(--opc-bad) 12%, var(--opc-bg));
+  }
+}
+
+/* ---- base elements ---- */
+html { font-family: var(--opc-font); font-size: 13px; line-height: 1.4; color: var(--opc-fg); background: var(--opc-bg); -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--opc-bg); color: var(--opc-fg); }
+*, *::before, *::after { box-sizing: border-box; }
+h1, h2, h3, p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; margin: 0; }
+button { cursor: pointer; }
+:focus { outline: none; box-shadow: var(--opc-focus); }
+:focus:not(:focus-visible) { box-shadow: none; }
+::selection { background: var(--opc-selected-border); color: var(--opc-fg); }
+
+input, select, textarea {
+  height: 28px; padding: 0 8px; border-radius: var(--opc-r-control);
+  background: var(--opc-bg); border: 1px solid var(--opc-border); color: var(--opc-fg);
+}
+textarea { height: auto; padding: 6px 8px; }
+input[type="checkbox"], input[type="radio"] { height: 14px; width: 14px; padding: 0; margin: 0; }
+input:hover:not(:focus), select:hover:not(:focus), textarea:hover:not(:focus) { border-color: var(--opc-muted); }
+input:focus, select:focus, textarea:focus { border-color: var(--opc-accent-text); }
+[aria-invalid="true"], input[aria-invalid="true"]:focus { border-color: var(--opc-bad); }
+option { background: var(--opc-bg); color: var(--opc-fg); }
+::placeholder { color: var(--opc-muted); opacity: 1; }
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; height: 28px; padding: 0 10px;
+  border-radius: var(--opc-r-control); border: 1px solid var(--opc-border); background: transparent;
+  color: var(--opc-fg); font-weight: 500; white-space: nowrap;
+  transition: border-color var(--opc-dur-fast) var(--opc-ease), background var(--opc-dur-fast) var(--opc-ease);
+}
+.btn > * + * { margin-left: 6px; }
+.btn:hover { border-color: var(--opc-accent-text); }
+.btn:active { background: var(--opc-hover); }
+.btn.primary { height: 32px; padding: 0 16px; background: var(--opc-primary-bg); color: var(--opc-accent-fg); border-color: var(--opc-primary-bg); }
+.btn.primary:hover { border-color: var(--opc-accent-text); }
+.btn.ghost { border-color: transparent; color: var(--opc-accent-text); }
+.btn.ghost:hover { background: var(--opc-hover); border-color: transparent; }
+.btn.icon { width: 24px; height: 24px; padding: 0; border-color: transparent; color: var(--opc-muted); }
+.btn.icon:hover { color: var(--opc-fg); background: var(--opc-hover); border-color: transparent; }
+.btn.danger { color: var(--opc-bad); }
+.btn[aria-disabled="true"], .btn:disabled { color: var(--opc-muted); cursor: default; }
+.btn[aria-busy="true"] { cursor: progress; }
+
+/* ---- utilities ---- */
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.muted { color: var(--opc-muted); }
+.sm.bad, td.bad { color: var(--opc-bad); } /* error lines and loss cells */
+.sm { font-size: var(--opc-fs-sm); line-height: 1.35; }
+.xs { font-size: var(--opc-fs-xs); line-height: 1.3; }
+.lg { font-size: var(--opc-fs-lg); line-height: 1.25; font-weight: 500; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.hairline { border-top: 1px solid var(--opc-border); }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row { display: flex; align-items: center; } /* flex gap needs Safari 14.1: siblings get margins instead */
+.row > * + * { margin-left: var(--opc-s2); }
+.view-title { font-size: var(--opc-fs-xl); font-weight: 600; line-height: 1.2; }
+.view-title:focus { box-shadow: none; }
+/* the "edited" marker next to an overridden field or section */
+.ovr-dot { width: 6px; height: 6px; border-radius: var(--opc-r-pill); background: var(--opc-accent-text); flex: none; }
+.skeleton { background: var(--opc-track); border-radius: var(--opc-r-control); }
+.surface { background: var(--opc-raised); border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: var(--opc-s3); }
+.skip-link { position: absolute; left: 8px; top: -48px; z-index: 50; background: var(--opc-bg); border: 1px solid var(--opc-border); padding: 4px 10px; border-radius: var(--opc-r-control); color: var(--opc-accent-text); }
+.skip-link:focus { top: 8px; }
+table { border-collapse: collapse; width: 100%; }
+th { font-size: var(--opc-fs-sm); font-weight: 400; color: var(--opc-muted); text-align: left; padding: 0 8px; height: 28px; border-bottom: 1px solid var(--opc-border); }
+td { padding: 0 8px; height: 32px; border-bottom: 1px solid var(--opc-border); }
+th.r, td.r { text-align: right; }
+img { max-width: 100%; }
+
+/* ---- motion (docs/ux.md §7.9). Transform and opacity only; nothing waits on an animation (the price and the input
+   update first, the motion follows). Reduced motion removes all of it. ---- */
+@keyframes opc-enter { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+/* toast: rises in; dismissing is instant (a leave animation needs <TransitionGroup>, about 4 kB of runtime) */
+@keyframes opc-toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: opc-enter var(--opc-dur-fast) var(--opc-ease-out); }
+/* skeleton -> content: the real blocks fade up in place (skeletons share their box sizes) */
+.reveal-children > * { animation: opc-enter var(--opc-dur) var(--opc-ease-out); }
+/* popover/menu: scales in from its trigger corner, fades out (.leaving is set by Popover for 120 ms); stale badge fades in */
+@keyframes opc-pop-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes opc-badge-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
+.badge-in { animation: opc-badge-in var(--opc-dur) var(--opc-ease-out); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; transition-delay: 0s !important; animation: none !important; }
+}
+
+/* ---- print: everything with .app-chrome disappears; the quote sheet (T4.7) prints alone ---- */
+@media print {
+  .app-chrome { display: none !important; }
+}

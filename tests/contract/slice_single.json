@@ -1,0 +1,96 @@
+[
+ {
+  "in": {
+   "args": {},
+   "cmd": "get_state",
+   "id": 1,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "host": {
+      "pluginVersion": "0.0.0-dev",
+      "printerModel": "Snapmaker U1",
+      "printerVendor": "Snapmaker",
+      "projectName": "Desk organizer"
+     },
+     "plates": [],
+     "quotes": null,
+     "settings": null,
+     "spooler": null,
+     "unreadable": []
+    },
+    "id": 1,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "gcode": [
+    "snapmaker_u1_temp_plate1.head.txt",
+    "snapmaker_u1_temp_plate1.tail.txt"
+   ],
+   "lifecycle": "GCodeExportFinished",
+   "plate": 0
+  },
+  "out": []
+ },
+ {
+  "in": {
+   "code": "Ok",
+   "lifecycle": "SlicingJobComplete"
+  },
+  "out": [
+   {
+    "data": {
+     "plates": [
+      {
+       "fileName": null,
+       "index": 0,
+       "name": null,
+       "seconds": 607,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [
+        {
+         "color": "#FFFFFF",
+         "costPerKg": 83.1,
+         "grams": 1.12,
+         "material": "PLA",
+         "n": 1,
+         "notes": "",
+         "preset": "_local/spooler/3D Procer PLA Branco @Snapmaker U1"
+        },
+        {
+         "color": "#000000",
+         "costPerKg": 83.1,
+         "grams": 0.92,
+         "material": "PLA",
+         "n": 2,
+         "notes": "Spoolman filament 12",
+         "preset": "_local/spooler/3D Procer PLA Preto @Snapmaker U1"
+        },
+        {
+         "color": "#0000FF",
+         "costPerKg": 83.1,
+         "grams": 1.05,
+         "material": "PLA",
+         "n": 3,
+         "notes": "",
+         "preset": "_local/spooler/3D Procer PLA Azul @Snapmaker U1"
+        }
+       ],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      }
+     ]
+    },
+    "name": "plates",
+    "type": "event"
+   }
+  ]
+ }
+]

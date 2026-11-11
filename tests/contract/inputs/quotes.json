@@ -1,0 +1,223 @@
+[
+  {
+    "id": "q-a",
+    "no": 41,
+    "createdAt": "2026-11-03T12:00:00Z",
+    "updatedAt": "2026-11-03T12:00:00Z",
+    "title": "Desk organizer",
+    "customer": "Ana Souza",
+    "note": "",
+    "currency": "BRL",
+    "channelId": "store",
+    "plates": [
+      {
+        "index": 0,
+        "name": "Tray",
+        "seconds": 8040,
+        "slots": [
+          {
+            "n": 1,
+            "label": "Generic PLA @U1",
+            "key": "sm:3:3",
+            "gramsMg": 88000,
+            "pricePerKgMinor": 9990,
+            "color": "#E8E8E8",
+            "source": "spooler",
+            "filamentId": 3
+          },
+          {
+            "n": 2,
+            "label": "Generic PETG (#12)",
+            "key": "sm:12:5",
+            "gramsMg": 41000,
+            "pricePerKgMinor": 12400,
+            "color": "#2E6FBF",
+            "source": "name",
+            "filamentId": 12
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "name": "Lid",
+        "seconds": 9300,
+        "slots": [
+          {
+            "n": 1,
+            "label": "Generic PLA @U1",
+            "key": "sm:3:3",
+            "gramsMg": 150000,
+            "pricePerKgMinor": 9990,
+            "color": "#E8E8E8",
+            "source": "spooler",
+            "filamentId": 3
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "name": null,
+        "seconds": 8700,
+        "slots": [
+          {
+            "n": 1,
+            "label": "Generic PLA @U1",
+            "key": "sm:3:3",
+            "gramsMg": 80000,
+            "pricePerKgMinor": 9990,
+            "color": "#E8E8E8",
+            "source": "spooler",
+            "filamentId": 3
+          },
+          {
+            "n": 2,
+            "label": "Generic PETG (#12)",
+            "key": "sm:12:5",
+            "gramsMg": 42000,
+            "pricePerKgMinor": 12400,
+            "color": "#2E6FBF",
+            "source": "name",
+            "filamentId": 12
+          }
+        ]
+      }
+    ],
+    "input": {
+      "plates": [
+        {
+          "index": 0,
+          "name": "Tray",
+          "seconds": 8040,
+          "include": true,
+          "copies": 1,
+          "slots": [
+            {
+              "n": 1,
+              "label": "Generic PLA @U1",
+              "key": "sm:3:3",
+              "gramsMg": 88000,
+              "pricePerKgMinor": 9990
+            },
+            {
+              "n": 2,
+              "label": "Generic PETG (#12)",
+              "key": "sm:12:5",
+              "gramsMg": 41000,
+              "pricePerKgMinor": 12400
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "name": "Lid",
+          "seconds": 9300,
+          "include": true,
+          "copies": 1,
+          "slots": [
+            {
+              "n": 1,
+              "label": "Generic PLA @U1",
+              "key": "sm:3:3",
+              "gramsMg": 150000,
+              "pricePerKgMinor": 9990
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "seconds": 8700,
+          "include": true,
+          "copies": 1,
+          "slots": [
+            {
+              "n": 1,
+              "label": "Generic PLA @U1",
+              "key": "sm:3:3",
+              "gramsMg": 80000,
+              "pricePerKgMinor": 9990
+            },
+            {
+              "n": 2,
+              "label": "Generic PETG (#12)",
+              "key": "sm:12:5",
+              "gramsMg": 42000,
+              "pricePerKgMinor": 12400
+            }
+          ]
+        }
+      ],
+      "unitsPerSet": 1,
+      "quantity": 10,
+      "costs": {
+        "machine": {
+          "wattsW10": 1200,
+          "acquisitionCents": 450000,
+          "lifetimeHours": 5000
+        },
+        "kwhE4": 9500,
+        "failure": {
+          "bp": 500,
+          "mode": "expected_waste",
+          "includesMachine": false
+        },
+        "depreciationEnabled": true,
+        "maintenancePerHourCents": 0,
+        "labor": {
+          "perHourCents": 3000,
+          "minutes": 10
+        },
+        "fixedCostPerPrintHourCents": 0
+      },
+      "setup": {
+        "ratePerHourMinor": 3000,
+        "minutes": 0
+      },
+      "extras": [],
+      "shipping": {
+        "mode": "customer",
+        "minor": 0
+      },
+      "channels": [
+        {
+          "taxBp": 0,
+          "surchargeCents": 0,
+          "tiers": [
+            {
+              "minPriceCents": 0,
+              "pctBp": 0,
+              "fixedCents": 0,
+              "shippingCents": 0
+            }
+          ],
+          "id": "direct",
+          "name": "Direct"
+        },
+        {
+          "taxBp": 600,
+          "surchargeCents": 0,
+          "tiers": [
+            {
+              "minPriceCents": 0,
+              "pctBp": 500,
+              "fixedCents": 100,
+              "shippingCents": 0
+            }
+          ],
+          "id": "store",
+          "name": "Online store"
+        }
+      ],
+      "targetMarginBp": 3000,
+      "discountTiers": [],
+      "pretty": "round",
+      "minOrderMinor": 0
+    },
+    "summary": {
+      "channelName": "Online store",
+      "price": 9780,
+      "grandTotal": 97800,
+      "marginBp": 3005,
+      "quantity": 10
+    }
+  }
+]

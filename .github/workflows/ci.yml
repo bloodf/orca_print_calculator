@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          version: 12.18.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24.22.2
+          cache: pnpm
+          cache-dependency-path: ui/pnpm-lock.yaml
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - run: pnpm -C ui install --frozen-lockfile
+      - run: pnpm -C ui lint
+      - run: pnpm -C ui typecheck
+      # Coverage thresholds (80% branches, 85% lines, see ui/vite.config.ts) only run with --coverage, so CI runs this one.
+      - run: pnpm -C ui test:coverage
+      - name: Contract fixtures are up to date
+        run: python3 scripts/gen_contract.py --check
+      # Build first: it generates src/orca_print_calculator/_assets.py (gitignored), which the host tests import.
+      - run: python3 scripts/build.py
+      - name: Bundle size gate
+        run: |
+          size="$(wc -c < ui/dist/index.html)"
+          echo "ui/dist/index.html: $size bytes (limit 350000)"
+          [ "$size" -le 350000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 350000"; exit 1; }
+      - run: python -m unittest discover tests

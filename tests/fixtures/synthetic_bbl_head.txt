@@ -1,0 +1,19 @@
+; HEADER_BLOCK_START
+; BambuStudio 02.00.00.00
+; model printing time: 1h 2m 3s; total estimated time: 1h 9m 40s
+; total layer number: 40
+; filament: 1,2
+; HEADER_BLOCK_END
+
+; CONFIG_BLOCK_START
+; filament_colour = #FF0000;#00FF00
+; filament_cost = 25.5,30
+; filament_density = 1.24,1.27
+; filament_notes = "Spoolman filament 7";"line one\nline two; with semicolon"
+; filament_settings_id = "Bambu PLA Basic @BBL X1C";"Generic PETG; special @BBL X1C"
+; filament_type = PLA;PETG
+; printer_model = Bambu Lab X1 Carbon
+; CONFIG_BLOCK_END
+
+; EXECUTABLE_BLOCK_START
+M73 P0 R69

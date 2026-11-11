@@ -1,0 +1,206 @@
+[
+ {
+  "in": {
+   "args": {
+    "url": "http://192.168.1.10:7912"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 1,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "currency": "BRL",
+     "filaments": [
+      {
+       "colorHex": "#FFFFFF",
+       "id": 3,
+       "material": "PLA",
+       "name": "PLA+ White",
+       "price": 89.9,
+       "vendor": "eSun",
+       "weight": 1000.0
+      },
+      {
+       "colorHex": "#2E6FBF",
+       "id": 12,
+       "material": "PETG",
+       "name": "PETG Blue",
+       "price": 119.0,
+       "vendor": "Overture",
+       "weight": 1000.0
+      },
+      {
+       "colorHex": null,
+       "id": 20,
+       "material": "TPU",
+       "name": "TPU 95A",
+       "price": null,
+       "vendor": null,
+       "weight": 500.0
+      }
+     ],
+     "spools": [
+      {
+       "archived": false,
+       "filamentId": 3,
+       "id": 1,
+       "initialWeight": 1000.0,
+       "lastUsed": "2026-11-01T10:00:00Z",
+       "price": 95.0,
+       "remainingWeight": 412.5
+      },
+      {
+       "archived": false,
+       "filamentId": 12,
+       "id": 2,
+       "initialWeight": 1000.0,
+       "lastUsed": null,
+       "price": null,
+       "remainingWeight": 0.0
+      },
+      {
+       "archived": true,
+       "filamentId": 3,
+       "id": 3,
+       "initialWeight": 1000.0,
+       "lastUsed": "2026-12-01T10:00:00Z",
+       "price": 70.0,
+       "remainingWeight": null
+      }
+     ]
+    },
+    "id": 1,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "url": "http://192.168.1.10:7912"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 2,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "unreachable",
+    "id": 2,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "url": "http://192.168.1.10:7912"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 3,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "http_503",
+    "id": 3,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "url": "http://192.168.1.10:7912"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 4,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "timeout",
+    "id": 4,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "url": "ftp://nas"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 5,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "bad_url",
+    "id": 5,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "url": "http://192.168.1.10:7912"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 6,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "redirected",
+    "id": 6,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "url": "http://192.168.1.10:7912"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 7,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "denied",
+    "id": 7,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "args": {
+    "url": "http://192.168.2.20:7912"
+   },
+   "cmd": "spoolman_fetch",
+   "id": 8,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "error": "too_large",
+    "id": 8,
+    "ok": false,
+    "type": "res"
+   }
+  ]
+ }
+]
