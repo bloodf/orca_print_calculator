@@ -118,7 +118,7 @@ describe("MEDIUM: save is single-flight and numbers never repeat", () => {
     const original = host.postMessage.bind(host);
     host.postMessage = (m: unknown) => {
       const x = m as { type: string; id: number; cmd: string };
-      if (x.type === "cmd" && x.cmd === "get_state") return void setTimeout(() => dispatch({ type: "res", id: x.id, ok: true, data: { host: { projectName: "p", printerModel: null, printerVendor: null, pluginVersion: "x" }, plates: [], settings: fxSettings({ sheet: { shopName: "", footer: "", validityDays: 15, nextNo: 5 } }), quotes: savedQuotes(), spooler: null } }), 10);
+      if (x.type === "cmd" && x.cmd === "get_state") return void setTimeout(() => dispatch({ type: "res", id: x.id, ok: true, data: { host: { projectName: "p", printerModel: null, printerVendor: null, pluginVersion: "x" }, plates: [], settings: fxSettings({ sheet: { shopName: "", footer: "", validityDays: 15, nextNo: 5 } as never }), quotes: savedQuotes(), spooler: null } }), 10);
       original(m);
     };
     window.orca = host;

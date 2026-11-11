@@ -11,6 +11,7 @@ import { currency, derived, init, loadState, locale, setView, store } from "./st
 import CalculatorView from "./views/CalculatorView.vue";
 import QuotesView from "./views/QuotesView.vue";
 import SettingsView from "./views/SettingsView.vue";
+import StockView from "./views/StockView.vue";
 
 const DevBar = import.meta.env.DEV ? defineAsyncComponent(() => import("./mock/DevBar.vue")) : null;
 
@@ -53,6 +54,7 @@ onBeforeUnmount(() => { stop?.(); clearTimeout(settle); });
   </main>
   <CalculatorView v-else-if="store.view === 'calc'" />
   <QuotesView v-else-if="store.view === 'quotes'" />
+  <StockView v-else-if="store.view === 'stock'" />
   <SettingsView v-else />
   <div class="sr-only app-chrome" aria-live="polite" aria-atomic="true">{{ live }}</div>
   <HelpGuide />

@@ -321,7 +321,11 @@ describe("sheet details are frozen at save time", () => {
     load("ok");
     patchSettings((s) => ({ sheet: { ...s.sheet, shopName: "Old Shop", footer: "Old footer", validityDays: 7 } }));
     const q = await saveQuote();
-    expect(q?.sheet).toEqual({ shopName: "Old Shop", footer: "Old footer", validityDays: 7 });
+    // brand text fields are frozen too; the logo and the next number are not
+    expect(q?.sheet).toEqual({
+      shopName: "Old Shop", footer: "Old footer", validityDays: 7, taxId: "", phone: "+55 11 5550-0100", email: "hello@studiolayer.example",
+      website: "", address: "Rua das Camadas, 120\nSão Paulo, SP", payment: "", accent: "#00675B",
+    });
     patchSettings((s) => ({ sheet: { ...s.sheet, shopName: "New Shop", footer: "New footer", validityDays: 30 } }));
     const m = sheetFor(store.quotes.find((x) => x.id === q!.id)!)!;
     expect(m.shop).toBe("Old Shop");

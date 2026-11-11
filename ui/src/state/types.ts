@@ -5,7 +5,7 @@ import type { ChannelQuote, DiscountTier, PrettyMode, QuoteExtra, QuoteInput, Qu
 
 export type { ChannelDef, DiscountTier, PrettyMode, QuoteExtra, QuoteInput, QuoteResult, QuoteSlot, SlotOverride };
 
-export type View = "calc" | "quotes" | "settings";
+export type View = "calc" | "quotes" | "stock" | "settings";
 export type Lang = "auto" | "en" | "pt-BR";
 export type ShippingMode = "none" | "customer" | "absorbed"; // "none" maps to engine {mode:"customer", minor:0}
 
@@ -22,7 +22,9 @@ export type SpoolmanData = { currency: string | null; filaments: SpoolmanFilamen
 export type HostState = { host: HostInfo; plates: HostPlate[]; settings: Settings | null; quotes: SavedQuote[] | null; spooler: SpoolerInfo; unreadable?: string[] };
 
 export type PrinterProfile = { watts: number | null; acquisitionMinor: number | null; lifetimeHours: number | null };
-export type CatalogExtra = { key: string; label: string; unitMinor: number; qtyE3: number; per: "piece" | "plate" | "order" };
+export type CatalogExtra = { key: string; label: string; unitMinor: number; qtyE3: number; per: "piece" | "plate" | "order"; /** Units on hand at qty scale (E3); absent or null = stock not tracked. */ stockE3?: number | null };
+/** Logo (PNG/JPEG data URI or "") and company details printed on the quote sheet. */
+export type SheetBrand = { logo: string; taxId: string; phone: string; email: string; website: string; address: string; payment: string; accent: string };
 export type Defaults = {
   energyPerKwh: string | null; // canonical "0.95" (dot decimal, major units); null = not set
   failureBp: number; failureMode: "markup" | "expected_waste"; failureIncludesMachine: boolean;
@@ -40,7 +42,7 @@ export type Settings = {
   slotOverrides: Record<string, SlotOverride>; // key = filament preset name
   manualPrices: Record<string, number>; // key = preset; minor units per kg
   extrasCatalog: CatalogExtra[];
-  sheet: { shopName: string; footer: string; validityDays: number; nextNo: number };
+  sheet: { shopName: string; footer: string; validityDays: number; nextNo: number } & SheetBrand;
   ui: { open: Record<string, boolean>; sheetMode: "itemized" | "summary" };
   /** Rows from an older or hand-edited file that this version could not read. Written back untouched, never deleted. */
   invalid?: Record<string, unknown>;
@@ -48,7 +50,8 @@ export type Settings = {
 export type SlotSource = MatchSource | "manual";
 /** `filamentId` is optional so quotes saved before it existed still load (they show a generic "filament match" badge). */
 export type PlateSnapshot = { index: number; name: string | null; seconds: number; slots: (QuoteSlot & { color: string | null; source: SlotSource; filamentId?: number | null })[] };
-export type SheetDetails = { shopName: string; footer: string; validityDays: number };
+/** Frozen with a saved quote. The logo is not: it is large and belongs to the shop, so it always comes from settings. */
+export type SheetDetails = { shopName: string; footer: string; validityDays: number } & Partial<Omit<SheetBrand, "logo">>;
 export type SavedQuote = {
   id: string; no: number; createdAt: string; updatedAt: string;
   title: string; customer: string; note: string;

@@ -36,13 +36,15 @@ Orca Print Calculator is a plugin for OrcaSlicer 2.5. It adds a tab to the main 
 - **Sliced `.gcode.3mf` import.** "Import sliced file" reads plates from a file you exported with File, Export, Export all sliced file. Imported plates are replaced when you slice in Orca.
 - **Filament prices.** Spoolman first, then the preset price, then a price you type. See [Spoolman matching](#spoolman-matching).
 - **Printer power.** The plugin suggests average watts from the printer model and shows an "Estimated" badge. Many models have no entry, and those get a generic 120 W. Calibrate with a smart plug (kWh divided by print hours, times 1000) and type your own value. Your value wins.
-- **Cost sections.** Machine and energy (power, printer price and lifetime, price per kWh, maintenance, fixed cost per print hour, failure rate), Labor, Extras and accessories (with a catalog), Shipping and Sales fee.
+- **Cost sections.** Machine and energy (power, printer price and lifetime, price per kWh, maintenance, fixed cost per print hour, failure rate), Labor, Extras and accessories (from your catalog), Shipping and Sales fee.
+- **Extras and stock.** A tab for the extras catalog, with an optional count on hand per item, and a read-only summary of your Spoolman filament (spools and grams left). The calculator warns when a quote needs more of an extra than you have. Nothing is deducted automatically.
 - **Sales channels.** You define them in Settings. Each has a percent fee, a fixed fee, tax and optional price tiers, for fees that change with the sale price. "Compare channels" shows them side by side. There is no marketplace integration. The fees are the numbers you type.
 - **Starting values.** In BRL, USD and EUR every cost starts filled with a typical value (price per kWh, labor rate, printer price and lifetime, 5% failure rate, 100% markup). Other currencies start empty. Change any of them in Settings.
 - **Pricing.** Markup over cost (100% sells for twice the cost), a minimum order amount, and four rounding modes: Exact, Round (3 digits), Ends in 9 and Ends in 0 or 5. Rounding always goes up.
 - **Quantity and batches.** Quantity, discount tiers, and a batch table with unit cost, unit price, order total, order profit and margin per tier. When a run makes more pieces than the order needs, the spare pieces are charged to the order.
 - **Saved quotes.** A quote keeps its own inputs, plates, prices and currency. Opening it later shows the numbers as saved, even if you changed settings or currency since.
-- **Quote output.** "Print quote" opens a quote sheet (itemized or summary) and the print dialog, where you can save a PDF. CSV and HTML export write a file to the plugin data folder, and the tab shows the path.
+- **Quote output.** "Print quote" opens a quote sheet (itemized or summary) and the print dialog, where you can save a PDF. CSV and HTML export write a file to the plugin data folder, and the tab shows the path. The sheet carries your logo, company details, payment terms and accent color, set in Settings › Quote sheet with a live sample beside the form.
+- **Settings.** One group per tab: Spoolman, costs, pricing, sales channels, printers, quote sheet, language and currency, about. Changes save on their own.
 - **Languages and currency.** English and Brazilian Portuguese. Any currency, taken from Spoolman or set in Settings.
 - **Theme.** The interface is built to follow OrcaSlicer's dark and light themes. This is not verified inside Orca yet.
 

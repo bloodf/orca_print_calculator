@@ -50,7 +50,7 @@ export function settings(over: Partial<Settings> = {}): Settings {
     ],
     comparedChannelIds: ["direct", "store"], defaultChannelId: "store",
     printers: { "Snapmaker U1": { watts: 120, acquisitionMinor: 450000, lifetimeHours: 5000 } },
-    sheet: { shopName: "Studio Layer", footer: "Payment on delivery. Lead time 5 days.", validityDays: 15, nextNo: 43 },
+    sheet: { ...s.sheet, shopName: "Studio Layer", footer: "Payment on delivery. Lead time 5 days.", validityDays: 15, nextNo: 43, phone: "+55 11 5550-0100", email: "hello@studiolayer.example", address: "Rua das Camadas, 120\nSão Paulo, SP" },
     ...over,
   };
 }

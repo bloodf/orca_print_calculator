@@ -12,7 +12,10 @@ import { currency, derived, flushSettings, patchSettings, setPlates, store } fro
 import { toast } from "./toast";
 import type { SavedQuote, SheetDetails } from "./types";
 
-const sheetNow = (): SheetDetails => { const { shopName, footer, validityDays } = store.settings.sheet; return { shopName, footer, validityDays }; };
+const sheetNow = (): SheetDetails => {
+  const { shopName, footer, validityDays, taxId, phone, email, website, address, payment, accent } = store.settings.sheet;
+  return { shopName, footer, validityDays, taxId, phone, email, website, address, payment, accent };
+};
 
 // Writes are serialized: each one is an update applied to the list as it is when its turn comes, so an overlapping
 // failure rolls back only its own change and a retry never resends an old list.

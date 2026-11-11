@@ -4,6 +4,7 @@ import { decimalString } from "../../format";
 import { t } from "../../i18n";
 import { kwhE4 } from "../../engine/money";
 import { clearOverride, derived, patchDefaults, patchDraft, patchSettings, result, setOverride, setSectionOpen, setView, store } from "../../state/store";
+import { openSettingsTab } from "../../state/settingsTab";
 import { toast } from "../../state/toast";
 import type { Defaults, OverridableKey, PrinterProfile } from "../../state/types";
 
@@ -55,6 +56,7 @@ export function patchPrinter(model: string, patch: Partial<PrinterProfile>): voi
 
 /** Settings anchors are buttons, never links (docs/ux.md §7.10). */
 export function gotoSettings(anchor: string): void {
+  openSettingsTab(anchor);
   setView("settings");
   void nextTick(() => void nextTick(() => document.getElementById(anchor)?.scrollIntoView({ block: "start" })));
 }

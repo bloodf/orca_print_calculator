@@ -26,7 +26,7 @@ export function sheetFor(q: SavedQuote, itemized = store.settings.ui.sheetMode =
   if (!p) return null;
   return buildSheetModel({
     no: q.no, dateIso: q.updatedAt, title: q.title, customer: q.customer, note: q.note, currency: q.currency,
-    plates: q.input.plates, quantity: q.input.quantity, result: p.result, selected: p.selected, sheet: q.sheet ?? store.settings.sheet, itemized,
+    plates: q.input.plates, quantity: q.input.quantity, result: p.result, selected: p.selected, sheet: { ...store.settings.sheet, ...q.sheet }, itemized,
   });
 }
 

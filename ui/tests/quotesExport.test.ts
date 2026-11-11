@@ -3,7 +3,7 @@ import { computeQuote } from "../src/engine/quote";
 import { setLocale } from "../src/i18n";
 import { savedQuotes } from "../src/mock/fixtures";
 import { CSV_BOM, CSV_HEADER, buildCsv, csvMoney, csvText } from "../src/quoteCsv";
-import { buildSheetModel, esc, sheetHtml, splitLargestRemainder, type SheetModel, type SheetSource } from "../src/quoteExport";
+import { brandOf, buildSheetModel, sampleSheetModel, esc, sheetHtml, splitLargestRemainder, type SheetModel, type SheetSource } from "../src/quoteExport";
 
 beforeEach(() => { setLocale("en"); });
 
@@ -150,5 +150,21 @@ describe("sheet HTML", () => {
     expect(m.heading).toBe("Rascunho");
     expect(sheetHtml(m)).toContain('lang="pt-BR"');
     expect(m.total.value).toMatch(/^R\$/);
+  });
+});
+
+describe("corrupted saved sheet", () => {
+  const bad = { phone: 5, address: null, shopName: 7, footer: {}, validityDays: Number.NaN } as never;
+  test("brandOf ignores non-string fields", () => {
+    expect(() => brandOf(bad)).not.toThrow();
+    expect(brandOf(bad).contact).toEqual([]);
+  });
+  test("buildSheetModel, sampleSheetModel and sheetHtml render empty values", () => {
+    const m = buildSheetModel(source({ sheet: bad }));
+    expect(m.shop).toBe("");
+    expect(m.footer).toBe("");
+    expect(m.validValue).toBe("");
+    expect(() => sheetHtml(m)).not.toThrow();
+    expect(() => sheetHtml(sampleSheetModel(bad, "USD"))).not.toThrow();
   });
 });

@@ -16,6 +16,7 @@ defineEmits<{ "update:view": [value: View] }>();
 const tabs = (): SegOption<View>[] => [
   { value: "calc", label: t("nav.calc"), icon: "calc" },
   { value: "quotes", label: t("nav.quotes"), icon: "list" },
+  { value: "stock", label: t("nav.stock"), icon: "box" },
   { value: "settings", label: t("nav.settings"), icon: "sliders" },
 ];
 const langs = computed<{ value: Lang; label: string }[]>(() => [

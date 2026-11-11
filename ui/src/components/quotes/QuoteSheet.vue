@@ -5,9 +5,13 @@ defineProps<{ model: SheetModel }>();
 </script>
 
 <template>
-  <article class="quote-sheet" :lang="model.lang">
+  <article class="quote-sheet" :lang="model.lang" :style="{ '--rule': model.accent }">
     <header class="top">
-      <p class="shop">{{ model.shop }}</p>
+      <div>
+        <img v-if="model.logo" class="logo" :src="model.logo" alt="">
+        <p class="shop">{{ model.shop }}</p>
+        <p v-for="(c, i) in model.contact" :key="i" class="co">{{ c }}</p>
+      </div>
       <p class="no">{{ model.heading }}</p>
     </header>
     <div class="meta">
@@ -36,6 +40,7 @@ defineProps<{ model: SheetModel }>();
     <p v-if="model.discountNote" class="small">{{ model.discountNote }}</p>
     <p class="total"><span>{{ model.total.label }}</span><strong class="num">{{ model.total.value }}</strong></p>
     <p v-if="model.note" class="free">{{ model.note }}</p>
+    <p v-if="model.payment" class="free"><strong>{{ model.payment.label }}</strong><br>{{ model.payment.text }}</p>
     <p v-if="model.footer" class="free mu">{{ model.footer }}</p>
     <p class="small">{{ model.made }}</p>
   </article>
@@ -45,6 +50,9 @@ defineProps<{ model: SheetModel }>();
 .quote-sheet { --paper: #FFFFFF; --ink: #2B2B2B; --mu: #5C6664; --rule: #00675B; --price: #8A5800; --line: #D9D9D9;
   width: 720px; max-width: 100%; margin: 0 auto; padding: 32px; background: var(--paper); color: var(--ink); font-size: 11pt; line-height: 1.45; border: 1px solid var(--line); }
 .top, .meta, .sum, .total { display: flex; justify-content: space-between; align-items: baseline; }
+.top { align-items: flex-start; }
+.logo { display: block; max-height: 64px; max-width: 240px; margin-bottom: 8px; }
+.co { font-size: var(--opc-fs-sm); color: var(--mu); overflow-wrap: anywhere; }
 .top > * + *, .meta > * + * { margin-left: 16px; }
 .shop { font-size: var(--opc-fs-lg); font-weight: 600; }
 .no, .mu, .small { color: var(--mu); }
@@ -64,7 +72,7 @@ td { padding: 6px 0; border-bottom: 1px solid var(--line); }
 @media (max-width: 759px) { .quote-sheet { padding: 16px; } }
 @media print {
   .quote-sheet { width: auto; margin: 0; padding: 0; border: 0; box-shadow: none; background: none; color: #000; font-size: 11pt; }
-  .no, .mu, .small, th { color: #000; }
+  .no, .mu, .small, .co, th { color: #000; }
   .total strong { color: var(--price); }
 }
 </style>

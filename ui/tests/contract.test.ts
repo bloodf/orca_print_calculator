@@ -12,6 +12,7 @@ import { createMockHost } from "../src/mock/host";
 import { SCENARIO_NAMES } from "../src/mock/scenarios";
 import { exportBlock, exportQuote } from "../src/quoteFlow";
 import { saveQuote } from "../src/state/quotes";
+import { EMPTY_BRAND } from "../src/state/sheet";
 import * as S from "../src/state/store";
 import { clearToasts, toasts } from "../src/state/toast";
 import type { HostPlate, SavedQuote, Settings } from "../src/state/types";
@@ -179,7 +180,7 @@ describe("boot through get_state", () => {
     const r = await boot(load("saved_spooler"), load("spoolman"));
     expect(S.store.status).toBe("ready");
     expect(S.store.settings).toEqual({ ...inputSettings(), ...S.store.settings, channels: inputSettings().channels, defaults: inputSettings().defaults });
-    expect(S.store.settings.sheet).toEqual(inputSettings().sheet);
+    expect(S.store.settings.sheet).toEqual({ ...EMPTY_BRAND, ...inputSettings().sheet }); // an older file without brand fields gets the empty brand
     expect(S.store.quotes).toEqual(inputQuotes());
     expect(S.store.spooler).toEqual({ url: "http://192.168.1.10:7912", presetToFilament: { "Generic PLA @U1": 3, "Generic PETG (#12)": 12 } });
     expect(r.sent.filter((m) => m.type === "cmd").map((m) => m.cmd)).toEqual(["get_state", "spoolman_fetch"]);

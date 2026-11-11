@@ -3,7 +3,7 @@
 import { computed, nextTick, ref } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { money } from "../../format";
-import { currency, digits, patchDraft, patchSettings, store } from "../../state/store";
+import { currency, derived, digits, patchDraft, patchSettings, store } from "../../state/store";
 import { toast } from "../../state/toast";
 import type { CatalogExtra, QuoteExtra } from "../../state/types";
 import Icon from "../base/Icon.vue";
@@ -26,6 +26,16 @@ const m = (n: number) => money(n, currency.value, intlLocale());
 const setRows = (extras: QuoteExtra[]) => patchDraft({ extras });
 const patchRow = (key: string, patch: Partial<QuoteExtra>) => setRows(rows.value.map((r) => (r.key === key ? { ...r, ...patch } : r)));
 const inCatalog = (r: QuoteExtra) => catalog.value.some((c) => c.label === r.label);
+const units = (e3: number): string => new Intl.NumberFormat(intlLocale(), { maximumFractionDigits: 3 }).format(e3 / 1000);
+/** Stock of the matching catalog item, and a shortage line when this quote needs more (per plate: no estimate). Nothing is deducted. */
+function stockOf(r: QuoteExtra): { have: string; short: string } | null {
+  const have = catalog.value.find((c) => c.label === r.label)?.stockE3;
+  if (typeof have !== "number") return null;
+  const res = derived.value.result;
+  const pieces = res.ok ? res.piecesPrinted : store.draft.quantity; // spare pieces are printed too
+  const need = r.per === "piece" ? r.qtyE3 * pieces : r.per === "order" ? r.qtyE3 : 0;
+  return { have: units(have), short: need > have ? t("extras.short", { need: units(need), have: units(have) }) : "" };
+}
 
 async function add(base: Omit<QuoteExtra, "key">): Promise<void> {
   menuOpen.value = false;
@@ -76,6 +86,10 @@ function onMenuKey(e: KeyboardEvent): void {
       <NumberField :model-value="r.qtyE3" :label="t('field.extraQty')" :scale="1000" :step="1000" :max="1000000" required @update:model-value="(v) => patchRow(r.key, { qtyE3: v ?? 0 })" />
       <SelectField :model-value="r.per" :label="t('field.extraPer')" :options="pers" @update:model-value="(v) => patchRow(r.key, { per: v as Per })" />
       <button type="button" class="btn icon xdel" :aria-label="t('common.removeNamed', { name: r.label || t('field.extraName') })" :title="t('common.remove')" @click="remove(r)"><Icon name="trash" /></button>
+      <p v-if="stockOf(r)" class="xstock sm">
+        <span class="muted">{{ t("extras.inStock", { n: stockOf(r)!.have }) }}</span>
+        <span v-if="stockOf(r)!.short" class="short"><Icon name="alert-triangle" />{{ stockOf(r)!.short }}</span>
+      </p>
       <div v-if="r.label.trim() && !inCatalog(r)" class="xsave"><button type="button" class="btn ghost" @click="saveToCatalog(r)">{{ t("extras.saveToCatalog") }}</button></div>
     </div>
     <div class="add">
@@ -102,6 +116,10 @@ function onMenuKey(e: KeyboardEvent): void {
 .bad-text { color: var(--opc-bad); margin-top: 2px; }
 .xdel { justify-self: end; margin-bottom: 2px; }
 .xsave { grid-column: 1 / -1; justify-self: start; }
+.xstock { grid-column: 1 / -1; }
+.xstock > * + * { margin-left: 12px; }
+.short { display: inline-flex; align-items: center; color: var(--opc-warn); }
+.short > * + * { margin-left: 4px; }
 .add { margin-top: var(--opc-s2); }
 .menu { display: grid; grid-row-gap: 2px; min-width: 220px; }
 .mi { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 28px; padding: 0 8px; border: 0; border-radius: var(--opc-r-control); background: transparent; text-align: left; }
@@ -111,7 +129,7 @@ function onMenuKey(e: KeyboardEvent): void {
 @media (min-width: 1100px) {
   .xrow { grid-template-columns: minmax(0, 2fr) 120px 88px 132px 24px; }
   .xname { grid-column: auto; }
-  .xsave { grid-column: 1 / -1; }
+  .xsave, .xstock { grid-column: 1 / -1; }
   .xrow.later .xl, .xrow.later :deep(.nf-head), .xrow.later :deep(.sf-head) { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 }
 </style>

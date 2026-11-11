@@ -8,6 +8,7 @@ import { t } from "../../i18n";
 import { exportQuote, savedOf } from "../../quoteFlow";
 import { buildSheetModel } from "../../quoteExport";
 import { currency, derived, patchSettings, plateOrigin, store } from "../../state/store";
+import { gotoSettings } from "../costs/shared";
 import QuoteSheet from "./QuoteSheet.vue";
 
 const mode = computed({
@@ -24,7 +25,7 @@ const model = computed(() => {
     no: saved?.no ?? null, dateIso: saved?.updatedAt ?? now, title: store.draft.title || store.host.projectName || "",
     customer: store.draft.customer, note: store.draft.note, currency: saved?.currency ?? currency.value,
     plates: d.quoteInput.plates, quantity: store.draft.quantity, result: d.result, selected: sel,
-    sheet: saved?.sheet ?? store.settings.sheet, itemized: mode.value === "itemized",
+    sheet: { ...store.settings.sheet, ...saved?.sheet }, itemized: mode.value === "itemized",
   });
 });
 const stale = computed(() => !store.draft.frozenPlates && store.plates.some((p) => p.stale));
@@ -32,6 +33,7 @@ const imported = computed(() => plateOrigin.value === "import");
 const back = ref<HTMLButtonElement | null>(null);
 const printNow = (): void => window.print();
 const close = () => { store.preview = false; };
+const editDetails = (): void => { close(); gotoSettings("settings-sheet"); };
 function onKey(e: KeyboardEvent): void { if (e.key === "Escape") close(); }
 onMounted(() => { back.value?.focus(); document.addEventListener("keydown", onKey); });
 onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
@@ -43,6 +45,8 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
       <button ref="back" type="button" class="btn ghost" @click="close"><Icon name="arrow-left" />{{ t("sheet.back") }}</button>
       <Segmented v-model="mode" :label="t('quote.print')" :options="[{ value: 'itemized', label: t('sheet.itemized') }, { value: 'summary', label: t('sheet.summary') }]" />
       <span class="grow" />
+      <span v-if="savedOf()?.sheet" class="sm muted">{{ t("sheet.frozenHint") }}</span>
+      <button type="button" class="btn ghost" @click="editDetails"><Icon name="pencil" />{{ t("sheet.editDetails") }}</button>
       <button type="button" class="btn" @click="exportQuote('html')"><Icon name="download" />{{ t("sheet.saveHtml") }}</button>
       <button type="button" class="btn primary" @click="printNow"><Icon name="print" />{{ t("sheet.printPdf") }}</button>
     </div>

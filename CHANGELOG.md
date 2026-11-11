@@ -8,9 +8,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Added
 
 - A "?" button in the header opens a step-by-step guide, from sliced plates to the saved quote. Each cost section has its own "?" that opens the guide at that step.
+- An "Extras and stock" tab, between Quotes and Settings. It holds the extras catalog, with an optional count on hand per item and an "Out of stock" badge at zero, and a read-only filament summary from Spoolman: spools and grams left per filament.
+- In the calculator, an extra that matches a catalog item with a stock count shows it, and warns when the quote needs more than you have (per piece and per order). Nothing is deducted automatically.
+- Quote sheet branding: logo (PNG, JPEG or WebP, re-encoded and resized), tax ID, phone, email, website, address, payment terms and an accent color. Settings › Quote sheet shows a live sample beside the form. The quote preview has an "Edit logo and details" button.
 
 ### Changed
 
+- Settings shows one group at a time behind tabs (a side rail on wide windows, a row of tabs on narrow ones) instead of one long page. The extras catalog moved out of Settings to the "Extras and stock" tab.
+- A saved quote keeps the company details it was saved with. The logo always comes from the current settings.
 - The profit field is now markup over cost instead of margin on price. 100% markup sells for twice the cost. A saved margin above 90.91% (1000% markup) is reset to the default, 100% markup.
 - In BRL, USD and EUR every cost starts from a typical value: price per kWh, labor rate, printer price and lifetime. An energy or labor rate saved as "not set" takes that value. Other currencies start empty.
 

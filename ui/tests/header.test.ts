@@ -112,3 +112,16 @@ describe("AppHeader", () => {
     expect(r.querySelector(".cur")!.getAttribute("title")).toBe(t("header.currencyFromSpoolman"));
   });
 });
+
+describe("AppHeader tabs", () => {
+  test("tabs collapse to icons below the wide breakpoint but keep the full label as title and aria-label", () => {
+    seed();
+    const r = mount(AppHeader, { view: "calc" });
+    const btns = [...r.querySelectorAll<HTMLElement>(".seg-opt")];
+    expect(btns).toHaveLength(4);
+    for (const b of btns) {
+      expect(b.getAttribute("title")).toBeTruthy();
+      expect(b.getAttribute("aria-label")).toBe(b.getAttribute("title"));
+    }
+  });
+});

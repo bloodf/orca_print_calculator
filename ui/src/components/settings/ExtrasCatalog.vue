@@ -1,10 +1,11 @@
 <script setup lang="ts">
-// Settings › Extras catalog: items the user adds to quotes often (docs/ux.md §5.3 Settings 6).
+// Extras and stock › catalog: items the user adds to quotes often, with an optional count on hand (never deducted automatically).
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { currency, digits, patchSettings, store } from "../../state/store";
 import { toast } from "../../state/toast";
 import type { CatalogExtra } from "../../state/types";
+import Badge from "../base/Badge.vue";
 import Icon from "../base/Icon.vue";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
@@ -39,8 +40,10 @@ function remove(key: string): void {
           <MoneyField :model-value="x.unitMinor" :label="t('field.extraCost')" :digits="digits" :currency="currency" :step="smallStep(digits)" @update:model-value="(v) => v !== null && edit(x.key, { unitMinor: v })" />
           <NumberField :model-value="x.qtyE3" :label="t('field.extraQty')" :scale="1000" :step="1000" :max="1000000" @update:model-value="(v) => v !== null && edit(x.key, { qtyE3: v })" />
           <SelectField :model-value="x.per" :label="t('field.extraPer')" :options="pers()" @update:model-value="(v) => edit(x.key, { per: v as CatalogExtra['per'] })" />
+          <NumberField :model-value="x.stockE3 ?? null" :label="t('field.extraStock')" :scale="1000" :step="1000" :max="1000000000" nullable :helper="t('field.extraStockHelp')" @update:model-value="(v) => edit(x.key, { stockE3: v })" />
           <button type="button" class="btn icon ec-rm" :aria-label="t('common.removeNamed', { name: x.label || t('extras.custom') })" @click="remove(x.key)"><Icon name="trash" /></button>
         </div>
+        <Badge v-if="x.stockE3 === 0" tone="warn" :text="t('stock.out')" class="ec-out" />
       </li>
     </ul>
     <button type="button" class="btn ghost" @click="add"><Icon name="plus" /><span>{{ t("catalog.add") }}</span></button>
@@ -54,4 +57,5 @@ function remove(key: string): void {
 .ec-item + .ec-item { padding-top: 12px; }
 .ec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; align-items: start; }
 .ec-rm { margin-top: 24px; }
+.ec-out { margin-top: 8px; }
 </style>

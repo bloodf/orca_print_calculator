@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { nextTick } from "vue";
 import AboutSettings from "../src/components/settings/AboutSettings.vue";
 import ExtrasCatalog from "../src/components/settings/ExtrasCatalog.vue";
 import LanguageCurrency from "../src/components/settings/LanguageCurrency.vue";
@@ -7,10 +8,11 @@ import CostDefaults from "../src/components/settings/CostDefaults.vue";
 import FirstRunChecklist from "../src/components/FirstRunChecklist.vue";
 import SettingsView from "../src/views/SettingsView.vue";
 import { t } from "../src/i18n";
+import { openSettingsTab, settingsTab } from "../src/state/settingsTab";
 import { store } from "../src/state/store";
 import { byText, flush, installHost, lastToast, mountComponent, resetStore, type, unmountComponent } from "./settings-helpers";
 
-beforeEach(() => { resetStore(); });
+beforeEach(() => { resetStore(); settingsTab.value = "spoolman"; });
 afterEach(() => { unmountComponent(); vi.useRealTimers(); });
 
 describe("printer profiles", () => {
@@ -79,16 +81,22 @@ describe("auto-save", () => {
     expect(root.querySelector("[role=status]")?.textContent).toContain("Saved");
     expect(byText(root, "button", "Save")).toBeUndefined();
     expect(root.querySelector("a")).toBeNull();
-    expect(root.querySelectorAll("section.grp")).toHaveLength(9);
+    expect(root.querySelectorAll("section.grp")).toHaveLength(1); // one tab panel at a time
     expect(root.querySelectorAll("[data-stub]")).toHaveLength(0);
   });
 });
 
 describe("anchors", () => {
-  test("header links can scroll to every settings group id", () => {
+  test("every settings anchor opens its tab and the panel keeps the settings-<id> id", async () => {
     installHost();
     const root = mountComponent(SettingsView);
-    for (const id of ["spoolman", "costs", "pricing", "channels", "printers", "extras", "sheet", "language", "about"]) expect(root.querySelector(`section#settings-${id}`), id).not.toBeNull();
+    for (const id of ["spoolman", "costs", "pricing", "channels", "printers", "sheet", "language", "about"]) {
+      openSettingsTab(`settings-${id}`);
+      await nextTick();
+      expect(root.querySelector(`section#settings-${id}[role=tabpanel]`), id).not.toBeNull();
+    }
+    openSettingsTab("settings-extras"); // moved to its own top-level tab: leaves Settings where it was
+    expect(settingsTab.value).toBe("about");
   });
 });
 

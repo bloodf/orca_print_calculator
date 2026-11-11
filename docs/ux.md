@@ -62,7 +62,7 @@ Three views, switched by a segmented tab control in the header (same pattern as 
 |---|---|---|
 | Calculator (default) | Price the open project; save, print, CSV | header tab; "Open" on a quote; after first run |
 | Quotes | Saved quotes: search, reopen, duplicate, print, CSV, delete | header tab; toast "View quotes" after save |
-| Settings | Spoolman, defaults, channels, printers, extras catalog, quote sheet, language and currency | header tab; links "Edit in settings" from sections and chips (scrolls to the anchor `#settings-<section>`) |
+| Settings | Tabbed: Spoolman, Costs, Pricing, Sales channels, Printers, Quote sheet, Language and currency, About (the extras catalog lives in the "Extras and stock" view) | header tab; links "Edit in settings" from sections and chips (scrolls to the anchor `#settings-<section>`) |
 
 The quote sheet preview is a sub-state of Calculator (`state.preview = true`), not a fourth tab: it replaces the
 calculator body with the sheet and a toolbar (Back, Itemized/Summary, Print or save PDF, Save HTML).
@@ -1502,7 +1502,6 @@ via `Intl.PluralRules` with `_one` / `_other` suffixed keys. `i18n.ts` exports `
 | settings.group.pricing | Pricing | Preço |
 | settings.group.channels | Sales channels | Canais de venda |
 | settings.group.printers | Printers | Impressoras |
-| settings.group.extras | Extras catalog | Catálogo de extras |
 | settings.group.sheet | Quote sheet | Folha de orçamento |
 | settings.group.language | Language and currency | Idioma e moeda |
 | settings.group.about | About | Sobre |

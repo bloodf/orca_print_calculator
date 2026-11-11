@@ -4,6 +4,7 @@ import type { ChannelDef } from "../engine/channels";
 import { PRETTY_MODES } from "../engine/quotePricing";
 import type { CatalogExtra, Defaults, Draft, HostPlate, PrinterProfile, Settings } from "./types";
 import { MAX_MARGIN_BP, presetFor } from "./markup";
+import { BRAND_SHAPES, EMPTY_BRAND } from "./sheet";
 import { isRec } from "./validate";
 
 export const DEFAULT_PRETTY = "round" as const; // engine exports no PRETTY_DEFAULT; "round" is the closest to the spec's "whole"
@@ -28,7 +29,7 @@ export const defaultSettings = (currency: string | null, directName: string, pre
   spoolman: { url: "" }, defaults: defaultDefaults(presetCurrency),
   channels: [directChannel(directName)], comparedChannelIds: ["direct"], defaultChannelId: "direct",
   printers: {}, slotOverrides: {}, manualPrices: {}, extrasCatalog: [],
-  sheet: { shopName: "", footer: "", validityDays: 15, nextNo: 1 },
+  sheet: { shopName: "", footer: "", validityDays: 15, nextNo: 1, ...EMPTY_BRAND },
   ui: { open: {}, sheetMode: "summary" },
 });
 
@@ -63,7 +64,7 @@ function migratePrinter(p: unknown): PrinterProfile | null {
   return f.some((x) => x === undefined) ? null : { watts: f[0] ?? null, acquisitionMinor: f[1] ?? null, lifetimeHours: f[2] ?? null };
 }
 const migrateExtra = (e: unknown): CatalogExtra | null =>
-  isRec(e) && typeof e.key === "string" && typeof e.label === "string" && natural(e.unitMinor) && natural(e.qtyE3) && (e.per === "piece" || e.per === "plate" || e.per === "order") ? { key: e.key, label: e.label, unitMinor: e.unitMinor, qtyE3: e.qtyE3, per: e.per } : null;
+  isRec(e) && typeof e.key === "string" && typeof e.label === "string" && natural(e.unitMinor) && natural(e.qtyE3) && (e.per === "piece" || e.per === "plate" || e.per === "order") ? { key: e.key, label: e.label, unitMinor: e.unitMinor, qtyE3: e.qtyE3, per: e.per, ...(natural(e.stockE3) && e.stockE3 >= 0 ? { stockE3: e.stockE3 } : {}) } : null;
 
 /** Rows that fail `f` are returned in `dropped` instead of vanishing. */
 function listRows<T>(v: unknown, f: (x: unknown) => T | null): { kept: T[]; dropped: unknown[] } {
@@ -113,7 +114,7 @@ const SCALARS: Record<string, (v: unknown) => boolean> = {
 };
 const NESTED: Record<string, Record<string, (v: unknown) => boolean>> = {
   spoolman: { url: (v) => typeof v === "string" },
-  sheet: { shopName: (v) => typeof v === "string", footer: (v) => typeof v === "string", validityDays: int(0, 3650), nextNo: int(1, 999_999_999) },
+  sheet: { shopName: (v) => typeof v === "string", footer: (v) => typeof v === "string", validityDays: int(0, 3650), nextNo: int(1, 999_999_999), ...BRAND_SHAPES },
   ui: { open: (v) => isRec(v) && Object.values(v).every(bool), sheetMode: (v) => v === "itemized" || v === "summary" },
 };
 /** Names of every setting in a raw settings file that will be reset to a built-in value (for the one-time notice). */
