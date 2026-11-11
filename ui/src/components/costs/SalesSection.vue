@@ -51,7 +51,7 @@ const modes = computed(() => PRETTY_MODES.map((v) => ({ value: v, label: t(`pret
 </script>
 
 <template>
-  <Section id="sales" :title="t('section.sales')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="bad" @update:open="setOpen">
+  <Section id="sales" help="sales" :title="t('section.sales')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="bad" @update:open="setOpen">
     <FrozenNote v-if="frozen" />
     <div v-if="channel && tier && single" class="form-grid">
       <PercentField :model-value="tier.pctBp" :label="t('field.fee')" :max="9000 - channel.taxBp" :step="50" :helper="t('field.feeHelp')" :readonly="frozen" @update:model-value="setFee" />

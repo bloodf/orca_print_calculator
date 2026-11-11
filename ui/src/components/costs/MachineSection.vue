@@ -55,7 +55,7 @@ const wearText = (b: boolean) => t(b ? "common.on" : "common.off");
 </script>
 
 <template>
-  <Section id="machine" :title="t('section.machine')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('costs')" @update:open="setOpen">
+  <Section id="machine" help="machine" :title="t('section.machine')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('costs')" @update:open="setOpen">
     <div class="form-grid">
       <template v-if="model || frozen">
         <FrozenNote v-if="frozen" class="wide" />

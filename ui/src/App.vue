@@ -2,6 +2,7 @@
 // App shell: skip link, header, view switch, host-error screen, price live region, toasts (docs/ux.md §2, §3, §7.8).
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import AppHeader from "./components/AppHeader.vue";
+import HelpGuide from "./components/HelpGuide.vue";
 import Icon from "./components/base/Icon.vue";
 import ToastHost from "./components/base/ToastHost.vue";
 import { t } from "./i18n";
@@ -54,6 +55,7 @@ onBeforeUnmount(() => { stop?.(); clearTimeout(settle); });
   <QuotesView v-else-if="store.view === 'quotes'" />
   <SettingsView v-else />
   <div class="sr-only app-chrome" aria-live="polite" aria-atomic="true">{{ live }}</div>
+  <HelpGuide />
   <ToastHost />
   <component :is="DevBar" v-if="DevBar" />
 </template>

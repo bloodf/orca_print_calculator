@@ -2,6 +2,7 @@
 // Header (docs/ux.md §5.3): mark, tabs, project name, printer chip, Spoolman status, currency chip, language select.
 import { computed } from "vue";
 import { t } from "../i18n";
+import { openHelp } from "../state/help";
 import { currency, currencySource, derived, setLanguage, store } from "../state/store";
 import type { Lang, View } from "../state/types";
 import Icon from "./base/Icon.vue";
@@ -36,14 +37,16 @@ const source = computed(() => t(currencySource.value === "spoolman" ? "header.cu
     <select class="lang" :aria-label="t('header.language')" :value="store.settings.language" @change="setLanguage(($event.target as HTMLSelectElement).value as Lang)">
       <option v-for="l in langs" :key="l.value" :value="l.value">{{ l.label }}</option>
     </select>
+    <button type="button" class="btn icon help-btn" :title="t('help.open')" :aria-label="t('help.open')" aria-haspopup="dialog" data-testid="help-open" @click="openHelp()"><Icon name="help" /></button>
     </template>
   </header>
 </template>
 
 <style scoped>
-.app-header { position: sticky; top: 0; z-index: 20; height: var(--opc-header-h); display: grid; grid-template-columns: 20px auto minmax(0, 1fr) auto auto auto auto; grid-column-gap: 12px; align-items: center; padding: 0 12px; background: var(--opc-bg); border-bottom: 1px solid var(--opc-border); }
+.app-header { position: sticky; top: 0; z-index: 20; height: var(--opc-header-h); display: grid; grid-template-columns: 20px auto minmax(0, 1fr) auto auto auto auto auto; grid-column-gap: 12px; align-items: center; padding: 0 12px; background: var(--opc-bg); border-bottom: 1px solid var(--opc-border); }
 .mark { color: var(--opc-accent-text); display: inline-flex; }
 .lang { height: 28px; max-width: 150px; }
+.help-btn { width: 28px; height: 28px; color: var(--opc-fg); border-color: var(--opc-border); }
 @media (min-width: 1100px) { .app-header { padding: 0 16px; } }
 @media (max-width: 1279px) { .proj { visibility: hidden; } } /* the title is on the plate list; below 1280 the chips need the room */
 @media (max-width: 899px) { .lang { max-width: 96px; } .app-header { grid-column-gap: 8px; } }

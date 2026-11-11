@@ -23,7 +23,7 @@ const summary = computed(() => {
 </script>
 
 <template>
-  <Section id="labor" :title="t('section.labor')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('setup', 'costs.labor')" @update:open="setOpen">
+  <Section id="labor" help="labor" :title="t('section.labor')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('setup', 'costs.labor')" @update:open="setOpen">
     <div class="form-grid">
       <MoneyField
         id="field-laborPerHourMinor" :model-value="rate.value.value" :label="t('field.laborRate')" :digits="digits" :currency="currency" :step="10 ** digits" unit="/h" nullable

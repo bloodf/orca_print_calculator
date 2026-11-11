@@ -19,7 +19,7 @@ const mount = (render: () => unknown) => { app = createApp({ render: render as n
 
 describe("icons", () => {
   test("every name in the spec's icon list exists", () => {
-    const spec = ["mark", "chevron-down", "chevron-right", "arrow-left", "plus", "minus", "x", "check", "refresh", "reset", "sliders", "list", "calc", "alert-triangle", "alert-circle", "info", "printer-3d", "print", "download", "upload", "copy", "trash", "pencil", "link", "link-off", "clock", "more", "search", "bolt"];
+    const spec = ["mark", "chevron-down", "chevron-right", "arrow-left", "plus", "minus", "x", "check", "refresh", "reset", "sliders", "list", "calc", "alert-triangle", "alert-circle", "help", "info", "printer-3d", "print", "download", "upload", "copy", "trash", "pencil", "link", "link-off", "clock", "more", "search", "bolt"];
     expect(Object.keys(ICONS).sort()).toEqual([...spec].sort());
   });
   test("rendered svg is decorative", () => {

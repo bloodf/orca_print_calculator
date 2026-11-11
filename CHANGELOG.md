@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [0.1.1] - Unreleased
 
+### Added
+
+- A "?" button in the header opens a step-by-step guide, from sliced plates to the saved quote. Each cost section has its own "?" that opens the guide at that step.
+
 ### Changed
 
 - The profit field is now markup over cost instead of margin on price. 100% markup sells for twice the cost. A saved margin above 90.91% (1000% markup) is reset to the default, 100% markup.

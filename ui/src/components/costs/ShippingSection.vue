@@ -30,7 +30,7 @@ const setAmount = (v: number | null) => ship.set({ ...ship.value.value, minor: v
 </script>
 
 <template>
-  <Section id="shipping" :title="t('section.shipping')" :summary="summary" :open="open" :overridden="edited" :invalid="hasProblem('shipping')" @update:open="setOpen">
+  <Section id="shipping" help="shipping" :title="t('section.shipping')" :summary="summary" :open="open" :overridden="edited" :invalid="hasProblem('shipping')" @update:open="setOpen">
     <div v-if="edited" class="head row">
       <span class="ovr-dot" aria-hidden="true" />
       <span class="sr-only">{{ t("a11y.edited") }}</span>

@@ -18,7 +18,7 @@ const summary = computed(() => {
 </script>
 
 <template>
-  <Section id="extras" :title="t('section.extras')" :summary="summary" :open="open" :invalid="hasProblem('extras')" @update:open="setOpen">
+  <Section id="extras" help="extras" :title="t('section.extras')" :summary="summary" :open="open" :invalid="hasProblem('extras')" @update:open="setOpen">
     <ExtrasEditor />
   </Section>
 </template>
