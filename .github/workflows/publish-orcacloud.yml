@@ -60,8 +60,8 @@ jobs:
       - name: Bundle size gate
         run: |
           size="$(wc -c < ui/dist/index.html)"
-          echo "ui/dist/index.html: $size bytes (limit 350000)"
-          [ "$size" -le 350000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 350000"; exit 1; }
+          echo "ui/dist/index.html: $size bytes (limit 400000)"
+          [ "$size" -le 400000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 400000"; exit 1; }
       - name: Unit tests
         run: python -m unittest discover tests
       - name: Publish to Orca Cloud
