@@ -4,21 +4,30 @@
 // Quantity model: one "run" (a set) prints every included plate × its copies once and yields
 // `unitsPerSet` sellable pieces. runs = ceil(quantity / unitsPerSet); pieces printed beyond `quantity`
 // are leftovers whose cost the order carries:
-//   orderCost          = unitCost × runs × unitsPerSet + orderFixed
+//   orderCost          = production cost of `runs` runs + orderFixed
 //   unitCostAtQuantity = ceil(orderCost / quantity)   (rounded up: pricing at it never loses money)
+// Calc version 2 (CALC_VERSION) rounds each cost line once, on the whole order (computeRunsCost). Quotes saved before
+// it carry no `calc` field and keep version 1, which multiplied a per-piece rounded cost: their numbers never move
+// unless the user reprices them on purpose.
 // orderFixed (setup labor, per-order extras, absorbed shipping) is charged once per order, not per run.
 //
 // Fees: channel fees apply to the item price only. Customer-paid shipping is passed through with no
 // channel fee, outside the margin base (grandTotal = orderTotal + shipping). A minimum order raises the
 // per-piece price to ceil(minOrder / quantity) and re-prices it through the channel's fees.
-import { computeCost, mulDivRound, type CostBreakdown, type EngineInput } from "./costs";
+import { computeCost, computeRunsCost, mulDivRound, type CostBreakdown, type EngineInput } from "./costs";
 import { PRETTY_MODES, priceChannel, type ChannelOk, type ChannelQuote, type DiscountTier, type PrettyMode, type QuoteChannel } from "./quotePricing";
 
 export type { ChannelOk, ChannelQuote, DiscountTier, PrettyMode, QuoteChannel } from "./quotePricing";
 export type QuoteSlot = { n: number; gramsMg: number; pricePerKgMinor: number; label: string; key: string };
 export type QuotePlate = { index: number; name?: string; seconds: number; include: boolean; copies: number; slots: QuoteSlot[] };
-export type QuoteExtra = { key: string; label: string; unitMinor: number; qtyE3: number; per: "piece" | "plate" | "order" };
+/** `catalogKey`: the catalog item this row came from (optional: rows saved without it are matched by name). */
+export type QuoteExtra = { key: string; label: string; unitMinor: number; qtyE3: number; per: "piece" | "plate" | "order"; catalogKey?: string };
+/** Order cost rounding: 1 = per-piece rounded lines × pieces (quotes saved before versions existed), 2 = exact order cost. */
+export const CALC_VERSION = 2;
+export const LEGACY_CALC = 1;
 export type QuoteInput = {
+  /** Calculation version this input was priced with; absent = 1. New quotes are stamped with CALC_VERSION. */
+  calc?: number;
   plates: QuotePlate[];
   unitsPerSet?: number; // default 1
   quantity: number;
@@ -94,6 +103,7 @@ function ruleProblems(i: QuoteInput): Problem[] {
     at(t.minQty < 1, "quantity_min", `discountTiers.${k}.minQty`);
     at(t.discountBp >= 10000, "discount_range", `discountTiers.${k}.discountBp`);
   });
+  at(i.calc !== undefined && i.calc !== LEGACY_CALC && i.calc !== CALC_VERSION, "invalid_option", "calc");
   at(!PRETTY_MODES.includes(i.pretty), "invalid_option", "pretty");
   at(i.shipping.mode !== "absorbed" && i.shipping.mode !== "customer", "invalid_option", "shipping.mode");
   i.extras.forEach((e, k) => at(!["piece", "plate", "order"].includes(e.per), "invalid_option", `extras.${k}.per`));
@@ -141,37 +151,40 @@ const overflow = new RangeError("quote overflow");
 const safe = (n: number) => { if (!Number.isSafeInteger(n)) throw overflow; return n; };
 
 type Project = Omit<QuoteOk, "ok" | "lines" | "orderFixed" | "orderCost" | "unitCostAtQuantity" | "channels" | "comparison" | "batchTable">;
+/** The project's engine input (one run's worth), kept so every quantity row can price whole runs exactly. */
+type Built = { project: Project; engine: EngineInput };
 
-function buildProject(i: QuoteInput, materials: EngineInput["materials"]): Project {
+function buildProject(i: QuoteInput, materials: EngineInput["materials"]): Built {
   const included = i.plates.filter((p) => p.include);
   const printSeconds = included.reduce((s, p) => s + p.seconds * p.copies, 0);
   const copies = included.reduce((s, p) => s + p.copies, 0);
   const unitsPerSet = i.unitsPerSet ?? 1;
   const runs = Math.ceil(i.quantity / unitsPerSet);
   // quantity 1 then batchCostCents set here, so a huge quantity is an overflow problem, not an engine error.
-  const one = computeCost({ ...i.costs, materials, printSeconds, unitsPerPrint: unitsPerSet, extras: engineExtras(i.extras, copies), quantity: 1 });
+  const engine: EngineInput = { ...i.costs, materials, printSeconds, unitsPerPrint: unitsPerSet, extras: engineExtras(i.extras, copies), quantity: 1 };
+  const one = computeCost(engine);
   const project = { ...one, batchCostCents: safe(one.unitCostCents * i.quantity) };
-  return { materials, printSeconds, runs, piecesPrinted: runs * unitsPerSet, sparePieces: runs * unitsPerSet - i.quantity, project, plates: i.plates.map((p) => plateRow(i, p)), unitCost: project.unitCostCents };
+  return { engine, project: { materials, printSeconds, runs, piecesPrinted: runs * unitsPerSet, sparePieces: runs * unitsPerSet - i.quantity, project, plates: i.plates.map((p) => plateRow(i, p)), unitCost: project.unitCostCents } };
 }
 
 /** Cost and every channel's pricing at quantity q (q > 0). */
-function atQuantity(i: QuoteInput, p: Project, q: number) {
+function atQuantity(i: QuoteInput, { project: p, engine }: Built, q: number) {
   const qi = { ...i, quantity: q };
   const runs = Math.ceil(q / (i.unitsPerSet ?? 1)), pieces = runs * (i.unitsPerSet ?? 1);
   const order = orderLines(qi);
   const orderFixed = order.reduce((s, l) => s + l.perOrder, 0);
-  const orderCost = safe(safe(p.unitCost * pieces) + orderFixed);
+  const exact = (i.calc ?? LEGACY_CALC) >= CALC_VERSION ? computeRunsCost(engine, runs) : null;
+  const orderCost = safe((exact ? exact.totalCents : safe(p.unitCost * pieces)) + orderFixed);
   const unitCostAtQuantity = Number((BigInt(orderCost) + BigInt(q) - 1n) / BigInt(q));
   const ctx = {
     quantity: q, unitCostAtQuantity, orderCost, orderPrintSeconds: p.printSeconds * runs, targetMarginBp: i.targetMarginBp,
     discountTiers: i.discountTiers, pretty: i.pretty, minOrderMinor: i.minOrderMinor,
     customerShippingMinor: i.shipping.mode === "customer" ? i.shipping.minor : 0,
   };
-  // Engine lines are rounded per piece, then × pieces: each line's perOrder is within 0.5 × pieces of exact.
-  const engineLines: QuoteLine[] = p.project.lines.map((l) => ({
-    id: l.id, perPiece: mulDivRound(l.cents, pieces, q), perOrder: safe(l.cents * pieces),
-    ...(l.detail ? { detail: l.detail.map((d) => ({ key: d.key, minor: d.cents })) } : {}),
-  }));
+  // v1: engine lines rounded per piece, then × pieces (each perOrder within 0.5 × pieces of exact).
+  // v2: lines rounded once on the whole order, so they add up to the production cost in orderCost.
+  const engineLines: QuoteLine[] = (exact ? exact.lines.map((l) => ({ ...l, perOrder: l.cents, perPiece: mulDivRound(l.cents, 1, q) })) : p.project.lines.map((l) => ({ ...l, perOrder: safe(l.cents * pieces), perPiece: mulDivRound(l.cents, pieces, q) })))
+    .map(({ id, perPiece, perOrder, detail }) => ({ id, perPiece, perOrder, ...(detail ? { detail: detail.map((d) => ({ key: d.key, minor: d.cents })) } : {}) }));
   return { lines: [...engineLines, ...order], orderFixed, orderCost, unitCostAtQuantity, channels: i.channels.map((c) => priceChannel(c, ctx)) };
 }
 
@@ -183,12 +196,13 @@ export function computeQuote(i: QuoteInput): QuoteResult {
   const problems = [...shape, ...merged.problems];
   if (problems.length) return { ok: false, problems };
   try {
-    const p = buildProject(i, merged.materials);
-    const now = atQuantity(i, p, i.quantity);
+    const built = buildProject(i, merged.materials);
+    const p = built.project;
+    const now = atQuantity(i, built, i.quantity);
     const comparison = now.channels.filter((c): c is ChannelOk => c.ok).sort((a, b) => b.orderProfit - a.orderProfit);
     const qs = [...new Set([...i.discountTiers.map((t) => t.minQty), i.quantity])].sort((a, b) => a - b);
     const batchTable = qs.map((q) => {
-      const r = q === i.quantity ? now : atQuantity(i, p, q);
+      const r = q === i.quantity ? now : atQuantity(i, built, q);
       return { quantity: q, unitCostAtQuantity: r.unitCostAtQuantity, channels: r.channels };
     });
     return { ok: true, ...p, ...now, comparison, batchTable };

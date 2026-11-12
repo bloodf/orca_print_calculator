@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { grams } from "../../format";
 import { t } from "../../i18n";
 import { locale, store } from "../../state/store";
 import type { SlotMatchView } from "../../state/types";
+import { elOf } from "../base/el";
 import Icon from "../base/Icon.vue";
 import SpoolPicker from "./SpoolPicker.vue";
 import { takePick, pickRequest } from "./pickRequest";
@@ -46,8 +48,8 @@ function useAuto(): void { clearSlot(props.match.slot.preset); emit("useAuto"); 
       <span v-else class="sm bad">{{ t("plate.missingPrice") }}</span>
     </span>
     <span v-if="!frozen" class="actions">
-      <button ref="anchor" type="button" class="btn" aria-haspopup="dialog" :aria-expanded="open ? 'true' : 'false'" @click="toggle">{{ t("match.change") }}</button>
-      <button v-if="showReset" type="button" class="btn icon" :aria-label="autoLabel" :title="autoLabel" @click="useAuto"><Icon name="reset" /></button>
+      <Button :ref="(c) => (anchor = elOf(c))" severity="secondary" outlined size="small" type="button" aria-haspopup="dialog" :aria-expanded="open ? 'true' : 'false'" @click="toggle">{{ t("match.change") }}</Button>
+      <Button v-if="showReset" text severity="secondary" type="button" class="icon-btn" :aria-label="autoLabel" :title="autoLabel" @click="useAuto"><Icon name="reset" /></Button>
     </span>
     <SpoolPicker v-if="!frozen" :match="match" :open="open" :anchor="anchor" @close="open = false" />
   </div>
@@ -56,7 +58,7 @@ function useAuto(): void { clearSlot(props.match.slot.preset); emit("useAuto"); 
 <style scoped>
 .mrow { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto auto auto; align-items: center; column-gap: 12px; padding: 8px 0; }
 .mrow + .mrow { border-top: 1px solid var(--opc-border); }
-.mrow:focus { box-shadow: var(--opc-focus); outline: none; }
+.mrow:focus-visible { outline: 2px solid var(--p-primary-color); outline-offset: 2px; }
 .names { display: flex; flex-direction: column; min-width: 0; }
 .price { display: flex; flex-direction: column; align-items: flex-end; }
 .g { text-align: right; }

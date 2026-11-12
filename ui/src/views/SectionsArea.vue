@@ -14,5 +14,5 @@ import ShippingSection from "../components/costs/ShippingSection.vue";
 </template>
 
 <style scoped>
-.sections-area { display: grid; grid-row-gap: 8px; }
+.sections-area { display: grid; grid-template-columns: minmax(0, 1fr); grid-row-gap: 8px; }
 </style>

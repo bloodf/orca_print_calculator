@@ -11,6 +11,7 @@ import { t } from "../src/i18n";
 import { openSettingsTab, settingsTab } from "../src/state/settingsTab";
 import { store } from "../src/state/store";
 import { byText, flush, installHost, lastToast, mountComponent, resetStore, type, unmountComponent } from "./settings-helpers";
+import { choose } from "./pv";
 
 beforeEach(() => { resetStore(); settingsTab.value = "spoolman"; });
 afterEach(() => { unmountComponent(); vi.useRealTimers(); });
@@ -136,8 +137,7 @@ describe("language and about", () => {
     installHost();
     const root = mountComponent(LanguageCurrency);
     expect(root.textContent).toContain("Language");
-    const sel = root.querySelector("select")!;
-    sel.value = "pt-BR"; sel.dispatchEvent(new Event("change", { bubbles: true })); await flush();
+    await choose(root, "Português (Brasil)");
     expect(store.settings.language).toBe("pt-BR");
     expect(root.textContent).toContain("Idioma");
     expect(root.textContent).toContain("Moeda");
@@ -161,7 +161,7 @@ describe("language and about", () => {
     installHost({ spoolman_fetch: () => ({ currency: null, filaments: [], spools: [] }) });
     store.settings = { ...store.settings, sheet: { ...store.settings.sheet, shopName: "Mine" } };
     const root = mountComponent(AboutSettings);
-    const btn = () => root.querySelector<HTMLElement>("button.danger")!;
+    const btn = () => root.querySelector<HTMLElement>("button.p-button-danger")!;
     btn().click(); await flush();
     expect(btn().textContent).toContain("Click again");
     expect(store.settings.sheet.shopName).toBe("Mine");

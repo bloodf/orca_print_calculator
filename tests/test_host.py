@@ -22,8 +22,8 @@ SRC = ROOT / "src"
 # Field lists copied from ui/src/state/types.ts (HostState, HostInfo, HostPlate, HostSlot, SpoolerInfo)
 # and ui/src/engine/match.ts (SpoolmanFilament, SpoolmanSpool).
 STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable"}
-HOST_KEYS = {"projectName", "printerModel", "printerVendor", "pluginVersion"}
-PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots"}
+HOST_KEYS = {"projectName", "printerModel", "printerVendor", "pluginVersion", "appLanguage"}
+PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots", "consumption"}
 SLOT_KEYS = {"n", "preset", "grams", "color", "costPerKg", "notes", "material"}
 SPOOLER_KEYS = {"url", "presetToFilament"}
 FILAMENT_KEYS = {"id", "name", "vendor", "material", "price", "weight", "colorHex"}
@@ -183,11 +183,20 @@ class Rpc(HostCase):
         self.assertEqual(set(state), STATE_KEYS)
         self.assertEqual(set(state["host"]), HOST_KEYS)
         self.assertEqual(state["host"], {"projectName": "Desk organizer", "printerModel": "Snapmaker U1",
-                                         "printerVendor": "Snapmaker", "pluginVersion": "0.0.0-dev"})
+                                         "printerVendor": "Snapmaker", "pluginVersion": "0.0.0-dev", "appLanguage": None})
         self.assertEqual(state["plates"], [])
         self.assertIsNone(state["settings"])
         self.assertIsNone(state["quotes"])
         self.assertIsNone(state["spooler"])
+
+    def test_state_reports_host_language_without_requiring_the_api(self):
+        self.assertIsNone(self.cmd("get_state")["data"]["host"]["appLanguage"])
+        self.orca.host.app_language = lambda: "pt_BR"
+        self.assertEqual(self.cmd("get_state")["data"]["host"]["appLanguage"], "pt_BR")
+        def unavailable():
+            raise RuntimeError("GUI not ready")
+        self.orca.host.app_language = unavailable
+        self.assertIsNone(self.cmd("get_state")["data"]["host"]["appLanguage"])
 
     def test_state_with_plate_matches_types_ts(self):
         self.slice(0, gcode_file(self.tmp))
@@ -304,6 +313,31 @@ class Capture(HostCase):
         self.assertEqual(slots[1], {"n": 2, "preset": "Generic PETG (#12)", "grams": 1.0, "color": "#2E6FBF",
                                     "costPerKg": 30.0, "notes": "Spoolman filament 12", "material": "PETG"})
 
+    def captured(self, index, text):
+        path = Path(self.tmp) / (".7.%d.gcode" % index)
+        path.write_text(text)
+        self.slice(index, str(path))
+        return [p for p in self.events("plates")[-1]["plates"] if p["index"] == index][0]
+
+    def test_time_without_any_weight_is_missing_consumption_not_free(self):  # F02
+        p = self.captured(0, "; estimated printing time (normal mode) = 1h 0m 0s\n")
+        self.assertEqual((p["seconds"], p["slots"], p["consumption"]), (3600, [], "missing"))
+
+    def test_total_without_per_slot_split_stays_missing(self):  # F02
+        p = self.captured(0, "; total filament used [g] = 12.50\n; estimated printing time (normal mode) = 1h\n")
+        self.assertEqual((p["slots"], p["consumption"]), ([], "missing"))
+
+    def test_stated_zero_is_confirmed_zero(self):  # F02
+        p = self.captured(0, "; filament used [g] = 0.00, 0.00\n; estimated printing time (normal mode) = 1h\n")
+        self.assertEqual((p["slots"], p["consumption"]), ([], "zero"))
+
+    def test_unparsable_weights_are_missing_not_zero(self):  # F02
+        p = self.captured(0, "; filament used [g] = abc\n; estimated printing time (normal mode) = 1h\n")
+        self.assertEqual(p["consumption"], "missing")
+
+    def test_reported_weight_is_known(self):
+        self.assertEqual(self.captured(0, "; filament used [g] = 2.5, 1.0\n")["consumption"], "known")
+
     def test_unknown_values_are_null_not_zero(self):
         folder = Path(self.tmp)
         path = folder / ".3.0.gcode"
@@ -375,6 +409,15 @@ class Lifecycle(HostCase):
 
 
 class ImportSliced(HostCase):
+    def test_plate_without_filaments_is_missing_consumption(self):  # F02
+        info = '<config><plate><metadata key="index" value="1"/><metadata key="prediction" value="600"/></plate></config>'
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("Metadata/slice_info.config", info)
+        res = self.cmd("import_sliced", {"name": "e.gcode.3mf", "b64": base64.b64encode(buf.getvalue()).decode()})
+        p = res["data"]["plates"][0]
+        self.assertEqual((p["seconds"], p["slots"], p["consumption"]), (600, [], "missing"))
+
     def test_happy_path(self):
         project = {"filament_settings_id": ["Bambu PLA Basic @BBL X1C", "Generic PETG"], "filament_cost": ["25.5", "0"],
                    "filament_notes": ["Spoolman filament 7", ""]}

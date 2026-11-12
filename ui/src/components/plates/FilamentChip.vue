@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 import { computed } from "vue";
 import { grams, safeColor } from "../../format";
 import { t } from "../../i18n";
@@ -15,20 +16,18 @@ const label = computed(() => t("a11y.chip", { preset: chipLabel(props.match), gr
 </script>
 
 <template>
-  <button :id="`chip-${match.plateIndex}-${slot.n}`" type="button" class="chip" :aria-label="label" :title="slot.preset" @click="$emit('toggle')">
+  <Button :id="`chip-${match.plateIndex}-${slot.n}`" type="button" severity="secondary" outlined rounded size="small" class="chip" :aria-label="label" :title="slot.preset" @click="$emit('toggle')">
     <span class="dot" :class="{ hatched: !swatch }" :style="swatch ? { background: swatch } : undefined" aria-hidden="true" />
     <span class="name xs truncate" aria-hidden="true">{{ chipLabel(match) }}</span>
     <span class="num xs muted" aria-hidden="true">{{ g ?? UNKNOWN }}</span>
     <Badge :tone="sourceTone(match)" :text="sourceText(match)" aria-hidden="true" />
-  </button>
+  </Button>
 </template>
 
 <style scoped>
-.chip { display: inline-flex; align-items: center; height: 24px; max-width: 100%; padding: 0 4px 0 8px; font: inherit; color: var(--opc-fg); background: var(--opc-bg); border: 1px solid var(--opc-border); border-radius: var(--opc-r-pill); cursor: pointer; }
-.chip:hover { border-color: var(--opc-accent-text); }
-.chip > * + * { margin-left: 6px; }
+.chip { max-width: 100%; padding: 2px 6px 2px 10px; font-weight: 400; color: var(--opc-fg); }
 .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 1px var(--opc-bar); } /* --opc-bar: 3:1 against the chip in both themes (WCAG 1.4.11) */
-.dot.hatched { background: repeating-linear-gradient(45deg, var(--opc-track), var(--opc-track) 2px, var(--opc-bg) 2px, var(--opc-bg) 4px); }
+.dot.hatched { background: repeating-linear-gradient(45deg, var(--opc-track), var(--opc-track) 2px, var(--opc-raised) 2px, var(--opc-raised) 4px); }
 .name { text-align: left; flex: 0 1 auto; min-width: 8ch; max-width: 28ch; font-size: var(--opc-fs-sm); font-weight: 400; }
 .chip :deep(.badge) { flex: none; }
 </style>

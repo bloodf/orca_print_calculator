@@ -1,5 +1,6 @@
 // Test helpers for the price components: load a mock scenario straight into the store (no host round trip).
-import { createApp, type App, type Component } from "vue";
+import { type App, type Component } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import { defaultSettings, mergeSettings, newDraft } from "../src/state/defaults";
 import { setLocale } from "../src/i18n";
 import { buildScenario, type ScenarioName } from "../src/mock/scenarios";

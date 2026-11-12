@@ -147,10 +147,12 @@ def slots_from(fields, slots, presets=()):
     return rows
 
 
-def plate(index, seconds, slots, source, file_name=None):
+def plate(index, seconds, slots, source, file_name=None, consumption=None):
+    """`consumption`: "known" (a slot reported a weight), "zero" (the file states 0 g) or "missing" (no usable weight
+    data: the UI must not price it as free filament). Left unset it follows `slots`."""
     return {"index": index, "name": None, "seconds": seconds, "stale": False, "thumb": None,
             "slicedAt": _now() if source == "slice" else None, "source": source, "fileName": file_name,
-            "slots": slots}
+            "slots": slots, "consumption": consumption or ("known" if slots else "missing")}
 
 
 def spoolman_data(raw):
@@ -232,7 +234,7 @@ class Host:
         path = _text(_try(lambda: orca.host.plater().project_path()))
         name = re.sub(r"\.3mf$", "", os.path.basename(path), flags=re.I) if path else None
         return {"projectName": name or None, "printerModel": model, "printerVendor": cfg("printer_vendor"),
-                "pluginVersion": self.version}
+                "pluginVersion": self.version, "appLanguage": _text(_try(lambda: orca.host.app_language()))}
 
     def preset_slots(self):
         bundle = _try(orca.host.preset_bundle)
@@ -402,7 +404,7 @@ class Host:
             return
         parsed = core.parse_gcode(head, tail)
         slots = slots_from(parsed, [(s["n"], s["grams"], None) for s in parsed["slots"]], self.preset_slots())
-        self.plates = {**self.plates, index: plate(index, parsed["seconds"], slots, "slice")}
+        self.plates = {**self.plates, index: plate(index, parsed["seconds"], slots, "slice", consumption=parsed["consumption"])}
         log.info("plate %d captured: seconds=%s slots=%d", index, parsed["seconds"], len(slots))
         self.push_plates()
 

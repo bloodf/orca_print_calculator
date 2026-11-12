@@ -1,6 +1,7 @@
 // T5.3 re-review LOW items: kept rows, numbering, save queue, timeouts, unreadable files.
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick, type App } from "vue";
+import { h, nextTick, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn(async () => ({})) }));
 import { call } from "../src/bridge";

@@ -29,6 +29,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pnpm -C ui install --frozen-lockfile
+      - name: Shared Orca UI snapshot is unmodified (Vue + PrimeVue preset, palette)
+        run: node ui/shared/scripts/check.mjs
       - run: pnpm -C ui lint
       - run: pnpm -C ui typecheck
       # Coverage thresholds (80% branches, 85% lines, see ui/vite.config.ts) only run with --coverage, so CI runs this one.
@@ -40,6 +42,6 @@ jobs:
       - name: Bundle size gate
         run: |
           size="$(wc -c < ui/dist/index.html)"
-          echo "ui/dist/index.html: $size bytes (limit 400000)"
-          [ "$size" -le 400000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 400000"; exit 1; }
+          echo "ui/dist/index.html: $size bytes (limit 900000)"
+          [ "$size" -le 900000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 900000"; exit 1; }
       - run: python -m unittest discover tests

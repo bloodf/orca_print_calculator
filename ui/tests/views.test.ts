@@ -1,6 +1,7 @@
 // Mounted app and views, driven through the real bridge by the dev mock host (same shapes as the contract fixtures).
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick, type App as VueApp } from "vue";
+import { h, nextTick, type App as VueApp } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import AppRoot from "../src/App.vue";
 import PriceBar from "../src/components/price/PriceBar.vue";
 import ToastHost from "../src/components/base/ToastHost.vue";
@@ -29,7 +30,8 @@ const btn = (el: ParentNode, text: string): HTMLButtonElement => {
   if (!b) throw new Error(`no button "${text}"`);
   return b;
 };
-const tab = (el: ParentNode, name: string): HTMLElement => el.querySelector<HTMLElement>(`[role=radio][aria-label="${name}"]`)!;
+const item = (text: string): HTMLElement => [...document.querySelectorAll<HTMLElement>("[role=menuitem] .mi")].find((x) => x.textContent?.includes(text))!;
+const tab = (el: ParentNode, name: string): HTMLElement => el.querySelector<HTMLElement>(`[role=tab][aria-label="${name}"]`)!;
 
 beforeEach(() => { Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => undefined); vi.useFakeTimers(); setLocale("en"); clearToasts(); });
 afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; delete window.orca; store.preview = false; store.view = "calc"; vi.useRealTimers(); });
@@ -60,6 +62,15 @@ describe("App shell", () => {
   test("host error screen offers Try again, which reloads", async () => {
     const el = await boot("hostError");
     expect(el.querySelector(".host-error")).not.toBeNull();
+    const tech = el.querySelector<HTMLElement>("[data-tech-details]")!; // C07: the raw code is behind a collapsed disclosure
+    const toggle = tech.querySelector<HTMLElement>("[aria-expanded]")!;
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(toggle.textContent).toContain("Technical details");
+    expect(tech.querySelector("code")!.textContent).toBe("host_error");
+    expect(el.querySelector(".host-error .msg")!.textContent).not.toContain("host_error");
+    toggle.click();
+    await tick(300);
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
     btn(el, "Try again").click();
     await tick(700);
     expect(el.querySelector(".host-error")).not.toBeNull(); // still failing in this scenario, and still reachable
@@ -68,6 +79,19 @@ describe("App shell", () => {
     const el = await boot("loading");
     expect(el.querySelector(".sk-plate")).not.toBeNull();
     expect(el.textContent).toContain("Waiting for OrcaSlicer");
+  });
+  test("opening Quotes from the header moves focus to its title, like the other routes", async () => {
+    const el = await boot("ok");
+    tab(el, "Quotes").click();
+    await tick();
+    expect(store.view).toBe("quotes");
+    expect(document.activeElement?.id).toBe("quotes-title");
+    expect(document.activeElement?.tagName).toBe("H1");
+    for (const [name, id] of [["Settings", ""], ["Extras and stock", ""]] as const) { // the other routes still land on their own titles
+      tab(el, name).click();
+      await tick();
+      expect((document.activeElement as HTMLElement).hasAttribute("data-view-title"), name + id).toBe(true);
+    }
   });
   test("skip link focuses the price panel", async () => {
     const el = await boot("ok");
@@ -142,13 +166,13 @@ describe("Quotes view", () => {
     const el = await quotes();
     const more = () => el.querySelector<HTMLButtonElement>("tbody tr button[aria-haspopup]")!;
     more().click();
-    await tick();
-    btn(document.body, "Duplicate").click();
+    await tick(200);
+    item("Duplicate").click();
     await tick(300);
     expect(store.quotes).toHaveLength(3);
     more().click();
-    await tick();
-    btn(document.body, "Delete").click();
+    await tick(200);
+    item("Delete").click();
     await tick(300);
     expect(store.quotes).toHaveLength(2);
     const undo = [...document.querySelectorAll(".toast button")].find((b) => b.textContent === "Undo") as HTMLButtonElement;
@@ -159,8 +183,8 @@ describe("Quotes view", () => {
   test("More menu: CSV export writes through the host", async () => {
     const el = await quotes();
     el.querySelector<HTMLButtonElement>("tbody tr button[aria-haspopup]")!.click();
-    await tick();
-    btn(document.body, "CSV").click();
+    await tick(200);
+    item("CSV").click();
     await tick(300);
     expect(document.querySelector(".toast")!.textContent).toContain("Saved to");
   });
@@ -168,8 +192,8 @@ describe("Quotes view", () => {
     const el = await quotes();
     const print = vi.spyOn(window, "print").mockImplementation(() => undefined);
     el.querySelector<HTMLButtonElement>("tbody tr button[aria-haspopup]")!.click();
-    await tick();
-    btn(document.body, "Print").click();
+    await tick(200);
+    item("Print").click();
     await tick(100);
     expect(store.preview).toBe(true);
     expect(print).toHaveBeenCalled();

@@ -1,5 +1,6 @@
 // Shared harness for settings*.test.ts: mounts a component, fakes window.orca, resets the store.
-import { createApp, type App, type Component } from "vue";
+import { type App, type Component } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import { setLocale } from "../src/i18n";
 import { defaultSettings } from "../src/state/defaults";
 import { store } from "../src/state/store";

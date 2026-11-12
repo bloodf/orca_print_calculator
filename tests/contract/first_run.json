@@ -16,6 +16,7 @@
    {
     "data": {
      "host": {
+      "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Snapmaker U1",
       "printerVendor": "Snapmaker",

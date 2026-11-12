@@ -1,11 +1,12 @@
 <script setup lang="ts">
-// Native select over the user's channels in settings order; channels with no price are suffixed.
+// PrimeVue Select over the user's channels in settings order; channels with no price are suffixed.
+import Select from "primevue/select";
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { derived, result, store } from "../../state/store";
 
 defineProps<{ modelValue: string }>();
-defineEmits<{ "update:modelValue": [value: string] }>();
+const emit = defineEmits<{ "update:modelValue": [value: string] }>();
 
 const noPrice = computed(() => {
   const bad = new Set<string>(derived.value.skippedChannels.map((c) => c.id));
@@ -17,9 +18,7 @@ const options = computed(() => (store.draft.frozenInput ? store.draft.frozenInpu
 </script>
 
 <template>
-  <select class="channel-select" :value="modelValue" :aria-label="t('price.channel')" @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)">
-    <option v-for="o in options" :key="o.id" :value="o.id" :selected="o.id === modelValue">{{ o.label }}</option>
-  </select>
+  <Select class="channel-select" :model-value="modelValue" :options="options" option-label="label" option-value="id" :aria-label="t('price.channel')" fluid @update:model-value="(v: string) => emit('update:modelValue', v)" />
 </template>
 
 <style scoped>

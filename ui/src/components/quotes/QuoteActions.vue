@@ -1,20 +1,26 @@
 <script setup lang="ts">
 // Save / print / CSV row of the price panel (docs/ux.md §5.3 QuoteActions). Blocked exports show a reason, never a disabled button.
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Textarea from "primevue/textarea";
 import { computed, nextTick, ref } from "vue";
+import { elOf } from "../base/el";
 import Icon from "../base/Icon.vue";
 import { intlLocale, t } from "../../i18n";
 import { quoteNo } from "../../format";
 import { exportBlock, exportQuote, isDirty, savedOf } from "../../quoteFlow";
 import { saveBusy, saveQuote } from "../../state/quotes";
-import { patchDraft, store } from "../../state/store";
+import { patchDraft, setView, store } from "../../state/store";
+import GapList from "./GapList.vue";
 
 const draft = computed(() => store.draft);
 const saved = computed(() => savedOf());
 const dirty = computed(() => isDirty());
-const blocked = computed(() => { const k = exportBlock(); return k ? t(k) : ""; });
+const blockKey = computed(() => exportBlock());
+const gapBlock = computed(() => blockKey.value === "quote.blockedUnknown" || blockKey.value === "quote.blockedIncomplete");
 const open = ref(false);
 const showMore = computed(() => open.value || !!draft.value.customer || !!draft.value.note);
-const customer = ref<HTMLInputElement | null>(null);
+const customer = ref<HTMLElement | null>(null);
 async function reveal(): Promise<void> { open.value = true; await nextTick(); customer.value?.focus(); }
 const no = computed(() => (saved.value ? quoteNo(saved.value.no, intlLocale()) : ""));
 const onInput = (key: "title" | "customer" | "note", e: Event): void => patchDraft({ [key]: (e.target as HTMLInputElement).value });
@@ -28,41 +34,42 @@ async function print(): Promise<void> {
   <div class="qa">
     <div class="field">
       <label class="sm muted" for="qa-title">{{ t("quote.title") }}</label>
-      <input id="qa-title" type="text" :value="draft.title" :placeholder="store.host.projectName ?? ''" @input="onInput('title', $event)">
+      <InputText id="qa-title" type="text" :model-value="draft.title" :placeholder="store.host.projectName ?? ''" fluid @input="onInput('title', $event)" />
     </div>
-    <button v-if="!showMore" type="button" class="btn ghost add" @click="reveal"><Icon name="plus" />{{ t("quote.addCustomer") }}</button>
+    <Button v-if="!showMore" text type="button" class="add" @click="reveal"><Icon name="plus" /><span>{{ t("quote.addCustomer") }}</span></Button>
     <template v-else>
       <div class="field">
         <label class="sm muted" for="qa-customer">{{ t("quote.customer") }}</label>
-        <input id="qa-customer" ref="customer" type="text" :value="draft.customer" @input="onInput('customer', $event)">
+        <InputText id="qa-customer" :ref="(c) => (customer = elOf(c))" type="text" :model-value="draft.customer" fluid @input="onInput('customer', $event)" />
       </div>
       <div class="field">
         <label class="sm muted" for="qa-note">{{ t("quote.note") }}</label>
-        <textarea id="qa-note" rows="2" :value="draft.note" @input="onInput('note', $event)" />
+        <Textarea id="qa-note" rows="2" auto-resize :model-value="draft.note" fluid @input="onInput('note', $event)" />
       </div>
     </template>
     <div class="row actions">
       <template v-if="!saved || dirty">
-        <button type="button" class="btn primary" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote()">{{ saved ? t("quote.saveChanges") : t("quote.save") }}</button>
-        <button v-if="saved" type="button" class="btn ghost" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</button>
+        <Button id="qa-save" type="button" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote()">{{ saved ? t("quote.saveChanges") : t("quote.save") }}</Button>
+        <Button v-if="saved" text type="button" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</Button>
       </template>
       <template v-else>
         <span class="sm muted">{{ t("quote.savedAs", { no }) }}</span>
-        <button type="button" class="btn ghost" :disabled="saveBusy" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</button>
+        <Button text type="button" :disabled="saveBusy" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</Button>
+        <Button text type="button" @click="setView('quotes')">{{ t("quote.openList") }}</Button>
       </template>
     </div>
-    <p v-if="blocked" class="sm muted" role="status">{{ blocked }}</p>
+    <GapList v-if="gapBlock" />
+    <p v-else-if="blockKey" class="sm muted" role="status">{{ t(blockKey) }}</p>
     <div v-else class="row actions">
-      <button type="button" class="btn" @click="print"><Icon name="print" />{{ t("quote.print") }}</button>
-      <button type="button" class="btn" @click="exportQuote('csv')"><Icon name="download" />{{ t("quote.csv") }}</button>
+      <Button severity="secondary" outlined type="button" @click="print"><Icon name="print" /><span>{{ t("quote.print") }}</span></Button>
+      <Button severity="secondary" outlined type="button" @click="exportQuote('csv')"><Icon name="download" /><span>{{ t("quote.csv") }}</span></Button>
     </div>
   </div>
 </template>
 
 <style scoped>
 .qa > * + * { margin-top: 8px; }
-.field { display: grid; grid-row-gap: 2px; }
-.field input, .field textarea { width: 100%; }
+.field { display: grid; grid-row-gap: 4px; }
 .add { justify-self: start; margin-left: -8px; }
 .actions { flex-wrap: wrap; }
 </style>

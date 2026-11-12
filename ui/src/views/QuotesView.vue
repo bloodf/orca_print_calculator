@@ -1,15 +1,20 @@
 <script setup lang="ts">
 // Saved quotes (docs/ux.md §5.3 QuotesView): search, reopen, duplicate, print, CSV, delete with undo. Frozen snapshots, never recomputed here.
+import Button from "primevue/button";
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
+import InputText from "primevue/inputtext";
+import Menu from "primevue/menu";
 import { computed, ref } from "vue";
 import EmptyState from "../components/base/EmptyState.vue";
 import Icon from "../components/base/Icon.vue";
 import InlineAlert from "../components/base/InlineAlert.vue";
-import Popover from "../components/base/Popover.vue";
 import { count, date, money, percent, quoteNo } from "../format";
 import { intlLocale, t } from "../i18n";
 import { exportQuote, printQuote } from "../quoteFlow";
 import { deleteQuote, duplicateQuote, openQuote } from "../state/quotes";
 import { setView, store } from "../state/store";
+import type { IconName } from "../components/base/icons";
 import type { SavedQuote } from "../state/types";
 
 const q = ref("");
@@ -20,42 +25,43 @@ const shown = computed(() => {
   if (!needle) return sorted.value;
   return sorted.value.filter((x) => [x.title, x.customer, quoteNo(x.no, loc.value), String(x.no)].some((s) => s.toLowerCase().includes(needle)));
 });
-const menu = ref<{ quote: SavedQuote; anchor: HTMLElement } | null>(null);
-function toggle(quote: SavedQuote, e: Event): void {
-  const anchor = e.currentTarget as HTMLElement;
-  menu.value = menu.value?.quote.id === quote.id ? null : { quote, anchor };
-}
-function run(fn: (x: SavedQuote) => unknown): void {
-  const x = menu.value?.quote;
-  menu.value = null;
-  if (x) void fn(x);
-}
+// The row menu is PrimeVue's popup Menu (menu/menuitem roles, arrow keys, Esc, focus back to the trigger); `target` is the row it was opened for.
+const menu = ref<InstanceType<typeof Menu> | null>(null);
+const target = ref<SavedQuote | null>(null);
+const run = (fn: (x: SavedQuote) => unknown): void => { const x = target.value; if (x) void fn(x); };
+const items = computed(() => [
+  { key: "dup", label: t("quotes.duplicate"), icon: "copy", command: () => run((x) => duplicateQuote(x.id)) },
+  { key: "print", label: t("quote.print"), icon: "print", command: () => run(printQuote) },
+  { key: "csv", label: t("quote.csv"), icon: "download", command: () => run((x) => exportQuote("csv", x)) },
+  { key: "del", label: t("quotes.delete"), icon: "trash", danger: true, command: () => run((x) => deleteQuote(x.id)) },
+]);
+function openMenu(quote: SavedQuote, e: Event): void { target.value = quote; menu.value?.toggle(e); }
 const goCalc = (): void => setView("calc");
 </script>
 
 <template>
   <main class="quotes">
     <div class="head row">
-      <h1 id="quotes-title" class="view-title" tabindex="-1">{{ t("quotes.title") }}</h1>
+      <h1 id="quotes-title" class="view-title" tabindex="-1" data-view-title>{{ t("quotes.title") }}</h1>
       <span class="muted num">{{ t("quotes.count", { n: store.quotes.length }) }}</span>
       <span class="grow" />
-      <label v-if="store.quotes.length" class="search">
-        <Icon name="search" />
-        <input v-model="q" type="search" :aria-label="t('quotes.search')" :placeholder="t('quotes.search')">
-      </label>
+      <IconField v-if="store.quotes.length" class="search">
+        <InputIcon><Icon name="search" /></InputIcon>
+        <InputText v-model="q" type="search" :aria-label="t('quotes.search')" :placeholder="t('quotes.search')" fluid />
+      </IconField>
     </div>
     <InlineAlert v-if="store.skippedQuotes" tone="warn" class="skipped"><p>{{ t("quotes.skipped", { n: store.skippedQuotes }) }}</p></InlineAlert>
     <EmptyState v-if="!store.quotes.length" art="quote" :title="t('empty.quote.title')" :body="t('empty.quote.body')">
-      <template #actions><button type="button" class="btn primary" @click="goCalc">{{ t("empty.quote.action") }}</button></template>
+      <template #actions><Button type="button" @click="goCalc">{{ t("empty.quote.action") }}</Button></template>
     </EmptyState>
     <p v-else-if="!shown.length" class="muted sm none" role="status">{{ t("quotes.noMatch", { q: q.trim() }) }}</p>
-    <div v-else class="wrap">
-      <table aria-labelledby="quotes-title">
+    <div v-else class="opc-table-wrap list">
+      <table class="opc-table" aria-labelledby="quotes-title">
         <thead>
           <tr>
             <th scope="col">{{ t("quotes.col.no") }}</th><th scope="col">{{ t("quotes.col.title") }}</th><th scope="col">{{ t("quotes.col.customer") }}</th>
-            <th scope="col">{{ t("quotes.col.date") }}</th><th scope="col" class="r">{{ t("quotes.col.qty") }}</th><th scope="col">{{ t("quotes.col.channel") }}</th>
-            <th scope="col" class="r">{{ t("quotes.col.total") }}</th><th scope="col" class="r">{{ t("quotes.col.margin") }}</th><th scope="col" />
+            <th scope="col" class="opt2">{{ t("quotes.col.date") }}</th><th scope="col" class="r opt2">{{ t("quotes.col.qty") }}</th><th scope="col" class="opt">{{ t("quotes.col.channel") }}</th>
+            <th scope="col" class="r">{{ t("quotes.col.total") }}</th><th scope="col" class="r opt">{{ t("quotes.col.margin") }}</th><th scope="col"><span class="sr-only">{{ t("quotes.col.actions") }}</span></th>
           </tr>
         </thead>
         <tbody>
@@ -63,27 +69,24 @@ const goCalc = (): void => setView("calc");
             <td class="num">{{ quoteNo(x.no, loc) }}</td>
             <td class="truncate title">{{ x.title }}</td>
             <td class="truncate cust">{{ x.customer }}</td>
-            <td class="num">{{ date(x.updatedAt, loc) }}</td>
-            <td class="num r">{{ count(x.summary.quantity, loc) }}</td>
-            <td class="truncate chan">{{ x.summary.channelName }}</td>
+            <td class="num opt2">{{ date(x.updatedAt, loc) }}</td>
+            <td class="num r opt2">{{ count(x.summary.quantity, loc) }}</td>
+            <td class="truncate chan opt">{{ x.summary.channelName }}</td>
             <td class="num r">{{ money(x.summary.grandTotal, x.currency, loc) }}</td>
-            <td class="num r muted">{{ percent(x.summary.marginBp, loc) }}</td>
+            <td class="num r muted opt">{{ percent(x.summary.marginBp, loc) }}</td>
             <td class="acts">
-              <button type="button" class="btn" @click="openQuote(x.id)">{{ t("quotes.open") }}</button>
-              <button type="button" class="btn icon" :aria-label="t('quotes.more', { no: quoteNo(x.no, loc) })" aria-haspopup="dialog" :aria-expanded="menu?.quote.id === x.id" @click="toggle(x, $event)"><Icon name="more" /></button>
+              <Button severity="secondary" outlined size="small" type="button" @click="openQuote(x.id)">{{ t("quotes.open") }}</Button>
+              <Button text severity="secondary" type="button" class="icon-btn" :aria-label="t('quotes.more', { no: quoteNo(x.no, loc) })" aria-haspopup="menu" @click="openMenu(x, $event)"><Icon name="more" /></Button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-    <Popover :open="!!menu" :anchor="menu?.anchor ?? null" :label="menu ? t('quotes.more', { no: quoteNo(menu.quote.no, loc) }) : ''" @close="menu = null">
-      <div class="menu">
-        <button type="button" class="btn ghost" @click="run((x) => duplicateQuote(x.id))"><Icon name="copy" />{{ t("quotes.duplicate") }}</button>
-        <button type="button" class="btn ghost" @click="run(printQuote)"><Icon name="print" />{{ t("quote.print") }}</button>
-        <button type="button" class="btn ghost" @click="run((x) => exportQuote('csv', x))"><Icon name="download" />{{ t("quote.csv") }}</button>
-        <button type="button" class="btn ghost danger" @click="run((x) => deleteQuote(x.id))"><Icon name="trash" />{{ t("quotes.delete") }}</button>
-      </div>
-    </Popover>
+    <Menu ref="menu" popup :model="items" :aria-label="target ? t('quotes.more', { no: quoteNo(target.no, loc) }) : t('quotes.col.actions')" class="opc-menu">
+      <template #item="{ item, props }">
+        <a v-bind="props.action" class="mi" :class="{ danger: (item as { danger?: boolean }).danger }"><Icon :name="(item as { icon: IconName }).icon" /><span>{{ item.label }}</span></a>
+      </template>
+    </Menu>
   </main>
 </template>
 
@@ -92,19 +95,17 @@ const goCalc = (): void => setView("calc");
 .head { margin-bottom: 12px; }
 .head > * + * { margin-left: 12px; }
 .grow { flex: 1; }
-.search { position: relative; display: block; width: 240px; max-width: 100%; }
-.search svg { position: absolute; left: 8px; top: 6px; color: var(--opc-muted); pointer-events: none; }
-.search input { width: 100%; padding-left: 30px; }
-.wrap { overflow-x: auto; border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); }
-table { width: 100%; border-collapse: collapse; }
-td { height: 36px; padding: 0 8px; border-bottom: 1px solid var(--opc-border); }
-tbody tr:last-child td { border-bottom: 0; }
-tbody tr:hover { background: var(--opc-hover); }
-th.r, td.r { text-align: right; }
+.search { display: block; width: 240px; max-width: 100%; }
+.list { border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); background: var(--opc-raised); }
+.list tbody tr:last-child td { border-bottom: 0; }
+.list tbody tr:hover { background: var(--opc-hover); }
 .title { max-width: 220px; } .cust { max-width: 160px; } .chan { max-width: 140px; }
 .acts { text-align: right; white-space: nowrap; }
 .acts > * + * { margin-left: 4px; }
+/* narrow window or zoom: channel and margin give way so the Open button stays inside the window (both are on the opened quote) */
+@media (max-width: 899px) { .opt { display: none; } }
+@media (max-width: 699px) { .opt2 { display: none; } }
 .none { text-align: center; padding: 24px 0; }
-.menu { display: grid; margin: -6px; }
-.menu .btn { justify-content: flex-start; }
+.mi { display: flex; align-items: center; gap: 8px; padding: 8px 12px; color: inherit; text-decoration: none; cursor: pointer; }
+.mi.danger { color: var(--opc-bad); }
 </style>

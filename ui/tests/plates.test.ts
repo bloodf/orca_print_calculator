@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick, type App } from "vue";
+import { h, nextTick, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn() }));
 import { call, BridgeError } from "../src/bridge";
@@ -12,6 +13,7 @@ import { spoolman } from "../src/mock/fixtures";
 import PlateList from "../src/components/plates/PlateList.vue";
 import ImportButton from "../src/components/plates/ImportButton.vue";
 import { importFile, importState, checkFile } from "../src/components/plates/importFlow";
+import { settle } from "./pv";
 
 let app: App | null = null;
 let root: HTMLElement;
@@ -43,7 +45,7 @@ describe("PlateList rendering", () => {
     expect(cards[2]!.textContent).toContain("Plate 3");
     expect(cards[0]!.querySelectorAll(".chip")).toHaveLength(2);
     expect(cards[0]!.querySelector(".cost")!.textContent).toMatch(/\d/);
-    expect(cards[0]!.querySelector("[aria-label='Copies of plate 1']")).not.toBeNull();
+    expect(cards[0]!.querySelector("[aria-label='Copies per run, plate 1']")).not.toBeNull();
     expect(root.textContent).toContain("Desk organizer");
     expect(root.textContent).toContain("3 plates");
     expect(root.querySelector(".stale, [class*=amber]")).toBeNull();
@@ -92,7 +94,7 @@ describe("controls", () => {
   test("copies stepper updates the draft and the cost caption", async () => {
     seed("ok");
     await mount(PlateList);
-    root.querySelector<HTMLButtonElement>("article [aria-label='Increase Copies of plate 1']")!.click();
+    root.querySelector<HTMLButtonElement>("article [aria-label='Increase Copies per run, plate 1']")!.click();
     await flush();
     expect(store.draft.plates[0]!.copies).toBe(2);
     expect(root.querySelector("article")!.textContent).toContain("cost × 2");
@@ -115,13 +117,13 @@ describe("chips, rows and picker", () => {
     seed("ok");
     await mount(PlateList);
     root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
-    root.querySelector<HTMLButtonElement>(".mrow .actions .btn")!.click(); await flush();
-    const opts = document.querySelectorAll<HTMLElement>("[role=option]");
+    root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
+    const opts = document.querySelectorAll<HTMLElement>(".p-listbox-option");
     expect(opts.length).toBeGreaterThan(3);
-    const spool = Array.from(opts).find((o) => o.classList.contains("spool"))!;
-    spool.click(); await flush();
+    const spool = Array.from(opts).find((o) => o.querySelector(".opt.spool"))!;
+    spool.click(); await settle();
     expect(Object.keys(store.settings.slotOverrides)).toHaveLength(1);
-    const reset = root.querySelector<HTMLButtonElement>(".mrow .actions .btn.icon")!;
+    const reset = root.querySelector<HTMLButtonElement>(".mrow .actions .icon-btn")!;
     expect(reset).not.toBeNull();
     reset.click(); await flush();
     expect(store.settings.slotOverrides).toEqual({});
@@ -130,18 +132,18 @@ describe("chips, rows and picker", () => {
     seed("ok");
     await mount(PlateList);
     root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
-    root.querySelector<HTMLButtonElement>(".mrow .actions .btn")!.click(); await flush();
-    const input = document.querySelector<HTMLInputElement>("[role=combobox]")!;
-    input.value = "polyterra"; input.dispatchEvent(new Event("input")); await flush();
-    expect(document.querySelectorAll("[role=option]:not(.spool)")).toHaveLength(1);
-    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); await flush();
+    root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
+    const input = document.querySelector<HTMLInputElement>("[role=dialog] input[type=text]")!;
+    input.value = "polyterra"; input.dispatchEvent(new Event("input")); await settle();
+    expect(document.querySelectorAll(".p-listbox-option:not(:has(.spool))")).toHaveLength(1);
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); await settle();
     expect(Object.values(store.settings.slotOverrides)[0]).toEqual({ filamentId: 2 });
   });
   test("spoolman unset: note replaces the list, typed price is stored per preset", async () => {
     seed("ok", false);
     await mount(PlateList);
     root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
-    root.querySelector<HTMLButtonElement>(".mrow .actions .btn")!.click(); await flush();
+    root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
     expect(document.querySelector("[role=listbox]")).toBeNull();
     expect(document.body.textContent).toContain("Connect Spoolman to pick a spool.");
     const field = document.querySelector<HTMLInputElement>("[role=dialog] input")!;

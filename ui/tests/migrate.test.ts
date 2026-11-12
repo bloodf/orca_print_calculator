@@ -1,6 +1,7 @@
 // T5.3: settings migration and saved-quote validation (never crash on a hand-edited or older file).
 import { describe, expect, test } from "vitest";
-import { createApp, h, nextTick } from "vue";
+import { h, nextTick } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import { defaultSettings, mergeSettings, migrateSettings } from "../src/state/defaults";
 import { parseQuotes } from "../src/state/validate";
 import { savedQuotes } from "../src/mock/fixtures";

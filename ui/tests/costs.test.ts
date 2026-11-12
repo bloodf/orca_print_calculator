@@ -8,6 +8,7 @@ import ShippingSection from "../src/components/costs/ShippingSection.vue";
 import { t } from "../src/i18n";
 import { store } from "../src/state/store";
 import { toasts } from "../src/state/toast";
+import { choose, optionLabels, settle } from "./pv";
 import { click, field, mount, openAll, seed, type, unmount } from "./costsHarness";
 
 beforeEach(() => { vi.useFakeTimers(); });
@@ -137,12 +138,9 @@ describe("overrides, reset and save as defaults", () => {
   test("failure model select and wear checkbox are overrides too", async () => {
     seed({ settings: openAll() });
     const r = mount(MachineSection);
-    const sel = r.querySelector<HTMLSelectElement>("select")!;
-    sel.value = "markup";
-    sel.dispatchEvent(new Event("change", { bubbles: true }));
-    await nextTick();
+    await choose(r, t("field.failureMode.markup"));
     expect(store.draft.overrides.failureMode).toBe("markup");
-    const box = r.querySelector<HTMLInputElement>("input[type=checkbox]#cf-1, .cf input")!;
+    const box = r.querySelector<HTMLInputElement>(".cf input[type=checkbox]")!;
     await click(box);
     expect(Object.keys(store.draft.overrides)).toContain("failureIncludesMachine");
   });
@@ -154,15 +152,13 @@ describe("extras", () => {
     const r = mount(ExtrasSection);
     expect(r.textContent).toContain(t("extras.help"));
     await click(r.querySelector(".add button"));
-    await click([...document.querySelectorAll("[role=menuitem]")].find((b) => b.textContent === t("extras.custom"))!);
+    await settle();
+    await click([...document.querySelectorAll<HTMLElement>("[role=menuitem] .mi")].find((b) => b.textContent?.trim() === t("extras.custom"))!);
     expect(store.draft.extras).toHaveLength(1);
     await type(r.querySelector<HTMLInputElement>("[data-extra-name]")!, "Magnet");
     await type(field(r, t("field.extraCost")), "1.50");
     expect(store.draft.extras[0]).toMatchObject({ label: "Magnet", unitMinor: 150, qtyE3: 1000, per: "piece" });
-    const sel = r.querySelector<HTMLSelectElement>("select")!;
-    sel.value = "order";
-    sel.dispatchEvent(new Event("change", { bubbles: true }));
-    await nextTick();
+    await choose(r, t("extra.per.order"));
     expect(store.draft.extras[0]!.per).toBe("order");
     expect(summary(r)).toMatch(/^1 item · R\$\s?\d/);
   });
@@ -170,7 +166,8 @@ describe("extras", () => {
     seed({ settings: { ...openAll(), extrasCatalog: [{ key: "c1", label: "Box", unitMinor: 250, qtyE3: 1000, per: "order" }] } });
     const r = mount(ExtrasSection);
     await click(r.querySelector(".add button"));
-    await click(document.querySelector("[role=menuitem]"));
+    await settle();
+    await click(document.querySelector<HTMLElement>("[role=menuitem] .mi"));
     expect(store.draft.extras[0]).toMatchObject({ label: "Box", unitMinor: 250, per: "order" });
     expect(r.textContent).not.toContain(t("extras.saveToCatalog"));
     await type(r.querySelector<HTMLInputElement>("[data-extra-name]")!, "Ring");
@@ -225,8 +222,7 @@ describe("shipping and sales", () => {
     expect(store.settings.channels.find((c) => c.id === "store")!.tiers[0]!.pctBp).toBe(800);
     await type(field(r, t("field.tax")), "10");
     expect(store.settings.channels.find((c) => c.id === "store")!.taxBp).toBe(1000);
-    const opts = [...r.querySelectorAll<HTMLOptionElement>("select option")].map((o) => o.value);
-    expect(opts).toEqual(["none", "round", "ending9", "step5"]);
+    expect(await optionLabels(r)).toEqual(["none", "round", "ending9", "step5"].map((k) => t(`pretty.${k}`)));
     await type(field(r, t("field.minOrder")), "20");
     expect(store.draft.overrides.minOrderMinor).toBe(2000);
   });

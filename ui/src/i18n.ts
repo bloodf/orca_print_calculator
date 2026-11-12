@@ -24,8 +24,9 @@ export function hostLocale(): string {
   return typeof navigator === "undefined" ? "en" : navigator.language || "en";
 }
 
-export function setLocale(pref: Lang | null | undefined): Locale {
-  state.locale = resolveLocale(pref, hostLocale());
+export function setLocale(pref: Lang | null | undefined, appLanguage?: string | null): Locale {
+  const language = typeof appLanguage === "string" ? appLanguage.trim() : "";
+  state.locale = resolveLocale(pref, language || hostLocale());
   if (typeof document !== "undefined") document.documentElement.lang = state.locale === "pt-BR" ? "pt-BR" : "en";
   return state.locale;
 }

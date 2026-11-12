@@ -62,7 +62,9 @@ describe("F13 export block reasons", () => {
   test("QuoteActions shows the reason instead of the buttons", async () => {
     load("unknown");
     const el = await show(QuoteActions);
-    expect(txt(el)).toContain("Slice again: some plate time or weight is unknown.");
+    expect(txt(el)).toContain("Not ready to send: 2 things to fix.");
+    expect(txt(el)).toContain("Plate 1: print time is unknown.");
+    expect(txt(el)).toContain("Slice again in OrcaSlicer, then Refresh.");
     expect(el.textContent).not.toContain("CSV");
   });
 });
@@ -151,7 +153,7 @@ describe("F8 header before the state is known", () => {
     load("ok");
     store.status = "loading";
     const el = await show(AppHeader, { view: "calc" });
-    expect(el.querySelector(".seg")).not.toBeNull();
+    expect(el.querySelector("[role=tablist]")).not.toBeNull();
     expect(txt(el)).not.toMatch(/Untitled project|No printer|USD|Spoolman/);
     expect(el.querySelector("select")).toBeNull();
     store.status = "ready";
@@ -191,13 +193,15 @@ describe("F10/F11 picker", () => {
     const el = await show(PlateList);
     el.querySelector<HTMLButtonElement>(".chip")!.click();
     await flush();
-    const change = [...el.querySelectorAll<HTMLButtonElement>(".mrow .btn")].find((b) => b.textContent?.includes("Change"))!;
+    const change = [...el.querySelectorAll<HTMLButtonElement>(".mrow button")].find((b) => b.textContent?.includes("Change"))!;
     change.focus();
     change.click();
     await flush();
-    const first = document.querySelector('[role="listbox"] [role="group"]')!.getAttribute("aria-label");
-    expect(first).toBe("PLA");
-    document.querySelector<HTMLElement>('[role="option"]')!.click();
+    await flush();
+    const first = document.querySelector('[role="listbox"] [role="group"]')?.getAttribute("aria-label") ?? document.querySelector(".p-listbox-option-group")?.textContent;
+    expect(first?.trim().toUpperCase()).toBe("PLA");
+    document.querySelector<HTMLElement>('[role="option"] .opt')!.click();
+    await flush();
     await flush();
     expect(document.activeElement).toBe(change);
   });
@@ -219,21 +223,17 @@ describe("F12 provenance and snapshot", () => {
 describe("F15 header tabs: manual activation", () => {
   test("arrows and End move focus only; Enter/click activates", async () => {
     const seen: string[] = [];
-    const el = await show(Segmented, {
-      options: [{ value: "a", label: "A" }, { value: "b", label: "B" }, { value: "c", label: "C" }], modelValue: "a", label: "tabs", manual: true,
-      "onUpdate:modelValue": (v: string) => seen.push(v),
-    });
-    const [a, b, c] = [...el.querySelectorAll<HTMLButtonElement>("button")];
-    a!.focus();
-    a!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
-    await flush();
-    expect(document.activeElement).toBe(b);
-    b!.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
-    await flush();
-    expect(document.activeElement).toBe(c);
-    expect(seen).toEqual([]);
-    c!.click();
-    expect(seen).toEqual(["c"]);
+    const el = await show(AppHeader, { view: "calc", "onUpdate:view": (v: string) => seen.push(v) });
+    const tabs = [...el.querySelectorAll<HTMLElement>("[role=tab]")];
+    const key = async (to: HTMLElement, code: string) => { to.dispatchEvent(new KeyboardEvent("keydown", { key: code, code, bubbles: true })); await flush(); };
+    tabs[0]!.focus();
+    await key(tabs[0]!, "ArrowRight");
+    expect(document.activeElement).toBe(tabs[1]);
+    await key(tabs[1]!, "End");
+    expect(document.activeElement).toBe(tabs[3]);
+    expect(seen).toEqual([]); // moving focus never switches the view
+    tabs[3]!.click();
+    expect(seen).toEqual(["settings"]);
   });
   test("automatic mode still selects on arrow", async () => {
     const seen: string[] = [];

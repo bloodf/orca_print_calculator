@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import IconField from "primevue/iconfield";
+import InputIcon from "primevue/inputicon";
+import InputText from "primevue/inputtext";
+import Listbox from "primevue/listbox";
 import { computed, ref, useId, watch } from "vue";
 import { grams } from "../../format";
 import { pricePerKg } from "../../engine/match";
@@ -15,7 +19,7 @@ const emit = defineEmits<{ close: [] }>();
 
 type Opt = { id: string; filamentId: number; spoolId?: number; title: string; sub: string; price: string; spool: boolean };
 const q = ref("");
-const active = ref(0);
+const list = ref<{ $el?: HTMLElement } | null>(null);
 const ready = computed(() => store.spoolman.state === "ok");
 const preset = computed(() => props.match.slot.preset);
 
@@ -43,25 +47,19 @@ const groups = computed(() => {
   return [...out.entries()].sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b)).map(([material, opts]) => ({ material, opts }));
 });
 const flat = computed(() => groups.value.flatMap((g) => g.opts));
-watch(q, () => { active.value = 0; });
-watch(() => props.open, (o) => { if (o) { q.value = ""; active.value = 0; } });
+watch(() => props.open, (o) => { if (o) q.value = ""; });
 
-const isSel = (o: Opt): boolean => (o.spoolId === undefined ? props.match.filamentId === o.filamentId && props.match.spoolId === null : props.match.spoolId === o.spoolId);
+const selectedId = computed(() => flat.value.find((o) => (o.spoolId === undefined ? props.match.filamentId === o.filamentId && props.match.spoolId === null : props.match.spoolId === o.spoolId))?.id ?? null);
 function pick(o: Opt | undefined): void {
   if (!o) return;
   setSlotOverride(preset.value, o.spoolId === undefined ? { filamentId: o.filamentId } : { filamentId: o.filamentId, spoolId: o.spoolId });
   emit("close");
 }
-function onKey(e: KeyboardEvent): void {
-  const n = flat.value.length;
-  if (!n) return;
-  if (e.key === "ArrowDown") { e.preventDefault(); active.value = (active.value + 1) % n; }
-  else if (e.key === "ArrowUp") { e.preventDefault(); active.value = (active.value - 1 + n) % n; }
-  else if (e.key === "Home") { e.preventDefault(); active.value = 0; }
-  else if (e.key === "End") { e.preventDefault(); active.value = n - 1; }
-  else if (e.key === "Enter") { e.preventDefault(); pick(flat.value[active.value]); }
-  else return;
-  document.getElementById(`${lid}-${flat.value[active.value]?.id}`)?.scrollIntoView?.({ block: "nearest" });
+const byId = (id: string | null): Opt | undefined => flat.value.find((o) => o.id === id);
+// Enter in the search picks the first result (the slot's own material is listed first); ArrowDown moves into the list.
+function onSearchKey(e: KeyboardEvent): void {
+  if (e.key === "Enter") { e.preventDefault(); pick(flat.value[0]); }
+  else if (e.key === "ArrowDown") { e.preventDefault(); list.value?.$el?.querySelector<HTMLElement>(".p-listbox-list")?.focus(); }
 }
 const lid = `sp-${useId()}`;
 const typed = computed(() => store.settings.manualPrices[preset.value] ?? null);
@@ -71,22 +69,24 @@ const typed = computed(() => store.settings.manualPrices[preset.value] ?? null);
   <Popover :open="open" :anchor="anchor" :label="t('match.change')" @close="emit('close')">
     <div class="picker">
       <template v-if="ready">
-        <div class="search">
-          <Icon name="search" />
-          <input v-model="q" type="text" role="combobox" aria-expanded="true" autocomplete="off" spellcheck="false" :aria-controls="lid" :aria-activedescendant="flat.length ? `${lid}-${flat[active]?.id}` : undefined" :aria-label="t('picker.search')" :placeholder="t('picker.search')" @keydown="onKey" />
-        </div>
-        <div :id="lid" role="listbox" :aria-label="t('picker.search')" class="list">
-          <div v-for="g in groups" :key="g.material" role="group" :aria-label="g.material">
-            <p class="xs muted group" aria-hidden="true">{{ g.material }}</p>
-            <div v-for="o in g.opts" :id="`${lid}-${o.id}`" :key="o.id" role="option" class="opt" :class="{ spool: o.spool, on: flat[active]?.id === o.id }" :aria-selected="isSel(o) ? 'true' : 'false'" @mousedown.prevent @click="pick(o)">
-              <span v-if="!o.spool" class="title truncate">{{ o.title }}</span>
-              <span v-if="!o.spool" class="num sm muted">{{ o.price }}</span>
-              <span v-else class="num sm muted sub">{{ o.sub }}</span>
-              <Icon v-if="isSel(o)" name="check" />
-            </div>
-          </div>
-          <p v-if="!flat.length" class="sm muted empty">{{ t("picker.empty", { q }) }}</p>
-        </div>
+        <IconField class="search">
+          <InputIcon><Icon name="search" /></InputIcon>
+          <InputText v-model="q" type="text" autocomplete="off" spellcheck="false" fluid :aria-label="t('picker.search')" :placeholder="t('picker.search')" @keydown="onSearchKey" />
+        </IconField>
+        <Listbox
+          :id="lid" ref="list" class="list" :model-value="selectedId" :options="groups" option-label="title" option-value="id" option-group-label="material" option-group-children="opts"
+          :aria-label="t('picker.search')" @change="(e) => e.value && pick(byId(e.value))"
+        >
+          <template #optiongroup="{ option }"><span class="xs muted group">{{ option.material }}</span></template>
+          <template #option="{ option }">
+            <span class="opt" :class="{ spool: option.spool }" @click.stop="pick(option)">
+              <span v-if="!option.spool" class="title truncate">{{ option.title }}</span>
+              <span v-if="!option.spool" class="num sm muted">{{ option.price }}</span>
+              <span v-else class="num sm muted sub">{{ option.sub }}</span>
+            </span>
+          </template>
+          <template #empty><span class="sm muted empty">{{ t("picker.empty", { q }) }}</span></template>
+        </Listbox>
       </template>
       <p v-else class="sm muted">{{ t("picker.connect") }}</p>
       <div class="hairline typed">
@@ -99,17 +99,14 @@ const typed = computed(() => store.settings.manualPrices[preset.value] ?? null);
 
 <style scoped>
 .picker > * + * { margin-top: 8px; }
-.search { display: flex; align-items: center; color: var(--opc-muted); }
-.search input { flex: 1; min-width: 0; margin-left: 8px; }
-.list { max-height: 200px; overflow-y: auto; }
-.group { padding: 8px 8px 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-.opt { display: flex; align-items: center; justify-content: space-between; min-height: 28px; padding: 4px 8px; border-radius: var(--opc-r-control); cursor: pointer; }
+.search { display: block; }
+.list :deep(.p-listbox-option) { padding: 0; }
+.list :deep(.p-listbox-option-group) { padding: 8px 8px 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+.opt { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 32px; padding: 6px 12px; }
 .opt > * + * { margin-left: 8px; }
 .opt .title { flex: 1; min-width: 0; }
-.opt.spool { padding-left: 24px; min-height: 24px; }
-.opt.on, .opt:hover { background: var(--opc-hover); }
-.opt[aria-selected="true"] { color: var(--opc-accent-text); }
+.opt.spool { padding-left: 28px; min-height: 28px; }
 .typed { padding-top: 8px; }
 .typed > * + * { margin-top: 4px; }
-.empty { padding: 8px; }
+.empty { padding: 8px; display: block; }
 </style>

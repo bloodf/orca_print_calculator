@@ -19,8 +19,9 @@ export function slotsWithoutPrice(d: Derived): { plate: number; n: number; prese
 
 const itemText = (c: Derived["notCounted"][number]): string =>
   c.kind === "time" ? t("notCounted.time", { n: c.plate })
-    : c.kind === "grams" ? t("notCounted.grams", { slot: c.slot, n: c.plate })
-      : t(`notCounted.${c.kind}`);
+    : c.kind === "consumption" ? t("notCounted.consumption", { n: c.plate })
+      : c.kind === "grams" ? t("notCounted.grams", { slot: c.slot, n: c.plate })
+        : t(`notCounted.${c.kind}`);
 
 export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; invalid?: boolean; currencyFrom?: string | null }): Flag[] {
   const bad: Flag[] = [];
@@ -34,11 +35,13 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
   if (sel?.flags.belowBreakEven) bad.push({ id: "belowBreakEven", tone: "bad", text: t("flag.belowBreakEven", { channel: sel.name, amount: f.m(-sel.profit) }) });
   else if (sel?.flags.orderBelowBreakEven) bad.push({ id: "orderBelowBreakEven", tone: "bad", text: t("flag.orderBelowBreakEven", { amount: f.m(-sel.orderProfit) }) });
 
-  if (d.notCounted.length) {
+  // With a price on screen, unknown time/weight/usage already has its own list under the actions (GapList): not said twice.
+  const counted = sel ? d.notCounted.filter((c) => c.kind === "energy" || c.kind === "labor" || c.kind === "wear") : d.notCounted;
+  if (counted.length) {
     // Printer wear is set per printer model; with no model reported there is no field to go to, so no shortcut.
-    const settable = d.notCounted.find((c) => c.kind === "energy" || c.kind === "labor" || (c.kind === "wear" && !!d.printer.model));
+    const settable = counted.find((c) => c.kind === "energy" || c.kind === "labor" || (c.kind === "wear" && !!d.printer.model));
     info.push({
-      id: "notCounted", tone: "info", text: t("flag.notCounted", { items: d.notCounted.map(itemText).join(", ") }),
+      id: "notCounted", tone: "info", text: t("flag.notCounted", { items: counted.map(itemText).join(", ") }),
       ...(settable && (settable.kind === "energy" || settable.kind === "labor" || settable.kind === "wear") ? { action: { label: t("flag.set"), kind: "set" as const, item: settable.kind } } : {}),
     });
   }

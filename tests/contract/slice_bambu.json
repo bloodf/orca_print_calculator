@@ -10,6 +10,7 @@
    {
     "data": {
      "host": {
+      "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Bambu Lab X1 Carbon",
       "printerVendor": "BBL",
@@ -48,6 +49,7 @@
     "data": {
      "plates": [
       {
+       "consumption": "known",
        "fileName": null,
        "index": 0,
        "name": null,
@@ -102,6 +104,7 @@
     "data": {
      "plates": [
       {
+       "consumption": "known",
        "fileName": null,
        "index": 0,
        "name": null,
@@ -132,6 +135,7 @@
        "thumb": null
       },
       {
+       "consumption": "known",
        "fileName": null,
        "index": 1,
        "name": null,

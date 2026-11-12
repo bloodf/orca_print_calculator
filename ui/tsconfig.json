@@ -7,8 +7,9 @@
     "noEmit": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "resolveJsonModule": true,
     "lib": ["ES2020", "DOM"],
     "types": ["vite/client"]
   },
-  "include": ["src", "tests", "vite.config.ts"]
+  "include": ["src", "shared/src", "tests", "vite.config.ts"]
 }

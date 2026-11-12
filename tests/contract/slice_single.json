@@ -10,6 +10,7 @@
    {
     "data": {
      "host": {
+      "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Snapmaker U1",
       "printerVendor": "Snapmaker",
@@ -48,6 +49,7 @@
     "data": {
      "plates": [
       {
+       "consumption": "known",
        "fileName": null,
        "index": 0,
        "name": null,

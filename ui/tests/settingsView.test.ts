@@ -1,6 +1,7 @@
 // Settings fields end to end: each control writes the setting it names (and only that one).
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick, type App } from "vue";
+import { h, nextTick, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn(async () => ({})) }));
 import SettingsView from "../src/views/SettingsView.vue";
@@ -9,6 +10,7 @@ import { settingsTab, type SettingsTab } from "../src/state/settingsTab";
 import { store } from "../src/state/store";
 import { clearToasts } from "../src/state/toast";
 import { load } from "./priceKit";
+import { choose } from "./pv";
 
 let app: App | null = null;
 let root: HTMLElement | null = null;
@@ -67,10 +69,7 @@ describe("Cost defaults", () => {
   });
   test("failure mode and the two checkboxes", async () => {
     await open("costs");
-    const mode = input("Failure cost") as HTMLSelectElement;
-    mode.value = "markup";
-    mode.dispatchEvent(new Event("change", { bubbles: true }));
-    await flush();
+    await choose(root!, "Add on top of cost");
     expect(store.settings.defaults.failureMode).toBe("markup");
     const boxes = [...root!.querySelectorAll<HTMLInputElement>('.checks input[type="checkbox"]')];
     expect(boxes.length).toBe(2);
@@ -85,9 +84,7 @@ describe("Pricing defaults", () => {
   test("markup, rounding and minimum order write the defaults", async () => {
     await open("pricing");
     await type("Markup", "40");
-    const pretty = input("Price rounding") as HTMLSelectElement;
-    pretty.value = "step5";
-    pretty.dispatchEvent(new Event("change", { bubbles: true }));
+    await choose(root!, "Ends in 0 or 5");
     await type("Minimum order", "50");
     await flush();
     const d = store.settings.defaults;
@@ -122,11 +119,13 @@ describe("tabs", () => {
     expect(settingsTab.value).toBe("printers");
   });
   test("arrow keys, Home and End move and activate", async () => {
-    const key = async (k: string) => { root!.querySelector("[role=tablist]")!.dispatchEvent(new KeyboardEvent("keydown", { key: k, bubbles: true })); await flush(); };
-    await key("ArrowDown");
+    // PrimeVue Tabs: a horizontal tablist (Left/Right/Home/End on the focused tab), selecting on focus like the old rail did.
+    const key = async (k: string) => { (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent("keydown", { key: k, code: k, bubbles: true })); await flush(); };
+    document.getElementById(`settings-tab-${settingsTab.value}`)!.focus();
+    await key("ArrowRight");
     expect(settingsTab.value).toBe("costs");
     expect(document.activeElement?.id).toBe("settings-tab-costs");
-    await key("ArrowUp"); await key("ArrowUp");
+    await key("ArrowLeft"); await key("ArrowLeft");
     expect(settingsTab.value).toBe("about"); // wraps
     await key("Home");
     expect(settingsTab.value).toBe("spoolman");

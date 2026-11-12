@@ -1,6 +1,10 @@
 <script setup lang="ts">
-// Settings view: one group at a time behind tabs (vertical rail >= 900px, wrapping row below), "Saved" status, no Save button.
-import { computed, nextTick, onBeforeUnmount, ref } from "vue";
+// Settings view: one group at a time behind PrimeVue tabs, "Saved" status, no Save button.
+import Button from "primevue/button";
+import Tab from "primevue/tab";
+import TabList from "primevue/tablist";
+import Tabs from "primevue/tabs";
+import { computed } from "vue";
 import { t } from "../i18n";
 import { SETTINGS_TABS, settingsTab, type SettingsTab } from "../state/settingsTab";
 import { flushSettings, store } from "../state/store";
@@ -20,27 +24,7 @@ const COMPS = {
 const HELP: Partial<Record<SettingsTab, string>> = { costs: "settings.costsHelp" };
 const help = computed(() => HELP[settingsTab.value]);
 
-const mq = typeof matchMedia === "function" ? matchMedia("(min-width: 900px)") : null;
-const vertical = ref(mq?.matches ?? true);
-const onMq = (e: MediaQueryListEvent): void => { vertical.value = e.matches; };
-mq?.addEventListener("change", onMq);
-onBeforeUnmount(() => mq?.removeEventListener("change", onMq));
-
-async function select(id: SettingsTab, focus = false): Promise<void> {
-  settingsTab.value = id;
-  if (!focus) return;
-  await nextTick();
-  document.getElementById(`settings-tab-${id}`)?.focus();
-}
-function onKey(e: KeyboardEvent): void {
-  const i = SETTINGS_TABS.indexOf(settingsTab.value);
-  const n = SETTINGS_TABS.length;
-  const k = e.key;
-  const to = k === "ArrowDown" || k === "ArrowRight" ? i + 1 : k === "ArrowUp" || k === "ArrowLeft" ? i - 1 : k === "Home" ? 0 : k === "End" ? n - 1 : null;
-  if (to === null) return;
-  e.preventDefault();
-  void select(SETTINGS_TABS[(to + n) % n]!, true);
-}
+const select = (id: SettingsTab): void => { settingsTab.value = id; };
 </script>
 
 <template>
@@ -49,16 +33,14 @@ function onKey(e: KeyboardEvent): void {
       <h1 class="view-title" tabindex="-1" data-view-title>{{ t("settings.title") }}</h1>
       <span class="sm status" :class="{ bad: store.saveStatus === 'error' }" role="status">
         <template v-if="store.saveStatus === 'saved'">{{ t("settings.saved") }}</template>
-        <template v-else-if="store.saveStatus === 'error'">{{ t("settings.saveFailed") }} <button type="button" class="btn ghost" @click="flushSettings()">{{ t("settings.retry") }}</button></template>
+        <template v-else-if="store.saveStatus === 'error'">{{ t("settings.saveFailed") }} <Button text size="small" type="button" @click="flushSettings()">{{ t("settings.retry") }}</Button></template>
       </span>
     </div>
-    <div class="rail app-chrome" role="tablist" :aria-orientation="vertical ? 'vertical' : 'horizontal'" :aria-label="t('settings.nav')" @keydown="onKey">
-      <button
-        v-for="id in SETTINGS_TABS" :id="`settings-tab-${id}`" :key="id" type="button" role="tab" class="rail-btn"
-        :class="{ on: id === settingsTab }" :aria-selected="id === settingsTab" :aria-controls="`settings-${id}`" :tabindex="id === settingsTab ? 0 : -1"
-        @click="select(id)"
-      >{{ t(`settings.group.${id}`) }}</button>
-    </div>
+    <Tabs :value="settingsTab" select-on-focus class="rail app-chrome" @update:value="select($event as SettingsTab)">
+      <TabList :aria-label="t('settings.nav')">
+        <Tab v-for="id in SETTINGS_TABS" :id="`settings-tab-${id}`" :key="id" :value="id" :aria-controls="id === settingsTab ? `settings-${id}` : undefined">{{ t(`settings.group.${id}`) }}</Tab>
+      </TabList>
+    </Tabs>
     <section :id="`settings-${settingsTab}`" :key="settingsTab" class="grp" :class="{ wide: settingsTab === 'sheet' }" role="tabpanel" :aria-labelledby="`settings-tab-${settingsTab}`" tabindex="0">
       <h2 class="lg">{{ t(`settings.group.${settingsTab}`) }}</h2>
       <p v-if="help" class="sm muted help">{{ t(help) }}</p>
@@ -73,21 +55,17 @@ function onKey(e: KeyboardEvent): void {
 .head > * + * { margin-left: 12px; }
 .status { color: var(--opc-muted); min-height: 20px; }
 .status.bad { color: var(--opc-bad); }
-.rail { display: flex; flex-wrap: wrap; margin: -2px; padding-bottom: 8px; border-bottom: 1px solid var(--opc-border); } /* no flex gap: Safari 14 floor */
-.rail-btn { margin: 2px; height: 28px; padding: 0 10px; border: 0; border-radius: var(--opc-r-control); background: transparent; color: var(--opc-muted); text-align: left; white-space: nowrap; }
-.rail-btn:hover { background: var(--opc-hover); color: var(--opc-fg); }
-.rail-btn.on { background: var(--opc-selected); color: var(--opc-accent-text); font-weight: 500; }
+.rail { margin-bottom: 8px; }
+/* eight groups: wrap them instead of hiding some behind scroll arrows at narrow widths or zoom; the current one is marked by fill */
+.rail :deep(.p-tablist-content) { overflow: visible; }
+.rail :deep(.p-tablist-tab-list) { flex-wrap: wrap; border: 0; background: transparent; gap: 4px; }
+.rail :deep(.p-tablist-active-bar) { display: none; }
+.rail :deep(.p-tab) { padding: 8px 14px; white-space: nowrap; border: 0; border-radius: var(--opc-r-control); }
+.rail :deep(.p-tab-active) { background: var(--opc-selected); }
 .grp { max-width: 760px; min-width: 0; padding: 16px 0 24px; scroll-margin-top: calc(var(--opc-header-h) + 12px); }
 .grp.wide { max-width: none; } /* the quote editor puts its live sample beside the form */
 .grp > h2 { margin-bottom: 4px; }
 .grp > .help { margin-bottom: 8px; }
 .grp > h2 + :not(.help) { margin-top: 12px; }
-@media (min-width: 900px) {
-  .settings { display: grid; grid-template-columns: 200px minmax(0, 1fr); grid-column-gap: 24px; align-items: start; padding: 16px; }
-  .head { grid-column: 1 / -1; }
-  .rail { display: block; position: sticky; top: calc(var(--opc-header-h) + 12px); margin: 0; padding: 0; border: 0; }
-  .rail-btn { display: block; width: 100%; margin: 0; }
-  .rail-btn + .rail-btn { margin-top: 2px; }
-  .grp { padding-top: 0; }
-}
+@media (min-width: 900px) { .settings { padding: 16px; } }
 </style>

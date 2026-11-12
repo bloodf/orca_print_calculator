@@ -82,6 +82,20 @@ class ParseGcodeOrca(unittest.TestCase):
         self.assertEqual(r["slots"], [])
         self.assertEqual(r["flavour"], "orca")
 
+    def test_consumption_state(self):  # F02: absent data is "missing", never a free plate
+        cases = [
+            ("", "missing"),
+            ("; total filament used [g] = 12.5\n", "missing"),
+            ("; total filament used [g] = 0.00\n", "zero"),
+            ("; filament used [g] = 0.00, 0.00\n", "zero"),
+            ("; filament used [g] = 0.00, x\n", "missing"),
+            ("; filament used [mm] = 0.00\n", "missing"),
+            ("; filament used [g] = 1.5, 0.00\n", "known"),
+        ]
+        for tail, want in cases:
+            with self.subTest(tail=tail):
+                self.assertEqual(core.parse_gcode("", tail)["consumption"], want)
+
     def test_total_from_sum_when_line_missing(self):
         tail = "; filament used [g] = 1.50, 0.00, 2.25\n"
         self.assertEqual(core.parse_gcode("", tail)["total_grams"], 3.75)

@@ -20,10 +20,10 @@ const csp = (): Plugin => ({
 
 export default defineConfig({
   plugins: [vue(), viteSingleFile(), csp()],
-  // Every SFC is <script setup> (no options API), and the plugin ships as a single file with no devtools: switch those Vue paths off.
-  define: { __VUE_OPTIONS_API__: false, __VUE_PROD_DEVTOOLS__: false, __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false },
+  // PrimeVue's components are Options API objects: the Options API path of Vue must stay compiled in. No devtools in the single file.
+  define: { __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false, __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false },
   build: { target: "safari14" },
-  test: { environment: "jsdom", include: ["tests/**/*.test.ts"], coverage: {
+  test: { environment: "jsdom", include: ["tests/**/*.test.ts"], setupFiles: ["tests/setup.ts"], coverage: {
       // The whole app layer, not just the engine. Excluded: the dev harness, pure data (strings, icon paths, types), the entry file.
       include: ["src/**/*.ts", "src/**/*.vue"],
       exclude: ["src/mock/**", "src/i18n/messages.ts", "src/components/base/icons.ts", "src/state/types.ts", "src/main.ts", "src/env.d.ts"],

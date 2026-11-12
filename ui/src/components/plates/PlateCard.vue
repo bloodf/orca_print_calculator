@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Checkbox from "primevue/checkbox";
 import { computed, nextTick, ref, useId, watch } from "vue";
 import type { PlateRow } from "../../engine/quote";
 import { duration, grams, money, slicedTime, date } from "../../format";
@@ -13,6 +14,7 @@ import MaterialRow from "./MaterialRow.vue";
 import { pickRequest } from "./pickRequest";
 import { UNKNOWN } from "./slots";
 import emptyPlate from "../../assets/empty-plate.svg?raw";
+import Art from "../base/Art.vue";
 
 const props = defineProps<{ plate: HostPlate | PlateSnapshot; row: PlateRow | null; matches: SlotMatchView[]; include: boolean; copies: number; stale: boolean; frozen: boolean }>();
 const emit = defineEmits<{ "update:include": [value: boolean]; "update:copies": [value: number] }>();
@@ -38,7 +40,6 @@ const savedDate = computed(() => {
   const q = store.quotes.find((x) => x.id === store.draft.quoteId);
   return q ? date(q.updatedAt, locale.value) : "";
 });
-const thumbSvg = emptyPlate.replace(/ role="img" aria-label="[^"]*"/, ' aria-hidden="true" focusable="false"');
 
 watch(() => pickRequest.seq, () => { if (pickRequest.plate === props.plate.index) open.value = true; });
 const unpriced = computed(() => props.include && props.matches.some((m) => m.pricePerKg === null));
@@ -53,9 +54,9 @@ async function toggle(slotN: number): Promise<void> {
 
 <template>
   <article class="card" :class="{ off: !include }" :aria-label="title">
-    <input type="checkbox" class="inc" :checked="include" :aria-label="t('plate.include', { n })" @change="emit('update:include', ($event.target as HTMLInputElement).checked)" />
+    <Checkbox binary class="inc" :model-value="include" :aria-label="t('plate.include', { n })" @update:model-value="(v: boolean) => emit('update:include', v)" />
     <img v-if="host?.thumb" class="thumb" :src="host.thumb" alt="" width="64" height="64" />
-    <span v-else class="thumb none" v-html="thumbSvg" />
+    <span v-else class="thumb none"><Art :svg="emptyPlate" /></span>
     <div class="main">
       <div class="head">
         <h3 class="lg truncate">{{ title }}</h3>
@@ -81,6 +82,7 @@ async function toggle(slotN: number): Promise<void> {
       <FilamentChip v-for="m in matches" :key="m.slot.n" :slot="m.slot" :match="m" :aria-expanded="open ? 'true' : 'false'" :aria-controls="open ? id : undefined" @toggle="toggle(m.slot.n)" />
     </div>
     <div class="copies">
+      <span class="sm muted cp-lbl" aria-hidden="true">{{ t("plate.copiesLabel") }}</span>
       <Stepper :model-value="copies" :min="1" :max="999" :label="t('plate.copies', { n })" @update:model-value="(v) => emit('update:copies', v)" />
     </div>
     <div v-if="open" :id="id" ref="list" class="rows hairline">
@@ -90,9 +92,9 @@ async function toggle(slotN: number): Promise<void> {
 </template>
 
 <style scoped>
-.card { display: grid; grid-template-columns: 16px 64px minmax(0, 1fr) auto; column-gap: 12px; align-items: start; min-height: 88px; padding: 12px; background: var(--opc-raised); border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); }
+.card { display: grid; grid-template-columns: 20px 64px minmax(0, 1fr) auto; column-gap: 12px; align-items: start; min-height: 88px; padding: 12px; background: var(--opc-raised); border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); }
 .card.off { border-style: dashed; color: var(--opc-muted); }
-.inc { margin: 4px 0 0; width: 14px; height: 14px; }
+.inc { margin: 2px 0 0; }
 .thumb { width: 64px; height: 64px; object-fit: cover; border-radius: var(--opc-r-control); background: var(--opc-track); display: flex; align-items: center; justify-content: center; }
 .thumb.none { color: var(--opc-muted); overflow: hidden; }
 .thumb.none :deep(svg) { width: 64px; height: 43px; }
@@ -110,9 +112,10 @@ async function toggle(slotN: number): Promise<void> {
 .warn-icon { display: inline-flex; vertical-align: -2px; margin-right: 4px; color: var(--opc-bad); }
 .side { grid-column: 4; grid-row: 1; display: flex; flex-direction: column; align-items: flex-end; }
 .side > * + * { margin-top: 2px; }
-.copies { grid-column: 3 / -1; grid-row: 3; justify-self: end; margin-top: 8px; }
+.copies { grid-column: 3 / -1; grid-row: 3; justify-self: end; margin-top: 8px; display: flex; align-items: center; }
+.cp-lbl { margin-right: 8px; }
 .cost { font-size: var(--opc-fs-lg); font-weight: 500; color: var(--opc-fg); line-height: 1.25; }
 .rows { grid-column: 1 / -1; margin-top: 12px; }
 .card.off .cost { font-weight: 400; }
-@media (max-width: 420px) { .card { grid-template-columns: 16px 48px minmax(0, 1fr); } .thumb { width: 48px; height: 48px; } .side { grid-column: 3; grid-row: 2; align-items: flex-start; } .chips { grid-row: 3; } .copies { grid-column: 3; grid-row: 4; justify-self: start; } }
+@media (max-width: 420px) { .card { grid-template-columns: 20px 48px minmax(0, 1fr); } .thumb { width: 48px; height: 48px; } .side { grid-column: 3; grid-row: 2; align-items: flex-start; } .chips { grid-row: 3; } .copies { grid-column: 3; grid-row: 4; justify-self: start; } }
 </style>

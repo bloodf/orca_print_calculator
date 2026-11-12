@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { nextTick, type App } from "vue";
 import PriceBar from "../src/components/price/PriceBar.vue";
+import GapList from "../src/components/quotes/GapList.vue";
 import PriceFlags from "../src/components/price/PriceFlags.vue";
 import PricePanel from "../src/components/price/PricePanel.vue";
 import { buildFlags } from "../src/components/price/flagList";
-import { channelProblemSentence, problemSentence } from "../src/components/price/priceState";
+import { channelProblemSentence, m, problemSentence } from "../src/components/price/priceState";
+import type { ChannelOk } from "../src/engine/quote";
 import { setLocale } from "../src/i18n";
 import { SCENARIO_NAMES } from "../src/mock/scenarios";
 import type { Derived } from "../src/state/derive";
@@ -127,6 +129,22 @@ describe("tiles and sub-line", () => {
     expect(txt(el)).toMatch(/order total for 5 pieces/);
     expect(txt(el)).toMatch(/on the order/);
   });
+  test("q>1 with plate copies and an extra: unit price and order total are both stated and agree with the engine", async () => {
+    load("ok", { draft: (d) => ({ ...d, quantity: 4, plates: { 0: { include: true, copies: 2 }, 1: { include: true, copies: 1 } }, extras: [{ key: "x1", label: "Box", unitMinor: 150, qtyE3: 1000, per: "piece" }] }) });
+    const el = await show(PricePanel);
+    const sel = (derived.value.selected as ChannelOk);
+    const line = el.querySelector("[data-testid=order-line]")!;
+    expect(line.classList.contains("order-line")).toBe(true); // a result of its own, not a muted footnote
+    expect(txt(line)).toContain(m(sel.grandTotal));
+    expect(txt(el.querySelector("[data-testid=hero-price]"))).toBe(m(sel.price));
+    expect(txt(line)).toMatch(/order total for 4 pieces/);
+    expect(sel.orderTotal).toBeGreaterThanOrEqual(sel.price * 4 - 4); // rounding of the unit price may move it by cents, never by a whole piece
+  });
+  test("q=1 without shipping keeps the quiet sub-line", async () => {
+    load("ok");
+    const el = await show(PricePanel);
+    expect(el.querySelector("[data-testid=order-line]")!.classList.contains("order-line")).toBe(false);
+  });
   test("a loss shows the profit in the bad tone with a typographic minus", async () => {
     load("ok", { draft: (d) => ({ ...d, quantity: 2, discountTiers: [{ minQty: 2, discountBp: 9000 }] }) });
     const el = await show(PricePanel);
@@ -144,17 +162,17 @@ describe("spare pieces", () => {
   };
   test("none when the run divides the quantity", async () => { expect(await spare(2, 4)).toBeNull(); });
   test("en singular and plural", async () => {
-    expect(txt(await spare(2, 3))).toBe("1 spare piece");
+    expect(txt(await spare(2, 3))).toBe("1 spare piece. One run makes 2 pieces, so this order prints 1 extra. Their costs, including extras set to Each piece, are included in this order.");
     app?.unmount(); root?.remove();
-    expect(txt(await spare(3, 4))).toBe("2 spare pieces");
+    expect(txt(await spare(3, 4))).toBe("2 spare pieces. One run makes 3 pieces, so this order prints 2 extra. Their costs, including extras set to Each piece, are included in this order.");
   });
-  test("pt-BR singular and plural, with the why in the title", async () => {
+  test("pt-BR singular and plural, with visible cost explanation", async () => {
     setLocale("pt-BR");
     const one = await spare(2, 3);
-    expect(txt(one)).toBe("1 peça a mais");
-    expect(one?.getAttribute("title")).toContain("Uma rodada rende 2 peças");
+    expect(txt(one)).toBe("1 peça a mais. Uma rodada rende 2 peças, então este pedido imprime 1 a mais. Os custos delas, inclusive os extras marcados como Cada peça, entram neste pedido.");
+    expect(one?.hasAttribute("title")).toBe(false);
     app?.unmount(); root?.remove();
-    expect(txt(await spare(3, 4))).toBe("2 peças a mais");
+    expect(txt(await spare(3, 4))).toBe("2 peças a mais. Uma rodada rende 3 peças, então este pedido imprime 2 a mais. Os custos delas, inclusive os extras marcados como Cada peça, entram neste pedido.");
   });
 });
 
@@ -199,11 +217,13 @@ describe("flags", () => {
     expect(f.tone).toBe("info");
     expect(f.text).toBe("Note: Not counted yet: energy, labor.");
   });
-  test("unknown print time and grams are named", async () => {
+  test("unknown print time and grams are named once, in the gap list under the actions, not repeated in the flags (B-26)", async () => {
     load("unknown");
-    const el = await show(PriceFlags);
-    expect(txt(el)).toContain("print time of plate 1");
-    expect(txt(el)).toContain("filament weight of slot 2 on plate 1");
+    const flags = await show(PriceFlags);
+    expect(txt(flags)).not.toContain("print time of plate 1");
+    const gaps = await show(GapList);
+    expect(txt(gaps)).toContain("Plate 1: print time is unknown.");
+    expect(txt(gaps)).toContain("Plate 1, slot 2: filament weight is unknown.");
   });
   test("stale plates and a skipped channel", async () => {
     load("stale", { settings: (s) => ({ ...s, channels: s.channels.map((c) => (c.id === "store" ? { ...c, taxBp: 99999 } : c)), defaultChannelId: "direct" }) });

@@ -6,7 +6,41 @@
 
 Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na janela principal que precifica cada placa do projeto aberto. O custo do filamento vem do seu estoque no Spoolman, a energia é sugerida pelo modelo da impressora, e você soma mão de obra, depreciação, taxa de falha, extras, frete, imposto e taxas dos canais de venda. O resultado é um preço de venda sugerido, a comparação entre canais, o preço por lote, orçamentos salvos e um orçamento para imprimir ou exportar para o cliente.
 
-**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão 0.1.0 não foi lançada e não está no hub do OrcaCloud.
+**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão desta árvore é 0.2.0 ([changelog](CHANGELOG.md)). Os testes usam só simulações (host simulado, fixtures, um módulo `orca` falso, Chrome headless); nada foi executado contra um OrcaSlicer, servidor Spoolman, impressora ou câmera reais. Na última checagem (2026-11-11) o hub do OrcaCloud listava a 0.1.1; ele só lista a 0.2.0 depois que a versão 0.2.0 for publicada. A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então a aba deste plugin fica ao lado das de outros plugins (Spooler, U1 Control).
+
+<!-- related-plugins:start -->
+## Conheça os outros plugins
+
+Complete seu fluxo no OrcaSlicer: organizar, calcular, gerenciar filamento e imprimir. Clique na imagem, no ícone ou no nome para abrir o repositório.
+
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/orca_organizer"><img src="docs/related-plugins/orca_organizer-icon.png" width="40" height="40" alt="Organizer"></a>
+      <h3><a href="https://github.com/bloodf/orca_organizer">Organizer</a></h3>
+      <a href="https://github.com/bloodf/orca_organizer"><img src="docs/related-plugins/orca_organizer-preview.jpg" width="280" alt="Organizer: imagem de apresentação"></a>
+      <p>Organize os objetos pelo contorno real e preencha a bandeja com mais cópias.</p>
+      <p><a href="https://github.com/bloodf/orca_organizer">Abrir repositório →</a></p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/spooler"><img src="docs/related-plugins/spooler-icon.png" width="40" height="40" alt="Spooler"></a>
+      <h3><a href="https://github.com/bloodf/spooler">Spooler</a></h3>
+      <a href="https://github.com/bloodf/spooler"><img src="docs/related-plugins/spooler-preview.png" width="280" alt="Spooler: imagem de apresentação"></a>
+      <p>Traga suas bobinas do Spoolman e os perfis de filamento para o OrcaSlicer.</p>
+      <p><a href="https://github.com/bloodf/spooler">Abrir repositório →</a></p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/u1control"><img src="docs/related-plugins/u1control-icon.png" width="40" height="40" alt="U1 Control"></a>
+      <h3><a href="https://github.com/bloodf/u1control">U1 Control</a></h3>
+      <a href="https://github.com/bloodf/u1control"><img src="docs/related-plugins/u1control-preview.png" width="280" alt="U1 Control: imagem de apresentação"></a>
+      <p>Prepare e acompanhe impressões na Snapmaker U1, com mapeamento de cabeçotes, temperaturas, câmera e arquivos.</p>
+      <p><a href="https://github.com/bloodf/u1control">Abrir repositório →</a></p>
+    </td>
+  </tr>
+</table>
+
+Imagens ilustrativas dos projetos. [Créditos e licenças](docs/related-plugins/README.md).
+<!-- related-plugins:end -->
 
 ## Capturas de tela
 
@@ -26,23 +60,25 @@ Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na ja
 
 ![Calculadora em português do Brasil](docs/screenshots/calculator-pt-BR.png)
 
-*São capturas da interface do plugin rodando no navegador, com dados de exemplo e um host simulado. Não são capturas de dentro do OrcaSlicer. As miniaturas das placas nos dados de exemplo são imagens de apoio; o plugin ainda não mostra miniaturas reais.*
+Capturas atuais com host simulado (Chrome headless numa build local com o host de desenvolvimento; não são do OrcaSlicer): [escuro, inglês](docs/screenshots/mock-calc-dark-en.png), [claro, pt-BR](docs/screenshots/mock-calc-light-ptBR.png), [estreito](docs/screenshots/mock-calc-narrow-dark-en.png), [tempo desconhecido, fatiamento ao vivo](docs/screenshots/mock-unknown-live-light-en.png), [orçamento antigo com 0 g sem explicação](docs/screenshots/mock-legacy-blocked-dark-en.png), [o mesmo, estreito, pt-BR](docs/screenshots/mock-legacy-blocked-narrow-light-ptBR.png).
+
+*São capturas da interface do plugin rodando no navegador, com dados de exemplo e um host simulado. Não são capturas de dentro do OrcaSlicer. As miniaturas das placas nos dados de exemplo são imagens de apoio; o plugin ainda não mostra miniaturas reais. Elas são anteriores a partes da interface da 0.1.1 (as capturas conferidas nesta revisão mostram "Margem desejada", hoje "Markup", e não mostram a aba Extras e estoque) e não foram regeneradas nesta revisão: isso está pendente.*
 
 ## Recursos
 
 - **Placas.** Cada placa fatiada aparece com o tempo, os gramas de filamento por slot e o custo. Cada placa tem uma caixa para incluir e um contador de cópias. "Uma rodada destas placas rende N peças" define quantas peças um conjunto completo de placas produz.
 - **Fatiamento.** Fatie uma placa no OrcaSlicer e o plugin lê o G-code que o Orca gera. O "Fatiar tudo" do OrcaSlicer preenche todas as placas, uma depois da outra.
 - **Aviso de desatualizado.** O Orca não diz qual placa mudou. Quando algo muda depois de um fatiamento, a aba marca o projeto como "pode estar desatualizado". Ela não percebe espelhar, centralizar e mudanças de ajuste sem salvar. Fatie de novo depois dessas ações.
-- **Importar `.gcode.3mf` fatiado.** "Importar arquivo fatiado" lê as placas de um arquivo exportado em Arquivo, Exportar, Exportar todos os arquivos fatiados. As placas importadas são substituídas quando você fatia no Orca.
+- **Importar `.gcode.3mf` fatiado.** "Importar arquivo fatiado" lê as placas de um arquivo exportado em Arquivo, Exportar, Exportar todos os arquivos fatiados. As placas importadas continuam na tela quando você fatia no Orca; um aviso de "Novo fatiamento" oferece "Usar" para trocar para o novo fatiamento.
 - **Preço do filamento.** Primeiro o Spoolman, depois o preço do perfil, depois um preço digitado por você. Veja [Correspondência com o Spoolman](#correspondência-com-o-spoolman).
 - **Potência da impressora.** O plugin sugere os watts médios pelo modelo e mostra o selo "Estimado". Muitos modelos não têm entrada, e esses recebem um valor genérico de 120 W. Calibre com uma tomada inteligente (kWh dividido pelas horas de impressão, vezes 1000) e digite o seu valor. O seu valor prevalece.
 - **Seções de custo.** Máquina e energia (potência, preço e vida útil da impressora, preço do kWh, manutenção, custo fixo por hora de impressão, taxa de falha), Mão de obra, Extras e acessórios (do seu catálogo), Frete e Taxa de venda.
-- **Extras e estoque.** Uma aba para o catálogo de extras, com a quantidade em estoque opcional por item, e um resumo somente leitura do filamento no Spoolman (carretéis e gramas restantes). A calculadora avisa quando um orçamento precisa de mais de um extra do que você tem. Nada é descontado sozinho.
-- **Canais de venda.** Você define os canais em Ajustes. Cada um tem taxa percentual, taxa fixa, imposto e faixas de preço opcionais, para taxas que mudam conforme o preço de venda. "Comparar canais" mostra todos lado a lado. Não há integração com marketplaces. As taxas são os números que você digita.
+- **Extras e estoque.** Uma aba para o catálogo de extras, com a quantidade em estoque opcional por item, e um resumo somente leitura do filamento no Spoolman (carretéis e gramas restantes). A calculadora avisa quando um orçamento precisa de mais de um extra do que você tem, somando todas as linhas do mesmo item, por peça (inclusive as sobras), por cópia de placa e rodada, e por pedido. Nada é descontado sozinho.
+- **Canais de venda.** Você define os canais em Ajustes. Cada um tem taxa percentual, taxa fixa, imposto e faixas de preço opcionais, para taxas que mudam conforme o preço de venda. "Comparar canais" mostra todos lado a lado. Não há integração com marketplaces. As taxas são os números que você digita. As taxas são calculadas sobre o preço de uma peça e multiplicadas pela quantidade: a taxa fixa vale por peça vendida, não uma vez por pedido, e as faixas de preço escolhem a faixa pelo preço por peça.
 - **Valores iniciais.** Em BRL, USD e EUR todo custo começa preenchido com um valor típico (preço do kWh, mão de obra, preço e vida útil da impressora, 5% de falha, 100% de markup). Outras moedas começam vazias. Mude qualquer um nos Ajustes.
-- **Preço.** Markup sobre o custo (100% vende pelo dobro do custo), pedido mínimo e quatro modos de arredondamento: Exato, Arredondar (3 dígitos), Termina em 9 e Termina em 0 ou 5. O arredondamento sempre sobe.
-- **Quantidade e lotes.** Quantidade, faixas de desconto e uma tabela de lote com custo unitário, preço unitário, total do pedido, lucro do pedido e margem por faixa. Quando uma rodada rende mais peças do que o pedido pede, as peças a mais entram no custo do pedido.
-- **Orçamentos salvos.** O orçamento guarda os próprios dados, placas, preços e moeda. Ao abrir depois, os números aparecem como foram salvos, mesmo que você tenha mudado ajustes ou moeda.
+- **Preço.** Markup sobre o custo (100% vende pelo dobro do custo antes das taxas; as taxas do canal e o imposto entram por cima para o lucro se manter), pedido mínimo e quatro modos de arredondamento: Exato, Arredondar (3 dígitos), Termina em 9 e Termina em 0 ou 5. O arredondamento sempre sobe.
+- **Quantidade e lotes.** Quantidade, faixas de desconto e uma tabela de lote com custo unitário, preço unitário, total do pedido, lucro do pedido e margem por faixa. Quando uma rodada rende mais peças do que o pedido pede, as peças a mais entram no custo do pedido. Cada linha de custo é arredondada uma vez sobre o pedido inteiro, não por peça (versão de cálculo 2). Orçamentos salvos antes mantêm os números com que foram salvos; "Reprecificar com o cálculo atual", nas notas do próprio orçamento, aplica o novo arredondamento de propósito.
+- **Orçamentos salvos.** O orçamento guarda os próprios dados, placas, preços e moeda. Ao abrir depois, os números aparecem como foram salvos, mesmo que você tenha mudado ajustes ou moeda. O que o fatiamento não informou (tempo de impressão, peso ou uso de filamento, preço do filamento) é salvo como desconhecido, nunca como zero: dá para salvar esse rascunho, mas ele não pode ser exportado, impresso nem enviado enquanto estiver incompleto.
 - **Saída do orçamento.** "Imprimir orçamento" abre a folha de orçamento (detalhada ou resumida) e a janela de impressão, onde dá para salvar em PDF. A exportação em CSV e em HTML grava um arquivo na pasta de dados do plugin, e a aba mostra o caminho. A folha leva seu logo, dados da empresa, condições de pagamento e cor de destaque, definidos em Ajustes › Folha de orçamento, com uma prévia ao lado do formulário.
 - **Ajustes.** Um grupo por aba: Spoolman, custos, preço, canais de venda, impressoras, folha de orçamento, idioma e moeda, sobre. As alterações são salvas sozinhas.
 - **Idiomas e moeda.** Português do Brasil e inglês. Qualquer moeda, vinda do Spoolman ou definida nos Ajustes.
@@ -55,7 +91,7 @@ Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na ja
 
 ## Instalação
 
-A versão 0.1.1 está no hub de plugins do OrcaCloud: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f. Assine por lá e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. Ele ainda não foi verificado dentro do OrcaSlicer, então espere arestas.
+O plugin está no hub de plugins do OrcaCloud: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f (a 0.1.1 era a mais recente na última checagem; a 0.2.0 aparece lá depois de publicada). Assine por lá e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. Ele ainda não foi verificado dentro do OrcaSlicer, então espere arestas.
 
 Para testar um build local no macOS:
 
@@ -124,7 +160,7 @@ A importação de `.gcode.3mf` fatiado tem limite de 100 MB.
 
 ## Desenvolvimento
 
-A interface usa Vue 3 com TypeScript e Vite. O host é Python 3.12, sem dependências.
+A interface usa Vue 3 e PrimeVue 4 (tema compartilhado Orca em `ui/shared`) com TypeScript e Vite, compilada em um único arquivo HTML offline. O host é Python 3.12, sem dependências.
 
 ```bash
 pnpm -C ui install

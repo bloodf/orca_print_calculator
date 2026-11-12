@@ -111,11 +111,12 @@ describe("stock in the calculator extras", () => {
     await flush();
     expect(lines(root)).toEqual(["In stock: 5 | Needs 8, 5 in stock"]);
   });
-  test("per order warns on qty; per plate shows the stock only; untracked shows nothing", async () => {
+  test("per order and per plate warn on qty; untracked shows nothing", async () => {
     patchDraft({ quantity: 50, extras: [row("Box", "order"), row("Magnet", "plate", 9000), row("Screw", "piece"), row("Custom", "piece")] });
     const root = mount(ExtrasEditor);
     await flush();
-    expect(lines(root)).toEqual(["In stock: 0 | Needs 1, 0 in stock", "In stock: 1"]);
+    // per plate: 9 per plate copy x 3 plates x 50 runs = 1,350
+    expect(lines(root)).toEqual(["In stock: 0 | Needs 1, 0 in stock", "In stock: 1 | Needs 1,350, 1 in stock"]);
     expect(store.settings.extrasCatalog[0]!.stockE3).toBe(5000); // nothing deducted
   });
 });

@@ -6,7 +6,41 @@ English | [Português (Brasil)](README.pt-BR.md)
 
 Orca Print Calculator is a plugin for OrcaSlicer 2.5. It adds a tab to the main window that prices every build plate of the open project. Filament cost comes from your Spoolman inventory, electricity is suggested from your printer model, and you add labor, depreciation, failure rate, extras, shipping, tax and sales-channel fees. The result is a suggested selling price, a channel comparison, batch pricing, saved quotes and a quote you can print or export for the customer.
 
-**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). Version 0.1.0 is not released and is not on the OrcaCloud hub.
+**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). The version in this tree is 0.2.0 ([changelog](CHANGELOG.md)). Tests are mock-only (mock host, fixtures, a fake `orca` module, headless Chrome); nothing has run against a real OrcaSlicer, Spoolman server, printer or camera. When last checked (2026-11-11) the OrcaCloud hub listed 0.1.1; it lists 0.2.0 only after the 0.2.0 release is published. OrcaSlicer's plugin API offers no way to merge or hide tabs, so this plugin's tab sits beside the tabs of other plugins (Spooler, U1 Control) instead of inside one.
+
+<!-- related-plugins:start -->
+## Explore the other plugins
+
+Complete your OrcaSlicer workflow: arrange, price, manage filament and print. Click an image, icon or name to open its repository.
+
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/orca_organizer"><img src="docs/related-plugins/orca_organizer-icon.png" width="40" height="40" alt="Organizer"></a>
+      <h3><a href="https://github.com/bloodf/orca_organizer">Organizer</a></h3>
+      <a href="https://github.com/bloodf/orca_organizer"><img src="docs/related-plugins/orca_organizer-preview.jpg" width="280" alt="Organizer: promotional artwork"></a>
+      <p>Arrange objects using their actual footprints and fill a build plate with more copies.</p>
+      <p><a href="https://github.com/bloodf/orca_organizer">View repository →</a></p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/spooler"><img src="docs/related-plugins/spooler-icon.png" width="40" height="40" alt="Spooler"></a>
+      <h3><a href="https://github.com/bloodf/spooler">Spooler</a></h3>
+      <a href="https://github.com/bloodf/spooler"><img src="docs/related-plugins/spooler-preview.png" width="280" alt="Spooler: promotional artwork"></a>
+      <p>Bring your Spoolman spools and filament profiles into OrcaSlicer.</p>
+      <p><a href="https://github.com/bloodf/spooler">View repository →</a></p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/u1control"><img src="docs/related-plugins/u1control-icon.png" width="40" height="40" alt="U1 Control"></a>
+      <h3><a href="https://github.com/bloodf/u1control">U1 Control</a></h3>
+      <a href="https://github.com/bloodf/u1control"><img src="docs/related-plugins/u1control-preview.png" width="280" alt="U1 Control: promotional artwork"></a>
+      <p>Prepare and monitor Snapmaker U1 prints, with toolhead mapping, temperatures, camera and files.</p>
+      <p><a href="https://github.com/bloodf/u1control">View repository →</a></p>
+    </td>
+  </tr>
+</table>
+
+Illustrative project artwork. [Credits and licenses](docs/related-plugins/README.md).
+<!-- related-plugins:end -->
 
 ## Screenshots
 
@@ -26,23 +60,25 @@ Orca Print Calculator is a plugin for OrcaSlicer 2.5. It adds a tab to the main 
 
 ![Calculator in Brazilian Portuguese](docs/screenshots/calculator-pt-BR.png)
 
-*These are screenshots of the plugin interface running in a browser with sample data and a mock host. They are not captures from inside OrcaSlicer. The plate thumbnails in the sample data are placeholders; the plugin does not show real thumbnails yet.*
+Current mock captures (headless Chrome on a local build with the dev mock host; not OrcaSlicer): [dark, English](docs/screenshots/mock-calc-dark-en.png), [light, pt-BR](docs/screenshots/mock-calc-light-ptBR.png), [narrow](docs/screenshots/mock-calc-narrow-dark-en.png), [unknown time, live slice](docs/screenshots/mock-unknown-live-light-en.png), [older quote with an unexplained 0 g](docs/screenshots/mock-legacy-blocked-dark-en.png), [same, narrow, pt-BR](docs/screenshots/mock-legacy-blocked-narrow-light-ptBR.png).
+
+*These are screenshots of the plugin interface running in a browser with sample data and a mock host. They are not captures from inside OrcaSlicer. The plate thumbnails in the sample data are placeholders; the plugin does not show real thumbnails yet. They predate parts of the 0.1.1 interface (the captures checked for this revision show "Desired margin", now "Markup", and no Extras and stock tab) and have not been regenerated for this revision: that is pending.*
 
 ## Features
 
 - **Plates.** Each plate you slice appears with its time, filament grams per slot and cost. Every plate has an include checkbox and a copies stepper. "One run of these plates makes N pieces" sets how many pieces a full set of plates produces.
 - **Slicing.** Slice a plate in OrcaSlicer and the plugin reads the G-code that Orca writes. OrcaSlicer's "Slice all" fills every plate, one after another.
 - **Out-of-date warning.** Orca does not say which plate changed. When something changes after a slice, the tab marks the project "may be out of date". It misses mirroring, centering and unsaved setting changes. Slice again after those.
-- **Sliced `.gcode.3mf` import.** "Import sliced file" reads plates from a file you exported with File, Export, Export all sliced file. Imported plates are replaced when you slice in Orca.
+- **Sliced `.gcode.3mf` import.** "Import sliced file" reads plates from a file you exported with File, Export, Export all sliced file. Imported plates stay on screen when you slice in Orca; a "New slice" notice offers "Use it" to switch to the new slice.
 - **Filament prices.** Spoolman first, then the preset price, then a price you type. See [Spoolman matching](#spoolman-matching).
 - **Printer power.** The plugin suggests average watts from the printer model and shows an "Estimated" badge. Many models have no entry, and those get a generic 120 W. Calibrate with a smart plug (kWh divided by print hours, times 1000) and type your own value. Your value wins.
 - **Cost sections.** Machine and energy (power, printer price and lifetime, price per kWh, maintenance, fixed cost per print hour, failure rate), Labor, Extras and accessories (from your catalog), Shipping and Sales fee.
-- **Extras and stock.** A tab for the extras catalog, with an optional count on hand per item, and a read-only summary of your Spoolman filament (spools and grams left). The calculator warns when a quote needs more of an extra than you have. Nothing is deducted automatically.
-- **Sales channels.** You define them in Settings. Each has a percent fee, a fixed fee, tax and optional price tiers, for fees that change with the sale price. "Compare channels" shows them side by side. There is no marketplace integration. The fees are the numbers you type.
+- **Extras and stock.** A tab for the extras catalog, with an optional count on hand per item, and a read-only summary of your Spoolman filament (spools and grams left). The calculator warns when a quote needs more of an extra than you have, counting every row of the same item together, per piece (spares included), per plate copy and run, and per order. Nothing is deducted automatically.
+- **Sales channels.** You define them in Settings. Each has a percent fee, a fixed fee, tax and optional price tiers, for fees that change with the sale price. "Compare channels" shows them side by side. There is no marketplace integration. The fees are the numbers you type. Fees are worked out on the price of one piece and multiplied by the quantity: the fixed fee is charged per piece sold, not once per order, and price tiers pick their band from the per-piece price.
 - **Starting values.** In BRL, USD and EUR every cost starts filled with a typical value (price per kWh, labor rate, printer price and lifetime, 5% failure rate, 100% markup). Other currencies start empty. Change any of them in Settings.
-- **Pricing.** Markup over cost (100% sells for twice the cost), a minimum order amount, and four rounding modes: Exact, Round (3 digits), Ends in 9 and Ends in 0 or 5. Rounding always goes up.
-- **Quantity and batches.** Quantity, discount tiers, and a batch table with unit cost, unit price, order total, order profit and margin per tier. When a run makes more pieces than the order needs, the spare pieces are charged to the order.
-- **Saved quotes.** A quote keeps its own inputs, plates, prices and currency. Opening it later shows the numbers as saved, even if you changed settings or currency since.
+- **Pricing.** Markup over cost (100% sells for twice the cost before fees; channel fees and tax are added on top so the profit holds), a minimum order amount, and four rounding modes: Exact, Round (3 digits), Ends in 9 and Ends in 0 or 5. Rounding always goes up.
+- **Quantity and batches.** Quantity, discount tiers, and a batch table with unit cost, unit price, order total, order profit and margin per tier. When a run makes more pieces than the order needs, the spare pieces are charged to the order. Each cost line is rounded once on the whole order, not per piece (calculation version 2). Quotes saved earlier keep the numbers they were saved with; "Reprice with the current calculation" in the quote's own notes applies the new rounding on purpose.
+- **Saved quotes.** A quote keeps its own inputs, plates, prices and currency. Opening it later shows the numbers as saved, even if you changed settings or currency since. Whatever the slice did not report (print time, filament weight or usage, a filament price) is saved as unknown, never as zero: you can save such a draft, but it cannot be exported, printed or sent until it is complete.
 - **Quote output.** "Print quote" opens a quote sheet (itemized or summary) and the print dialog, where you can save a PDF. CSV and HTML export write a file to the plugin data folder, and the tab shows the path. The sheet carries your logo, company details, payment terms and accent color, set in Settings › Quote sheet with a live sample beside the form.
 - **Settings.** One group per tab: Spoolman, costs, pricing, sales channels, printers, quote sheet, language and currency, about. Changes save on their own.
 - **Languages and currency.** English and Brazilian Portuguese. Any currency, taken from Spoolman or set in Settings.
@@ -55,7 +91,7 @@ Orca Print Calculator is a plugin for OrcaSlicer 2.5. It adds a tab to the main 
 
 ## Install
 
-Version 0.1.1 is on the OrcaCloud plugin hub: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f. Subscribe there, then in OrcaSlicer open Plugins, refresh and enable the plugin. It has not been verified inside OrcaSlicer yet, so expect rough edges.
+The plugin is on the OrcaCloud plugin hub: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f (0.1.1 was the latest when last checked; 0.2.0 appears there once published). Subscribe there, then in OrcaSlicer open Plugins, refresh and enable the plugin. It has not been verified inside OrcaSlicer yet, so expect rough edges.
 
 To try a local build on macOS instead:
 
@@ -124,7 +160,7 @@ A sliced `.gcode.3mf` import is limited to 100 MB.
 
 ## Development
 
-The UI is Vue 3 with TypeScript and Vite. The host is Python 3.12 with no dependencies.
+The UI is Vue 3 and PrimeVue 4 (shared Orca theme in `ui/shared`) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
 
 ```bash
 pnpm -C ui install
@@ -141,7 +177,7 @@ scripts/dev-install.sh               # build and copy into OrcaSlicer (macOS)
 
 `scripts/gen_contract.py` runs the real Python host against a fake `orca` module and writes the messages it exchanges to `tests/contract/*.json`. The UI tests replay those files through the real bridge and store, so the two sides cannot drift apart; `--check` fails when the committed files are stale. `scripts/dev_host.py` runs the same host behind a JSON-lines pipe, for browser smoke tests without OrcaSlicer.
 
-Release changes are listed in [CHANGELOG.md](CHANGELOG.md).
+Release changes are listed in [CHANGELOG.md](CHANGELOG.md). How a release is published and verified: [docs/release.md](docs/release.md).
 
 ## License
 

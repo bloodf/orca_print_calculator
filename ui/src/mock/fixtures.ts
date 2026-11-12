@@ -17,9 +17,9 @@ const PETG = "Generic PETG (#12)";
 // The host never sends plate names or thumbnails (no Orca API for them yet): both stay null here too, as in
 // tests/contract/*.json, so the harness shows what Orca will show.
 export const plates = (): HostPlate[] => [
-  { index: 0, name: null, seconds: 8040, stale: false, thumb: null, slicedAt: AT(14, 32), source: "slice", fileName: null, slots: [slot(1, PLA, 88, "#E8E8E8", 24), slot(2, PETG, 41, "#2E6FBF", 30, "PETG")] },
-  { index: 1, name: null, seconds: 9300, stale: false, thumb: null, slicedAt: AT(14, 33), source: "slice", fileName: null, slots: [slot(1, PLA, 150, "#E8E8E8", 24)] },
-  { index: 2, name: null, seconds: 8700, stale: false, thumb: null, slicedAt: AT(14, 35), source: "slice", fileName: null, slots: [slot(1, PLA, 80, "#E8E8E8", 24), slot(2, PETG, 42, "#2E6FBF", 30, "PETG")] },
+  { index: 0, name: null, seconds: 8040, stale: false, thumb: null, slicedAt: AT(14, 32), source: "slice", fileName: null, consumption: "known", slots: [slot(1, PLA, 88, "#E8E8E8", 24), slot(2, PETG, 41, "#2E6FBF", 30, "PETG")] },
+  { index: 1, name: null, seconds: 9300, stale: false, thumb: null, slicedAt: AT(14, 33), source: "slice", fileName: null, consumption: "known", slots: [slot(1, PLA, 150, "#E8E8E8", 24)] },
+  { index: 2, name: null, seconds: 8700, stale: false, thumb: null, slicedAt: AT(14, 35), source: "slice", fileName: null, consumption: "known", slots: [slot(1, PLA, 80, "#E8E8E8", 24), slot(2, PETG, 42, "#2E6FBF", 30, "PETG")] },
 ];
 
 export const spooler = (): SpoolerInfo => ({ url: "http://192.168.1.10:7912", presetToFilament: { [PLA]: 3 } });

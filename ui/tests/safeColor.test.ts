@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { createApp, h } from "vue";
+import { h } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import FilamentChip from "../src/components/plates/FilamentChip.vue";
 import { safeColor } from "../src/format";
 import type { HostSlot, SlotMatchView } from "../src/state/types";

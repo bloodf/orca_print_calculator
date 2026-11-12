@@ -1,5 +1,8 @@
 <script setup lang="ts">
 // Settings › Spoolman: address, Test connection (spoolman_fetch), Spooler hint (docs/ux.md §5.3 Settings 1).
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Message from "primevue/message";
 import { computed, ref } from "vue";
 import { call, errorCode } from "../../bridge";
 import { t } from "../../i18n";
@@ -36,20 +39,21 @@ async function runTest(): Promise<void> {
     <div>
       <label for="settings-spoolman-url" class="sm muted lbl">{{ t("spoolman.url") }}</label>
       <div class="url-row">
-        <input
+        <InputText
           id="settings-spoolman-url" v-model="url" type="text" inputmode="url" autocomplete="off" spellcheck="false" :placeholder="EXAMPLE_URL"
-          :aria-invalid="error ? 'true' : undefined" :aria-describedby="error ? 'settings-spoolman-err' : 'settings-spoolman-hint'" @change="commit" @keydown.enter="commit"
+          :invalid="!!error" :aria-invalid="error ? 'true' : undefined" :aria-describedby="error ? 'settings-spoolman-err' : 'settings-spoolman-hint'" @change="commit" @keydown.enter="commit"
         />
-        <button type="button" class="btn" :aria-disabled="!canTest" :aria-busy="test.state === 'testing'" @click="runTest">
+        <Button severity="secondary" outlined type="button" :aria-disabled="!canTest" :aria-busy="test.state === 'testing'" @click="runTest">
           {{ test.state === "testing" ? t("spoolman.testing") : t("spoolman.test") }}
-        </button>
+        </Button>
       </div>
-      <p v-if="error" id="settings-spoolman-err" class="sm bad" role="alert">{{ error }}</p>
+      <Message v-if="error" id="settings-spoolman-err" class="bad" severity="error" size="small" variant="simple" role="alert">{{ error }}</Message>
       <p v-else id="settings-spoolman-hint" class="sm muted">{{ t("spoolman.saveHint") }}</p>
     </div>
-    <p v-if="test.state === 'ok' || test.state === 'bad'" class="sm result row" :class="test.state" :role="test.state === 'bad' ? 'alert' : 'status'">
-      <Icon :name="test.state === 'ok' ? 'check' : 'alert-circle'" /><span>{{ test.text }}</span>
-    </p>
+    <Message v-if="test.state === 'ok' || test.state === 'bad'" class="result" :class="test.state" :severity="test.state === 'ok' ? 'success' : 'error'" size="small" :role="test.state === 'bad' ? 'alert' : 'status'" :aria-live="test.state === 'bad' ? 'assertive' : 'polite'">
+      <template #icon><Icon :name="test.state === 'ok' ? 'check' : 'alert-circle'" /></template>
+      {{ test.text }}
+    </Message>
     <CopyValue v-if="saved" :value="saved" :label="t('spoolman.url')" />
   </div>
 </template>
@@ -58,9 +62,6 @@ async function runTest(): Promise<void> {
 .stack > * + * { margin-top: 8px; }
 .lbl { display: block; min-height: 24px; line-height: 24px; }
 .url-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-column-gap: 8px; align-items: center; }
-.url-row input { width: 100%; }
+.url-row :deep(.p-inputtext) { width: 100%; }
 .bad { color: var(--opc-bad); margin-top: 2px; }
-.result > * + * { margin-left: 6px; }
-.result.ok { color: var(--opc-accent-text); }
-.result.bad { color: var(--opc-bad); }
 </style>

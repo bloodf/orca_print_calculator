@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Labor (docs/ux.md §5.3): rate, hands-on minutes per run, setup minutes per order. All overridable defaults.
 import { computed } from "vue";
 import { intlLocale, t } from "../../i18n";
@@ -38,7 +39,7 @@ const summary = computed(() => {
         :default-value="setup.base.value" :helper="t('field.setupHelp')" @update:model-value="(v) => setup.set(v ?? 0)" @reset="setup.reset"
       />
     </div>
-    <div v-if="hasOverride(KEYS)" class="foot hairline"><button type="button" class="btn ghost" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</button></div>
+    <div v-if="hasOverride(KEYS)" class="foot hairline"><Button text type="button" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</Button></div>
   </Section>
 </template>
 

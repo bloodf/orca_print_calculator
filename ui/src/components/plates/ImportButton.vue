@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 import { onBeforeUnmount, ref, watch } from "vue";
 import { bytes } from "../../format";
 import { t } from "../../i18n";
@@ -25,20 +26,20 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 
 <template>
   <span class="import row">
-    <button type="button" class="btn" :aria-busy="busy() ? 'true' : undefined" :aria-disabled="busy() ? 'true' : undefined" @click="!busy() && input?.click()">
+    <Button severity="secondary" outlined type="button" :aria-busy="busy() ? 'true' : undefined" :aria-disabled="busy() ? 'true' : undefined" @click="!busy() && input?.click()">
       <Icon name="upload" />
       <span v-if="importState.phase === 'reading'">{{ t("plates.importing", { name: importState.name, size: bytes(importState.size, locale) }) }}</span>
       <span v-else-if="importState.phase === 'parsing'">{{ t("plates.importParsing", { name: importState.name }) }}</span>
       <span v-else>{{ t("plates.import") }}</span>
-    </button>
-    <button v-if="importState.phase === 'reading'" type="button" class="btn ghost" @click="cancelImport">{{ t("plates.importCancel") }}</button>
+    </Button>
+    <Button v-if="importState.phase === 'reading'" text type="button" @click="cancelImport">{{ t("plates.importCancel") }}</Button>
     <input ref="input" type="file" accept=".3mf" class="hidden" tabindex="-1" aria-hidden="true" @change="onPick" />
   </span>
 </template>
 
 <style scoped>
 .import { min-width: 0; display: inline-flex; }
-.import .btn:first-child { max-width: 320px; }
-.import .btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.import :deep(.p-button:first-child) { max-width: 320px; }
+.import :deep(.p-button span) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hidden { display: none; }
 </style>

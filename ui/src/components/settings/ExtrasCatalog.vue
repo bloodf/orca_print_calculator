@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Extras and stock › catalog: items the user adds to quotes often, with an optional count on hand (never deducted automatically).
 import { computed } from "vue";
 import { t } from "../../i18n";
@@ -41,12 +42,12 @@ function remove(key: string): void {
           <NumberField :model-value="x.qtyE3" :label="t('field.extraQty')" :scale="1000" :step="1000" :max="1000000" @update:model-value="(v) => v !== null && edit(x.key, { qtyE3: v })" />
           <SelectField :model-value="x.per" :label="t('field.extraPer')" :options="pers()" @update:model-value="(v) => edit(x.key, { per: v as CatalogExtra['per'] })" />
           <NumberField :model-value="x.stockE3 ?? null" :label="t('field.extraStock')" :scale="1000" :step="1000" :max="1000000000" nullable :helper="t('field.extraStockHelp')" @update:model-value="(v) => edit(x.key, { stockE3: v })" />
-          <button type="button" class="btn icon ec-rm" :aria-label="t('common.removeNamed', { name: x.label || t('extras.custom') })" @click="remove(x.key)"><Icon name="trash" /></button>
+          <Button text severity="secondary" type="button" class="ec-rm icon-btn" :aria-label="t('common.removeNamed', { name: x.label || t('extras.custom') })" @click="remove(x.key)"><Icon name="trash" /></Button>
         </div>
         <Badge v-if="x.stockE3 === 0" tone="warn" :text="t('stock.out')" class="ec-out" />
       </li>
     </ul>
-    <button type="button" class="btn ghost" @click="add"><Icon name="plus" /><span>{{ t("catalog.add") }}</span></button>
+    <Button text type="button" @click="add"><Icon name="plus" /><span>{{ t("catalog.add") }}</span></Button>
   </div>
 </template>
 

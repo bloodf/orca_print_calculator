@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Machine and energy (docs/ux.md §5.3). Printer-scoped fields save to the printer profile; the rest are overridable defaults.
 import { computed } from "vue";
 import { intlLocale, t } from "../../i18n";
@@ -12,6 +13,7 @@ import PercentField from "../base/PercentField.vue";
 import Section from "../base/Section.vue";
 import CheckField from "./CheckField.vue";
 import FrozenNote from "./FrozenNote.vue";
+import { unknownLines } from "../price/unknownLines";
 import SelectField from "./SelectField.vue";
 import { energyText, energyUnits, hasOverride, hasProblem, patchPrinter, perPiece, saveSectionDefaults, smallStep, useDefault, useOpen } from "./shared";
 
@@ -45,8 +47,13 @@ const summary = computed(() => {
   const mc = perPiece("depreciation", "maintenance", "fixed");
   const fl = perPiece("failure");
   if (en === null || mc === null || fl === null) return "—"; // nothing to price yet: a dash, like the unknown value elsewhere
-  if (en) parts.push(t("summary.machine.energy", { energy: m(en) }));
-  if (mc) parts.push(t("summary.machine.machine", { machine: m(mc) }));
+  // an unknown line is a dash with a reason, never silently left out (that would read as a cost of zero)
+  const unk = unknownLines(derived.value);
+  const part = ` (${t("price.partial")})`;
+  if (unk.energy) parts.push(t("summary.machine.energy", { energy: "—" }));
+  else if (en) parts.push(t("summary.machine.energy", { energy: m(en) }));
+  if (unk.depreciation || unk.maintenance || unk.fixed) parts.push(t("summary.machine.machine", { machine: mc ? m(mc) + part : "—" }));
+  else if (mc) parts.push(t("summary.machine.machine", { machine: m(mc) }));
   if (fl) parts.push(t("summary.machine.failure", { failure: m(fl) }));
   return parts.length ? parts.join(" · ") : t("section.notCounted");
 });
@@ -105,7 +112,7 @@ const wearText = (b: boolean) => t(b ? "common.on" : "common.off");
       />
     </div>
     <p v-if="!model" class="sm muted nomodel">{{ t("header.noPrinter") }}</p>
-    <div v-if="hasOverride(KEYS)" class="foot hairline"><button type="button" class="btn ghost" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</button></div>
+    <div v-if="hasOverride(KEYS)" class="foot hairline"><Button text type="button" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</Button></div>
   </Section>
 </template>
 

@@ -27,7 +27,7 @@ const file = (rel: string): unknown => {
   return JSON.parse(JSON.stringify(v));
 };
 const load = (name: string): Step[] => file(`${name}.json`) as Step[];
-const SCENARIOS = ["first_run", "saved_spooler", "slice_single", "slice_all", "slice_bambu", "spoolman", "import_sliced", "export_misc", "unreadable_quotes"] as const;
+const SCENARIOS = ["first_run", "saved_spooler", "slice_single", "slice_all", "slice_bambu", "slice_no_consumption", "spoolman", "import_sliced", "export_misc", "unreadable_quotes"] as const;
 const inputSettings = (): Settings => file("inputs/settings.json") as Settings;
 const inputQuotes = (): SavedQuote[] => file("inputs/quotes.json") as SavedQuote[];
 
@@ -52,10 +52,10 @@ const obj = (shape: Record<string, Check>): Check => (v, at, e) => {
 };
 const record = (c: Check): Check => (v, at, e) => { if (!isObj(v)) e.push(`${at}: object expected`); else for (const [k, x] of Object.entries(v)) c(x, `${at}.${k}`, e); };
 
-const HostInfo = obj({ projectName: nul(str), printerModel: nul(str), printerVendor: nul(str), pluginVersion: str });
+const HostInfo = obj({ projectName: nul(str), printerModel: nul(str), printerVendor: nul(str), pluginVersion: str, appLanguage: opt(nul(str)) });
 const HostSlot = obj({ n: num, preset: str, grams: nul(num), color: nul(hex), costPerKg: nul(num), notes: str, material: nul(str) });
 const HostPlate = obj({
-  index: num, name: nul(str), seconds: nul(num), stale: bool, thumb: nul(str), slicedAt: nul(iso),
+  index: num, name: nul(str), seconds: nul(num), stale: bool, thumb: nul(str), slicedAt: nul(iso), consumption: oneOf("known", "zero", "missing"),
   source: oneOf("slice", "file"), fileName: nul(str), slots: list(HostSlot),
 });
 const SpoolerInfo = nul(obj({ url: nul(str), presetToFilament: record(num) }));
@@ -173,7 +173,7 @@ describe("boot through get_state", () => {
     expect(S.store.settings.onboarded).toBe(false);
     expect(S.store.quotes).toEqual([]);
     expect(S.store.spooler).toBeNull();
-    expect(S.store.host).toEqual({ projectName: "Desk organizer", printerModel: "Snapmaker U1", printerVendor: "Snapmaker", pluginVersion: "0.0.0-dev" });
+    expect(S.store.host).toEqual({ projectName: "Desk organizer", printerModel: "Snapmaker U1", printerVendor: "Snapmaker", pluginVersion: "0.0.0-dev", appLanguage: null });
     expect(r.unanswered).toEqual([]); // no Spoolman URL yet: no fetch
   });
   test("saved settings + quotes + Spooler round-trip; Spoolman data loads", async () => {

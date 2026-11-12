@@ -1,11 +1,16 @@
 <script setup lang="ts">
 // App shell: skip link, header, view switch, host-error screen, price live region, toasts (docs/ux.md §2, §3, §7.8).
+import Button from "primevue/button";
+import { usePrimeVue } from "primevue/config";
+import Fieldset from "primevue/fieldset";
+import Message from "primevue/message";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import HelpGuide from "./components/HelpGuide.vue";
 import Icon from "./components/base/Icon.vue";
 import ToastHost from "./components/base/ToastHost.vue";
 import { t } from "./i18n";
+import { primeLocale } from "./orcaUi";
 import { priceAnnouncement } from "./state/announce";
 import { currency, derived, init, loadState, locale, setView, store } from "./state/store";
 import CalculatorView from "./views/CalculatorView.vue";
@@ -14,6 +19,11 @@ import SettingsView from "./views/SettingsView.vue";
 import StockView from "./views/StockView.vue";
 
 const DevBar = import.meta.env.DEV ? defineAsyncComponent(() => import("./mock/DevBar.vue")) : null;
+
+// PrimeVue's own strings (dialog close, empty table, ...) follow the plugin language, which Settings can change at runtime.
+const pv = usePrimeVue();
+const enLocale = { ...pv.config.locale } as NonNullable<typeof pv.config.locale>;
+watch(locale, (l) => { pv.config.locale = l === "pt-BR" ? ({ ...enLocale, ...primeLocale("pt-BR") } as typeof enLocale) : enLocale; }, { immediate: true });
 
 const live = ref("");
 const announcement = computed(() => priceAnnouncement(derived.value, { currency: currency.value, locale: locale.value, hasPlates: store.plates.length > 0 || !!store.draft.frozenPlates }));
@@ -41,16 +51,20 @@ onBeforeUnmount(() => { stop?.(); clearTimeout(settle); });
 </script>
 
 <template>
-  <button v-if="store.view === 'calc' && store.status !== 'error'" type="button" class="skip-link app-chrome" @click="skipToPrice">{{ t("nav.skipToPrice") }}</button>
+  <Button v-if="store.view === 'calc' && store.status !== 'error'" type="button" text size="small" class="skip-link app-chrome" @click="skipToPrice">{{ t("nav.skipToPrice") }}</Button>
   <AppHeader :view="store.view" @update:view="setView" />
-  <main v-if="store.status === 'error'" class="host-error" role="alert">
-    <span class="bad-icon"><Icon name="alert-circle" :size="20" /></span>
-    <h1 class="view-title" tabindex="-1" data-view-title>{{ t("host.errorTitle") }}</h1>
-    <p class="muted">{{ t("host.errorBody") }}</p>
-    <div class="row">
-      <button type="button" class="btn primary" @click="loadState()">{{ t("host.tryAgain") }}</button>
-      <span class="sm muted"><span>{{ t("host.details") }}:</span> <span class="details">{{ store.error }}</span></span>
-    </div>
+  <main v-if="store.status === 'error'" class="host-error">
+    <Message severity="error" :closable="false" role="alert">
+      <template #icon><Icon name="alert-circle" :size="20" /></template>
+      <div class="msg">
+        <h1 class="view-title" tabindex="-1" data-view-title>{{ t("host.errorTitle") }}</h1>
+        <p>{{ t("host.errorBody") }}</p>
+        <div class="row"><Button type="button" @click="loadState()">{{ t("host.tryAgain") }}</Button></div>
+      </div>
+    </Message>
+    <Fieldset :legend="t('host.details')" toggleable collapsed class="tech sm" data-tech-details>
+      <code class="details">{{ store.error }}</code>
+    </Fieldset>
   </main>
   <CalculatorView v-else-if="store.view === 'calc'" />
   <QuotesView v-else-if="store.view === 'quotes'" />
@@ -63,9 +77,9 @@ onBeforeUnmount(() => { stop?.(); clearTimeout(settle); });
 </template>
 
 <style scoped>
-.host-error { max-width: 480px; margin: 64px auto 0; padding: 0 16px; text-align: center; }
-.host-error > * + * { margin-top: 12px; }
-.host-error .row { justify-content: center; }
-.bad-icon { color: var(--opc-bad); display: inline-flex; }
-.details { user-select: text; }
+.host-error { max-width: 520px; margin: 64px auto 0; padding: 0 16px; }
+.host-error .msg > * + * { margin-top: 8px; }
+.host-error .msg h1 { margin: 0; }
+.tech { margin-top: 12px; }
+.tech code { display: block; overflow-wrap: anywhere; white-space: pre-wrap; user-select: text; }
 </style>

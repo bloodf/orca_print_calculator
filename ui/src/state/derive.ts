@@ -4,7 +4,8 @@ import { currencyDigits, kwhE4 } from "../engine/money";
 import { decimalString } from "../format";
 import { matchSlot, type SpoolmanFilament, type SpoolmanSpool } from "../engine/match";
 import { resolveWatts, type ResolvedWatts } from "../engine/printerMatch";
-import { computeQuote, type ChannelQuote, type QuoteChannel, type QuoteInput, type QuotePlate, type QuoteResult, type QuoteSlot } from "../engine/quote";
+import { CALC_VERSION, computeQuote, type ChannelQuote, type QuoteChannel, type QuoteInput, type QuotePlate, type QuoteResult, type QuoteSlot } from "../engine/quote";
+import { snapshotGaps } from "./completeness";
 import { presetFor } from "./markup";
 import type { Defaults, Draft, HostInfo, HostPlate, HostSlot, NotCounted, PlateSnapshot, Settings, SlotMatchView, SpoolerInfo } from "./types";
 
@@ -76,11 +77,14 @@ const toQuoteSlot = (v: SlotMatchView, digits: number): QuoteSlot => ({
 
 /** Frozen plates (saved quote): the snapshot already holds engine slots; make render views from them. */
 function frozenViews(p: PlateSnapshot, digits: number): SlotMatchView[] {
+  const gaps = snapshotGaps(p);
+  const unknown = (kind: "grams" | "price", n: number) => gaps.some((g) => g.kind === kind && "slot" in g && g.slot === n);
   return p.slots.map((s) => ({
     plateIndex: p.index,
-    slot: { n: s.n, preset: s.label, grams: s.gramsMg / 1000, color: s.color, costPerKg: null, notes: "", material: null },
+    // an unknown weight or price stays null (never 0 g / free) so reopening and duplicating cannot turn it into a number
+    slot: { n: s.n, preset: s.label, grams: unknown("grams", s.n) ? null : s.gramsMg / 1000, color: s.color, costPerKg: null, notes: "", material: null },
     key: s.key, source: s.source, filamentId: s.filamentId ?? null, spoolId: null,
-    pricePerKg: s.pricePerKgMinor / 10 ** digits,
+    pricePerKg: unknown("price", s.n) ? null : s.pricePerKgMinor / 10 ** digits,
     priceSource: s.source === "manual" ? "manual" : s.source === "preset" ? "preset" : s.source === "none" ? null : "filament",
   }));
 }
@@ -119,7 +123,7 @@ function costsOf(i: DeriveInput, d: Defaults, digits: number, watts: number): Qu
   };
 }
 
-function notCountedOf(i: DeriveInput, d: Defaults, plates: readonly HostPlate[], views: Record<number, SlotMatchView[]>, fi: QuoteInput | null): NotCounted[] {
+function notCountedOf(i: DeriveInput, d: Defaults, snapshots: readonly PlateSnapshot[], fi: QuoteInput | null): NotCounted[] {
   const out: NotCounted[] = [];
   // A saved quote cannot tell "not set" from an explicit 0, so it raises no energy or labor flag; its wear flag reads its own frozen printer.
   if (!fi && d.energyPerKwh === null) out.push({ kind: "energy" });
@@ -127,10 +131,12 @@ function notCountedOf(i: DeriveInput, d: Defaults, plates: readonly HostPlate[],
   const p = machineOf(i);
   const hasWear = fi ? !!fi.costs.machine.acquisitionCents && !!fi.costs.machine.lifetimeHours : !!p.acquisitionMinor && !!p.lifetimeHours;
   if (d.depreciationEnabled && !hasWear) out.push({ kind: "wear" });
-  for (const pl of plates) {
-    if (!(i.draft.plates[pl.index]?.include ?? true)) continue;
-    if (pl.seconds === null) out.push({ kind: "time", plate: pl.index + 1 });
-    for (const v of views[pl.index] ?? []) if (v.slot.grams === null) out.push({ kind: "grams", plate: pl.index + 1, slot: v.slot.n });
+  for (const sp of snapshots) {
+    if (!(i.draft.plates[sp.index]?.include ?? true)) continue;
+    for (const g of snapshotGaps(sp)) { // an unpriced slot is its own flag (slotsWithoutPrice)
+      if (g.kind === "grams") out.push({ kind: "grams", plate: g.plate, slot: g.slot });
+      else if (g.kind === "time" || g.kind === "consumption") out.push({ kind: g.kind, plate: g.plate });
+    }
   }
   return out;
 }
@@ -158,7 +164,10 @@ export function deriveQuote(i: DeriveInput): Derived {
       const slots = views.map((v) => toQuoteSlot(v, digits));
       const seconds = p.seconds ?? 0;
       qPlates.push({ index: p.index, name: p.name ?? undefined, seconds, include: ctl(p.index).include, copies: ctl(p.index).copies, slots });
-      snapshots.push({ index: p.index, name: p.name, seconds, slots: slots.map((s, k) => ({ ...s, color: p.slots[k]?.color ?? null, source: views[k]?.source ?? "none", filamentId: views[k]?.filamentId ?? null })) });
+      snapshots.push({
+        index: p.index, name: p.name, seconds, secondsKnown: p.seconds !== null, consumption: p.consumption ?? (p.slots.length ? "known" : "missing"),
+        slots: slots.map((s, k) => ({ ...s, color: p.slots[k]?.color ?? null, source: views[k]?.source ?? "none", filamentId: views[k]?.filamentId ?? null, gramsKnown: p.slots[k]?.grams != null, priceKnown: views[k]?.pricePerKg != null })),
+      });
     }
   }
 
@@ -171,6 +180,8 @@ export function deriveQuote(i: DeriveInput): Derived {
   const labor = setupRate(defaults);
 
   const quoteInput: QuoteInput = {
+    // A saved quote keeps the calculation version it was priced with (none = 1): only an explicit reprice moves it.
+    ...(fi ? (fi.calc === undefined ? {} : { calc: fi.calc }) : { calc: CALC_VERSION }),
     plates: qPlates, unitsPerSet: i.draft.unitsPerSet, quantity: i.draft.quantity,
     costs: fi ? { ...costsOf(i, defaults, digits, printer.watts), machine: fi.costs.machine } : costsOf(i, defaults, digits, printer.watts),
     setup: { ratePerHourMinor: labor, minutes: defaults.setupMinutes },
@@ -182,7 +193,7 @@ export function deriveQuote(i: DeriveInput): Derived {
   return {
     digits, defaults, selectedChannelId, slotMatches, snapshots, printer, quoteInput, result,
     selected: result.ok ? (result.channels.find((c) => c.id === selectedChannelId) ?? null) : null,
-    notCounted: notCountedOf(i, defaults, frozen ? [] : i.plates, slotMatches, fi), skippedChannels: skipped,
+    notCounted: notCountedOf(i, defaults, snapshots, fi), skippedChannels: skipped,
     fieldErrors: result.ok ? {} : Object.fromEntries(result.problems.map((p) => [p.path, p.code])),
   };
 }

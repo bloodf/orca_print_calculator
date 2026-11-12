@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Button from "primevue/button";
+import ProgressBar from "primevue/progressbar";
 import { computed, ref } from "vue";
 import { call, errorCode } from "../../bridge";
 import { count, date, duration, grams, quoteNo } from "../../format";
@@ -73,17 +75,18 @@ async function refresh(): Promise<void> {
     <template v-else>
       <div class="top">
         <div class="titles">
-          <h2 id="plates-title" class="view-title truncate">{{ title }}</h2>
+          <h2 id="plates-title" class="view-title truncate" tabindex="-1" data-view-title>{{ title }}</h2>
           <p class="num muted sm">{{ meta }}</p>
         </div>
         <div v-if="!frozen" class="row tools">
-          <button type="button" class="btn" :aria-busy="refreshing ? 'true' : undefined" @click="refresh"><Icon name="refresh" /><span>{{ t("plates.refresh") }}</span></button>
+          <Button severity="secondary" outlined type="button" :aria-busy="refreshing ? 'true' : undefined" @click="refresh"><Icon name="refresh" /><span>{{ t("plates.refresh") }}</span></Button>
           <ImportButton />
         </div>
       </div>
-      <div v-if="importState.phase !== 'idle'" class="bar" role="progressbar" :aria-label="importState.phase === 'reading' ? t('plates.importing', { name: importState.name, size: '' }) : t('plates.importParsing', { name: importState.name })" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="importState.phase === 'reading' ? progress : undefined">
-        <span class="fill" :class="{ indet: importState.phase === 'parsing' }" :style="importState.phase === 'reading' ? { width: `${progress}%` } : undefined" />
-      </div>
+      <ProgressBar
+        v-if="importState.phase !== 'idle'" class="bar" :mode="importState.phase === 'reading' ? 'determinate' : 'indeterminate'" :value="importState.phase === 'reading' ? progress : undefined" :show-value="false"
+        :aria-label="importState.phase === 'reading' ? t('plates.importing', { name: importState.name, size: '' }) : t('plates.importParsing', { name: importState.name })"
+      />
       <div v-if="anyStale" class="alerts"><InlineAlert tone="warn"><p>{{ t("plates.staleAlert") }}</p><p class="sm muted">{{ t("plates.staleBlind") }}</p></InlineAlert></div>
       <div v-if="plateOrigin === 'import' && !frozen" class="alerts"><InlineAlert tone="info" :actions="store.pendingPlates ? [{ label: t('plates.useNewSlice'), run: useNewSlice }] : []"><p>{{ store.pendingPlates ? t("plates.newSlice") : t("plates.fromFile", { file: fileName }) }}</p></InlineAlert></div>
       <div v-else-if="store.pendingPlates && !frozen" class="alerts"><InlineAlert tone="info" :actions="[{ label: t('plates.useNewSlice'), run: useNewSlice }]"><p>{{ t("plates.newSlice") }}</p></InlineAlert></div>
@@ -106,11 +109,9 @@ async function refresh(): Promise<void> {
 <style scoped>
 .top { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
 .top > * { margin-bottom: 8px; }
-.titles { min-width: 0; flex: 1; }
-.tools { flex: none; }
-.bar { height: 2px; background: var(--opc-track); margin-bottom: 8px; }
-.fill { display: block; height: 100%; background: var(--opc-accent); transition: width var(--opc-dur-fast) linear; }
-.fill.indet { width: 100%; opacity: 0.5; }
+.titles { min-width: 0; flex: 1 1 12rem; }
+.tools { flex: none; flex-wrap: wrap; max-width: 100%; }
+.plates :deep(.bar) { height: 6px; margin-bottom: 8px; }
 .alerts { margin-bottom: 8px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: 8px; }
 .units { margin-top: 12px; flex-wrap: wrap; }
