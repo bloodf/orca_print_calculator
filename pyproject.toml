@@ -1,6 +1,6 @@
 [project]
 name = "orca-print-calculator"
-version = "0.2.0"
+version = "0.2.1"
 description = "Prices every build plate of the open OrcaSlicer project: filament, energy, labor, fees and a suggested selling price."
 authors = [{ name = "bloodf" }]
 license = "MIT"

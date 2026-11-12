@@ -18,12 +18,12 @@
     "@primeuix/themes": "1.2.5"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.10",
+    "@vitejs/plugin-vue": "^6.0.11",
     "@vitest/coverage-v8": "^5.1.0",
     "jsdom": "^31.0.0",
     "oxlint": "^1.93.0",
     "typescript": "6.0.3",
-    "vite": "^8.3.7",
+    "vite": "^8.3.8",
     "vite-plugin-singlefile": "^2.3.4",
     "vitest": "^5.1.0",
     "vue-tsc": "^3.3.14"
