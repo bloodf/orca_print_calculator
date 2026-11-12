@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-12
+
+### Changed
+- Build tools only: shared Orca UI foundation 2.0.3 (Vite 8.3.8, @vitejs/plugin-vue 6.0.11). No change to pricing, quotes or the interface.
+
 ## [0.2.0] - 2026-11-12
 
 Not yet run inside OrcaSlicer (see `docs/live-run.md`); everything below was checked with the mock host, fixtures and a fake `orca` module. Pricing results of a saved quote do not change unless you choose "Reprice with the current calculation".
