@@ -9,7 +9,7 @@ import AppHeader from "../src/components/AppHeader.vue";
 import PrinterChip from "../src/components/PrinterChip.vue";
 import SpoolmanStatus from "../src/components/SpoolmanStatus.vue";
 import { t } from "../src/i18n";
-import { store } from "../src/state/store";
+import { setLanguage, store } from "../src/state/store";
 import { click, field, mount, seed, type, unmount } from "./costsHarness";
 
 beforeEach(() => { vi.useFakeTimers(); call.mockReset(); });
@@ -92,18 +92,31 @@ describe("SpoolmanStatus", () => {
 });
 
 describe("AppHeader", () => {
-  test("shows project name, printer chip, currency and a working language select", async () => {
+  test("shows project name, printer chip and currency; the language select lives in Settings, not here", async () => {
     seed();
     const r = mount(AppHeader, { view: "calc" });
     expect(r.textContent).toContain("Desk organizer");
     expect(r.textContent).toContain("Snapmaker U1");
     expect(r.querySelector(".cur")!.textContent).toBe("BRL");
-    const sel = r.querySelector<HTMLSelectElement>("select.lang")!;
-    sel.value = "pt-BR";
-    sel.dispatchEvent(new Event("change", { bubbles: true }));
+    expect(r.querySelector("select")).toBeNull();
+    setLanguage("pt-BR"); // the Settings select calls this
     await nextTick();
     expect(store.settings.language).toBe("pt-BR");
-    expect(r.querySelector("[role=radiogroup] button")!.getAttribute("aria-label")).toBe("Calculadora");
+    expect(r.querySelector("[role=tablist] [role=tab]")!.getAttribute("aria-label")).toBe("Calculadora");
+  });
+  test("the tab group never shrinks and only the current tab keeps its name when narrow", () => {
+    seed();
+    const r = mount(AppHeader, { view: "quotes" });
+    expect(r.querySelector("[role=tablist]")).not.toBeNull();
+    const labels = [...r.querySelectorAll<HTMLElement>("[role=tab]")].map((b) => ({ on: b.getAttribute("aria-selected") === "true", hides: b.querySelector(".tab-label")!.classList.contains("hide-narrow") }));
+    expect(labels).toEqual([{ on: false, hides: true }, { on: true, hides: false }, { on: false, hides: true }, { on: false, hides: true }]);
+  });
+  test("the Spoolman chip keeps its full text as the accessible name and tooltip even when the label is cut", () => {
+    seed();
+    const r = mount(SpoolmanStatus, { state: "unset" });
+    const b = r.querySelector("button")!;
+    expect(b.getAttribute("title")).toBe(t("spoolman.unset"));
+    expect(b.getAttribute("aria-label")).toBe(t("spoolman.unset"));
   });
   test("untitled project fallback and currency chip source title", () => {
     seed({ host: { ...BAMBU_HOST, projectName: null } });
@@ -117,7 +130,7 @@ describe("AppHeader tabs", () => {
   test("tabs collapse to icons below the wide breakpoint but keep the full label as title and aria-label", () => {
     seed();
     const r = mount(AppHeader, { view: "calc" });
-    const btns = [...r.querySelectorAll<HTMLElement>(".seg-opt")];
+    const btns = [...r.querySelectorAll<HTMLElement>("[role=tab]")];
     expect(btns).toHaveLength(4);
     for (const b of btns) {
       expect(b.getAttribute("title")).toBeTruthy();

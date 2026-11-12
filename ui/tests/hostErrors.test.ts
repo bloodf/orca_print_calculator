@@ -1,5 +1,6 @@
 // Host error copy (B) and real-data chip labels (C). Written red-first.
-import { createApp, h } from "vue";
+import { h } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn() }));

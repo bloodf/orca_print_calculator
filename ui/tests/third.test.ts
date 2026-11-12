@@ -1,6 +1,7 @@
 // T5.3 third pass: frozen quote sections, prototype-safe settings, deep quote validation, unreadable files.
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick, type App } from "vue";
+import { h, nextTick, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn(async () => ({})) }));
 import { call } from "../src/bridge";
@@ -79,7 +80,7 @@ describe("M1: a saved quote's printer and channel are shown from the quote, read
     const fee = field(machine, "Fee");
     expect(fee.value.replace(/[^\d]/g, "")).toBe(String(ch.tiers[0]!.pctBp / 100).replace(/[^\d]/g, ""));
     const before = JSON.stringify(S.store.settings.channels);
-    for (const l of ["Fee", "Fixed fee per sale", "Tax"]) {
+    for (const l of ["Fee", "Fixed fee per piece", "Tax"]) {
       const i = field(machine, l);
       expect(i.readOnly, l).toBe(true);
       await typeInto(i, "9");

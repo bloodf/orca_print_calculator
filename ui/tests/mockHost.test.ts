@@ -15,7 +15,7 @@ const run = async <T>(p: Promise<T>, ms = 1000): Promise<T> => { const out = p.t
 
 describe("mock host: every ?state= is defined", () => {
   test("names", () => {
-    expect([...SCENARIO_NAMES]).toEqual(["ok", "loading", "hostError", "empty", "stale", "noSpoolman", "offline", "unmatched", "impossible", "savedQuote", "firstRun", "narrow", "unknown", "imported"]);
+    expect([...SCENARIO_NAMES]).toEqual(["ok", "loading", "hostError", "empty", "stale", "noSpoolman", "offline", "unmatched", "impossible", "savedQuote", "firstRun", "narrow", "unknown", "imported", "legacyQuote"]);
     expect(isScenario("unknown")).toBe(true);
     expect(isScenario("nope")).toBe(false);
   });

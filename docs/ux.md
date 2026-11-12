@@ -133,9 +133,9 @@ Trigger: `settings.onboarded !== true` (no `settings.json`, or new install).
 2. Currency before Spoolman connects: `settings.currency ?? (navigator.language starts with "pt" ? "BRL" : "USD")`.
    The header currency chip shows it with source "Set in settings"; once Spoolman responds, Spoolman's currency
    wins and the chip source reads "From Spoolman".
-3. Language: `auto` → `pt-BR` if `navigator.language` starts with `pt`, else `en`.
+3. Language: an explicit saved choice wins. In `auto`, use the optional `host.appLanguage` from `orca.host.app_language()`; when unavailable, use `navigator.language`. Values starting with `pt` (including `pt_BR` and `pt-BR`) select `pt-BR`; other values select `en`. Host language affects display, not currency selection.
 4. Sales: settings hold one channel, "Direct", with zero fees. The **Sales fee** section starts open on first run
-   (Fee %, Fixed fee per sale, Tax %) so the user sets what their platform or payment provider keeps. No channel
+   (Fee %, Fixed fee per piece, Tax %) so the user sets what their platform or payment provider keeps. No channel
    select, no comparison until they add a second channel in Settings.
 5. No printer profile yet: watts come from `resolveWatts` (estimated badge). Printer price and lifetime are
    empty → depreciation not counted → listed under "not counted: printer wear" until set or depreciation is
@@ -207,6 +207,36 @@ white-space: nowrap`). Numbers in tables are right-aligned; their headers too. U
 ---
 
 ## 4. Design tokens (`ui/src/theme.css`)
+
+### 4.0 Vue + PrimeVue (2026-11-11): what supersedes the rest of this section
+
+The UI is Vue 3.5.45 + PrimeVue 4.5.5 + @primeuix/themes 1.2.5 (MIT) with the family's shared Aura preset and palette,
+vendored unchanged in `ui/shared/` (`manifest.json`, hashes checked by `node ui/shared/scripts/check.mjs` and by `scripts/build.py`).
+Documentation for PrimeVue is v4.primevue.org / the 4.5.5 tag, never v5. Where §4.1-4.9 below contradict this block, this block wins.
+
+- **Colour** comes only from the shared palette (`--oui-*`, set on `<html>` by `applyOrcaTheme`). `theme.css` keeps `--opc-*` as
+  aliases of it so layout CSS keeps its names; the host `--orca-*` colours are no longer read. The host still decides light or dark:
+  `src/orcaUi.ts` mirrors `<html data-orca-theme>` onto the palette (and `.orca-dark`) and follows changes. `tests/themeContrast.test.ts`
+  computes the contrast pairs from `ui/shared/src/palette.json` through those aliases.
+- **Type and space**: system sans 14 px body, 12 px secondary, 16 px section titles, 20 px view title, 28 px price; 4/8/12/16/24/32 spacing;
+  6 px controls, 12 px panels. The 40 px hero price became 28 px (shared scale).
+- **Controls are PrimeVue**: Button (primary / secondary-outlined / text / icon), InputText, Textarea, Checkbox, RadioButton, Select
+  (channel, per, rounding, failure mode, language), ColorPicker (+ hex field), Tabs (header views, Settings groups), Dialog (help guide),
+  Popover (printer power, Spoolman offline, spool picker), Menu (+ Extra catalog, quote row actions), Listbox (spool picker),
+  Message (alerts, errors, toasts, results), Fieldset (host error details), ProgressBar (import), IconField (search).
+  Wrappers exist only where behaviour is shared: `NumberField` (the engine's locale-aware parse/reject rules; PrimeVue's InputNumber
+  cannot express them, so InputText + InputGroup), `Stepper`, `Segmented` (radio group with arrow keys; SelectButton has no radio
+  semantics), `Section` (disclosure), `Popover` (anchor/open API over PrimeVue's), `Art` (bundled SVG as VNodes, no `v-html`).
+- **Read-only grids** (batch, channel comparison, saved quotes, stock) are semantic `<table class="opc-table">` styled with the tokens;
+  the printable quote sheet is its own paper document. DataTable was measured at about 240 kB minified of the bundle and none of its
+  features (sort, paging, selection) are used.
+- **Focus**: dialogs and overlays hand focus back to the opener, or to the current view title if the opener is gone
+  (`components/base/dialogFocus.ts`). Header tabs use manual activation (arrows move focus, Enter/Space switches); Settings tabs select
+  on focus. Settings groups wrap instead of scrolling at narrow widths or zoom.
+- **Language**: PrimeVue's own strings (dialog close, labels) follow the plugin language, switched at runtime from `App.vue`.
+- **Bundle**: 387,010 B before, 877 kB after (gzip 119.7 kB → 226.7 kB); CI limit 900,000 B. Breakdown and reasons are in the migration report.
+- **Not changed**: engine, store, bridge protocol, Python host, profiles, accounting, Undo draft, completeness rules.
+
 
 ### 4.1 Strategy and `color-mix` fallback
 
@@ -326,6 +356,14 @@ the price use `--opc-bad` (money loss) or `--opc-muted` with an info icon (neutr
 `:focus { outline: none; box-shadow: var(--opc-focus); }` and `:focus:not(:focus-visible) { box-shadow: none; }`
 (Safari 14 ignores the second rule, so mouse focus also shows the ring there; acceptable). Inputs keep their
 border and add the ring. Never remove focus without replacement.
+
+Forced colors (Windows high contrast) drop box-shadow and fills, so `@media (forced-colors: active)` gives `:focus-visible` a
+2 px `CanvasText` outline, the current tab `Highlight`/`HighlightText`, and the breakdown bars a system-colour fill.
+
+The primary action (button, current tab) uses our own pair, `--opc-on-primary` on `--opc-primary-bg` (#00675B, 6.79:1), in
+both themes; the host accent only fills and borders. White on the host's #009688 would be 3.67:1. `tests/themeContrast.test.ts`
+computes the ratios of the colours this plugin fixes itself. The host's own `--orca-*` values were not measured, so nothing here
+claims their contrast, nor WCAG conformance as a whole. Checkboxes take `accent-color: var(--opc-primary-bg)`.
 
 ### 4.5 Base component classes (in `theme.css`, used instead of wrapper components)
 
@@ -485,7 +523,7 @@ labor rate. Channels: compared ∪ selected defs through `toChannelInput`; inval
 | `Segmented` | `options: {value, label, icon?}[]; modelValue; label: string` | `update:modelValue` | `role="radiogroup"`, arrow keys move; selected = `--opc-primary-bg` fill + accent-fg text (Spooler `.tabs .on`) |
 | `Badge` | `tone: "neutral" \| "ok" \| "warn" \| "bad" \| "info"; text` | — | 18px pill, `--opc-fs-xs` 500; neutral = border + muted; warn = warn text on warn-bg; bad = bad text on bad-bg; ok = accent-text on selected |
 | `InlineAlert` | `tone: "info" \| "warn" \| "bad"; title?: string; actions?: {label, run}[]` + default slot | — | left 3px border in tone colour, bg raised (info) / warn-bg / bad-bg; icon info / alert-triangle / alert-circle; `role="status"` (info, warn) or `role="alert"` (bad) |
-| `ToastHost` + `state/toast.ts` | `toast({text, tone?, action?: {label, run}, ms?})` | — | bottom-right 16px, width 360 max, stack ≤ 3, newest bottom; 5 s default, 8 s with an action, errors stay until closed; `role="status"` / `role="alert"`; close button `x` |
+| `ToastHost` + `state/toast.ts` | `toast({text, tone?, action?: {label, run}, ms?})` | — | bottom-right 16px, width 360 max, stack ≤ 3, newest bottom; 5 s default, 8 s with an action; timers pause on hover/focus and restart after leaving, dismissal restores focus; errors stay until closed; `role="status"` / `role="alert"`; close button `x` |
 | `EmptyState` | `art: "plate" \| "spool" \| "quote"; title; body?` + actions slot | — | SVG from `assets/empty-*.svg` inlined at 240×160, `color: var(--opc-muted)`; title lg 500; body sm muted; max-width 360 centered |
 | `Popover` | `open: boolean; anchor: HTMLElement; label: string` + slot | `close` | `position: fixed` computed from anchor rect (never clipped by scroll containers); Esc and outside click close; focus moves to first field on open and returns to anchor on close; `role="dialog" aria-label` |
 | `ResetButton` | `label: string; defaultText: string` | `click` | `.btn.icon` with `reset` glyph, `aria-label` = t("a11y.resetTo", {label, value}) |
@@ -496,9 +534,9 @@ labor rate. Channels: compared ∪ selected defs through `toChannelInput`; inval
 
 Layout, 44px, flex, gap 12, padding 0 12 (16 at W/X): `[mark 20px] [Segmented tabs: Calculator | Quotes |
 Settings] [project name, flex 1, truncate, muted; hidden at M and N] [PrinterChip] [SpoolmanStatus] [Currency
-chip] [Language select]`.
+chip] [Help]`. (UX fixes: the language select left the header; it is only in Settings > Language and currency, which the currency chip opens.)
 
-- **Tabs**: `Segmented` with icons `calc`, `list`, `sliders`; at N labels hide (icon only, `aria-label` kept).
+- **Tabs**: `Segmented` with icons `calc`, `list`, `box`, `sliders`; the group never shrinks (`min-width: max-content`), so the chips truncate instead of clipping "Settings". Below 1000 px (or Orca zoom 200%) only the current tab keeps its label; the others are icon only with `aria-label` and `title`. Below 600 px the logo mark and project name give their room to the Help button.
 - **PrinterChip** props: `model: string | null; watts: number; source: "saved" | "match"; estimated: boolean`.
   Render `[printer-3d] {model} · {watts} W` + Badge info "Estimated" when `source === "match" && estimated`.
   Model truncates at 18ch (M: 12ch; N: icon + watts only). No model: muted "No printer".
@@ -513,8 +551,7 @@ chip] [Language select]`.
   with error text + "Retry" + "Settings"; ok → triggers Refresh (re-fetch) with toast "Spoolman refreshed".
   At M/N the text collapses to the dot plus `aria-label`.
 - **Currency chip**: `.btn` showing ISO code ("BRL"); `title` = source; click → Settings#settings-language.
-- **Language select**: native `<select>` 28px: "Auto", "English", "Português (Brasil)". Switches without
-  reload (i18n reactive).
+- **Language**: no longer in the header (UX review C01); native select in Settings, switches without reload (i18n reactive).
 
 #### PlateList + PlateCard + FilamentChip + MaterialRow + SpoolPicker + ImportButton (T4.3)
 
@@ -627,7 +664,7 @@ show; a footer text button "Save as defaults" appears only when the section has 
   Amount (hidden for Not included). Helper per mode: customer → "Added to the order total, outside your margin.";
   absorbed → "Part of your cost, spread over the quantity." Summary per mode §2.3.
 - **Sales fee** (`SalesSection.vue`): the selected channel's own fees, editable in place — **Fee** (% of the
-  sale price → `tiers[0].pctBp`), **Fixed fee per sale** (money → `tiers[0].fixedMinor`), **Tax** (% → `taxBp`).
+  sale price → `tiers[0].pctBp`), **Fixed fee per piece** (money → `tiers[0].fixedMinor`), **Tax** (% → `taxBp`).
   These are channel-scoped like printer fields (helper "Saved for {channel}", no override dot): editing them
   edits that channel in Settings. When the channel has more than one price tier, the three fields are replaced
   by a read-only line `channel.steps` + "Edit in settings". Below a hairline: **Price rounding** (select; options
@@ -761,7 +798,7 @@ List rows (40px): Compare checkbox (`aria-label` "Compare {name}"; shown only wi
 inline (one at a time):
 
 - Name (text, required, max 40).
-- Fee (% → `tiers[0].pctBp`), Fixed fee per sale (money → `tiers[0].fixedMinor`), Tax (% → `taxBp`).
+- Fee (% → `tiers[0].pctBp`), Fixed fee per piece (money → `tiers[0].fixedMinor`), Tax (% → `taxBp`).
 - `+ Price tiers` ghost button (optional field rule; auto-expanded when the channel already has > 1 tier):
   helper "Use when the fee changes with the sale price." Table: From price (money; first row fixed at 0,
   read-only, mirrors the fields above), Fee (%), Fixed fee, remove; `+ Price tier` (≤ `MAX_TIERS`).
@@ -918,6 +955,45 @@ with not-counted flags for what's missing.
 | plate `seconds === null` (included) | `flag.notCounted` with `notCounted.time` | — (slice again) |
 | slot `grams === null` (included plate) | `flag.notCounted` with `notCounted.grams` | — (slice again) |
 
+#### 6.12b Incomplete price (C03, C04, C05, C06)
+
+When something is not counted (`missingCount` = not-counted items + unpriced slots) the number is marked **where it is**: the hero
+price is neutral with a dashed underline instead of the one amber (also on the narrow price bar, with "incomplete"); the line under
+it says "Incomplete: N items missing" with **See what's missing**, which moves focus to the gap list (it names unknown time/weight/
+usage and unpriced filament, with "Choose spool" for the latter), else to the not-counted note; Profit and Margin say "· partial".
+Unknown time/weight/usage is listed once, in the gap list, not again in the flags. The numbers themselves never change.
+
+"Where the price goes" never drops a line because its data is unknown: energy, printer wear, maintenance and fixed costs show a dash
+with the reason ("time unknown", "not set"), filament with unknown weights says "partial", and the cost total says "partial". The
+Machine and energy summary shows "Energy —" / "Machine —" the same way.
+
+With a configured Spoolman that is offline and profile or manual prices in use, a line under the price says so
+("Spoolman is offline: filament priced from Orca profiles or manual prices"); the narrow bar says "profile prices". Extras and stock
+says the same state with Retry and Settings instead of the first-time "Set up Spoolman".
+
+Quantities: the order controls say **Pieces ordered**; each plate's stepper is labelled **Copies per run**; under the quantity, when
+it is more than one piece, more than one piece per run, or a plate has extra copies, a line gives the engine's own composition:
+`10 pieces ordered = 4 runs × 3 pieces per run` (runs = ceil(ordered / pieces per run); the spare pieces are the rounding up) and,
+only with extra copies, "Each run prints N plates (copies counted)" (the sum of included plates' copies). Copies never fold into
+pieces.
+
+#### 6.12a Not ready to send (GapList, replaces the single blocked sentence)
+
+When the export block is "unknown" or "incomplete", the actions column lists every gap of the included plates, one per line, instead of one generic sentence: `gap.lead` (count), then `gap.time`, `gap.grams`, `gap.consumption`, `gap.price` with the plate and slot. Print and CSV stay hidden while the list shows. Excluded plates add nothing.
+
+Quotes saved before the completeness flags are read from their own provenance (`state/completeness.ts`), never guessed:
+
+| Saved value | Read as | Why |
+|---|---|---|
+| filament price 0 | unknown | no source (spool, filament, preset, manual) ever produced 0, only "no price" |
+| slot weight 0 (with or without a positive sibling slot) | gap, may be confirmed one slot at a time | the host never proved that a sibling's weight means this slot's 0 was reported (`core._slots` drops all-zero slots; a missing `used_g` reads as null), so nothing in the record says whether 0 was reported |
+| plate with no slots | gap (`gap.consumptionLegacy`), may be confirmed | cannot be told from a file that reports no use |
+| plate time 0 | gap, never confirmable | a sliced plate takes time; fix by using the current slice |
+
+"Confirm 0" (`gap.confirm`, aria-label names the slot or plate) stamps that one gap as an explicit zero on the open quote. It is an edit: the quote shows "Save changes", the stored record is untouched until saved, no number changes, and other gaps stay. It is offered only for legacy gaps (flag absent); a value the host reported as unknown is fixed by slicing again. The list also offers "Use current slice" when a saved quote is open. After a confirm, focus moves to the next Confirm button, else to Save.
+
+Order total: past one piece, or with shipping charged, the order total under the unit price is a result line (not a muted footnote); the narrow price bar shows it too ("R$ X for N").
+
 Several not-counted items join into one flag: "Not counted yet: energy, labor." Engine flags (`ChannelOk.flags`, committed `quotePricing.ts`), in display order:
 
 | Flag | Tone | Key | Params |
@@ -1014,6 +1090,15 @@ Every delete is immediate with an Undo toast (8 s): quote, channel, printer prof
 discount tier, reset to defaults, reset all settings. No confirmation dialogs anywhere,
 except "Reset all settings" uses the two-click inline confirm plus undo. Undo restores the exact object at its
 previous index and re-persists.
+
+**Replacing the working quote** (Close quote, opening another quote, "Use current slice", the host switching project) is never
+silent when it holds unsaved work: an open saved quote edited since it was saved, or a quote never saved that holds anything the
+user entered (title, customer, note, quantity, controls, overrides, extras, tiers). Then a toast (15 s) says the changes were
+not saved and offers **Undo** (`state/draftUndo.ts`, `state/dirty.ts`). Undo restores the whole previous draft: customer, note,
+edited values, confirmed zeros and the quote id, so saving afterwards updates the same record. It applies only while the draft is
+still exactly what the change produced; any newer edit wins, nothing is overwritten and the toast says so. "Use current slice" also
+restores the plates it swapped out (only if the host has sent none since); a project switch restores the draft fields only, since
+the old project's plates are gone. A clean quote, or an untouched blank one, replaces without any toast.
 
 ### 7.6 Field table
 
@@ -1250,7 +1335,7 @@ via `Intl.PluralRules` with `_one` / `_other` suffixed keys. `i18n.ts` exports `
 | summary.noFees | No fees | Sem taxas |
 | field.fee | Fee | Taxa |
 | field.feeHelp | Percent of the sale price the platform or payment provider keeps. | Percentual do preço que a plataforma ou o meio de pagamento retém. |
-| field.fixedFee | Fixed fee per sale | Taxa fixa por venda |
+| field.fixedFee | Fixed fee per piece | Taxa fixa por peça |
 | field.taxHelp | Percent of the sale price paid as tax. | Percentual do preço pago como imposto. |
 | field.savedForChannel | Saved for {channel} | Salvo para {channel} |
 | field.watts | Average power | Potência média |
@@ -1273,7 +1358,7 @@ via `Intl.PluralRules` with `_one` / `_other` suffixed keys. `i18n.ts` exports `
 | field.laborMinutesHelp | Removing, cleaning and packing one run of plates. | Retirar, limpar e embalar uma rodada de placas. |
 | field.setupMinutes | Setup time per order | Preparação por pedido |
 | field.setupHelp | Charged once per order, spread over the quantity. | Cobrado uma vez por pedido e dividido pela quantidade. |
-| field.margin | Target margin | Margem desejada |
+| field.margin | Markup | Markup |
 | field.pretty | Price rounding | Arredondamento |
 | pretty.none | No rounding | Sem arredondamento |
 | pretty.whole | Round up to a whole amount | Arredondar para valor inteiro |
@@ -1779,7 +1864,7 @@ pt-BR, keyboard only for one full pass.
 - [ ] No banned features from §7.10 in source (grep `:has(`, `@container`, `structuredClone`, `.at(`, `dvh`, `<dialog`, `inert`, `aspect-ratio`, `accent-color`).
 - [ ] No `data-stub`, no `TODO`, no imports of `engine/cost.ts`.
 - [ ] No marketplace names, presets, rate sources or "as of" dates anywhere in the UI or bundle (grep `Mercado`, `Shopee`, `Etsy`, `unverified`). Fresh settings = one "Direct" channel; channel select and comparison absent until a 2nd channel exists; comparison collapsed by default.
-- [ ] First run: Sales fee section open with Fee %, Fixed fee per sale, Tax %; edits there change the channel in Settings.
+- [ ] First run: Sales fee section open with Fee %, Fixed fee per piece, Tax %; edits there change the channel in Settings.
 - [ ] `?state=ok` with unitsPerSet 4 and quantity 10 shows "2 spare pieces" under Quantity.
 - [ ] Batch table shows effective discount, nominal tier as a second line when different; loss rows in bad colour; discount below break-even is allowed and flagged.
 - [ ] Minimum order fixture shows `flag.minimum` and a per-piece price raised through fees; no adjustment line on the sheet.
@@ -1789,7 +1874,7 @@ pt-BR, keyboard only for one full pass.
 - [ ] Unknown host values (`seconds`/`grams` null fixture, Bambu fixture) render "—" and a not-counted flag, never `0`.
 - [ ] Import: non-.3mf, > 100 MB, plain project .3mf (no slice data) each give their own message; progress bar moves while reading; cancel works; current plates survive a failed import.
 - [ ] Stale wording says "may be"; every plate card shows "sliced {time}"; first-run checklist shows the permission line.
-- [ ] Bundle (single file) ≤ 250 KB.
+- [ ] Bundle (single file) ≤ 900,000 B (was 400,000 B before the Vue + PrimeVue migration; see §4.0).
 - [ ] `impeccable detect --json ui/src` triaged.
 
 ---

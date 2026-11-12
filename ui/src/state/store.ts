@@ -6,6 +6,7 @@ import { failText } from "../hostError";
 import { hostLocale, intlLocale, setLocale, t, type Lang } from "../i18n";
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft, resetNames, shiftPlateControls } from "./defaults";
 import { deriveQuote, failedDerive, safeDigits } from "./derive";
+import { changeDraft } from "./draftUndo";
 import { toast } from "./toast";
 import { parseQuotes } from "./validate";
 import type { Draft, HostInfo, HostPlate, HostState, OverridableKey, Defaults, SavedQuote, Settings, SpoolerInfo, SpoolmanData, SpoolmanState, View } from "./types";
@@ -88,7 +89,7 @@ export async function flushSettings(quiet = false): Promise<void> {
 export function patchSettings(patch: Partial<Settings> | ((s: Settings) => Partial<Settings>)): void {
   store.settings = { ...store.settings, ...(typeof patch === "function" ? patch(store.settings) : patch) };
   pinCurrency();
-  setLocale(store.settings.language);
+  setLocale(store.settings.language, store.host.appLanguage);
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => void flushSettings(), SAVE_DELAY);
 }
@@ -153,24 +154,34 @@ function onPlates(data: unknown): void {
 }
 function onHost(data: unknown): void {
   const d = (data ?? {}) as HostEvent;
-  if (d.host) store.host = d.host;
-  if (d.kind === "ProjectOpened" || d.kind === "NewProject" || d.kind === "ProjectClosed") { store.plates = []; resetDraft(); }
+  if (d.host) {
+    store.host = d.host;
+    setLocale(store.settings.language, store.host.appLanguage);
+  }
+  // a project switch replaces the working quote: unsaved fields are kept for Undo (the old project's plates are gone for good)
+  if (d.kind === "ProjectOpened" || d.kind === "NewProject" || d.kind === "ProjectClosed") changeDraft(() => { store.plates = []; resetDraft(); }, "draft.undoProject", { withPlates: false });
 }
 
 // ---- spoolman ----
 let retryTimer: ReturnType<typeof setInterval> | undefined;
 let fetchSeq = 0; // a reply counts only if no newer fetch started meanwhile (the user may have changed the address)
+let dataUrl: string | null = null; // the address the filaments, spools and currency in the store came from
+const NO_SPOOLMAN_DATA: SpoolmanData = { currency: null, filaments: [], spools: [] };
 export async function fetchSpoolman(silent = false): Promise<void> {
   const url = store.settings.spoolman.url.trim();
   const mine = ++fetchSeq;
   clearInterval(retryTimer);
   retryTimer = undefined;
-  if (!url) { store.spoolman = { ...store.spoolman, state: "unset", error: null }; return; }
+  // Prices and currency belong to the connection they came from: no address, or another one, means they are gone.
+  // (A temporary failure of the same address keeps them as last known; that is the offline branch below.)
+  if (dataUrl !== null && dataUrl !== url) { store.spoolman = { ...store.spoolman, data: NO_SPOOLMAN_DATA }; dataUrl = null; }
+  if (!url) { store.spoolman = { state: "unset", data: NO_SPOOLMAN_DATA, error: null }; return; }
   store.spoolman = { ...store.spoolman, state: "connecting" };
   try {
     const data = await call("spoolman_fetch", { url });
     if (mine !== fetchSeq) return;
     store.spoolman = { state: "ok", data, error: null };
+    dataUrl = url;
     if (!silent) toast({ text: t("spoolman.refreshed") });
   } catch (e) {
     if (mine !== fetchSeq) return;
@@ -183,6 +194,7 @@ export async function fetchSpoolman(silent = false): Promise<void> {
 // ---- boot ----
 function applyState(s: HostState): void {
   store.host = s.host ?? EMPTY_HOST;
+  setLocale(s.settings?.language, store.host.appLanguage);
   store.unreadable = Array.isArray(s.unreadable) ? s.unreadable.filter((x) => typeof x === "string") : [];
   const savedCurrency = s.settings && typeof s.settings.currency === "string" ? s.settings.currency : null;
   const fresh = defaultSettings(null, t("channel.directName"), savedCurrency ?? guessCurrency());
@@ -208,7 +220,7 @@ function applyState(s: HostState): void {
   // A number is never reused: nextNo is at least one above every saved quote, even if the settings save was lost.
   const nextNo = Math.max(merged.sheet.nextNo, ...quotes.map((q) => q.no + 1));
   store.settings = { ...merged, sheet: { ...merged.sheet, nextNo } };
-  setLocale(store.settings.language);
+  setLocale(store.settings.language, store.host.appLanguage);
   store.quotes = quotes;
   store.quarantined = bad;
   store.skippedQuotes = bad.length;
@@ -216,7 +228,8 @@ function applyState(s: HostState): void {
   store.plates = s.plates ?? [];
   store.draft = newDraft(store.settings);
   store.pendingPlates = null;
-  store.spoolman = { state: "unset", data: { currency: null, filaments: [], spools: [] }, error: null };
+  store.spoolman = { state: "unset", data: NO_SPOOLMAN_DATA, error: null };
+  dataUrl = null;
 }
 
 export async function loadState(): Promise<void> {
@@ -238,7 +251,7 @@ export function init(): () => void {
   const offs = [on("plates", onPlates), on("host", onHost)];
   const onHide = () => { if (document.visibilityState === "hidden" && saveTimer && store.status === "ready") void flushSettings(true); };
   document.addEventListener("visibilitychange", onHide);
-  setLocale(store.settings.language);
+  setLocale(store.settings.language, store.host.appLanguage);
   ready();
   void loadState();
   booted = () => { offs.forEach((o) => o()); document.removeEventListener("visibilitychange", onHide); clearInterval(retryTimer); };

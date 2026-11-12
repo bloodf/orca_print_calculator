@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // "Compare channels": only with 2+ channels, collapsed by default, forced open when the selected channel has no price.
-// Prices here are normal text colour (the hero is the only amber). Rows select the channel.
+// Prices here are normal text colour. Rows select the channel.
+import Button from "primevue/button";
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { derived, patchDraft, result } from "../../state/store";
@@ -28,8 +29,8 @@ const select = (id: string): void => patchDraft({ channelId: id });
 
 <template>
   <Section v-if="show" id="compare" :title="t('compare.title')" variant="flush" :open="open" @update:open="(v) => (stored = v)">
-    <div class="wrap">
-      <table class="cmp">
+    <div class="opc-table-wrap">
+      <table class="opc-table dense cmp">
         <caption class="sr-only">{{ t("compare.caption") }}</caption>
         <thead>
           <tr>
@@ -43,9 +44,9 @@ const select = (id: string): void => patchDraft({ channelId: id });
           </tr>
         </thead>
         <tbody>
-          <tr v-for="c in rows" :key="c.id" class="pick" :class="{ sel: c.id === selectedId }" :aria-selected="c.id === selectedId ? 'true' : undefined" :data-channel="c.id" @click="select(c.id)">
+          <tr v-for="c in rows" :key="c.id" class="pick" :class="{ sel: c.id === selectedId }" :data-channel="c.id" @click="select(c.id)">
             <td class="name">
-              <button type="button" class="pickbtn" @click.stop="select(c.id)">{{ c.name }}</button>
+              <Button type="button" text size="small" class="pickbtn" @click.stop="select(c.id)">{{ c.name }}</Button>
               <span v-if="c.id === selectedId" class="sr-only">{{ ` ${t("compare.selected")}` }}</span>
               <span v-if="c.ok && c.deadZones.length" class="zone" :title="stepText(c)"><Icon name="info" /><span class="sr-only">{{ stepText(c) }}</span></span>
             </td>
@@ -66,15 +67,14 @@ const select = (id: string): void => patchDraft({ channelId: id });
 </template>
 
 <style scoped>
-.wrap { position: relative; overflow-x: auto; } /* relative: keeps absolutely-positioned .sr-only cells inside the scroller */
-.cmp { font-size: var(--opc-fs-sm); }
-.cmp th, .cmp td { padding: 0 4px; }
+.cmp th, .cmp td { padding-inline: 4px; }
 .cmp th:first-child, .cmp td:first-child { padding-left: 0; }
 .pick { cursor: pointer; }
 .pick:hover { background: var(--opc-hover); }
-.pick.sel { background: var(--opc-selected); box-shadow: inset 2px 0 0 var(--opc-selected-border); }
+.pick.sel > td { background: var(--opc-selected); }
+.pick.sel > td:first-child { box-shadow: inset 2px 0 0 var(--opc-selected-border); }
 .name { white-space: nowrap; }
-.pickbtn { padding: 0 0 0 6px; font-size: inherit; border: 0; background: transparent; font-weight: 500; text-align: left; }
+.cmp :deep(.pickbtn) { font-weight: 500; padding: 2px 6px; }
 .px { font-weight: 500; }
 .zone { display: inline-flex; vertical-align: middle; margin-left: 4px; color: var(--opc-muted); cursor: help; }
 .prob { white-space: normal; min-width: 160px; }

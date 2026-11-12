@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Dev-only gallery of the base primitives (?kit=1). Used to eyeball tokens and states; never in production.
+import Button from "primevue/button";
 import { ref } from "vue";
 import Badge from "../components/base/Badge.vue";
 import EmptyState from "../components/base/EmptyState.vue";
@@ -42,7 +43,7 @@ toast({ text: "Couldn't save the file.", tone: "bad" });
     </div>
     <div class="row"><Stepper v-model="q" :min="1" :max="100000" label="Quantity" /><Segmented v-model="seg" label="Shipping" :options="[{ value: 'none', label: 'Not included' }, { value: 'customer', label: 'Customer pays' }, { value: 'absorbed', label: 'I pay' }]" /></div>
     <div class="row"><Badge text="Spooler" /><Badge tone="info" text="Estimated" /><Badge tone="ok" text="Connected" /><Badge tone="warn" text="Preset price" /><Badge tone="bad" text="No price" /></div>
-    <button type="button" class="btn primary">Save quote</button> <button type="button" class="btn">Print quote</button> <button type="button" class="btn ghost">Edit in settings</button> <button type="button" class="btn danger">Delete</button>
+    <Button type="button">Save quote</Button> <Button type="button" severity="secondary" outlined>Print quote</Button> <Button type="button" text>Edit in settings</Button> <Button type="button" severity="danger" outlined>Delete</Button>
     <InlineAlert tone="info">Plates from desk.gcode.3mf. Slice in OrcaSlicer to replace them.</InlineAlert>
     <InlineAlert tone="warn" :actions="[{ label: 'Retry', run: () => {} }]">Spoolman isn't responding at http://192.168.1.10:7912.</InlineAlert>
     <InlineAlert tone="bad">Slot 2 has no price, counted as 0.</InlineAlert>

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // Inline 3-step setup checklist above the plate list; never a modal (docs/ux.md §2.4).
 // A row shows its check as soon as its value is valid, but collapses only when focus leaves it, so typing is never interrupted.
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Message from "primevue/message";
 import { computed, nextTick, reactive, ref, watch } from "vue";
 import { money, percent, perKwh } from "../format";
 import { t } from "../i18n";
@@ -61,22 +64,22 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
         <div class="fr-main">
           <p v-if="collapsed[row] && done[row]" class="fr-line">
             <span class="fr-title">{{ title(row) }}</span><span class="muted"> · {{ summary(row) }} · </span>
-            <button type="button" class="btn ghost fr-edit" @click="reopen(row)">{{ t("setup.edit") }}</button>
+            <Button text type="button" class="fr-edit" @click="reopen(row)">{{ t("setup.edit") }}</Button>
           </p>
           <template v-else>
             <p class="fr-title">{{ title(row) }}</p>
             <template v-if="row === 'filament'">
               <template v-if="spoolerUrl">
                 <p class="sm muted">{{ t("setup.spoolerFound", { url: spoolerUrl }) }}</p>
-                <div class="row fr-act"><button type="button" class="btn" @click="useSpooler">{{ t("setup.useSpoolman") }}</button><button type="button" class="btn ghost" @click="skip">{{ t("setup.skip") }}</button></div>
+                <div class="row fr-act"><Button severity="secondary" outlined type="button" @click="useSpooler">{{ t("setup.useSpoolman") }}</Button><Button text type="button" @click="skip">{{ t("setup.skip") }}</Button></div>
               </template>
               <template v-else>
                 <div class="fr-url">
-                  <input v-model="sp.url.value" type="text" inputmode="url" autocomplete="off" spellcheck="false" :placeholder="EXAMPLE_URL" :aria-label="t('spoolman.url')" :aria-invalid="sp.error.value ? 'true' : undefined" @keydown.enter="connect" />
-                  <button type="button" class="btn" @click="connect">{{ t("setup.connect") }}</button>
+                  <InputText v-model="sp.url.value" type="text" inputmode="url" autocomplete="off" spellcheck="false" :placeholder="EXAMPLE_URL" :aria-label="t('spoolman.url')" :invalid="!!sp.error.value" :aria-invalid="sp.error.value ? 'true' : undefined" @keydown.enter="connect" />
+                  <Button severity="secondary" outlined type="button" @click="connect">{{ t("setup.connect") }}</Button>
                 </div>
-                <p v-if="sp.error.value" class="sm bad" role="alert">{{ sp.error.value }}</p>
-                <button type="button" class="btn ghost fr-skip" @click="skip">{{ t("setup.skip") }}</button>
+                <Message v-if="sp.error.value" class="bad" severity="error" size="small" variant="simple" role="alert">{{ sp.error.value }}</Message>
+                <Button text type="button" class="fr-skip" @click="skip">{{ t("setup.skip") }}</Button>
               </template>
             </template>
             <MoneyField
@@ -92,7 +95,7 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
       </li>
     </ol>
     <p class="sm muted fr-perm">{{ t("setup.permission") }}</p>
-    <div class="fr-foot"><button type="button" class="btn primary" @click="finishOnboarding()">{{ t("setup.done") }}</button></div>
+    <div class="fr-foot"><Button type="button" @click="finishOnboarding()">{{ t("setup.done") }}</Button></div>
   </section>
 </template>
 
@@ -101,11 +104,11 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
 .fr-rows { list-style: none; margin: 8px 0 0; padding: 0; }
 .fr-row { display: grid; grid-template-columns: 20px minmax(0, 1fr); grid-column-gap: 12px; padding: 10px 0; border-top: 1px solid var(--opc-border); }
 .fr-mark { width: 18px; height: 18px; margin-top: 1px; border: 1.5px solid var(--opc-border); border-radius: var(--opc-r-pill); display: inline-flex; align-items: center; justify-content: center; }
-.fr-mark.on { background: var(--opc-primary-bg); border-color: var(--opc-primary-bg); color: var(--opc-accent-fg); }
+.fr-mark.on { background: var(--opc-primary-bg); border-color: var(--opc-primary-bg); color: var(--opc-on-primary); }
 .fr-mark :deep(svg) { width: 12px; height: 12px; }
 .fr-title { font-weight: 500; }
 .fr-main > * + * { margin-top: 6px; }
-.fr-line > .fr-edit { height: 22px; padding: 0 6px; }
+.fr-line :deep(.fr-edit) { padding: 2px 6px; }
 .fr-url { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-column-gap: 8px; max-width: 460px; }
 .fr-act > * + * { margin-left: 8px; }
 .fr-skip { margin-left: -10px; }

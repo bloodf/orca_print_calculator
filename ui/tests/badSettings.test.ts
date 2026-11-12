@@ -1,6 +1,7 @@
 // A settings file with any wrong-typed or absurd value must never break boot, blank the price, or hide what was reset.
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick, type App } from "vue";
+import { h, nextTick, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import PricePanel from "../src/components/price/PricePanel.vue";
 import { setLocale } from "../src/i18n";
 import { HOST, plates, settings as fxSettings, spoolman as fxSpoolman } from "../src/mock/fixtures";

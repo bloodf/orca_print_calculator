@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Volume discount tiers: add (max 6), remove with undo, sorted by quantity on blur, duplicate quantities flagged.
 // Reused by Settings (no defaultValue there, so no override dot).
 import { computed } from "vue";
@@ -52,11 +53,11 @@ function remove(i: number): void {
       <div class="trow">
         <div class="cell"><p class="sm muted lbl">{{ t("tier.from") }}</p><Stepper :model-value="tier.minQty" :min="2" :max="100000" :label="t('tier.from')" @update:model-value="(v) => patch(i, { minQty: v })" /></div>
         <PercentField :model-value="tier.discountBp" :label="t('tier.discount')" :min="0" :max="9900" :step="100" @update:model-value="(v) => v !== null && patch(i, { discountBp: v })" />
-        <button type="button" class="btn icon rm" :aria-label="t('common.removeNamed', { name: `${t('tier.add')} ${tier.minQty}` })" @click="remove(i)"><Icon name="trash" /></button>
+        <Button text severity="secondary" type="button" class="rm icon-btn" :aria-label="t('common.removeNamed', { name: `${t('tier.add')} ${tier.minQty}` })" @click="remove(i)"><Icon name="trash" /></Button>
       </div>
       <p v-if="dupes.has(tier.minQty)" class="sm err" role="alert">{{ t("field.error.duplicateTier") }}</p>
     </div>
-    <button v-if="modelValue.length < MAX_TIERS" type="button" class="btn ghost add" @click="add"><Icon name="plus" />{{ t("tier.add") }}</button>
+    <Button text v-if="modelValue.length < MAX_TIERS" type="button" class="add" @click="add"><Icon name="plus" /><span>{{ t("tier.add") }}</span></Button>
   </div>
 </template>
 

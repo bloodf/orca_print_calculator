@@ -204,6 +204,18 @@ def _times(head, tail):
     return (parse_duration(orca.group(1)) if orca else None), None, "orca"
 
 
+def consumption_state(slots, total_grams, grams):
+    """"known": at least one slot reported a positive use. "zero": the file states a weight and every reading is 0.
+    "missing": nothing usable (no weight fields, unparsable values, or a total with no per-slot split): never read as free."""
+    if slots:
+        return "known"
+    readings = list(grams) if grams else []
+    stated = bool(readings) or total_grams is not None
+    if stated and total_grams in (None, 0) and all(v == 0 for v in readings):
+        return "zero"
+    return "missing"
+
+
 def parse_gcode(head, tail):
     """Parse the head and tail text of a slice; missing fields are None, never guessed."""
     head, tail = head or "", tail or ""
@@ -218,6 +230,7 @@ def parse_gcode(head, tail):
         "seconds": seconds,
         "model_seconds": model_seconds,
         "slots": slots,
+        "consumption": consumption_state(slots, total_grams, grams),
         "total_grams": total_grams,
         "printer_model": model or None,
         "filament_presets": _split_strings(cfg.get("filament_settings_id")),

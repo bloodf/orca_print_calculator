@@ -22,9 +22,20 @@ import core  # noqa: E402
 FIX = Path(__file__).resolve().parent / "fixtures"
 
 
-def serve(handler):
+def serve(case, handler):
+    """Loopback server owned by `case`: its cleanup stops the loop, closes the listening socket and joins the thread
+    (cleanups run last-in first-out, so a server started later is stopped first)."""
     server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
-    threading.Thread(target=server.serve_forever, daemon=True).start()
+    server.daemon_threads = True  # a handler still sending (the trickle test) must not block the join
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+
+    def stop():
+        server.shutdown()
+        server.server_close()
+        thread.join(5)
+        case.assertFalse(thread.is_alive(), "server thread still running")
+    case.addCleanup(stop)
     return server
 
 
@@ -64,12 +75,10 @@ def redirector(location):
 class RedirectSsrf(unittest.TestCase):  # M2
     def setUp(self):
         Recorder.hits = []
-        self.target = serve(Recorder)
-        self.addCleanup(self.target.shutdown)
+        self.target = serve(self, Recorder)
 
     def fetch_code(self, location):
-        a = serve(redirector(location))
-        self.addCleanup(a.shutdown)
+        a = serve(self, redirector(location))
         with self.assertRaises(core.CoreError) as ctx:
             core.spoolman_fetch("127.0.0.1:%d" % a.server_port, timeout=2)
         return ctx.exception.code
@@ -94,8 +103,7 @@ class RedirectSsrf(unittest.TestCase):  # M2
         self.assertEqual(self.fetch_code(lambda h: "file:///etc/passwd"), "redirected")
 
     def test_same_origin_redirect_followed(self):
-        a = serve(redirector(lambda h: "/moved"))
-        self.addCleanup(a.shutdown)
+        a = serve(self, redirector(lambda h: "/moved"))
         info = core._get_json("http://127.0.0.1:%d" % a.server_port, "/api/v1/info", core.open_url, 2,
                               time.monotonic() + 5)
         self.assertEqual(info, {"version": "1"})
@@ -128,8 +136,7 @@ class Trickle(http.server.BaseHTTPRequestHandler):
 
 class Deadline(unittest.TestCase):  # M1
     def test_trickle_server_hits_total_deadline(self):
-        s = serve(Trickle)
-        self.addCleanup(s.shutdown)
+        s = serve(self, Trickle)
         with self.assertRaises(core.CoreError) as ctx:
             core.spoolman_fetch("127.0.0.1:%d" % s.server_port, timeout=1, deadline=1.5)
         self.assertEqual(ctx.exception.code, "timeout")  # wall time is bounded by the fake-clock test below

@@ -9,10 +9,14 @@ export type View = "calc" | "quotes" | "stock" | "settings";
 export type Lang = "auto" | "en" | "pt-BR";
 export type ShippingMode = "none" | "customer" | "absorbed"; // "none" maps to engine {mode:"customer", minor:0}
 
-export type HostInfo = { projectName: string | null; printerModel: string | null; printerVendor: string | null; pluginVersion: string };
+export type HostInfo = { projectName: string | null; printerModel: string | null; printerVendor: string | null; pluginVersion: string; appLanguage?: string | null };
 export type HostSlot = { n: number; preset: string; grams: number | null; color: string | null; costPerKg: number | null; notes: string; material: string | null };
+/** Filament use of a plate: `known` (a slot reported a weight), `zero` (the file states 0 g), `missing` (no usable data: never free). */
+export type Consumption = "known" | "zero" | "missing";
 export type HostPlate = {
   index: number; name: string | null; seconds: number | null; stale: boolean; thumb: string | null /* data: URI */;
+  /** Absent only from an older host: read as `known` with slots, `missing` without. */
+  consumption?: Consumption;
   slicedAt: string | null /* ISO time the host captured it */; source: "slice" | "file"; fileName: string | null; slots: HostSlot[];
 };
 export type SpoolerInfo = { url: string | null; presetToFilament: Record<string, number> } | null;
@@ -49,7 +53,14 @@ export type Settings = {
 };
 export type SlotSource = MatchSource | "manual";
 /** `filamentId` is optional so quotes saved before it existed still load (they show a generic "filament match" badge). */
-export type PlateSnapshot = { index: number; name: string | null; seconds: number; slots: (QuoteSlot & { color: string | null; source: SlotSource; filamentId?: number | null })[] };
+/**
+ * `seconds`, `gramsMg` and `pricePerKgMinor` are the engine's numbers: an unknown value is stored as 0. The optional flags say
+ * whether each was really known (absent on quotes saved before they existed: see state/completeness.ts).
+ */
+export type PlateSnapshot = {
+  index: number; name: string | null; seconds: number; secondsKnown?: boolean; consumption?: Consumption;
+  slots: (QuoteSlot & { color: string | null; source: SlotSource; filamentId?: number | null; gramsKnown?: boolean; priceKnown?: boolean })[];
+};
 /** Frozen with a saved quote. The logo is not: it is large and belongs to the shop, so it always comes from settings. */
 export type SheetDetails = { shopName: string; footer: string; validityDays: number } & Partial<Omit<SheetBrand, "logo">>;
 export type SavedQuote = {
@@ -87,7 +98,7 @@ export type SlotMatchView = {
 
 export type NotCounted =
   | { kind: "energy" | "labor" | "wear" }
-  | { kind: "time"; plate: number }
+  | { kind: "time" | "consumption"; plate: number }
   | { kind: "grams"; plate: number; slot: number };
 
 export type SelectedChannel = ChannelQuote | null;

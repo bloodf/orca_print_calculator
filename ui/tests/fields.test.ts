@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick, ref, type App } from "vue";
+import { h, nextTick, ref, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import MoneyField from "../src/components/base/MoneyField.vue";
 import NumberField from "../src/components/base/NumberField.vue";
 import PercentField from "../src/components/base/PercentField.vue";
@@ -107,7 +108,7 @@ describe("MoneyField", () => {
   });
   test("override dot and reset appear when the value differs from defaultValue", async () => {
     const { resets } = mount(MoneyField, { ...money, defaultValue: 500 }, 1000);
-    const btn = root.querySelector("button.btn.icon") as HTMLButtonElement;
+    const btn = root.querySelector("button.icon-btn") as HTMLButtonElement;
     expect(btn.getAttribute("aria-label")).toBe("Reset Price to default (R$5.00)");
     btn.click();
     expect(resets).toHaveBeenCalledTimes(1);

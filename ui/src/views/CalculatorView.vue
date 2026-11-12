@@ -42,7 +42,7 @@ onBeforeUnmount(() => { mq?.removeEventListener("change", onMq); io?.disconnect(
 
 <template>
   <QuotePreview v-if="store.preview" />
-  <main v-else class="calc" :class="{ n: narrow, 'bar-on': narrow && !priceVisible, 'reveal-children': reveal }" :aria-label="t('a11y.plates')">
+  <main v-else class="calc" tabindex="-1" :class="{ n: narrow, 'bar-on': narrow && !priceVisible, 'reveal-children': reveal }" :aria-label="t('a11y.plates')">
     <div v-if="loading" class="left" aria-busy="true">
       <div v-for="i in 3" :key="i" class="skeleton sk-plate" />
     </div>

@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createOrcaApp, syncHostTheme } from "./orcaUi";
 import App from "./App.vue";
 import "./theme.css";
 
@@ -7,10 +7,11 @@ async function boot(): Promise<void> {
   if (import.meta.env.DEV) {
     (await import("./mock/install")).installDevHost();
     if (new URLSearchParams(window.location.search).has("kit")) {
-      createApp((await import("./mock/Kit.vue")).default).mount("#app");
+      createOrcaApp((await import("./mock/Kit.vue")).default).mount("#app");
       return;
     }
   }
-  createApp(App).mount("#app");
+  syncHostTheme();
+  createOrcaApp(App).mount("#app");
 }
 void boot();

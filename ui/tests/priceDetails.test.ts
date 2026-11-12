@@ -9,6 +9,7 @@ import { derived, result, store } from "../src/state/store";
 import { clearToasts, toasts } from "../src/state/toast";
 import type { DiscountTier } from "../src/state/types";
 import { en, load, mount, txt } from "./priceKit";
+import { optionLabels } from "./pv";
 
 let app: App | null = null;
 let root: HTMLElement | null = null;
@@ -20,6 +21,29 @@ afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; });
 const oneChannel = (s: typeof store.settings) => ({ ...s, channels: [s.channels[0]!], comparedChannelIds: ["direct"], defaultChannelId: "direct" });
 
 describe("breakdown bars", () => {
+  test.each([[2, 1, false], [10, 3, false], [10, 3, true]] as const)("detail remains per ordered piece (quantity %i, run %i, legacy %s)", async (quantity, unitsPerSet, legacy) => {
+    load("ok", { draft: (d) => ({ ...d, quantity, unitsPerSet, extras: [
+      { key: "ring", label: "Ring", unitMinor: 50, qtyE3: 1000, per: "piece" },
+      { key: "magnet", label: "Magnet", unitMinor: 40, qtyE3: 2000, per: "piece" },
+    ] }) });
+    if (legacy) {
+      const input: typeof derived.value.quoteInput = JSON.parse(JSON.stringify(derived.value.quoteInput));
+      delete input.calc;
+      store.draft.frozenInput = input;
+      expect(derived.value.quoteInput.calc).toBeUndefined();
+    }
+    const el = await show(BreakdownBars);
+    const amount = (n: Element | null) => Math.round(Number(txt(n).replace(/[^0-9.-]/g, "")) * 100);
+    for (const id of ["filament", "extras"]) {
+      const row = el.querySelector(`[data-row=${id}]`)!;
+      row.querySelector<HTMLButtonElement>("button")!.click(); await nextTick();
+      const details: number[] = [];
+      for (let n = row.nextElementSibling; n?.classList.contains("det"); n = n.nextElementSibling) details.push(amount(n.querySelector(".amt")));
+      expect(details.length).toBeGreaterThan(0);
+      expect(Math.abs(details.reduce((a, b) => a + b, 0) - amount(row.querySelector(".amt")))).toBeLessThanOrEqual(details.length);
+      if (id === "extras") expect(details).toEqual(quantity === 2 ? [50, 80] : [60, 96]);
+    }
+  });
   test("rows carry amount, share and a bar scaled to the largest row", async () => {
     load("ok", { settings: (s) => ({ ...s, ui: { ...s.ui, open: { breakdown: true } } }) });
     const el = await show(BreakdownBars);
@@ -71,13 +95,15 @@ describe("channel comparison", () => {
     expect(store.settings.ui.open.compare).toBe(true);
     const rows = [...el.querySelectorAll<HTMLElement>("tbody tr")];
     expect(rows).toHaveLength(2);
-    expect(el.querySelectorAll("[aria-selected=true]")).toHaveLength(1);
-    expect((el.querySelector("[aria-selected=true]") as HTMLElement).dataset.channel).toBe(derived.value.selectedChannelId);
+    expect(el.querySelectorAll("tr.sel")).toHaveLength(1);
+    expect((el.querySelector("tr.sel") as HTMLElement).dataset.channel).toBe(derived.value.selectedChannelId);
+    expect(txt(el.querySelector("tr.sel .sr-only"))).toBe("selected");
+    expect(el.querySelector("tr[aria-selected]")).toBeNull();
     expect(el.querySelector(".price-amber")).toBeNull();
     expect(el.querySelector("caption")?.textContent).toBe("Price and profit per piece on each channel");
     rows.find((r) => r.dataset.channel === "direct")!.click(); await nextTick();
     expect(store.draft.channelId).toBe("direct");
-    expect((el.querySelector("[aria-selected=true]") as HTMLElement).dataset.channel).toBe("direct");
+    expect((el.querySelector("tr.sel") as HTMLElement).dataset.channel).toBe("direct");
   });
 });
 
@@ -85,12 +111,12 @@ describe("order controls", () => {
   test("channel select only with 2+ channels; problem channels are suffixed", async () => {
     load("impossible");
     let el = await show(OrderControls);
-    const sel = el.querySelector("select")!;
-    expect([...sel.options].map((o) => o.textContent)).toEqual(["Direct", "Online store — no price"]);
+    expect(el.querySelector("[role=combobox]")).not.toBeNull();
+    expect(await optionLabels(el)).toEqual(["Direct", "Online store — no price"]);
     app?.unmount(); root?.remove();
     load("ok", { settings: oneChannel });
     el = await show(OrderControls);
-    expect(el.querySelector("select")).toBeNull();
+    expect(el.querySelector("[role=combobox]")).toBeNull();
     expect(el.querySelector("#price-margin")).not.toBeNull();
   });
 });

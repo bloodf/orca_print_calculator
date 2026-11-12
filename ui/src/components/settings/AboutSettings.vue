@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Settings › About: version, permission line, README address, Reset all settings (docs/ux.md §5.3 Settings 9, §7.5).
 import { onBeforeUnmount, ref } from "vue";
 import { t } from "../../i18n";
@@ -40,7 +41,7 @@ function reset(): void {
       <p class="sm muted lbl">{{ t("about.readme") }}</p>
       <CopyValue :value="README_URL" :label="t('about.readme')" />
     </div>
-    <button type="button" class="btn danger" :aria-live="armed ? 'polite' : undefined" @click="reset">{{ armed ? t("about.resetConfirm") : t("about.resetAll") }}</button>
+    <Button severity="danger" outlined type="button" :aria-live="armed ? 'polite' : undefined" @click="reset">{{ armed ? t("about.resetConfirm") : t("about.resetAll") }}</Button>
   </div>
 </template>
 

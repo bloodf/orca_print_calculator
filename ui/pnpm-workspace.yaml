@@ -1,0 +1,6 @@
+# @primevue/core 4.5.5 imports "@primeuix/styles/base" without declaring it (npm hoisting hides that; pnpm's strict layout does not).
+# Declare it for that one package, at the version primevue 4.5.5 itself pins, so the lockfile install resolves it.
+packageExtensions:
+  "@primevue/core@4.5.5":
+    dependencies:
+      "@primeuix/styles": "2.0.3"

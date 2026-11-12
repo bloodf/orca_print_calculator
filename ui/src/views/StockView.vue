@@ -1,13 +1,18 @@
 <script setup lang="ts">
 // Extras and stock: the extras catalog with counts on hand, and a read-only filament summary from Spoolman.
+import Button from "primevue/button";
+import Message from "primevue/message";
 import { computed } from "vue";
 import ExtrasCatalog from "../components/settings/ExtrasCatalog.vue";
 import { gotoSettings } from "../components/costs/shared";
 import { grams } from "../format";
 import { intlLocale, t } from "../i18n";
-import { store } from "../state/store";
+import { fetchSpoolman, store } from "../state/store";
 
 const connected = computed(() => store.spoolman.state === "ok");
+// A configured Spoolman that does not answer is not "not connected": say so, and offer the retry instead of the first-time setup.
+const offline = computed(() => store.spoolman.state === "offline" && !!store.settings.spoolman.url);
+const connecting = computed(() => store.spoolman.state === "connecting");
 const filaments = computed(() => {
   const { filaments: fs, spools } = store.spoolman.data;
   return fs.map((f) => {
@@ -31,13 +36,21 @@ const filaments = computed(() => {
     </section>
     <section class="grp" aria-labelledby="stock-filament-h">
       <h2 id="stock-filament-h" class="lg">{{ t("stock.filament") }}</h2>
-      <div v-if="!connected" class="off">
+      <div v-if="offline" class="off" data-stock-offline>
+        <Message severity="warn" size="small" role="status" :closable="false">{{ t("stock.offline", { url: store.settings.spoolman.url }) }}</Message>
+        <div class="row">
+          <Button severity="secondary" outlined type="button" @click="fetchSpoolman(false)">{{ t("spoolman.retry") }}</Button>
+          <Button text type="button" @click="gotoSettings('settings-spoolman')">{{ t("nav.settings") }}</Button>
+        </div>
+      </div>
+      <p v-else-if="connecting" class="muted" role="status">{{ t("spoolman.connecting") }}</p>
+      <div v-else-if="!connected" class="off">
         <p class="muted">{{ t("stock.noSpoolman") }}</p>
-        <button type="button" class="btn" @click="gotoSettings('settings-spoolman')">{{ t("stock.connect") }}</button>
+        <Button severity="secondary" outlined type="button" @click="gotoSettings('settings-spoolman')">{{ t("stock.connect") }}</Button>
       </div>
       <p v-else-if="!filaments.length" class="muted">{{ t("stock.noFilaments") }}</p>
-      <div v-else class="wrap">
-        <table aria-labelledby="stock-filament-h" data-testid="filament-table">
+      <div v-else class="opc-table-wrap list">
+        <table class="opc-table" aria-labelledby="stock-filament-h" data-testid="filament-table">
           <thead>
             <tr>
               <th scope="col">{{ t("stock.col.name") }}</th><th scope="col">{{ t("stock.col.type") }}</th>
@@ -63,10 +76,6 @@ const filaments = computed(() => {
 .grp > .help { margin-bottom: 12px; }
 .grp > h2 + :not(.help) { margin-top: 12px; }
 .off > * + * { margin-top: 8px; }
-.wrap { overflow-x: auto; border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); }
-table { width: 100%; border-collapse: collapse; }
-th { text-align: left; font-weight: 500; color: var(--opc-muted); padding: 6px 8px; border-bottom: 1px solid var(--opc-border); }
-td { height: 36px; padding: 0 8px; border-bottom: 1px solid var(--opc-border); }
-tbody tr:last-child td { border-bottom: 0; }
-th.r, td.r { text-align: right; }
+.list { border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); background: var(--opc-raised); }
+.list tbody tr:last-child td { border-bottom: 0; }
 </style>

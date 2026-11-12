@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Flags under the price: only true flags render, bad first (docs/ux.md §6.12). Tone is icon + sr text, never colour alone.
 import { computed } from "vue";
 import { t } from "../../i18n";
@@ -31,10 +32,10 @@ function run(f: Flag): void {
 
 <template>
   <ul v-if="flags.length" class="flags">
-    <li v-for="f in flags" :key="f.id" class="flag sm" :class="f.tone" :data-flag="f.id" :data-tone="f.tone">
+    <li v-for="f in flags" :key="f.id" class="flag sm" :class="f.tone" :data-flag="f.id" :data-tone="f.tone" tabindex="-1">
       <span class="flag-icon"><Icon :name="f.tone === 'bad' ? 'alert-circle' : 'info'" /></span>
       <span class="flag-text"><span class="sr-only">{{ `${f.tone === "bad" ? t("flag.srBad") : t("flag.srInfo")} ` }}</span>{{ f.text }}</span>
-      <button v-if="f.action" type="button" class="btn ghost flag-act" @click="run(f)">{{ f.action.label }}</button>
+      <Button text v-if="f.action" type="button" class="flag-act" @click="run(f)">{{ f.action.label }}</Button>
     </li>
   </ul>
 </template>

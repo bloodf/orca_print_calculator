@@ -3,15 +3,15 @@ import plate from "../../assets/empty-plate.svg?raw";
 import quote from "../../assets/empty-quote.svg?raw";
 import spool from "../../assets/empty-spool.svg?raw";
 
-// The asset SVGs carry an English role/aria-label; the art is decorative here, so those are swapped for aria-hidden.
-const decorative = (svg: string): string => svg.replace(/ role="img" aria-label="[^"]*"/, ' aria-hidden="true" focusable="false"');
-const ART = { plate: decorative(plate), quote: decorative(quote), spool: decorative(spool) };
+import Art from "./Art.vue";
+
+const ART = { plate, quote, spool };
 defineProps<{ art: "plate" | "spool" | "quote"; title: string; body?: string }>();
 </script>
 
 <template>
   <div class="empty">
-    <div class="empty-art" v-html="ART[art]" />
+    <div class="empty-art"><Art :svg="ART[art]" /></div>
     <p class="lg">{{ title }}</p>
     <p v-if="body" class="sm muted">{{ body }}</p>
     <div class="empty-actions"><slot name="actions" /></div>

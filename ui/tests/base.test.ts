@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, defineComponent, h, nextTick, ref, type App } from "vue";
+import { defineComponent, h, nextTick, ref, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import Badge from "../src/components/base/Badge.vue";
 import EmptyState from "../src/components/base/EmptyState.vue";
 import InlineAlert from "../src/components/base/InlineAlert.vue";
@@ -89,6 +90,44 @@ describe("Badge, InlineAlert, EmptyState", () => {
 });
 
 describe("toasts", () => {
+  test("Undo keeps focus for 20 seconds and returns it after dismissal", async () => {
+    vi.useFakeTimers();
+    try {
+      mount(() => h("main", { tabindex: -1 }, [h("button", { id: "source" }, "Source"), h(ToastHost)]));
+      const source = root.querySelector<HTMLButtonElement>("#source")!;
+      source.focus();
+      const run = vi.fn();
+      toast({ text: "Deleted", action: { label: "Undo", run } });
+      await nextTick();
+      const undo = [...root.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Undo")!;
+      undo.focus();
+      await vi.advanceTimersByTimeAsync(20_000);
+      expect(toasts.list).toHaveLength(1);
+      expect(document.activeElement).toBe(undo);
+      undo.click(); await nextTick(); await nextTick();
+      expect(run).toHaveBeenCalledOnce();
+      expect(toasts.list).toHaveLength(0);
+      expect(document.activeElement).toBe(source);
+    } finally { app?.unmount(); app = null; await vi.runAllTimersAsync(); vi.useRealTimers(); }
+  });
+  test("hover pauses expiry, leaving resumes it, and clearing also removes paused timers", async () => {
+    vi.useFakeTimers();
+    try {
+      mount(() => h(ToastHost));
+      toast({ text: "Hover", ms: 100 }); await nextTick();
+      const message = root.querySelector<HTMLElement>("[data-toast-id]")!;
+      message.dispatchEvent(new MouseEvent("mouseenter"));
+      await vi.advanceTimersByTimeAsync(500);
+      expect(toasts.list).toHaveLength(1);
+      message.dispatchEvent(new MouseEvent("mouseleave"));
+      await vi.advanceTimersByTimeAsync(101);
+      expect(toasts.list).toHaveLength(0);
+      toast({ text: "Paused", ms: 100 }); await nextTick();
+      root.querySelector<HTMLElement>("[data-toast-id]")!.dispatchEvent(new MouseEvent("mouseenter"));
+      clearToasts(); await vi.advanceTimersByTimeAsync(500);
+      expect(toasts.list).toHaveLength(0);
+    } finally { app?.unmount(); app = null; await vi.runAllTimersAsync(); vi.useRealTimers(); }
+  });
   test("stack is at most 3, newest last; errors stay; others auto-close", () => {
     vi.useFakeTimers();
     const ids = [toast({ text: "1" }), toast({ text: "2" }), toast({ text: "3", tone: "bad" }), toast({ text: "4" })];
@@ -115,7 +154,9 @@ describe("toasts", () => {
   });
 });
 
-describe("Popover", () => {
+const settle = async (): Promise<void> => { for (let i = 0; i < 6; i++) { await nextTick(); await new Promise((r) => setTimeout(r, 50)); } };
+
+describe("Popover (PrimeVue overlay behind the anchor/open API)", () => {
   test("focuses first field, closes on Escape and outside click, returns focus to the anchor", async () => {
     const anchor = document.createElement("button");
     document.body.appendChild(anchor);
@@ -123,19 +164,18 @@ describe("Popover", () => {
     const open = ref(true);
     const Host = defineComponent({ render: () => h(Popover, { open: open.value, anchor, label: "Power", onClose: () => (open.value = false) }, () => h("input", { id: "first" })) });
     mount(() => h(Host));
-    await nextTick(); await nextTick();
+    await settle();
     expect(document.activeElement?.id).toBe("first");
-    expect(root.querySelector("[role=dialog]")?.getAttribute("aria-label")).toBe("Power");
-    vi.useFakeTimers();
-    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-    await nextTick(); await nextTick();
-    expect(document.activeElement).toBe(anchor); // focus returns at once; the 120 ms exit fade removes the node afterwards
-    await vi.advanceTimersByTimeAsync(130);
-    vi.useRealTimers();
-    expect(root.querySelector("[role=dialog]")).toBeNull();
-    open.value = true; await nextTick(); await nextTick();
-    document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-    await nextTick();
+    expect(document.querySelector("[role=dialog]")?.getAttribute("aria-label")).toBe("Power");
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true }));
+    await settle();
+    expect(open.value).toBe(false);
+    expect(document.activeElement).toBe(anchor);
+    await vi.waitFor(() => expect(document.querySelector("[role=dialog]")).toBeNull(), { timeout: 3000 });
+    open.value = true; await settle();
+    expect(document.querySelector("[role=dialog]")).not.toBeNull();
+    document.body.click(); // outside click
+    await settle();
     expect(open.value).toBe(false);
     anchor.remove();
   });

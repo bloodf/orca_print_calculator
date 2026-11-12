@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Settings › Printers: per printer model watts, price, lifetime (docs/ux.md §5.3 Settings 5).
 // One card per printer instead of a table: the base fields carry their own labels, so cards stay readable at 760px.
 import { computed } from "vue";
@@ -46,7 +47,7 @@ function remove(model: string): void {
           <span class="lg truncate">{{ m }}</span>
           <Badge v-if="m === current" tone="neutral" :text="t('printers.current')" />
           <span class="pp-grow" />
-          <button v-if="profile(m)" type="button" class="btn icon" :aria-label="t('common.removeNamed', { name: m })" @click="remove(m)"><Icon name="trash" /></button>
+          <Button text severity="secondary" v-if="profile(m)" type="button" class="icon-btn" :aria-label="t('common.removeNamed', { name: m })" @click="remove(m)"><Icon name="trash" /></Button>
         </div>
         <div class="form-grid">
           <div>

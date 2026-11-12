@@ -9,8 +9,12 @@ const str = (v: unknown): boolean => typeof v === "string";
 const num = (v: unknown): boolean => typeof v === "number" && Number.isFinite(v);
 const arr = (v: unknown): v is unknown[] => Array.isArray(v);
 
+const optBool = (v: unknown): boolean => v === undefined || typeof v === "boolean";
+const CONSUMPTION = ["known", "zero", "missing"];
+
 function isPlate(p: unknown): boolean {
-  return isRec(p) && num(p.index) && num(p.seconds) && arr(p.slots) && p.slots.every((s) => isRec(s) && num(s.n) && num(s.gramsMg) && num(s.pricePerKgMinor) && str(s.label) && str(s.key));
+  return isRec(p) && num(p.index) && num(p.seconds) && optBool(p.secondsKnown) && (p.consumption === undefined || CONSUMPTION.includes(p.consumption as string))
+    && arr(p.slots) && p.slots.every((s) => isRec(s) && num(s.n) && num(s.gramsMg) && num(s.pricePerKgMinor) && str(s.label) && str(s.key) && optBool(s.gramsKnown) && optBool(s.priceKnown));
 }
 
 const strs = (...vs: unknown[]): boolean => vs.every(str);
@@ -24,7 +28,7 @@ function isEngineInput(i: Rec): boolean {
   if (!nums(c.machine.wattsW10, c.machine.acquisitionCents, c.machine.lifetimeHours, c.kwhE4, c.failure.bp, c.maintenancePerHourCents, c.labor.perHourCents, c.labor.minutes, c.fixedCostPerPrintHourCents)) return false;
   if (!str(c.failure.mode) || typeof c.failure.includesMachine !== "boolean" || typeof c.depreciationEnabled !== "boolean") return false;
   if (!isRec(i.setup) || !nums(i.setup.ratePerHourMinor, i.setup.minutes) || !isRec(i.shipping) || !str(i.shipping.mode) || !num(i.shipping.minor)) return false;
-  if (!nums(i.targetMarginBp, i.minOrderMinor) || !(PRETTY_MODES as readonly unknown[]).includes(i.pretty) || (i.unitsPerSet !== undefined && !num(i.unitsPerSet))) return false;
+  if (!nums(i.targetMarginBp, i.minOrderMinor) || !(PRETTY_MODES as readonly unknown[]).includes(i.pretty) || (i.unitsPerSet !== undefined && !num(i.unitsPerSet)) || (i.calc !== undefined && !num(i.calc))) return false;
   return each(i.extras, (e) => strs(e.key, e.label, e.per) && nums(e.unitMinor, e.qtyE3))
     && each(i.discountTiers, (t) => nums(t.minQty, t.discountBp))
     && each(i.channels, (ch) => strs(ch.id, ch.name) && nums(ch.taxBp, ch.surchargeCents) && each(ch.tiers, (t) => nums(t.minPriceCents, t.pctBp, t.fixedCents, t.shippingCents)));

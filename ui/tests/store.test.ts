@@ -1,8 +1,8 @@
 import { saveSectionDefaults } from "../src/components/costs/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { createMockHost } from "../src/mock/host";
-import type { ScenarioName } from "../src/mock/scenarios";
-import { setLocale } from "../src/i18n";
+import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
+import { currentLocale, setLocale } from "../src/i18n";
 import * as S from "../src/state/store";
 import { closeQuote, deleteQuote, duplicateQuote, openQuote, saveQuote } from "../src/state/quotes";
 import { clearToasts, toasts } from "../src/state/toast";
@@ -25,6 +25,23 @@ beforeEach(() => { vi.useFakeTimers(); sent.length = 0; clearToasts(); setLocale
 afterEach(() => { stop?.(); stop = null; delete window.orca; vi.useRealTimers(); });
 
 describe("boot", () => {
+  test("get_state supplies the Orca language for the automatic preference", async () => {
+    const state = buildScenario("firstRun").state;
+    const host = createMockHost("firstRun");
+    const post = host.postMessage.bind(host);
+    host.postMessage = (message) => {
+      if (typeof message === "object" && message !== null && "cmd" in message && message.cmd === "get_state" && "id" in message) {
+        dispatchToPage({ type: "res", id: message.id, ok: true, data: { ...state, host: { ...state.host, appLanguage: "pt_BR" } } });
+      } else post(message);
+    };
+    window.orca = host;
+    stop = S.init();
+    await vi.advanceTimersByTimeAsync(700);
+    expect(S.store.status).toBe("ready");
+    expect(S.store.settings.language).toBe("auto");
+    expect(currentLocale()).toBe("pt-BR");
+    expect(document.documentElement.lang).toBe("pt-BR");
+  });
   test("get_state fills the store and the price computes", async () => {
     await boot("ok");
     expect(S.store.status).toBe("ready");
@@ -143,6 +160,19 @@ describe("settings auto-save", () => {
 
 describe("events", () => {
   const push = (name: string, data: unknown) => dispatchToPage({ type: "event", name, data });
+  test("host language follows updates in auto mode and preserves an explicit preference", async () => {
+    await boot("ok");
+    S.setLanguage("auto");
+    push("host", { kind: "PresetSelected", host: { ...S.store.host, appLanguage: "pt_BR" } });
+    expect(currentLocale()).toBe("pt-BR");
+    S.patchSettings({ onboarded: true });
+    expect(currentLocale()).toBe("pt-BR");
+    S.setLanguage("en");
+    push("host", { kind: "PresetSelected", host: { ...S.store.host, appLanguage: "pt_BR" } });
+    expect(currentLocale()).toBe("en");
+    S.setLanguage("auto");
+    expect(currentLocale()).toBe("pt-BR");
+  });
   test("a plates event replaces plates and keeps controls by index", async () => {
     await boot("ok");
     S.setPlateControl(0, { copies: 3 });
@@ -158,6 +188,24 @@ describe("events", () => {
     push("host", { kind: "ProjectOpened", host: { ...S.store.host, projectName: "Other" } });
     expect(S.store.draft.quantity).toBe(1);
     expect(S.store.host.projectName).toBe("Other");
+  });
+  test("ProjectOpened with unsaved fields keeps them for Undo (draft only: the old project's plates stay gone)", async () => {
+    await boot("ok");
+    S.patchDraft({ quantity: 50, customer: "Ana" });
+    push("host", { kind: "ProjectOpened", host: { ...S.store.host, projectName: "Other" } });
+    expect(S.store.draft.customer).toBe("");
+    expect(S.store.plates).toHaveLength(0);
+    const undo = toasts.list.find((x) => x.action?.label === "Undo")!;
+    expect(undo.text).toMatch(/project changed/);
+    undo.action!.run();
+    expect(S.store.draft).toMatchObject({ quantity: 50, customer: "Ana" });
+    expect(S.store.plates).toHaveLength(0);
+  });
+  test("ProjectOpened on an untouched draft asks nothing", async () => {
+    await boot("ok");
+    clearToasts();
+    push("host", { kind: "ProjectOpened", host: { ...S.store.host, projectName: "Other" } });
+    expect(toasts.list.some((x) => x.action?.label === "Undo")).toBe(false);
   });
   test("a live slice while imported plates are showing becomes pending until accepted", async () => {
     await boot("imported");

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Fee steps by sale price for one channel (docs/ux.md §5.3 ChannelEditor). Row 0 mirrors the fields above and is read-only.
 import { computed } from "vue";
 import { MAX_TIERS } from "../../engine/channels";
@@ -31,12 +32,12 @@ const fmt = (n: number): string => money(n, currency.value, locale.value);
           <MoneyField :model-value="tier.minMinor" :label="t('field.tierFrom')" :digits="digits" :currency="currency" :step="major" @update:model-value="(v) => v !== null && updateTier(channelId, i, { minMinor: v })" />
           <PercentField :model-value="tier.pctBp" :label="t('field.fee')" :step="50" :max="9000" @update:model-value="(v) => v !== null && updateTier(channelId, i, { pctBp: v })" />
           <MoneyField :model-value="tier.fixedMinor" :label="t('field.fixedFee')" :digits="digits" :currency="currency" :step="major" @update:model-value="(v) => v !== null && updateTier(channelId, i, { fixedMinor: v })" />
-          <button type="button" class="btn icon" :aria-label="t('common.removeNamed', { name: `${t('field.tierFrom')} ${fmt(tier.minMinor)}` })" @click="removeTier(channelId, i)"><Icon name="trash" /></button>
+          <Button text severity="secondary" type="button" class="icon-btn" :aria-label="t('common.removeNamed', { name: `${t('field.tierFrom')} ${fmt(tier.minMinor)}` })" @click="removeTier(channelId, i)"><Icon name="trash" /></Button>
         </template>
       </div>
       <p v-for="m in errors(i)" :key="m" class="sm bad" role="alert">{{ m }}</p>
     </div>
-    <button type="button" class="btn ghost" :aria-disabled="full" @click="!full && addTier(channelId, major)"><Icon name="plus" /><span>{{ t("channel.addTier") }}</span></button>
+    <Button text type="button" :aria-disabled="full" @click="!full && addTier(channelId, major)"><Icon name="plus" /><span>{{ t("channel.addTier") }}</span></Button>
   </div>
 </template>
 

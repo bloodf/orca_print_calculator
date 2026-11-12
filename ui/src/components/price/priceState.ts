@@ -5,6 +5,7 @@ import { money, percent } from "../../format";
 import { t } from "../../i18n";
 import type { ChannelOk, ChannelQuote } from "../../engine/quote";
 import { currency, derived, locale, result, selected, setSectionOpen, setView, store } from "../../state/store";
+import { slotsWithoutPrice } from "./flagList";
 
 export const m = (minor: number): string => money(minor, currency.value, locale.value);
 export const pct = (bp: number): string => percent(bp, locale.value);
@@ -45,6 +46,23 @@ export const hero = computed<Hero>(() => {
   if (sel.problem === "margin_impossible") return { kind: "impossible", channel: sel.name };
   return { kind: "sentence", text: channelProblemSentence(sel), fees: sel.problem !== "overflow" };
 });
+
+/** Things the price does not count yet (unknown time/weight/usage, unset energy/labor/wear, unpriced filament): the number is partial. */
+export const missingCount = computed(() => derived.value.notCounted.length + slotsWithoutPrice(derived.value).length);
+
+/** True while an offline Spoolman (one that is configured) leaves some included filament priced from profiles or manual prices. */
+export const priceFromFallback = computed(() => {
+  if (store.draft.frozenPlates || !store.settings.spoolman.url.trim() || store.spoolman.state !== "offline") return false;
+  return derived.value.quoteInput.plates.some((p) => p.include && (derived.value.slotMatches[p.index] ?? []).some((v) => v.priceSource === "preset" || v.priceSource === "manual"));
+});
+
+/** Move focus to what explains what is missing: the gap list (unknown values and unpriced filament are all listed there), else the not-counted note. */
+export async function focusMissing(): Promise<void> {
+  await nextTick();
+  const el = document.querySelector<HTMLElement>("[data-gaps]") ?? document.querySelector<HTMLElement>('[data-flag="notCounted"]');
+  el?.scrollIntoView?.({ block: "center" });
+  el?.focus();
+}
 
 /** The selected channel when it has a price, else null. */
 export const priced = computed<ChannelOk | null>(() => (hero.value.kind === "price" ? hero.value.sel : null));

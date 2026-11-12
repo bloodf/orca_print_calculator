@@ -57,6 +57,15 @@ describe("locale selection and t()", () => {
     expect(t("plates.count", { n: 2 })).toBe("2 placas");
     expect(t("nav.quotes")).toBe("Orçamentos");
   });
+  test("Orca language overrides the browser only for automatic language", () => {
+    expect(setLocale("auto", "pt_BR")).toBe("pt-BR");
+    expect(setLocale("auto", "pt-BR")).toBe("pt-BR");
+    expect(setLocale("en", "pt_BR")).toBe("en");
+    expect(setLocale("pt-BR", "en_US")).toBe("pt-BR");
+    expect(setLocale("auto", "fr_FR")).toBe("en");
+    expect(setLocale("auto", null)).toBe(resolveLocale("auto", navigator.language));
+    expect(setLocale("auto", " ")).toBe(resolveLocale("auto", navigator.language));
+  });
   test("missing key renders the key", () => {
     expect(t("no.such.key")).toBe("no.such.key");
   });

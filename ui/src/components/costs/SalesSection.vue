@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Sales fee (docs/ux.md §5.3): the selected channel's own fees (channel-scoped, no override dot), then rounding and minimum order.
 import { computed } from "vue";
 import { intlLocale, t } from "../../i18n";
@@ -60,7 +61,7 @@ const modes = computed(() => PRETTY_MODES.map((v) => ({ value: v, label: t(`pret
     </div>
     <div v-else-if="channel" class="steps row">
       <span class="sm">{{ t("channel.steps", { n: channel.tiers.length }) }}</span>
-      <button v-if="!frozen" type="button" class="btn ghost" @click="gotoSettings('settings-channels')">{{ t("field.editChannelFees") }}</button>
+      <Button text v-if="!frozen" type="button" @click="gotoSettings('settings-channels')">{{ t("field.editChannelFees") }}</Button>
     </div>
     <div class="form-grid more hairline">
       <SelectField
@@ -72,7 +73,7 @@ const modes = computed(() => PRETTY_MODES.map((v) => ({ value: v, label: t(`pret
         :default-value="minOrder.base.value" :helper="t('field.minOrderHelp')" @update:model-value="(v) => minOrder.set(v ?? 0)" @reset="minOrder.reset"
       />
     </div>
-    <div v-if="hasOverride(KEYS)" class="foot"><button type="button" class="btn ghost" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</button></div>
+    <div v-if="hasOverride(KEYS)" class="foot"><Button text type="button" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</Button></div>
   </Section>
 </template>
 

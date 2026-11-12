@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { createApp, h, nextTick } from "vue";
+import { h, nextTick } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import CopyValue from "../src/components/settings/CopyValue.vue";
 import { setLocale } from "../src/i18n";
 

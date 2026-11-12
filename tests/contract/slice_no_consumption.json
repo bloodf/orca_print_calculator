@@ -1,0 +1,257 @@
+[
+ {
+  "in": {
+   "args": {},
+   "cmd": "get_state",
+   "id": 1,
+   "type": "cmd"
+  },
+  "out": [
+   {
+    "data": {
+     "host": {
+      "appLanguage": null,
+      "pluginVersion": "0.0.0-dev",
+      "printerModel": "Snapmaker U1",
+      "printerVendor": "Snapmaker",
+      "projectName": "Desk organizer"
+     },
+     "plates": [],
+     "quotes": null,
+     "settings": null,
+     "spooler": null,
+     "unreadable": []
+    },
+    "id": 1,
+    "ok": true,
+    "type": "res"
+   }
+  ]
+ },
+ {
+  "in": {
+   "gcode": "; estimated printing time (normal mode) = 1h 0m 0s\n",
+   "lifecycle": "GCodeExportFinished",
+   "plate": 0
+  },
+  "out": []
+ },
+ {
+  "in": {
+   "code": "Ok",
+   "lifecycle": "SlicingJobComplete"
+  },
+  "out": [
+   {
+    "data": {
+     "plates": [
+      {
+       "consumption": "missing",
+       "fileName": null,
+       "index": 0,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      }
+     ]
+    },
+    "name": "plates",
+    "type": "event"
+   }
+  ]
+ },
+ {
+  "in": {
+   "gcode": "; filament used [g] = 0.00, 0.00\n; estimated printing time (normal mode) = 1h 0m 0s\n",
+   "lifecycle": "GCodeExportFinished",
+   "plate": 1
+  },
+  "out": []
+ },
+ {
+  "in": {
+   "code": "Ok",
+   "lifecycle": "SlicingJobComplete"
+  },
+  "out": [
+   {
+    "data": {
+     "plates": [
+      {
+       "consumption": "missing",
+       "fileName": null,
+       "index": 0,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      },
+      {
+       "consumption": "zero",
+       "fileName": null,
+       "index": 1,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      }
+     ]
+    },
+    "name": "plates",
+    "type": "event"
+   }
+  ]
+ },
+ {
+  "in": {
+   "gcode": "; total filament used [g] = 12.50\n; estimated printing time (normal mode) = 1h 0m 0s\n",
+   "lifecycle": "GCodeExportFinished",
+   "plate": 2
+  },
+  "out": []
+ },
+ {
+  "in": {
+   "code": "Ok",
+   "lifecycle": "SlicingJobComplete"
+  },
+  "out": [
+   {
+    "data": {
+     "plates": [
+      {
+       "consumption": "missing",
+       "fileName": null,
+       "index": 0,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      },
+      {
+       "consumption": "zero",
+       "fileName": null,
+       "index": 1,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      },
+      {
+       "consumption": "missing",
+       "fileName": null,
+       "index": 2,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      }
+     ]
+    },
+    "name": "plates",
+    "type": "event"
+   }
+  ]
+ },
+ {
+  "in": {
+   "gcode": "; filament used [g] = 4.20, 0.00\n; estimated printing time (normal mode) = 1h 0m 0s\n",
+   "lifecycle": "GCodeExportFinished",
+   "plate": 3
+  },
+  "out": []
+ },
+ {
+  "in": {
+   "code": "Ok",
+   "lifecycle": "SlicingJobComplete"
+  },
+  "out": [
+   {
+    "data": {
+     "plates": [
+      {
+       "consumption": "missing",
+       "fileName": null,
+       "index": 0,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      },
+      {
+       "consumption": "zero",
+       "fileName": null,
+       "index": 1,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      },
+      {
+       "consumption": "missing",
+       "fileName": null,
+       "index": 2,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      },
+      {
+       "consumption": "known",
+       "fileName": null,
+       "index": 3,
+       "name": null,
+       "seconds": 3600,
+       "slicedAt": "2026-11-10T12:00:00Z",
+       "slots": [
+        {
+         "color": "#E8E8E8",
+         "costPerKg": 24.0,
+         "grams": 4.2,
+         "material": "PLA",
+         "n": 1,
+         "notes": "",
+         "preset": "Generic PLA @U1"
+        }
+       ],
+       "source": "slice",
+       "stale": false,
+       "thumb": null
+      }
+     ]
+    },
+    "name": "plates",
+    "type": "event"
+   }
+  ]
+ }
+]

@@ -47,7 +47,7 @@ until you enable it in the Plugins dialog (spike.md, "Installed copy"). Reinstal
 Orca, running the script again, and relaunching.
 
 Before moving on: `unzip -l dist/orca_print_calculator_any.whl` lists `orca_print_calculator/{__init__,_assets,core,host}.py`
-and a `.dist-info/`. Check `ls -l` on `ui/dist/index.html`: expect about 320 kB.
+and a `.dist-info/`. Check `ls -l` on `ui/dist/index.html`: expect about 880 kB (limit 900,000 B).
 
 ## Steps
 
@@ -63,7 +63,7 @@ See: the permission prompt lists `threading` and a read grant for `<tmp>/orcasli
 (on this Mac `<tmp>` is `$TMPDIR`; run `echo $TMPDIR` and compare). One combined prompt, accept it.
 Check that the plugin data folder exists afterwards and note its real name.
 
-Log: `loaded 0.1.0`.
+Log: `loaded 0.2.0`.
 Confirms: Q1; checklist C1 (grant shown at enable time).
 
 ### 2. Tab and icon
@@ -79,13 +79,13 @@ Confirms: tab and icon registration (Q7 context).
 
 Do: with the tab never opened, open the 3-plate project. Then open the tab and start a stopwatch.
 
-See: the page (about 320 kB, one file with a module script) shows state within 10 s. A blank page or the host-error
+See: the page (about 880 kB, one file with a module script) shows state within 10 s. A blank page or the host-error
 screen means `SetPage` or the bridge failed: collect per "If something fails" and stop.
-Log: there is no dedicated line for events before the tab opened. Read the order: `loaded 0.1.0` is written when the
+Log: there is no dedicated line for events before the tab opened. Read the order: `loaded 0.2.0` is written when the
 tab loads. A capture line (`export stashed ...` or `plate K captured ...`) before the first `loaded` line means events
 arrive before the tab exists. If you sliced before opening the tab and there are no such lines, those plates are
 missing from the tab. Also check `debug_*.log` has no `[AUDIT] block`.
-Confirms: Q7 (`SetPage` accepts ~320 kB with a module script); checklist C9; C4 and C5 (project name, printer vendor
+Confirms: Q7 (`SetPage` accepts ~880 kB with a module script); checklist C9; C4 and C5 (project name, printer vendor
 in the header).
 
 ### 4. Single slice
@@ -228,6 +228,10 @@ Do: switch the plugin language en and pt-BR.
 
 See: all visible text changes without a reload.
 
+Do: select Automatic while Orca uses Portuguese and the browser/system uses English; reopen the plugin. Then select English explicitly.
+
+See: Automatic follows Orca's language when `app_language()` is available. The explicit English preference wins. Hosts without that API fall back to the browser language. Currency and saved quotes stay unchanged.
+
 ### 20. Narrow window
 
 Do: shrink the Orca window to its minimum width.
@@ -247,7 +251,13 @@ Then copy the real files into `tests/fixtures/`: the captured G-code head and ta
 `synthetic_bbl_tail.txt`. Check them for IPs, hostnames and keys first. Run `python3 -m unittest discover tests`.
 Confirms: Q4 (Bambu footer and time line).
 
-### 22. Not checkable here
+### 22. Not ready to send, legacy zeros, order total
+
+Do: (a) with a quote saved by the previous version that has a plate with no filament or a 0 g slot, open it from Quotes. (b) Press "Confirm 0" on a listed gap, then Save changes, then CSV. (c) Set quantity to 5 and, in the narrow window, scroll the price off screen.
+See: (a) one line per gap with plate and slot, no Print or CSV; (b) focus lands on the next Confirm, else Save; after saving, CSV exports and no stored number changed; (c) the order total line is bold under the unit price, and the narrow bar reads "R$ X for 5".
+Not covered: screen-reader announcement of the toast, and focus order inside the WebView.
+
+### 23. Not checkable here
 
 Linux and Windows: the temp-folder grant (`orcaslicer_<uid>` on Linux, no uid suffix on Windows, `TMPDIR`/`TEMP`
 fallbacks), `window.print()` under WebView2 and WebKitGTK, and the file picker. They stay unverified until someone
@@ -300,3 +310,36 @@ rm -rf "$HOME/Library/Application Support/OrcaSlicer/orca_plugins/plugin_data/or
 
 The second path is the data folder (settings, saved quotes, log, exports); delete it only if you do not need the
 saved quotes. Use the real folder name you noted in step 1.
+
+
+## Added by the corrections round (not yet run in Orca)
+
+Record the exact version (`pyproject.toml`) and the SHA-256 of the wheel you installed. For each item, note what you saw:
+
+1. A slice whose G-code has a time but no filament use (rare; a post-processor can strip the weight lines): the plate shows "filament use of plate N" as not counted and Print/CSV stay unavailable.
+2. Save a draft with an unknown plate time, reopen it, duplicate it, restart Orca: it is still blocked in the calculator, in the quote list (CSV, Print) and in the preview.
+3. Remove the Spoolman address: prices and currency come from the preset or your manual values again.
+4. Switch language with a money field on screen: same value, new punctuation.
+5. Open Quotes with the keyboard: focus lands on the title (confirm the screen reader announces it).
+
+## Added by the UX fixes round (not yet run in Orca)
+
+1. Edit the customer of an open quote, press Close quote: an Undo toast appears; Undo brings the customer back and Save changes updates the same quote (no copy). Type something after closing, then Undo: it must refuse and keep what you typed.
+2. Open a second Orca project while a quote has unsaved fields: the fields can be recovered with Undo (the old project's plates are not).
+3. pt-BR at 1100 and 1280 px, then Orca zoom 200%: all four tabs are whole, the current tab keeps its name, the Help button is visible.
+4. Slice with an unknown time: the price is neutral with "Incomplete", "See what's missing" moves focus to the list (confirm a screen reader announces it); the breakdown shows Energy and Printer wear as a dash.
+5. Stop Spoolman: the price names the profile prices, and Extras and stock offers Retry. Windows high contrast: focus rings and the current tab are visible.
+6. A quote saved before the flags with a 0 g slot beside a positive one: it asks for "Confirm 0" for that slot (it is no longer read as a stated zero).
+
+## Added by the Vue + PrimeVue migration (not yet run in Orca)
+
+Mock screenshots and the production artifact under its CSP were checked in headless Chrome; none of this was run inside Orca's WebView.
+Record the wheel's SHA-256, then check:
+
+1. The plugin opens, every control is styled (buttons, fields, selects, tabs). Switch Orca light/dark: the whole UI, including open menus and dialogs, follows.
+2. Help (`?`): the dialog opens modal, Esc and the close button close it, focus returns to `?`.
+3. Header tabs: arrows move between tabs, Enter/Space switches; Settings groups wrap at narrow widths.
+4. Channel select, "+ Extra" menu, a quote's "…" menu, the printer chip power field and the spool picker open, take keyboard input and close with Esc.
+5. Orca zoom 200% and pt-BR: header whole, nothing cut off; Windows high contrast shows focus rings and the current tab.
+6. Save a quote, open it, print: the printed sheet looks as before (the paper sheet keeps its own colours).
+7. The bundle is larger (about 877 kB): note the first-open time compared with the previous release.

@@ -9,10 +9,13 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "typecheck": "vue-tsc --noEmit",
-    "lint": "oxlint src tests"
+    "lint": "oxlint src tests",
+    "check:shared": "node shared/scripts/check.mjs"
   },
   "dependencies": {
-    "vue": "^3.5.45"
+    "vue": "3.5.45",
+    "primevue": "4.5.5",
+    "@primeuix/themes": "1.2.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.10",

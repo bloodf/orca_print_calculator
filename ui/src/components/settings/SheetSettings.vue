@@ -1,5 +1,8 @@
 <script setup lang="ts">
 // Settings › Quote sheet: logo, company details, payment, footer, accent, validity and numbering, with a live sample beside the form.
+import Button from "primevue/button";
+import ColorPicker from "primevue/colorpicker";
+import InputText from "primevue/inputtext";
 import { computed, ref } from "vue";
 import { t } from "../../i18n";
 import { logoFromFile } from "../../logoFile";
@@ -13,6 +16,7 @@ import QuoteSheet from "../quotes/QuoteSheet.vue";
 import TextField from "./TextField.vue";
 import { UNIT } from "./units";
 
+const HEX = /^#[0-9a-fA-F]{6}$/;
 type Sheet = typeof store.settings.sheet;
 const sheet = computed(() => store.settings.sheet);
 const patchSheet = (patch: Partial<Sheet>): void => patchSettings((s) => ({ sheet: { ...s.sheet, ...patch } }));
@@ -31,6 +35,10 @@ async function onPick(e: Event): Promise<void> {
   if (r.ok) patchSheet({ logo: r.logo });
   else toast({ text: t(`sheet.logoError.${r.error}`), tone: "bad" });
 }
+function onHex(e: Event): void {
+  const v = (e.target as HTMLInputElement).value.trim();
+  if (HEX.test(v)) patchSheet({ accent: v });
+}
 function removeLogo(): void {
   const before = sheet.value.logo;
   patchSheet({ logo: "" });
@@ -47,8 +55,8 @@ function removeLogo(): void {
           <span class="se-thumb" :class="{ empty: !sheet.logo }"><img v-if="sheet.logo" :src="sheet.logo" :alt="t('sheet.logo')"><Icon v-else name="upload" /></span>
           <div>
             <div class="row se-logo-btns">
-              <button type="button" class="btn" :aria-busy="busy ? 'true' : undefined" @click="file?.click()"><Icon name="upload" /><span>{{ t(sheet.logo ? "sheet.logoReplace" : "sheet.logoAdd") }}</span></button>
-              <button v-if="sheet.logo" type="button" class="btn ghost" @click="removeLogo"><Icon name="trash" /><span>{{ t("sheet.logoRemove") }}</span></button>
+              <Button severity="secondary" outlined type="button" :aria-busy="busy ? 'true' : undefined" @click="file?.click()"><Icon name="upload" /><span>{{ t(sheet.logo ? "sheet.logoReplace" : "sheet.logoAdd") }}</span></Button>
+              <Button v-if="sheet.logo" text type="button" @click="removeLogo"><Icon name="trash" /><span>{{ t("sheet.logoRemove") }}</span></Button>
             </div>
             <p class="sm muted">{{ t("sheet.logoHelp") }}</p>
           </div>
@@ -60,8 +68,9 @@ function removeLogo(): void {
           <div class="se-color">
             <label for="sheet-accent" class="sm muted">{{ t("sheet.accent") }}</label>
             <div class="row">
-              <input id="sheet-accent" type="color" :value="sheet.accent" @input="(e) => patchSheet({ accent: (e.target as HTMLInputElement).value })">
-              <button v-if="sheet.accent.toLowerCase() !== DEFAULT_ACCENT.toLowerCase()" type="button" class="btn ghost" @click="patchSheet({ accent: DEFAULT_ACCENT })">{{ t("sheet.accentReset") }}</button>
+              <ColorPicker format="hex" :model-value="sheet.accent.replace('#', '')" :pt="{ preview: { 'aria-label': t('sheet.accent') } }" @update:model-value="(v) => patchSheet({ accent: `#${String(v).replace('#', '')}` })" />
+              <InputText id="sheet-accent" class="num se-hex" maxlength="7" spellcheck="false" autocomplete="off" :model-value="sheet.accent" :invalid="!HEX.test(sheet.accent)" @input="onHex" />
+              <Button v-if="sheet.accent.toLowerCase() !== DEFAULT_ACCENT.toLowerCase()" text type="button" @click="patchSheet({ accent: DEFAULT_ACCENT })">{{ t("sheet.accentReset") }}</Button>
             </div>
           </div>
         </div>
@@ -102,11 +111,11 @@ function removeLogo(): void {
 .se-group > * + * { margin-top: 12px; }
 .se-logo > * + * { margin-left: 12px; }
 .se-logo-btns > * + * { margin-left: 8px; }
-.se-thumb { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 56px; padding: 4px; background: #FFFFFF; border: 1px solid var(--opc-border); border-radius: var(--opc-r-control); color: #5C6664; }
+.se-thumb { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 56px; padding: 4px; background: var(--opc-raised); border: 1px solid var(--opc-border); border-radius: var(--opc-r-control); color: var(--opc-muted); }
 .se-thumb.empty { border-style: dashed; }
 .se-thumb img { max-width: 100%; max-height: 100%; }
 .se-color label { display: block; min-height: 24px; line-height: 24px; }
-.se-color input { width: 44px; height: 28px; padding: 2px; }
+.se-color .se-hex { width: 11ch; min-width: 11ch; }
 .se-color .row > * + * { margin-left: 8px; }
 .se-preview > p { margin-bottom: 6px; }
 .se-preview :deep(.quote-sheet) { width: 100%; margin: 0; padding: 20px; font-size: 9.5pt; }

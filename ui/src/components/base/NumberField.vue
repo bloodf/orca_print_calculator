@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import InputGroup from "primevue/inputgroup";
+import InputGroupAddon from "primevue/inputgroupaddon";
+import InputText from "primevue/inputtext";
+import Message from "primevue/message";
 import { computed, onBeforeUnmount, ref, useId, watch } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { markInvalid } from "../../state/invalid";
@@ -37,6 +41,15 @@ watch(() => props.modelValue, (v) => {
 // The currency (digits) changed under a mounted field: show the same stored value in the new format.
 // Watch the primitives: MoneyField passes a fresh `money` object on every render, and watching that rewrote the text on each keystroke.
 watch([() => props.scale, () => props.money?.digits], () => { text.value = fmt(props.modelValue); localError.value = null; });
+
+// The language changed under a mounted field. Text that was the confirmed value in the old language is shown again in the new
+// one (same number, new punctuation). An edit that was invalid or empty stays exactly as typed: it is never re-read with the new rules.
+watch(() => intlLocale(), (_now, before) => {
+  const was = checkText(text.value, spec.value, bounds.value, before);
+  if (was.error || was.value !== props.modelValue) return;
+  text.value = fmt(props.modelValue);
+  localError.value = null;
+});
 
 const overridden = computed(() => props.defaultValue !== undefined && props.modelValue !== props.defaultValue);
 const defaultText = computed(() => (props.defaultValue == null ? t("a11y.unknown") : `${props.prefix ?? ""}${fmt(props.defaultValue)}${props.unit ? ` ${props.unit}` : ""}`.trim()));
@@ -89,34 +102,28 @@ function onKey(e: KeyboardEvent): void {
       <label :for="fid" class="sm muted">{{ label }}</label>
       <ResetButton v-if="overridden" :label="label" :default-text="defaultText" @click="emit('reset')" />
     </div>
-    <div class="nf-box row" :class="{ bad: !!shownError }">
-      <span v-if="prefix" class="nf-affix muted num">{{ prefix }}</span>
-      <input
-        :id="fid" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num"
-        :value="text" :readonly="readonly" :aria-invalid="shownError ? 'true' : undefined" :aria-describedby="describedBy"
-        @input="onInput" @keydown="onKey" @focus="(e) => { focused = true; (e.target as HTMLInputElement).select(); }" @blur="onBlur"
+    <InputGroup class="nf-box">
+      <InputGroupAddon v-if="prefix" class="num">{{ prefix }}</InputGroupAddon>
+      <InputText
+        :id="fid" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" class="num nf-input"
+        :model-value="text" :readonly="readonly" :invalid="!!shownError" :aria-invalid="shownError ? 'true' : undefined" :aria-describedby="describedBy"
+        @input="onInput" @keydown="onKey" @focus="(e: FocusEvent) => { focused = true; (e.target as HTMLInputElement).select(); }" @blur="onBlur"
       />
-      <span v-if="unit" class="nf-affix muted num">{{ unit }}</span>
-    </div>
-    <p v-if="shownError || helperText" :id="`${fid}-d`" class="sm nf-help" :class="{ bad: !!shownError }" :role="shownError ? 'alert' : undefined">{{ shownError || helperText }}</p>
+      <InputGroupAddon v-if="unit" class="num">{{ unit }}</InputGroupAddon>
+    </InputGroup>
+    <Message v-if="shownError" :id="`${fid}-d`" class="nf-help bad" severity="error" size="small" variant="simple" role="alert">{{ shownError }}</Message>
+    <p v-else-if="helperText" :id="`${fid}-d`" class="sm nf-help">{{ helperText }}</p>
   </div>
 </template>
 
 <style scoped>
 .nf { min-width: 0; }
-.nf.sm { max-width: 112px; }
-.nf.md { max-width: 168px; }
+.nf.sm { max-width: 128px; }
+.nf.md { max-width: 184px; }
 .nf-head { min-height: 24px; }
 .nf-head > * + * { margin-left: 4px; }
-.nf-box { height: 28px; border: 1px solid var(--opc-border); border-radius: var(--opc-r-control); background: var(--opc-bg); padding: 0 8px; }
-.nf-box:hover { border-color: var(--opc-muted); }
-.nf-box:focus-within { border-color: var(--opc-accent-text); box-shadow: var(--opc-focus); }
-.nf-box.bad, .nf-box.bad:focus-within { border-color: var(--opc-bad); }
-.nf-box input { flex: 1 1 auto; min-width: 0; height: 26px; padding: 0; border: 0; background: transparent; box-shadow: none; text-align: right; }
-.nf-box input:focus { box-shadow: none; }
-.nf-affix { flex: none; font-size: var(--opc-fs-sm); }
-.nf-affix:first-child { margin-right: 6px; }
-.nf-box input + .nf-affix { margin-left: 4px; }
-.nf-help { margin-top: 2px; color: var(--opc-muted); }
+.nf-box :deep(.nf-input) { flex: 1 1 auto; min-width: 0; text-align: right; }
+.nf-box :deep(.p-inputgroupaddon) { padding-inline: 8px; font-size: var(--opc-fs-sm); }
+.nf-help { margin: 2px 0 0; color: var(--opc-muted); }
 .nf-help.bad { color: var(--opc-bad); }
 </style>

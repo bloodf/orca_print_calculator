@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Button from "primevue/button";
 // Shipping (docs/ux.md §5.3): mode + amount; one overridable default object {mode, minor}.
 import { computed } from "vue";
 import { intlLocale, t } from "../../i18n";
@@ -41,7 +42,7 @@ const setAmount = (v: number | null) => ship.set({ ...ship.value.value, minor: v
     <div v-if="mode !== 'none'" class="amount">
       <MoneyField :model-value="ship.value.value.minor" :label="t('field.shippingAmount')" :digits="digits" :currency="currency" :step="10 ** digits" :helper="helper" @update:model-value="setAmount" />
     </div>
-    <div v-if="edited" class="foot hairline"><button type="button" class="btn ghost" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</button></div>
+    <div v-if="edited" class="foot hairline"><Button text type="button" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</Button></div>
   </Section>
 </template>
 

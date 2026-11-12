@@ -50,10 +50,11 @@ const q = (a: number, b: number, c = 1): Q => [big(a) * big(b), big(c)];
 const add = (x: Q, y: Q): Q => [x[0] * y[1] + y[0] * x[1], x[1] * y[1]];
 const perUnit = (x: Q, u: number) => out(roundDiv(x[0], x[1] * big(u)));
 
-export function computeCost(i: EngineInput): CostBreakdown {
+/** Validated engine inputs as exact fractions: the cost of ONE print run per line, nothing rounded yet. */
+function runFractions(i: EngineInput) {
   const u = nat(i.unitsPerPrint, "unitsPerPrint", 1);
   const sec = nat(i.printSeconds, "printSeconds");
-  const qty = nat(i.quantity, "quantity", 1);
+  nat(i.quantity, "quantity", 1);
   const { wattsW10, acquisitionCents, lifetimeHours } = i.machine;
   [wattsW10, acquisitionCents, lifetimeHours, i.kwhE4, i.maintenancePerHourCents, i.labor.perHourCents, i.labor.minutes, i.fixedCostPerPrintHourCents]
     .forEach((v) => nat(v, "cost input"));
@@ -65,8 +66,8 @@ export function computeCost(i: EngineInput): CostBreakdown {
   });
   i.materials.forEach((m) => { nat(m.pricePerKgCents, `${m.key} pricePerKgCents`); nat(m.gramsMg, `${m.key} gramsMg`); });
 
-  const detail = i.materials.map((m) => ({ key: m.key, cents: perUnit(q(m.pricePerKgCents, m.gramsMg, 1_000_000), u) }));
-  const filament = i.materials.reduce<Q>((s, m) => add(s, q(m.pricePerKgCents, m.gramsMg, 1_000_000)), [0n, 1n]);
+  const materialQ = i.materials.map((m) => ({ key: m.key, q: q(m.pricePerKgCents, m.gramsMg, 1_000_000) }));
+  const filament = materialQ.reduce<Q>((s, m) => add(s, m.q), [0n, 1n]);
   const energy: Q = [big(wattsW10) * big(sec) * big(i.kwhE4), 3_600_000_000n];
   // ponytail: lifetimeHours = 0 means no depreciation (same as shared/cost.ts)
   const depreciation: Q = i.depreciationEnabled && lifetimeHours > 0 ? q(acquisitionCents, sec, 3600 * lifetimeHours) : [0n, 1n];
@@ -78,23 +79,45 @@ export function computeCost(i: EngineInput): CostBreakdown {
   const failure: Q = i.failure.mode === "markup" ? [base[0] * big(bp), base[1] * 10000n] : [base[0] * big(bp), base[1] * big(10000 - bp)];
   const labor = q(i.labor.perHourCents, i.labor.minutes, 60);
   const fixed = q(i.fixedCostPerPrintHourCents, sec, 3600);
+  return { u, materialQ, qs: { filament, energy, depreciation, maintenance, failure, labor, fixed } as Record<Exclude<LineId, "extras">, Q> };
+}
+const LINE_IDS = ["filament", "energy", "depreciation", "maintenance", "failure", "labor", "fixed"] as const;
+
+export function computeCost(i: EngineInput): CostBreakdown {
+  const { u, materialQ, qs } = runFractions(i);
+  const detail = materialQ.map((m) => ({ key: m.key, cents: perUnit(m.q, u) }));
   const extraDetail = i.extras.map((e) => ({ key: e.key, cents: mulDivRound(e.unitCents, e.qtyE3, e.per === "print" ? 1000 * u : 1000) }));
   const extras = extraDetail.reduce((s, e) => s + e.cents, 0);
   // Detail only when a caller opts into `per`, so outputs for older inputs stay byte-identical.
   const extrasDetail = i.extras.some((e) => e.per !== undefined) ? { detail: extraDetail } : {};
 
   const lines: CostBreakdown["lines"] = [
-    { id: "filament", cents: perUnit(filament, u), detail },
-    { id: "energy", cents: perUnit(energy, u) },
-    { id: "depreciation", cents: perUnit(depreciation, u) },
-    { id: "maintenance", cents: perUnit(maintenance, u) },
-    { id: "failure", cents: perUnit(failure, u) },
-    { id: "labor", cents: perUnit(labor, u) },
-    { id: "fixed", cents: perUnit(fixed, u) },
+    { id: "filament", cents: perUnit(qs.filament, u), detail },
+    ...LINE_IDS.slice(1).map((id) => ({ id, cents: perUnit(qs[id], u) })),
     { id: "extras", cents: extras, ...extrasDetail },
   ];
   const unitCostCents = lines.reduce((s, l) => s + l.cents, 0);
-  return { lines, unitCostCents, batchCostCents: nat(unitCostCents * qty, "batchCost"), version: ENGINE_VERSION };
+  return { lines, unitCostCents, batchCostCents: nat(unitCostCents * i.quantity, "batchCost"), version: ENGINE_VERSION };
+}
+
+/**
+ * Exact production cost of `runs` print runs (calc version 2). Each line is rounded once, at order level: the
+ * fraction for one run is multiplied by `runs` before rounding, so no per-piece rounding is multiplied back up.
+ * `per: "piece"` extras are charged for every piece printed (spares included), `per: "print"` extras once per run.
+ */
+export function computeRunsCost(i: EngineInput, runs: number): { lines: { id: LineId; cents: number; detail?: { key: string; cents: number }[] }[]; totalCents: number } {
+  nat(runs, "runs", 1);
+  const { u, materialQ, qs } = runFractions(i);
+  const r = big(runs);
+  const total = (x: Q) => out(roundDiv(x[0] * r, x[1]));
+  const detail = materialQ.map((m) => ({ key: m.key, cents: total(m.q) }));
+  const extraDetail = i.extras.map((e) => ({ key: e.key, cents: mulDivRound(e.unitCents, e.qtyE3 * (e.per === "print" ? runs : runs * u), 1000) }));
+  const lines: { id: LineId; cents: number; detail?: { key: string; cents: number }[] }[] = [
+    { id: "filament", cents: total(qs.filament), detail },
+    ...LINE_IDS.slice(1).map((id) => ({ id, cents: total(qs[id]) })),
+    { id: "extras", cents: extraDetail.reduce((s, e) => s + e.cents, 0), ...(i.extras.some((e) => e.per !== undefined) ? { detail: extraDetail } : {}) },
+  ];
+  return { lines, totalCents: nat(lines.reduce((s, l) => s + l.cents, 0), "orderCost") };
 }
 
 // ---- channel fees ----

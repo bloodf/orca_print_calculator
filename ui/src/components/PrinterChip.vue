@@ -1,10 +1,12 @@
 <script setup lang="ts">
 // Printer chip + average-power popover (docs/ux.md §5.3). Saves to settings.printers[model].watts; "Use suggested" clears it.
+import Button from "primevue/button";
 import { computed, ref } from "vue";
 import { intlLocale, t } from "../i18n";
 import { watts as fmtWatts } from "../format";
 import { derived } from "../state/store";
 import Badge from "./base/Badge.vue";
+import { elOf } from "./base/el";
 import Icon from "./base/Icon.vue";
 import NumberField from "./base/NumberField.vue";
 import Popover from "./base/Popover.vue";
@@ -24,22 +26,20 @@ const more = () => { close(); gotoSettings("settings-printers"); };
 <template>
   <span v-if="!model" class="chip none sm muted">{{ t("header.noPrinter") }}</span>
   <template v-else>
-    <button
-      ref="anchor" type="button" class="chip btn" :aria-label="`${model}, ${wattText}${estimated ? `, ${t('printer.estimated')}` : ''}`"
-      aria-haspopup="dialog" :aria-expanded="open" @click="open = !open"
-    >
+    <Button :ref="(c) => (anchor = elOf(c))" severity="secondary" outlined size="small" type="button" class="chip" :aria-label="`${model}, ${wattText}${estimated ? `, ${t('printer.estimated')}` : ''}`"
+      aria-haspopup="dialog" :aria-expanded="open" @click="open = !open">
       <Icon name="printer-3d" />
       <span class="model truncate">{{ model }}</span>
       <span class="w num sm muted"><span class="dotsep" aria-hidden="true">·</span> {{ wattText }}</span>
       <Badge v-if="source === 'match' && estimated" tone="info" :text="t('printer.estimated')" />
-    </button>
+    </Button>
     <Popover :open="open" :anchor="anchor" :label="t('printer.power')" @close="close">
       <div class="pc">
         <NumberField :model-value="watts" :label="t('printer.power')" :scale="1" :step="10" :min="1" :max="5000" unit="W" :helper="t('printer.powerHelp')" required @update:model-value="save" />
         <p class="sm muted sugg">{{ t("printer.suggested", { watts: match.watts, how: t(`printer.how.${match.how}`) }) }}</p>
         <div class="row acts">
-          <button v-if="source === 'saved'" type="button" class="btn" @click="useSuggested">{{ t("printer.useSuggested") }}</button>
-          <button type="button" class="btn ghost" @click="more">{{ t("printer.moreSettings") }}</button>
+          <Button v-if="source === 'saved'" severity="secondary" outlined type="button" @click="useSuggested">{{ t("printer.useSuggested") }}</Button>
+          <Button text type="button" @click="more">{{ t("printer.moreSettings") }}</Button>
         </div>
       </div>
     </Popover>
@@ -47,13 +47,16 @@ const more = () => { close(); gotoSettings("settings-printers"); };
 </template>
 
 <style scoped>
-.chip { min-width: 0; max-width: 100%; }
+.chip { min-width: 0; max-width: 100%; overflow: hidden; }
+.chip > .w, .chip :deep(.badge) { flex: none; }
 .chip.none { padding: 0 4px; }
-.chip > * + * { margin-left: 6px; }
-.model { max-width: 18ch; }
+.model { max-width: 18ch; min-width: 0; flex: 0 1 auto; }
 .dotsep { margin-right: 2px; }
 .sugg { margin-top: var(--opc-s2); }
 .acts { margin-top: var(--opc-s2); justify-content: space-between; flex-wrap: wrap; }
+/* the full text (model, watts, Estimated) stays in the button's accessible name; what is drawn gives way to the tabs */
+@media (max-width: 1279px) { .chip :deep(.badge) { display: none; } }
 @media (max-width: 1099px) { .model { max-width: 12ch; } }
 @media (max-width: 899px) { .model, .dotsep { display: none; } }
+@media (max-width: 599px) { .w { display: none; } }
 </style>

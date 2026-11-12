@@ -1,5 +1,9 @@
 <script setup lang="ts">
 // Settings › Sales channels: Direct plus whatever the user adds; inline editor, one row open at a time (docs/ux.md §5.3).
+import Button from "primevue/button";
+import Checkbox from "primevue/checkbox";
+import Message from "primevue/message";
+import RadioButton from "primevue/radiobutton";
 import { computed, nextTick, ref } from "vue";
 import { money, percent } from "../../format";
 import { t } from "../../i18n";
@@ -47,13 +51,13 @@ function remove(id: string): void {
     <ul class="ce-list">
       <li v-for="c in channels" :key="c.id" class="ce-item">
         <div class="ce-row">
-          <input v-if="multi" type="checkbox" :checked="store.settings.comparedChannelIds.includes(c.id)" :aria-label="t('channel.compare', { name: c.name })" @change="setCompared(c.id, ($event.target as HTMLInputElement).checked)" />
-          <input v-if="multi" type="radio" name="default-channel" :checked="store.settings.defaultChannelId === c.id" :aria-label="`${t('channel.default')}: ${c.name}`" @change="setDefaultChannel(c.id)" />
+          <Checkbox v-if="multi" binary :model-value="store.settings.comparedChannelIds.includes(c.id)" :aria-label="t('channel.compare', { name: c.name })" @update:model-value="(v: boolean) => setCompared(c.id, v)" />
+          <RadioButton v-if="multi" name="default-channel" :value="c.id" :model-value="store.settings.defaultChannelId" :aria-label="`${t('channel.default')}: ${c.name}`" @update:model-value="setDefaultChannel(c.id)" />
           <span class="ce-name truncate">{{ c.name }}</span>
           <Badge v-if="invalid(c)" tone="bad" :text="t('channel.fixFees')" />
           <span class="muted num sm ce-fee">{{ summary(c) }}</span>
-          <button type="button" class="btn icon" :aria-expanded="editing === c.id" :aria-label="t('channel.edit', { name: c.name })" @click="toggle(c.id)"><Icon name="pencil" /></button>
-          <button v-if="multi" type="button" class="btn icon" :aria-label="t('channel.delete', { name: c.name })" @click="remove(c.id)"><Icon name="trash" /></button>
+          <Button text severity="secondary" type="button" class="icon-btn" :aria-expanded="editing === c.id" :aria-label="t('channel.edit', { name: c.name })" @click="toggle(c.id)"><Icon name="pencil" /></Button>
+          <Button v-if="multi" text severity="secondary" type="button" class="icon-btn" :aria-label="t('channel.delete', { name: c.name })" @click="remove(c.id)"><Icon name="trash" /></Button>
         </div>
         <div v-if="editing === c.id" class="ce-edit fade-in">
           <TextField :id="`channel-name-${c.id}`" :model-value="c.name" :label="t('field.name')" :maxlength="40" width="md" :error="nameError(c)" @update:model-value="(v) => updateChannel(c.id, { name: v })" />
@@ -62,13 +66,13 @@ function remove(id: string): void {
             <MoneyField :model-value="first(c).fixedMinor" :label="t('field.fixedFee')" :digits="digits" :currency="currency" :step="major" @update:model-value="(v) => v !== null && updateTier(c.id, 0, { fixedMinor: v })" />
             <PercentField :model-value="c.taxBp" :label="t('field.tax')" :step="50" :max="9000" :helper="t('field.taxHelp')" @update:model-value="(v) => v !== null && updateChannel(c.id, { taxBp: v })" />
           </div>
-          <p v-for="m in rowProblems(c)" :key="m" class="sm bad" role="alert">{{ m }}</p>
+          <Message v-for="m in rowProblems(c)" :key="m" class="bad" severity="error" size="small" variant="simple" role="alert">{{ m }}</Message>
           <ChannelTierRows v-if="showTiers(c)" :channel-id="c.id" />
-          <button v-else type="button" class="btn ghost" @click="tiersOpen = { ...tiersOpen, [c.id]: true }"><Icon name="plus" /><span>{{ t("channel.addTiers") }}</span></button>
+          <Button v-else text type="button" @click="tiersOpen = { ...tiersOpen, [c.id]: true }"><Icon name="plus" /><span>{{ t("channel.addTiers") }}</span></Button>
         </div>
       </li>
     </ul>
-    <button type="button" class="btn ghost" @click="add"><Icon name="plus" /><span>{{ t("channel.add") }}</span></button>
+    <Button text type="button" @click="add"><Icon name="plus" /><span>{{ t("channel.add") }}</span></Button>
   </div>
 </template>
 

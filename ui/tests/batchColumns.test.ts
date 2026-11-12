@@ -1,6 +1,7 @@
 // The batch table keeps Order profit and Margin (the loss signal) visible at every panel width: 7 columns only where the panel is wide.
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { createApp, h, nextTick, type App } from "vue";
+import { h, nextTick, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import BatchTable from "../src/components/price/BatchTable.vue";
 import { setLocale } from "../src/i18n";
 import { setSectionOpen, store } from "../src/state/store";

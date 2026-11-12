@@ -1,5 +1,6 @@
 // Shared setup for the costs and header tests: seed the real store from the dev fixtures, mount one component.
-import { createApp, h, nextTick, type App } from "vue";
+import { h, nextTick, type App } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
 import { HOST, plates, settings, spoolman } from "../src/mock/fixtures";
 import { newDraft } from "../src/state/defaults";
 import { store } from "../src/state/store";

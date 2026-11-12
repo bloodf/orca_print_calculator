@@ -14,6 +14,7 @@
     "data": {
      "plates": [
       {
+       "consumption": "known",
        "fileName": "desk.gcode.3mf",
        "index": 0,
        "name": null,
@@ -44,6 +45,7 @@
        "thumb": null
       },
       {
+       "consumption": "known",
        "fileName": "desk.gcode.3mf",
        "index": 1,
        "name": null,

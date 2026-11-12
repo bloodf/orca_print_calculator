@@ -1,5 +1,6 @@
 <script setup lang="ts">
 // Checkbox row with the override dot + reset used by the cost sections.
+import Checkbox from "primevue/checkbox";
 import { useId } from "vue";
 import ResetButton from "../base/ResetButton.vue";
 import { t } from "../../i18n";
@@ -11,7 +12,7 @@ const fid = `cf-${useId()}`;
 
 <template>
   <div class="cf row">
-    <input :id="fid" type="checkbox" :checked="modelValue" @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)" />
+    <Checkbox :input-id="fid" binary :model-value="modelValue" @update:model-value="(v: boolean) => $emit('update:modelValue', v)" />
     <span v-if="overridden" class="ovr-dot" aria-hidden="true" />
     <span v-if="overridden" class="sr-only">{{ t("a11y.edited") }}</span>
     <label :for="fid" class="sm">{{ label }}</label>
@@ -20,5 +21,6 @@ const fid = `cf-${useId()}`;
 </template>
 
 <style scoped>
-.cf { min-height: 28px; }
+.cf { min-height: 32px; }
+.cf > * + * { margin-left: 8px; }
 </style>
