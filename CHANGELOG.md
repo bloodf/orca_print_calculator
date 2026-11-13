@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-11-13
+
+### Changed
+- README links the other plugins of the family (Organizer, Spooler, U1 Control) on GitHub and Orca Cloud, with refreshed previews. No change to pricing, quotes or the interface.
+
 ## [0.2.1] - 2026-11-12
 
 ### Changed
