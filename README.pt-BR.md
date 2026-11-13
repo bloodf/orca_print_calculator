@@ -11,30 +11,30 @@ Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na ja
 <!-- related-plugins:start -->
 ## Conheça os outros plugins
 
-Complete seu fluxo no OrcaSlicer: organizar, calcular, gerenciar filamento e imprimir. Clique na imagem, no ícone ou no nome para abrir o repositório.
+Complete seu fluxo no OrcaSlicer: organizar, calcular, gerenciar filamento e imprimir. Cada plugin funciona sozinho; instalados juntos, compartilham dados onde ajuda.
 
 <table>
   <tr>
     <td width="33%" valign="top">
-      <a href="https://github.com/bloodf/orca_organizer"><img src="docs/related-plugins/orca_organizer-icon.png" width="40" height="40" alt="Organizer"></a>
-      <h3><a href="https://github.com/bloodf/orca_organizer">Organizer</a></h3>
-      <a href="https://github.com/bloodf/orca_organizer"><img src="docs/related-plugins/orca_organizer-preview.jpg" width="280" alt="Organizer: imagem de apresentação"></a>
-      <p>Organize os objetos pelo contorno real e preencha a bandeja com mais cópias.</p>
-      <p><a href="https://github.com/bloodf/orca_organizer">Abrir repositório →</a></p>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54"><img src="docs/related-plugins/orca_organizer-icon.png" width="40" height="40" alt="Organizer"></a>
+      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54">Organizer</a></h3>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54"><img src="docs/related-plugins/orca_organizer-preview.jpg" width="280" alt="Organizer: prévia"></a>
+      <p>Organize os objetos pelo contorno real e preencha a mesa com mais cópias, numa aba ao lado de Preparar.</p>
+      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/orca_organizer">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
-      <a href="https://github.com/bloodf/spooler"><img src="docs/related-plugins/spooler-icon.png" width="40" height="40" alt="Spooler"></a>
-      <h3><a href="https://github.com/bloodf/spooler">Spooler</a></h3>
-      <a href="https://github.com/bloodf/spooler"><img src="docs/related-plugins/spooler-preview.png" width="280" alt="Spooler: imagem de apresentação"></a>
-      <p>Traga suas bobinas do Spoolman e os perfis de filamento para o OrcaSlicer.</p>
-      <p><a href="https://github.com/bloodf/spooler">Abrir repositório →</a></p>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368"><img src="docs/related-plugins/spooler-icon.png" width="40" height="40" alt="Spooler"></a>
+      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368">Spooler</a></h3>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368"><img src="docs/related-plugins/spooler-preview.png" width="280" alt="Spooler: prévia"></a>
+      <p>Suas bobinas do Spoolman e os perfis de filamento no OrcaSlicer: quanto resta em cada bobina, checagem da mesa e slots da impressora ao vivo.</p>
+      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/spooler">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
-      <a href="https://github.com/bloodf/u1control"><img src="docs/related-plugins/u1control-icon.png" width="40" height="40" alt="U1 Control"></a>
-      <h3><a href="https://github.com/bloodf/u1control">U1 Control</a></h3>
-      <a href="https://github.com/bloodf/u1control"><img src="docs/related-plugins/u1control-preview.png" width="280" alt="U1 Control: imagem de apresentação"></a>
-      <p>Prepare e acompanhe impressões na Snapmaker U1, com mapeamento de cabeçotes, temperaturas, câmera e arquivos.</p>
-      <p><a href="https://github.com/bloodf/u1control">Abrir repositório →</a></p>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f"><img src="docs/related-plugins/u1control-icon.png" width="40" height="40" alt="U1 Control"></a>
+      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f">U1 Control</a></h3>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f"><img src="docs/related-plugins/u1control-preview.png" width="280" alt="U1 Control: prévia"></a>
+      <p>Prepare e acompanhe impressões na Snapmaker U1: mapeamento de cabeçotes, temperaturas, câmera, arquivos e Spoolman.</p>
+      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/u1control">Código no GitHub →</a></p>
     </td>
   </tr>
 </table>
