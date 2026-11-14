@@ -28,7 +28,7 @@ export async function choose(root: ParentNode, label: string, nth = 0): Promise<
   await settle();
   const o = optionEls().find((x) => (x.textContent ?? "").trim() === label);
   if (!o) throw new Error(`no option "${label}" among ${optionEls().map((x) => x.textContent?.trim()).join(", ")}`);
-  o.dispatchEvent(new MouseEvent("mousedown", { bubbles: true })); // PrimeVue selects an option on mousedown
+  o.click(); // PrimeVue 5 selects an option on click
   await settle();
 }
 export const selectedLabel = (root: ParentNode, nth = 0): string => (combo(root, nth).textContent ?? "").trim();

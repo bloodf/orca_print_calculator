@@ -31,7 +31,7 @@ const run = async (theme, lang, w, h, dpr, label) => {
   await delay(400);
   if (lang === "pt-BR") { // the language lives in Settings > Language; the same path a user takes
     await evaluate(call, `document.querySelector('[role=tab][aria-label="Settings"]').click(); await new Promise(r => setTimeout(r, 300)); document.getElementById('settings-tab-language').click(); await new Promise(r => setTimeout(r, 300));`);
-    await evaluate(call, `const c = [...document.querySelectorAll('[role=combobox]')][0]; c.closest('.p-select').click(); await new Promise(r => setTimeout(r, 300)); const o = [...document.querySelectorAll('[role=option]')].find(x => x.textContent.includes('Português')); o.dispatchEvent(new MouseEvent('mousedown', { bubbles: true })); await new Promise(r => setTimeout(r, 400));`);
+    await evaluate(call, `const c = [...document.querySelectorAll('[role=combobox]')][0]; c.closest('.p-select').click(); await new Promise(r => setTimeout(r, 300)); const o = [...document.querySelectorAll('[role=option]')].find(x => x.textContent.includes('Português')); o.click(); await new Promise(r => setTimeout(r, 400));`);
     await evaluate(call, `document.querySelector('[role=tab][aria-label="Calculadora"]').click(); await new Promise(r => setTimeout(r, 500));`);
   }
   // CSP is enforced: runtime code generation must be refused
@@ -54,7 +54,7 @@ const run = async (theme, lang, w, h, dpr, label) => {
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true })); (d?.querySelector('button[aria-label]'))?.focus(); d?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true })); await new Promise(r => setTimeout(r, 600));
     return { opened, closed: !document.querySelector('[role=dialog]'), focusBack: document.activeElement === btn };`);
   // channel select (PrimeVue Select) changes the channel
-  r.steps.select = await evaluate(call, `const c = document.querySelector('#price .p-select, .p-select'); c.click(); await new Promise(r => setTimeout(r, 300)); const opts = [...document.querySelectorAll('[role=option]')]; const labels = opts.map(o => o.textContent.trim()); opts[opts.length - 1].dispatchEvent(new MouseEvent('mousedown', { bubbles: true })); await new Promise(r => setTimeout(r, 400)); return { labels, now: document.querySelector('.p-select [role=combobox]').textContent.trim() };`);
+  r.steps.select = await evaluate(call, `const c = document.querySelector('#price .p-select, .p-select'); c.click(); await new Promise(r => setTimeout(r, 300)); const opts = [...document.querySelectorAll('[role=option]')]; const labels = opts.map(o => o.textContent.trim()); opts[opts.length - 1].click(); await new Promise(r => setTimeout(r, 400)); return { labels, now: document.querySelector('.p-select [role=combobox]').textContent.trim() };`);
   // save a quote through the real bridge and see the confirmation
   r.steps.save = await evaluate(call, `document.getElementById('qa-save').click(); await new Promise(r => setTimeout(r, 900)); return { text: document.querySelector('.qa')?.textContent.replace(/\\s+/g, ' ').slice(0, 160), toast: !!document.querySelector('.toast-host .p-message') };`);
   // extras menu (PrimeVue Menu) adds a custom row
