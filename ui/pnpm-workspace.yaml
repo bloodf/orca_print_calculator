@@ -1,5 +1,6 @@
 minimumReleaseAgeExclude:
   - "@vitejs/plugin-vue@6.0.11"
+  - "jsdom@31.0.1"
 # @primevue/core 5.0.5 imports "@primeuix/styles/base" without declaring it (npm hoisting hides that; pnpm's strict layout does not).
 # Declare it for that one package, at the version primevue 5.0.5 itself requires, so the lockfile install resolves it.
 packageExtensions:
