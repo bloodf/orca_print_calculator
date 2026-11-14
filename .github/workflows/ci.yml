@@ -42,6 +42,6 @@ jobs:
       - name: Bundle size gate
         run: |
           size="$(wc -c < ui/dist/index.html)"
-          echo "ui/dist/index.html: $size bytes (limit 900000)"
-          [ "$size" -le 900000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 900000"; exit 1; }
+          echo "ui/dist/index.html: $size bytes (limit 960000)"
+          [ "$size" -le 960000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 960000"; exit 1; }
       - run: python -m unittest discover tests

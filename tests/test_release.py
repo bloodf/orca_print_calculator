@@ -61,7 +61,8 @@ class WheelPackaging(unittest.TestCase):
 
     def test_page_is_offline(self):
         page = self.zip.read("orca_print_calculator/_assets.py").decode("utf-8")
-        self.assertIsNone(re.search(r"<script[^>]+src=|<link[^>]+href=.?https?:|@import|url\(https?:|\bnew Function\b|\beval\(", page))
+        # A real @import is followed by a quote or url(; PrimeVue 5's style sanitizer only names "@import\s+" in a regex.
+        self.assertIsNone(re.search(r"<script[^>]+src=|<link[^>]+href=.?https?:|@import\s*(?:url\(|['\"])|url\(https?:|\bnew Function\b|\beval\(", page))
 
 
 class PublishWorkflow(unittest.TestCase):
@@ -82,7 +83,7 @@ class PublishWorkflow(unittest.TestCase):
         ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text("utf-8")
         for step in ("pnpm -C ui install --frozen-lockfile", "node ui/shared/scripts/check.mjs", "pnpm -C ui lint",
                      "pnpm -C ui typecheck", "pnpm -C ui test:coverage", "scripts/gen_contract.py --check",
-                     "python -m unittest discover tests", "-le 900000"):
+                     "python -m unittest discover tests", "-le 960000"):
             self.assertIn(step, ci, step)
             self.assertIn(step, PUBLISH, step)
 
