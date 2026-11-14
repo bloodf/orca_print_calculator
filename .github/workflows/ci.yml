@@ -27,7 +27,7 @@ jobs:
           cache-dependency-path: ui/pnpm-lock.yaml
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.12"
+          python-version: "3.15"
       - run: pnpm -C ui install --frozen-lockfile
       - name: Shared Orca UI snapshot is unmodified (Vue + PrimeVue preset, palette)
         run: node ui/shared/scripts/check.mjs
