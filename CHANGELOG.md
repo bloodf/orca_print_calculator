@@ -5,6 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-13
+
+### Changed
+- The interface runs on PrimeVue 5.0.5 (shared Orca UI foundation 3.0.2). No visible change is intended. PrimeVue 5 needs a newer web view: macOS with WebKit 17.5 or later, WebView2 on Windows, WebKitGTK 2.44 or later on Linux.
+- The page is about 56 kB larger (935 kB, 245 kB gzipped); the size gate is now 960 kB.
+
 ## [0.2.2] - 2026-11-13
 
 ### Changed

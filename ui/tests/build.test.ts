@@ -21,7 +21,7 @@ async function built(): Promise<string> {
 }
 
 /** 387,010 B before the Vue + PrimeVue migration; 877 kB after (Vue Options API, PrimeVue components, the shared Aura preset). The CI gate uses the same figure. */
-const BUDGET = 900_000;
+const BUDGET = 960_000; // PrimeVue 5 (license verifier, motion) added ~56 kB over 4.5.5
 
 describe("built index.html", () => {
   test("carries the CSP meta, before the first <script", async () => {
