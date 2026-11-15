@@ -302,7 +302,9 @@ def parse_slice_info(xml_text):
     except ET.ParseError as exc:
         raise CoreError("bad_xml", str(exc)) from exc
     plates = [_plate(node, pos) for pos, node in enumerate(root.iter("plate"), start=1)]
-    if len({p["index"] for p in plates}) < len(plates):  # a repeated plate number: the UI keys plate controls by index
+    if len({p["index"] for p in plates}) < len(plates):
+        # A repeated plate number: the UI keys plate controls by index, so use file order instead. `index` is 0-based like
+        # every HostPlate (the UI shows index + 1); each plate's time and filament were already read from its own node.
         plates = [{**p, "index": pos} for pos, p in enumerate(plates)]
     return plates
 

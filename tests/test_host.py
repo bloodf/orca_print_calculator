@@ -418,6 +418,19 @@ class ImportSliced(HostCase):
         p = res["data"]["plates"][0]
         self.assertEqual((p["seconds"], p["slots"], p["consumption"]), (600, [], "missing"))
 
+    def test_repeated_plate_number_keeps_each_plates_own_data(self):
+        info = ('<config>'
+                '<plate><metadata key="index" value="2"/><metadata key="prediction" value="100"/>'
+                '<filament id="1" used_g="11"/></plate>'
+                '<plate><metadata key="index" value="2"/><metadata key="prediction" value="200"/>'
+                '<filament id="2" used_g="22"/></plate>'
+                '<plate><metadata key="index" value="1"/><metadata key="prediction" value="300"/>'
+                '<filament id="1" used_g="33"/></plate></config>')
+        res = self.cmd("import_sliced", {"name": "d.gcode.3mf", "b64": base64.b64encode(sliced_3mf(info)).decode()})
+        got = [(p["index"], p["seconds"], [(s["n"], s["grams"]) for s in p["slots"]]) for p in res["data"]["plates"]]
+        # 0-based like every HostPlate (shown as Plate 1, 2, 3); time and filament stay with the <plate> they came from
+        self.assertEqual(got, [(0, 100, [(1, 11.0)]), (1, 200, [(2, 22.0)]), (2, 300, [(1, 33.0)])])
+
     def test_happy_path(self):
         project = {"filament_settings_id": ["Bambu PLA Basic @BBL X1C", "Generic PETG"], "filament_cost": ["25.5", "0"],
                    "filament_notes": ["Spoolman filament 7", ""]}
