@@ -111,7 +111,7 @@ Cada slot de filamento do projeto é ligado ao Spoolman nesta ordem. A primeira 
 2. O mapeamento do plugin Spooler, se você usa o Spooler.
 3. `(#ID)` no nome do perfil de filamento.
 4. `Spoolman filament N` nas `filament_notes` do perfil.
-5. Sem correspondência: o `filament_cost` do perfil por kg, marcado como "Preço do perfil". Se o perfil não tem custo, digite um preço no slot ("Digitado"). Um slot sem preço conta como 0 e o painel de preço avisa.
+5. Sem correspondência: o `filament_cost` do perfil por kg, marcado como "Preço do perfil". Se o perfil não tem custo, digite um preço no slot ("Digitado"). Um slot sem preço conta como 0 e o painel de preço avisa. Um slot ligado a um filamento do Spoolman sem preço (nenhum carretel com preço, nenhum preço no filamento) segue a mesma regra: preço digitado, depois preço do perfil.
 
 O preço por kg vem do carretel usado mais recentemente que não esteja arquivado (preço do carretel dividido pelo peso inicial). Sem carretel, vem do preço do filamento dividido pelo peso dele.
 

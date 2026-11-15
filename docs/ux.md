@@ -502,10 +502,11 @@ surchargeMinor 0, tiers [{0,0,0,0}], currency null, note "", sourceUrl "", asOf 
 engine's default mode (§7.6).
 
 `derive.ts` (T4.2) exposes, as Vue `computed`s: `currency`, `digits`, `locale` (`"en-US"` for en, `"pt-BR"`),
-`slotMatches` (per plate/slot: `matchSlot` result, then `manualPrices[preset]` applied when source is `none` or
-`preset` → source `"manual"`), `quoteInput: QuoteInput`, `result: QuoteResult`, `selected: ChannelQuote | null`,
+`slotMatches` (per plate/slot: `matchSlot` result, then `manualPrices[preset]` applied when the price did not come
+from Spoolman, i.e. source `none`, `preset`, or a Spoolman match whose filament and spools have no price → source `"manual"`), `quoteInput: QuoteInput`, `result: QuoteResult`, `selected: ChannelQuote | null`,
 `notCounted: NotCounted[]` (see §6.12), `fieldErrors: Record<path, ProblemCode>`. Slot key rule:
-`sm:<filamentId>:<spoolId|0>`, `manual:<preset>`, `preset:<preset>`, `none:<preset>`; `pricePerKgMinor =
+`sm:<filamentId>:<spoolId|0>` (only when Spoolman priced it), `manual:<preset>`, `preset:<preset>` (also a Spoolman match
+priced from its preset), `none:<preset>`; `pricePerKgMinor =
 round(pricePerKg × 10^digits)`; `gramsMg = round(grams × 1000)`. Energy: `kwhE4(energyPerKwh, digits) ?? 0`.
 Watts: `resolveWatts(printerModel, printerVendor, printers)` → `wattsW10 = round(watts × 10)`. Setup uses the
 labor rate. Channels: compared ∪ selected defs through `toChannelInput`; invalid defs are skipped and reported.
@@ -613,7 +614,7 @@ actions: SpoolPicker button "Change" and ResetButton "Use automatic match" (only
 then a listbox (`role="listbox"`, arrow keys, Enter picks) grouped by material: each option `#{filamentId}
 {vendor} {name}`, sub-line per non-archived spool `spool #{id} · {remaining} g · {price/kg}`; picking a filament
 row stores `{filamentId}`, picking a spool row stores `{filamentId, spoolId}` in `slotOverrides[preset]`.
-Below a hairline: MoneyField "Or type a price per kg" → `manualPrices[preset]` (used only when no Spoolman match).
+Below a hairline: MoneyField "Or type a price per kg" → `manualPrices[preset]` (used only when Spoolman gives no price for the slot).
 Spoolman unset/offline: the listbox is replaced by a one-line note "Connect Spoolman to pick a spool." and only
 the typed price remains. Max height 320, scrolls inside.
 

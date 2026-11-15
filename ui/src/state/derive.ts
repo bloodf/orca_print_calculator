@@ -62,11 +62,15 @@ function viewOf(plateIndex: number, slot: HostSlot, i: DeriveInput): SlotMatchVi
     { filaments: i.spoolman.filaments, spools: i.spoolman.spools, overrides: i.settings.slotOverrides, spoolerPresetToFilament: i.spooler?.presetToFilament ?? {} },
   );
   const manual = i.settings.manualPrices[slot.preset];
-  if ((m.source === "none" || m.source === "preset") && typeof manual === "number" && manual > 0) {
+  // Spoolman's own price wins; a match that found no Spoolman price is priced like an unmatched slot (typed, then preset).
+  const fromSpoolman = m.priceSource === "spool" || m.priceSource === "filament";
+  if (!fromSpoolman && typeof manual === "number" && manual > 0) {
     const pricePerKg = manual / 10 ** safeDigits(i.currency);
-    return { plateIndex, slot, key: slotKey("manual", null, null, slot.preset), source: "manual", filamentId: null, spoolId: null, pricePerKg, priceSource: "manual" };
+    return { plateIndex, slot, key: slotKey("manual", null, null, slot.preset), source: "manual", filamentId: m.filamentId, spoolId: null, pricePerKg, priceSource: "manual" };
   }
-  return { plateIndex, slot, key: slotKey(m.source, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource };
+  // The engine merges slots by key and needs one price per key: a preset-priced match is keyed by its preset, not the filament.
+  const keySource = fromSpoolman ? m.source : m.priceSource === "preset" ? "preset" : "none";
+  return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource };
 }
 
 const toQuoteSlot = (v: SlotMatchView, digits: number): QuoteSlot => ({

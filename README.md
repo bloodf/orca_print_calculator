@@ -111,7 +111,7 @@ Each filament slot in the project is matched in this order. The first match wins
 2. The Spooler plugin mapping, if you use Spooler.
 3. `(#ID)` in the filament preset name.
 4. `Spoolman filament N` in the preset's `filament_notes`.
-5. No match: the preset `filament_cost` per kg, labeled "Preset price". If the preset has no cost, type a price in the slot ("Typed"). A slot with no price counts as 0 and the price panel says so.
+5. No match: the preset `filament_cost` per kg, labeled "Preset price". If the preset has no cost, type a price in the slot ("Typed"). A slot with no price counts as 0 and the price panel says so. A slot matched to a Spoolman filament that has no price (no priced spool, no filament price) is priced the same way: typed price, then preset price.
 
 The price per kg comes from the most recently used spool that is not archived (spool price divided by initial weight). Without one it comes from the filament price divided by the filament weight.
 
