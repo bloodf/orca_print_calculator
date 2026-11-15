@@ -19,23 +19,40 @@ Complete seu fluxo no OrcaSlicer: organizar, calcular, gerenciar filamento e imp
       <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54"><img src="docs/related-plugins/orca_organizer-icon.png" width="40" height="40" alt="Organizer"></a>
       <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54">Organizer</a></h3>
       <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54"><img src="docs/related-plugins/orca_organizer-preview.jpg" width="280" alt="Organizer: prévia"></a>
-      <p>Organize os objetos pelo contorno real e preencha a mesa com mais cópias, numa aba ao lado de Preparar.</p>
+      <p>Organize os objetos pelo contorno real e preencha a mesa com mais cópias.</p>
       <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/orca_organizer">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
       <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368"><img src="docs/related-plugins/spooler-icon.png" width="40" height="40" alt="Spooler"></a>
       <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368">Spooler</a></h3>
       <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368"><img src="docs/related-plugins/spooler-preview.png" width="280" alt="Spooler: prévia"></a>
-      <p>Suas bobinas do Spoolman e os perfis de filamento no OrcaSlicer: quanto resta em cada bobina, checagem da mesa e slots da impressora ao vivo.</p>
+      <p>Suas bobinas do Spoolman e os perfis de filamento no OrcaSlicer, com quanto resta em cada bobina.</p>
       <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/spooler">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
       <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f"><img src="docs/related-plugins/u1control-icon.png" width="40" height="40" alt="U1 Control"></a>
       <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f">U1 Control</a></h3>
       <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f"><img src="docs/related-plugins/u1control-preview.png" width="280" alt="U1 Control: prévia"></a>
-      <p>Prepare e acompanhe impressões na Snapmaker U1: mapeamento de cabeçotes, temperaturas, câmera, arquivos e Spoolman.</p>
+      <p>A Snapmaker U1 no OrcaSlicer: configuração de impressão, câmera, cabeças, RFID, Spoolman e gerenciador de arquivos.</p>
       <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/u1control">Código no GitHub →</a></p>
     </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/kobracontrol"><img src="docs/related-plugins/kobracontrol-icon.png" width="40" height="40" alt="Kobra Control"></a>
+      <h3><a href="https://github.com/bloodf/kobracontrol">Kobra Control</a></h3>
+      <a href="https://github.com/bloodf/kobracontrol"><img src="docs/related-plugins/kobracontrol-preview.png" width="280" alt="Kobra Control: prévia"></a>
+      <p>A Anycubic Kobra X no OrcaSlicer: Print and Send, a aba Device, slots do ACE e um painel.</p>
+      <p><a href="https://github.com/bloodf/kobracontrol">Código no GitHub →</a></p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="https://github.com/bloodf/embedder"><img src="docs/related-plugins/embedder-icon.png" width="40" height="40" alt="Embedder"></a>
+      <h3><a href="https://github.com/bloodf/embedder">Embedder</a></h3>
+      <a href="https://github.com/bloodf/embedder"><img src="docs/related-plugins/embedder-preview.png" width="280" alt="Embedder: prévia"></a>
+      <p>Abra cavidades para ímãs e etiquetas NFC na peça, com uma pausa na camada certa para colocar cada inserto.</p>
+      <p><a href="https://github.com/bloodf/embedder">Código no GitHub →</a></p>
+    </td>
+    <td width="33%" valign="top"></td>
   </tr>
 </table>
 
