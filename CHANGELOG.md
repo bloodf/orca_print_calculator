@@ -8,6 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Fixed
 - A filament matched in Spoolman whose spools and filament have no price can now take a typed price per kg. The "Or type a price per kg" field was shown for it but the typed value was ignored, so the slot stayed unpriced and the quote could not be exported.
 - Two filament presets matched to the same Spoolman filament, when Spoolman has no price for it and each preset has its own cost, no longer stop the quote with "Same filament with two prices".
+- A saved quote whose date in `quotes.json` cannot be read (or whose validity is out of range) no longer breaks the quote sheet, print and HTML export; the date and "valid until" lines are left empty.
 
 ## [0.3.1] - 2026-11-14
 

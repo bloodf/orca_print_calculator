@@ -168,3 +168,11 @@ describe("corrupted saved sheet", () => {
     expect(() => sheetHtml(sampleSheetModel(bad, "USD"))).not.toThrow();
   });
 });
+
+describe("hand-edited dates", () => {
+  test("an unreadable quote date gives an empty date and validity, not a crash", () => {
+    const m = buildSheetModel(source({ dateIso: "yesterday" }));
+    expect(m.dateValue).toBe("");
+    expect(m.validValue).toBe("");
+  });
+});
