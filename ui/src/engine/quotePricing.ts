@@ -17,6 +17,8 @@ type Zones = { fromCents: number; untilCents: number }[];
 export type ChannelOk = {
   id: string; name: string; ok: true;
   price: number; fees: number; net: number; profit: number; marginBp: number;
+  /** Profit over the unit cost (markup reached), in bp; null when the cost is 0. */
+  markupBp: number | null;
   breakEven: number; deadZones: Zones;
   discountBp: number; effectiveDiscountBp: number; orderTotal: number; shippingCharged: number; grandTotal: number;
   orderProfit: number; profitPerPrintHour: number | null;
@@ -27,7 +29,10 @@ export type ChannelQuote = ChannelOk | { id: string; name: string; ok: false; pr
 /** What the order looks like for pricing: per-piece cost at q plus exact order cost. */
 export type PricingContext = {
   quantity: number; unitCostAtQuantity: number; orderCost: number; orderPrintSeconds: number;
-  targetMarginBp: number; discountTiers: DiscountTier[]; pretty: PrettyMode;
+  targetMarginBp: number;
+  /** Calc 3: the target is this markup on cost, profit after fees and tax (targetMarginBp is then unused). Absent: margin on price (calc 1-2). */
+  targetMarkupBp?: number;
+  discountTiers: DiscountTier[]; pretty: PrettyMode;
   minOrderMinor: number; customerShippingMinor: number;
 };
 
@@ -89,20 +94,25 @@ const discountFor = (tiers: DiscountTier[], q: number) =>
   tiers.reduce((best, t) => (t.minQty <= q && t.minQty >= best.minQty ? t : best), { minQty: 0, discountBp: 0 }).discountBp;
 const zoneAt = (zones: Zones, p: number) => zones.find((z) => p >= z.fromCents && p <= z.untilCents);
 const meets = (profit: number, price: number, targetBp: number) => BigInt(profit) * 10000n >= BigInt(targetBp) * BigInt(price);
+/** The one "on target" test for a context: suggestPrice, the pretty-price search and the belowTarget flag all use it. */
+type Target = (profit: number, price: number) => boolean;
+const targetOf = (x: PricingContext): Target => (x.targetMarkupBp === undefined
+  ? (profit, price) => meets(profit, price, x.targetMarginBp)
+  : (profit) => BigInt(profit) * 10000n >= BigInt(x.targetMarkupBp!) * BigInt(x.unitCostAtQuantity));
 
 /**
  * Round `raw` up to a pretty price, stepping to the next pretty price while the candidate sits in a dead
  * zone, earns less than `raw`, or (when raw met the target) misses the target. null = step limit hit.
  */
-function settle(c: ChannelInput, zones: Zones, cost: number, raw: number, target: number, mode: PrettyMode) {
+function settle(c: ChannelInput, zones: Zones, cost: number, raw: number, onTarget: Target, mode: PrettyMode) {
   const profit = (p: number) => p - feeFor(c, p).totalCents - cost;
-  const rawProfit = profit(raw), needTarget = meets(rawProfit, raw, target);
+  const rawProfit = profit(raw), needTarget = onTarget(rawProfit, raw);
   let p = prettyUp(raw, mode), jumped = false;
   for (let n = 0; n < SETTLE_LIMIT; n++) {
     const zone = zoneAt(zones, p);
     if (zone) { jumped = true; p = prettyUp(zone.untilCents + 1, mode); continue; }
     const pr = profit(p);
-    if (pr >= rawProfit && (!needTarget || meets(pr, p, target))) return { price: p, jumped };
+    if (pr >= rawProfit && (!needTarget || onTarget(pr, p))) return { price: p, jumped };
     p = prettyUp(p + 1, mode);
   }
   return null;
@@ -125,9 +135,10 @@ const signedMulDiv = (a: number, b: number, c: number) => Math.sign(a) * mulDivR
 function choosePrice(ch: QuoteChannel, zones: Zones, x: PricingContext, suggested: number) {
   const cost = x.unitCostAtQuantity;
   const discountBp = discountFor(x.discountTiers, x.quantity);
-  const list = settle(ch, zones, cost, suggested, x.targetMarginBp, x.pretty);
+  const onTarget = targetOf(x);
+  const list = settle(ch, zones, cost, suggested, onTarget, x.pretty);
   const discounted = Math.max(1, suggested - mulDivRound(suggested, discountBp, 10000));
-  const settled = discountBp ? settle(ch, zones, cost, discounted, x.targetMarginBp, x.pretty) : list;
+  const settled = discountBp ? settle(ch, zones, cost, discounted, onTarget, x.pretty) : list;
   if (!list || !settled) return null;
   // Minimum order re-prices per piece through the channel's fees: ceil(min / q), pretty-rounded up,
   // dead zones re-checked (tier may change).
@@ -143,8 +154,13 @@ export function priceChannel(ch: QuoteChannel, x: PricingContext): ChannelQuote 
   const { id, name } = ch, cost = x.unitCostAtQuantity;
   const fail = (problem: ChannelProblem): ChannelQuote => ({ id, name, ok: false, problem });
   try {
-    if (!boundedSearch(ch, cost, x.targetMarginBp)) return fail("search_bound_exceeded");
-    const suggested = suggestPrice(ch, cost, x.targetMarginBp);
+    // Calc 3: profit >= markup x cost <=> net >= ceil(cost x (1 + markup)) (net is whole minor units), i.e. break-even on
+    // that raised cost. It reuses the engine's exact search: tier bounds, dead zones and fee rounding included.
+    const raised = x.targetMarkupBp === undefined ? null : cost * (10000 + x.targetMarkupBp);
+    if (raised !== null && !Number.isSafeInteger(raised)) return fail("overflow");
+    const markupCost = raised === null ? null : ceilDiv(raised, 10000);
+    if (!(markupCost === null ? boundedSearch(ch, cost, x.targetMarginBp) : boundedSearch(ch, markupCost, 0))) return fail("search_bound_exceeded");
+    const suggested = markupCost === null ? suggestPrice(ch, cost, x.targetMarginBp) : breakEven(ch, markupCost);
     const floor = breakEven(ch, cost);
     if (suggested === null || floor === null) return fail("margin_impossible");
     const zones = deadZones(ch);
@@ -155,12 +171,12 @@ export function priceChannel(ch: QuoteChannel, x: PricingContext): ChannelQuote 
     const grandTotal = orderTotal + x.customerShippingMinor;
     if (![orderTotal, orderProfit, grandTotal].every(Number.isSafeInteger)) return fail("overflow");
     return {
-      id, name, ok: true, price, fees, net, profit, marginBp: marginBpOf(profit, price),
+      id, name, ok: true, price, fees, net, profit, marginBp: marginBpOf(profit, price), markupBp: cost > 0 ? marginBpOf(profit, cost) : null,
       breakEven: floor, deadZones: zones, discountBp: pick.discountBp, effectiveDiscountBp: pick.effectiveDiscountBp, orderTotal,
       shippingCharged: x.customerShippingMinor, grandTotal, orderProfit,
       profitPerPrintHour: x.orderPrintSeconds > 0 ? signedMulDiv(orderProfit, 3600, x.orderPrintSeconds) : null,
       flags: {
-        discounted: pick.effectiveDiscountBp > 0, belowTarget: !meets(profit, price, x.targetMarginBp), belowBreakEven: profit < 0,
+        discounted: pick.effectiveDiscountBp > 0, belowTarget: !targetOf(x)(profit, price), belowBreakEven: profit < 0,
         orderBelowBreakEven: orderProfit < 0, deadZoneJumped: pick.jumped, minimumApplied: pick.minimumApplied,
       },
     };

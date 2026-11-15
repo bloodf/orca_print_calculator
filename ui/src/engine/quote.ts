@@ -6,7 +6,7 @@
 // are leftovers whose cost the order carries:
 //   orderCost          = production cost of `runs` runs + orderFixed
 //   unitCostAtQuantity = ceil(orderCost / quantity)   (rounded up: pricing at it never loses money)
-// Calc version 2 (CALC_VERSION) rounds each cost line once, on the whole order (computeRunsCost). Quotes saved before
+// Calc version 2 (EXACT_COST_CALC) rounds each cost line once, on the whole order (computeRunsCost). Quotes saved before
 // it carry no `calc` field and keep version 1, which multiplied a per-piece rounded cost: their numbers never move
 // unless the user reprices them on purpose.
 // orderFixed (setup labor, per-order extras, absorbed shipping) is charged once per order, not per run.
@@ -15,6 +15,7 @@
 // channel fee, outside the margin base (grandTotal = orderTotal + shipping). A minimum order raises the
 // per-piece price to ceil(minOrder / quantity) and re-prices it through the channel's fees.
 import { computeCost, computeRunsCost, mulDivRound, type CostBreakdown, type EngineInput } from "./costs";
+import { markupOf } from "../state/markup";
 import { PRETTY_MODES, priceChannel, type ChannelOk, type ChannelQuote, type DiscountTier, type PrettyMode, type QuoteChannel } from "./quotePricing";
 
 export type { ChannelOk, ChannelQuote, DiscountTier, PrettyMode, QuoteChannel } from "./quotePricing";
@@ -22,9 +23,16 @@ export type QuoteSlot = { n: number; gramsMg: number; pricePerKgMinor: number; l
 export type QuotePlate = { index: number; name?: string; seconds: number; include: boolean; copies: number; slots: QuoteSlot[] };
 /** `catalogKey`: the catalog item this row came from (optional: rows saved without it are matched by name). */
 export type QuoteExtra = { key: string; label: string; unitMinor: number; qtyE3: number; per: "piece" | "plate" | "order"; catalogKey?: string };
-/** Order cost rounding: 1 = per-piece rounded lines × pieces (quotes saved before versions existed), 2 = exact order cost. */
-export const CALC_VERSION = 2;
+/**
+ * 1 = per-piece rounded lines × pieces (quotes saved before versions existed), 2 = exact order cost,
+ * 3 = exact order cost and markup measured on cost after channel fees and tax (1 and 2 aim for a margin on the gross price).
+ */
+export const CALC_VERSION = 3;
 export const LEGACY_CALC = 1;
+/** First version that rounds each cost line once on the whole order. */
+export const EXACT_COST_CALC = 2;
+/** First version whose target is markup over cost after fees and tax. */
+export const MARKUP_CALC = 3;
 export type QuoteInput = {
   /** Calculation version this input was priced with; absent = 1. New quotes are stamped with CALC_VERSION. */
   calc?: number;
@@ -103,7 +111,7 @@ function ruleProblems(i: QuoteInput): Problem[] {
     at(t.minQty < 1, "quantity_min", `discountTiers.${k}.minQty`);
     at(t.discountBp >= 10000, "discount_range", `discountTiers.${k}.discountBp`);
   });
-  at(i.calc !== undefined && i.calc !== LEGACY_CALC && i.calc !== CALC_VERSION, "invalid_option", "calc");
+  at(i.calc !== undefined && ![LEGACY_CALC, EXACT_COST_CALC, MARKUP_CALC].includes(i.calc), "invalid_option", "calc");
   at(!PRETTY_MODES.includes(i.pretty), "invalid_option", "pretty");
   at(i.shipping.mode !== "absorbed" && i.shipping.mode !== "customer", "invalid_option", "shipping.mode");
   i.extras.forEach((e, k) => at(!["piece", "plate", "order"].includes(e.per), "invalid_option", `extras.${k}.per`));
@@ -173,11 +181,13 @@ function atQuantity(i: QuoteInput, { project: p, engine }: Built, q: number) {
   const runs = Math.ceil(q / (i.unitsPerSet ?? 1)), pieces = runs * (i.unitsPerSet ?? 1);
   const order = orderLines(qi);
   const orderFixed = order.reduce((s, l) => s + l.perOrder, 0);
-  const exact = (i.calc ?? LEGACY_CALC) >= CALC_VERSION ? computeRunsCost(engine, runs) : null;
+  const exact = (i.calc ?? LEGACY_CALC) >= EXACT_COST_CALC ? computeRunsCost(engine, runs) : null;
   const orderCost = safe((exact ? exact.totalCents : safe(p.unitCost * pieces)) + orderFixed);
   const unitCostAtQuantity = Number((BigInt(orderCost) + BigInt(q) - 1n) / BigInt(q));
   const ctx = {
     quantity: q, unitCostAtQuantity, orderCost, orderPrintSeconds: p.printSeconds * runs, targetMarginBp: i.targetMarginBp,
+    // The stored margin is the markup field's value converted; markupOf gives back the markup the field shows.
+    ...((i.calc ?? LEGACY_CALC) >= MARKUP_CALC ? { targetMarkupBp: markupOf(i.targetMarginBp) } : {}),
     discountTiers: i.discountTiers, pretty: i.pretty, minOrderMinor: i.minOrderMinor,
     customerShippingMinor: i.shipping.mode === "customer" ? i.shipping.minor : 0,
   };

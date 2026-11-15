@@ -502,10 +502,11 @@ surchargeMinor 0, tiers [{0,0,0,0}], currency null, note "", sourceUrl "", asOf 
 engine's default mode (§7.6).
 
 `derive.ts` (T4.2) exposes, as Vue `computed`s: `currency`, `digits`, `locale` (`"en-US"` for en, `"pt-BR"`),
-`slotMatches` (per plate/slot: `matchSlot` result, then `manualPrices[preset]` applied when source is `none` or
-`preset` → source `"manual"`), `quoteInput: QuoteInput`, `result: QuoteResult`, `selected: ChannelQuote | null`,
+`slotMatches` (per plate/slot: `matchSlot` result, then `manualPrices[preset]` applied when the price did not come
+from Spoolman, i.e. source `none`, `preset`, or a Spoolman match whose filament and spools have no price → source `"manual"`), `quoteInput: QuoteInput`, `result: QuoteResult`, `selected: ChannelQuote | null`,
 `notCounted: NotCounted[]` (see §6.12), `fieldErrors: Record<path, ProblemCode>`. Slot key rule:
-`sm:<filamentId>:<spoolId|0>`, `manual:<preset>`, `preset:<preset>`, `none:<preset>`; `pricePerKgMinor =
+`sm:<filamentId>:<spoolId|0>` (only when Spoolman priced it), `manual:<preset>`, `preset:<preset>` (also a Spoolman match
+priced from its preset), `none:<preset>`; `pricePerKgMinor =
 round(pricePerKg × 10^digits)`; `gramsMg = round(grams × 1000)`. Energy: `kwhE4(energyPerKwh, digits) ?? 0`.
 Watts: `resolveWatts(printerModel, printerVendor, printers)` → `wattsW10 = round(watts × 10)`. Setup uses the
 labor rate. Channels: compared ∪ selected defs through `toChannelInput`; invalid defs are skipped and reported.
@@ -613,7 +614,7 @@ actions: SpoolPicker button "Change" and ResetButton "Use automatic match" (only
 then a listbox (`role="listbox"`, arrow keys, Enter picks) grouped by material: each option `#{filamentId}
 {vendor} {name}`, sub-line per non-archived spool `spool #{id} · {remaining} g · {price/kg}`; picking a filament
 row stores `{filamentId}`, picking a spool row stores `{filamentId, spoolId}` in `slotOverrides[preset]`.
-Below a hairline: MoneyField "Or type a price per kg" → `manualPrices[preset]` (used only when no Spoolman match).
+Below a hairline: MoneyField "Or type a price per kg" → `manualPrices[preset]` (used only when Spoolman gives no price for the slot).
 Spoolman unset/offline: the listbox is replaced by a one-line note "Connect Spoolman to pick a spool." and only
 the typed price remains. Max height 320, scrolls inside.
 
@@ -694,7 +695,15 @@ PriceSummary, top to bottom:
 5. **Tiles** (grid 2 cols, 1px divider between, no boxes): "Profit per piece" → `selected.profit` (xl 600 fg;
    negative in `--opc-bad` with leading "−"), qualifier sm muted: q > 1 ? "{orderProfit} on the order" :
    "{profitPerPrintHour}/print hour" (null → omitted). "Margin" → `marginBp` as percent 1 decimal (xl 600),
-   qualifier "Break-even {breakEven}".
+   qualifier "Break-even {breakEven}". This tile, the comparison, batch and Quotes "Margin" columns and the CSV `margin`
+   row are margin on the sale price (profit / price), never the markup.
+
+**Pricing target (calc 3).** The markup field stores `targetMarginBp = marginOf(markup)`; the engine reads it back with
+`markupOf` (the value the field shows). The suggested price is the smallest valid price, outside dead zones, whose profit
+after channel fees and tax is at least markup × unit cost: net ≥ ceil(cost × (1 + markup)), i.e. `breakEven` on that
+raised cost. With no fees and no tax, 100% markup is exactly twice the cost. Pretty rounding and the `belowTarget` flag
+use the same test (`ChannelOk.markupBp` = profit / cost). Quotes saved with calc 1 or 2 keep their target, a margin on
+the gross price (`profit ≥ margin × price`), and their numbers; "Reprice with the current calculation" moves them to calc 3.
 6. **PriceFlags** list (only true flags render; order: bad first): see §6.12 and §8 `flag.*`.
 7. **QuoteActions** (T4.7 component placed here).
 
@@ -723,7 +732,7 @@ PriceDetails (each a flush `Section`, open state remembered):
   differs from the nominal tier `discountBp`, a second muted line `batch.nominal` ("tier 10%"). Discounts may go
   below break-even: allowed, never blocked. Rows where `flags.belowBreakEven` or `orderBelowBreakEven` show
   Order profit and Margin in `--opc-bad` with sr text "loss"; `belowTarget` rows show Margin with a muted
-  `info` icon (`title` `flag.belowTarget`). Current quantity row bold 500 + "current" sr text + `--opc-selected` bg. Clicking a row's quantity sets Draft.quantity. Below:
+  `info` icon (`title` `flag.belowMarkup`, or `flag.belowTarget` on a calc 1-2 quote). Current quantity row bold 500 + "current" sr text + `--opc-selected` bg. Clicking a row's quantity sets Draft.quantity. Below:
   **DiscountTierEditor**: rows `From quantity` (Stepper min 2) + `Discount` (PercentField max 9900) + remove;
   `+ Discount tier` (max 6). Tiers sorted by quantity on blur; duplicate quantities → inline error. Override
   dot vs `defaults.discountTiers`, "Save as defaults" text button.
@@ -744,7 +753,12 @@ field rule; auto-expanded when filled): Title (defaults to project name), Custom
 - Print and CSV on an unsaved draft save first (toast "Saved as quote #{no}").
 
 **QuotesView**: header row: title "Quotes" xl 600, count muted, search input (240px, `search` icon prefix,
-filters title/customer/number). Table: No. (`#0042`), Title, Customer, Date (updatedAt, date medium), Qty,
+filters title/customer/number), then `.btn` "Export list" (`download` icon, `title` `quotes.exportListHelp`, shown while
+at least one row is listed): `quoteFlow.exportQuoteList(shown)` sends `export_file` `quotes-YYYY-MM-DD.csv` (local day)
+built by `quoteCsv.buildQuoteListCsv`: BOM, CRLF, header `quote_no,date,customer,title,currency,channel,quantity,unit_price,
+total,margin_pct,complete`, one row per listed quote from its frozen `summary` (never recomputed), money in the quote's own
+currency digits, text cells through the formula guard, `complete` = `yes` when `savedExportBlock` allows export. Same
+saved-path toast as a single export. Table: No. (`#0042`), Title, Customer, Date (updatedAt, date medium), Qty,
 Channel, Total (`summary.grandTotal`, fg), Margin (muted), actions: `.btn` "Open" + `more` menu (Duplicate,
 Print, CSV, Delete). Sorted updatedAt desc. Row height 36. Open → Calculator with the quote loaded (frozen
 plates banner §6.10). Delete → immediate, toast "Quote #0042 deleted" + Undo (8 s). No amber anywhere.
@@ -911,8 +925,8 @@ SpoolPicker). QuoteActions shows the blocked reason line instead of Print/CSV.
 
 ### 6.9 Impossible margin [`impossible`]
 
-Selected channel returns `ok:false, problem:"margin_impossible"` (fees + tax + margin ≥ 100%, or fixed fees
-cannot be covered). Hero area, in place of the number (fg, xl 600, not amber): "No price works on {channel}".
+Selected channel returns `ok:false, problem:"margin_impossible"` (calc 1-2 quotes only: fees + tax + margin ≥ 100%,
+or fixed fees cannot be covered; under calc 3 a markup on cost always has a price). Hero area, in place of the number (fg, xl 600, not amber): "No price works on {channel}".
 Under it sm: "Fees, tax and your target margin add up to 100% or more. Lower the target margin or the channel
 fees." + actions `.btn.ghost` "Lower target margin" (focuses the margin field) and "Edit channel fees". Tiles and
 breakdown hidden; Compare channels stays open, so a working channel is one click away. `search_bound_exceeded` →
@@ -1000,10 +1014,16 @@ Several not-counted items join into one flag: "Not counted yet: energy, labor." 
 |---|---|---|---|
 | `belowBreakEven` (per-piece profit < 0) | bad | `flag.belowBreakEven` | `amount` = −profit |
 | `orderBelowBreakEven` and not `belowBreakEven` (order-level costs sink the order) | bad | `flag.orderBelowBreakEven` | `amount` = −orderProfit |
-| `belowTarget` and not the two above (discount or minimum pushed margin under target) | info | `flag.belowTarget` | `margin` = marginBp, `target` |
+| `belowTarget` and not the two above (discount or minimum pushed the markup under target) | info | calc 3: `flag.belowMarkup`; calc 1-2: `flag.belowTarget` | `markup` = markupBp, `target` = markupOf(targetMarginBp); calc 1-2: `margin` = marginBp, `target` |
 | `minimumApplied` (per-piece price raised to `ceil(minOrder ÷ q)`) | info | `flag.minimum` | `amount` = minOrder |
 | `deadZoneJumped` | info | `flag.deadZone` | `price`, `from`/`until` = zone that contained the raw price (first zone with `untilCents < price`), `channel` |
 | `discounted` | info | `flag.discount` | `pct` = **`effectiveDiscountBp`** (what the customer actually gets), `q` = tier minQty |
+
+Filament stock (not an engine flag; `state/extrasDemand.ts` `filamentShortages`, only while Spoolman state is `ok`): for each
+Spoolman filament matched by a slot of an included plate, grams × plate copies × runs, summed, against the summed
+`remainingWeight` of its spools that are not archived. A filament with no spool reporting a remaining weight is not judged.
+Each shortage is one info flag `filamentShort-<filamentId>`, key `flag.filamentShort` (`filament` = Spoolman name, `have`,
+`need` formatted with `grams`), placed after the engine flags. Read-only; nothing is deducted.
 
 Then UI flags: stale `flag.stale`; preset prices `flag.presetPrices`.
 
@@ -1436,7 +1456,9 @@ via `Intl.PluralRules` with `_one` / `_other` suffixed keys. `i18n.ts` exports `
 | flag.belowBreakEven | Below break-even on {channel}: each piece loses {amount}. | Abaixo do empate em {channel}: cada peça perde {amount}. |
 | flag.deadZone | Raised to {price}: between {from} and {until} {channel}'s next fee step leaves you less. | Subiu para {price}: entre {from} e {until} a próxima faixa de taxa de {channel} rende menos. |
 | flag.orderBelowBreakEven | The order loses {amount} once setup and order costs are counted. | O pedido perde {amount} quando entram a preparação e os custos do pedido. |
-| flag.belowTarget | Margin {margin} is under your {target} target after discount or minimum. | A margem de {margin} fica abaixo da meta de {target} depois do desconto ou do mínimo. |
+| flag.filamentShort | Spoolman shows {have} of {filament} left; this quote prints {need}. | O Spoolman mostra {have} de {filament}; este orçamento imprime {need}. |
+| flag.belowMarkup | Markup {markup} is under the {target} you set, after discount or minimum. | O markup de {markup} fica abaixo dos {target} definidos, depois do desconto ou do mínimo. |
+| flag.belowTarget | Margin {margin} is under the {target} your markup aims for, after discount or minimum. | A margem de {margin} fica abaixo dos {target} que o seu markup busca, depois do desconto ou do mínimo. |
 | flag.minimum | Price per piece raised so the order reaches the {amount} minimum. | Preço por peça aumentado para o pedido chegar ao mínimo de {amount}. |
 | flag.discount | {pct} volume discount from {q} pieces. | Desconto de {pct} a partir de {q} peças. |
 | price.overflow | The order is too large to calculate. Lower the quantity. | O pedido é grande demais para o cálculo. Reduza a quantidade. |
@@ -1528,6 +1550,8 @@ via `Intl.PluralRules` with `_one` / `_other` suffixed keys. `i18n.ts` exports `
 | quotes.count_one | {n} quote | {n} orçamento |
 | quotes.count_other | {n} quotes | {n} orçamentos |
 | quotes.search | Search quotes | Buscar orçamentos |
+| quotes.exportList | Export list | Exportar lista |
+| quotes.exportListHelp | One CSV row per quote shown, from its saved numbers | Uma linha de CSV por orçamento listado, com os números salvos |
 | quotes.noMatch | No quote matches “{q}”. | Nenhum orçamento encontrado para “{q}”. |
 | quotes.col.no | No. | Nº |
 | quotes.col.title | Title | Título |

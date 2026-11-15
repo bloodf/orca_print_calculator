@@ -118,7 +118,7 @@ describe("H03: older quotes keep their numbers", () => {
     expect(ok(base({ calc: 1 })).orderCost).toBe(100);
   });
   test("an unknown calculation version is refused, not guessed", () => {
-    const r = computeQuote(base({ calc: 3 }));
+    const r = computeQuote(base({ calc: 4 }));
     expect(r).toMatchObject({ ok: false, problems: [{ code: "invalid_option", path: "calc" }] });
   });
   test("new quotes are stamped; reopening an old one and saving it does not stamp it", async () => {
@@ -168,12 +168,13 @@ describe("H03: older quotes keep their numbers", () => {
     load("ok");
     store.quotes = [];
     const fresh = (await saveQuote())!;
+    // calc 1 and 2 share the margin-on-price target (calc 3 changed it): a calc 2 record and its unversioned twin price alike
+    const v2 = ok({ ...fresh.input, calc: 2 }).channels.find((c) => c.id === fresh.channelId)!;
     const legacyInput = { ...fresh.input } as Partial<QuoteInput>;
     delete legacyInput.calc;
-    const legacy = { ...fresh, input: legacyInput as QuoteInput };
-    const r = ok(legacy.input);
-    const ch = r.channels.find((c) => c.id === legacy.channelId)!;
-    if (!ch.ok) throw new Error("channel");
-    expect(ch.price).toBe(legacy.summary.price);
+    const r = ok(legacyInput as QuoteInput);
+    const ch = r.channels.find((c) => c.id === fresh.channelId)!;
+    if (!ch.ok || !v2.ok) throw new Error("channel");
+    expect(ch.price).toBe(v2.price);
   });
 });

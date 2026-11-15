@@ -101,6 +101,11 @@ class ParseGcodeOrca(unittest.TestCase):
         self.assertEqual(core.parse_gcode("", tail)["total_grams"], 3.75)
 
 
+    def test_negative_weight_is_unknown(self):
+        tail = "; filament used [mm] = 100, 50\n; filament used [g] = -2.0, 1.5\n"
+        slots = core.parse_gcode("", tail)["slots"]
+        self.assertEqual([(s["n"], s["grams"]) for s in slots], [(1, None), (2, 1.5)])
+
 class ParseGcodeBbl(unittest.TestCase):
     """SYNTHETIC fixtures (synthetic_bbl_*.txt) built from docs/spike.md section 4.
     They must be replaced by a real Bambu capture once one exists."""
@@ -204,6 +209,19 @@ class SliceInfo(unittest.TestCase):
         self.assertEqual(plates[0]["index"], 0)  # falls back to position
         self.assertEqual(plates[0]["filaments"][0],
                          {"id": None, "used_g": None, "used_m": None, "type": None, "color": None})
+
+    def test_out_of_range_index_and_weight(self):
+        plates = core.parse_slice_info(
+            '<config><plate><metadata key="index" value="0"/><filament id="1" used_g="-3"/></plate>'
+            '<plate><metadata key="index" value="-4"/></plate></config>')
+        self.assertEqual([p["index"] for p in plates], [0, 1])  # positions, not plate 0 / -5
+        self.assertIsNone(plates[0]["filaments"][0]["used_g"])
+
+    def test_duplicate_plate_numbers_fall_back_to_positions(self):
+        plates = core.parse_slice_info(
+            '<config><plate><metadata key="index" value="2"/></plate><plate><metadata key="index" value="2"/></plate>'
+            '<plate><metadata key="index" value="1"/></plate></config>')
+        self.assertEqual([p["index"] for p in plates], [0, 1, 2])  # one plate per index: each gets its own controls
 
     def zip_with(self, files):
         buf = io.BytesIO()

@@ -89,7 +89,10 @@ describe("deriveQuote: host plates to engine input", () => {
   });
   test("impossible margin comes back as a channel problem, not a throw", () => {
     const { state } = buildScenario("impossible");
-    const d = deriveQuote(input({ settings: state.settings! }));
+    const live = deriveQuote(input({ settings: state.settings! }));
+    expect(live.selected).toMatchObject({ ok: true }); // calc 3: markup on cost after fees always has a price
+    const s = state.settings!;
+    const d = deriveQuote(input({ settings: s, draft: { ...newDraft(s), frozenInput: { ...live.quoteInput, calc: 2 }, frozenPlates: live.snapshots } }));
     expect(d.result.ok).toBe(true);
     expect(d.selected).toMatchObject({ ok: false, problem: "margin_impossible" });
   });
@@ -207,5 +210,30 @@ describe("helpers", () => {
     expect(s.channels[0]).toMatchObject({ id: "direct", name: "Venda direta" });
     expect(s.onboarded).toBe(false);
     expect(s.defaults.pretty).toBe("round");
+  });
+});
+
+describe("Spoolman match without a Spoolman price", () => {
+  const slot = (n: number, preset: string, costPerKg: number | null) => ({ n, preset, grams: 10, color: null, costPerKg, notes: "", material: "PLA" });
+  const plate = (index: number, slots: HostPlate["slots"]): HostPlate => ({ index, name: null, seconds: 600, stale: false, thumb: null, consumption: "known", slicedAt: null, source: "slice", fileName: null, slots });
+  const unpriced = { currency: null, filaments: [{ id: 9, name: "PLA", vendor: null, material: "PLA", price: null, weight: null, colorHex: null }], spools: [] };
+  test("a typed price applies when the matched filament has no price", () => {
+    const s = settings({ manualPrices: { "PLA (#9)": 8000 } });
+    const d = deriveQuote(input({ settings: s, spoolman: unpriced, spooler: null, plates: [plate(0, [slot(1, "PLA (#9)", null)])] }));
+    const v = d.slotMatches[0]![0]!;
+    expect(v.source).toBe("manual");
+    expect(v.pricePerKg).toBe(80);
+    expect(d.quoteInput.plates[0]!.slots[0]!.pricePerKgMinor).toBe(8000);
+  });
+  test("a Spoolman price still wins over a typed one", () => {
+    const priced = { ...unpriced, filaments: [{ ...unpriced.filaments[0]!, price: 100, weight: 1000 }] };
+    const s = settings({ manualPrices: { "PLA (#9)": 8000 } });
+    const v = deriveQuote(input({ settings: s, spoolman: priced, spooler: null, plates: [plate(0, [slot(1, "PLA (#9)", null)])] })).slotMatches[0]![0]!;
+    expect(v.source).toBe("name");
+    expect(v.pricePerKg).toBe(100);
+  });
+  test("two presets of one filament priced from their own presets do not conflict", () => {
+    const d = deriveQuote(input({ spoolman: unpriced, spooler: null, plates: [plate(0, [slot(1, "PLA (#9)", 100)]), plate(1, [slot(1, "PLA fast (#9)", 120)])] }));
+    expect(d.result.ok).toBe(true);
   });
 });

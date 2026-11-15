@@ -4,7 +4,7 @@
 import Button from "primevue/button";
 import { computed, ref } from "vue";
 import { feeFor, mulDivRound } from "../../engine/costs";
-import { CALC_VERSION, LEGACY_CALC } from "../../engine/quote";
+import { EXACT_COST_CALC, LEGACY_CALC } from "../../engine/quote";
 import { t } from "../../i18n";
 import { derived, result } from "../../state/store";
 import Icon from "../base/Icon.vue";
@@ -35,7 +35,7 @@ const rows = computed<Row[]>(() => {
     if (l.perPiece <= 0 && why) { seen.add(l.id); out.push({ id: l.id, label: t(`line.${l.id}`), minor: 0, why }); continue; } // unknown, not free
     if (l.perPiece <= 0) continue;
     seen.add(l.id);
-    const orderDetail = l.id === "orderExtras" || (derived.value.quoteInput.calc ?? LEGACY_CALC) >= CALC_VERSION;
+    const orderDetail = l.id === "orderExtras" || (derived.value.quoteInput.calc ?? LEGACY_CALC) >= EXACT_COST_CALC;
     const scale = (x: number) => mulDivRound(x, orderDetail ? 1 : r.piecesPrinted, q);
     out.push({ id: l.id, label: t(`line.${l.id}`), minor: l.perPiece, ...(why ? { partial: why } : {}), ...(l.detail?.length ? { detail: l.detail.map((d) => ({ label: labels.get(d.key) ?? d.key, minor: scale(d.minor) })) } : {}) });
   }

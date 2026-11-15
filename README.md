@@ -6,7 +6,7 @@ English | [Português (Brasil)](README.pt-BR.md)
 
 Orca Print Calculator is a plugin for OrcaSlicer 2.5. It adds a tab to the main window that prices every build plate of the open project. Filament cost comes from your Spoolman inventory, electricity is suggested from your printer model, and you add labor, depreciation, failure rate, extras, shipping, tax and sales-channel fees. The result is a suggested selling price, a channel comparison, batch pricing, saved quotes and a quote you can print or export for the customer.
 
-**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). The version in this tree is 0.2.0 ([changelog](CHANGELOG.md)). Tests are mock-only (mock host, fixtures, a fake `orca` module, headless Chrome); nothing has run against a real OrcaSlicer, Spoolman server, printer or camera. When last checked (2026-11-11) the OrcaCloud hub listed 0.1.1; it lists 0.2.0 only after the 0.2.0 release is published. OrcaSlicer's plugin API offers no way to merge or hide tabs, so this plugin's tab sits beside the tabs of other plugins (Spooler, U1 Control) instead of inside one.
+**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). The version in this tree is 0.4.0 ([changelog](CHANGELOG.md)). Tests are mock-only (mock host, fixtures, a fake `orca` module, headless Chrome); nothing has run against a real OrcaSlicer, Spoolman server, printer or camera. The OrcaCloud hub lists a version only after its release is published, so it can be behind this tree. OrcaSlicer's plugin API offers no way to merge or hide tabs, so this plugin's tab sits beside the tabs of other plugins (Spooler, U1 Control) instead of inside one.
 
 <!-- related-plugins:start -->
 ## Explore the other plugins
@@ -87,16 +87,16 @@ Current mock captures (headless Chrome on a local build with the dev mock host; 
 - **Slicing.** Slice a plate in OrcaSlicer and the plugin reads the G-code that Orca writes. OrcaSlicer's "Slice all" fills every plate, one after another.
 - **Out-of-date warning.** Orca does not say which plate changed. When something changes after a slice, the tab marks the project "may be out of date". It misses mirroring, centering and unsaved setting changes. Slice again after those.
 - **Sliced `.gcode.3mf` import.** "Import sliced file" reads plates from a file you exported with File, Export, Export all sliced file. Imported plates stay on screen when you slice in Orca; a "New slice" notice offers "Use it" to switch to the new slice.
-- **Filament prices.** Spoolman first, then the preset price, then a price you type. See [Spoolman matching](#spoolman-matching).
+- **Filament prices.** Spoolman first, then a price you typed for the filament preset, then the preset price. See [Spoolman matching](#spoolman-matching).
 - **Printer power.** The plugin suggests average watts from the printer model and shows an "Estimated" badge. Many models have no entry, and those get a generic 120 W. Calibrate with a smart plug (kWh divided by print hours, times 1000) and type your own value. Your value wins.
 - **Cost sections.** Machine and energy (power, printer price and lifetime, price per kWh, maintenance, fixed cost per print hour, failure rate), Labor, Extras and accessories (from your catalog), Shipping and Sales fee.
-- **Extras and stock.** A tab for the extras catalog, with an optional count on hand per item, and a read-only summary of your Spoolman filament (spools and grams left). The calculator warns when a quote needs more of an extra than you have, counting every row of the same item together, per piece (spares included), per plate copy and run, and per order. Nothing is deducted automatically.
+- **Extras and stock.** A tab for the extras catalog, with an optional count on hand per item, and a read-only summary of your Spoolman filament (spools and grams left). The calculator warns when a quote needs more of an extra than you have, counting every row of the same item together, per piece (spares included), per plate copy and run, and per order. It also notes when a quote prints more of a Spoolman filament than its spools that are not archived have left (every plate copy and run counted); filament with no remaining weight in Spoolman is not checked. Nothing is deducted automatically.
 - **Sales channels.** You define them in Settings. Each has a percent fee, a fixed fee, tax and optional price tiers, for fees that change with the sale price. "Compare channels" shows them side by side. There is no marketplace integration. The fees are the numbers you type. Fees are worked out on the price of one piece and multiplied by the quantity: the fixed fee is charged per piece sold, not once per order, and price tiers pick their band from the per-piece price.
 - **Starting values.** In BRL, USD and EUR every cost starts filled with a typical value (price per kWh, labor rate, printer price and lifetime, 5% failure rate, 100% markup). Other currencies start empty. Change any of them in Settings.
-- **Pricing.** Markup over cost (100% sells for twice the cost before fees; channel fees and tax are added on top so the profit holds), a minimum order amount, and four rounding modes: Exact, Round (3 digits), Ends in 9 and Ends in 0 or 5. Rounding always goes up.
-- **Quantity and batches.** Quantity, discount tiers, and a batch table with unit cost, unit price, order total, order profit and margin per tier. When a run makes more pieces than the order needs, the spare pieces are charged to the order. Each cost line is rounded once on the whole order, not per piece (calculation version 2). Quotes saved earlier keep the numbers they were saved with; "Reprice with the current calculation" in the quote's own notes applies the new rounding on purpose.
+- **Pricing.** Markup over cost: the suggested price is the lowest price whose profit after the channel's fees and tax is at least the markup times the cost. With no fees, 100% sells for twice the cost; a channel with a 20% fee sells a 10.00 cost at 25.00, so 10.00 profit stays after the fee. The "Margin" figures are profit as a share of the price. Also a minimum order amount and four rounding modes: Exact, Round (3 digits), Ends in 9 and Ends in 0 or 5. Rounding always goes up.
+- **Quantity and batches.** Quantity, discount tiers, and a batch table with unit cost, unit price, order total, order profit and margin per tier. When a run makes more pieces than the order needs, the spare pieces are charged to the order. Each cost line is rounded once on the whole order, not per piece (calculation version 2), and the markup is measured on cost after fees and tax (calculation version 3). Quotes saved earlier keep the numbers they were saved with; "Reprice with the current calculation" in the quote's own notes applies the current calculation on purpose.
 - **Saved quotes.** A quote keeps its own inputs, plates, prices and currency. Opening it later shows the numbers as saved, even if you changed settings or currency since. Whatever the slice did not report (print time, filament weight or usage, a filament price) is saved as unknown, never as zero: you can save such a draft, but it cannot be exported, printed or sent until it is complete.
-- **Quote output.** "Print quote" opens a quote sheet (itemized or summary) and the print dialog, where you can save a PDF. CSV and HTML export write a file to the plugin data folder, and the tab shows the path. The sheet carries your logo, company details, payment terms and accent color, set in Settings › Quote sheet with a live sample beside the form.
+- **Quote output.** "Print quote" opens a quote sheet (itemized or summary) and the print dialog, where you can save a PDF. CSV and HTML export write a file to the plugin data folder, and the tab shows the path. The sheet carries your logo, company details, payment terms and accent color, set in Settings › Quote sheet with a live sample beside the form. In the Quotes tab, "Export list" writes one CSV row per quote shown (search applied): number, date, customer, title, currency, channel, quantity, unit price, total, margin and whether the quote is complete, all from the numbers saved with each quote.
 - **Settings.** One group per tab: Spoolman, costs, pricing, sales channels, printers, quote sheet, language and currency, about. Changes save on their own.
 - **Languages and currency.** English and Brazilian Portuguese. Any currency, taken from Spoolman or set in Settings.
 - **Theme.** The interface is built to follow OrcaSlicer's dark and light themes. This is not verified inside Orca yet.
@@ -108,7 +108,7 @@ Current mock captures (headless Chrome on a local build with the dev mock host; 
 
 ## Install
 
-The plugin is on the OrcaCloud plugin hub: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f (0.1.1 was the latest when last checked; 0.2.0 appears there once published). Subscribe there, then in OrcaSlicer open Plugins, refresh and enable the plugin. It has not been verified inside OrcaSlicer yet, so expect rough edges.
+The plugin is on the OrcaCloud plugin hub: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f (the hub shows the latest published release, which can be older than this tree). Subscribe there, then in OrcaSlicer open Plugins, refresh and enable the plugin. It has not been verified inside OrcaSlicer yet, so expect rough edges.
 
 To try a local build on macOS instead:
 
@@ -128,7 +128,7 @@ Each filament slot in the project is matched in this order. The first match wins
 2. The Spooler plugin mapping, if you use Spooler.
 3. `(#ID)` in the filament preset name.
 4. `Spoolman filament N` in the preset's `filament_notes`.
-5. No match: the preset `filament_cost` per kg, labeled "Preset price". If the preset has no cost, type a price in the slot ("Typed"). A slot with no price counts as 0 and the price panel says so.
+5. No match: a price per kg you typed for that preset ("Typed"), else the preset `filament_cost` per kg, labeled "Preset price". A slot with no price counts as 0 and the price panel says so. A slot matched to a Spoolman filament that has no price (no priced spool, no filament price) is priced the same way: typed price, then preset price.
 
 The price per kg comes from the most recently used spool that is not archived (spool price divided by initial weight). Without one it comes from the filament price divided by the filament weight.
 
@@ -177,7 +177,7 @@ A sliced `.gcode.3mf` import is limited to 100 MB.
 
 ## Development
 
-The UI is Vue 3 and PrimeVue 4 (shared Orca theme in `ui/shared`) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
+The UI is Vue 3 and PrimeVue 5 (shared Orca theme in `ui/shared`) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
 
 ```bash
 pnpm -C ui install
