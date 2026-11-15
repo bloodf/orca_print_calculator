@@ -209,6 +209,7 @@ export const messages: Record<string, readonly [string, string?]> = {
   "flag.belowBreakEven": ["Below break-even on {channel}: each piece loses {amount}.", "Abaixo do empate em {channel}: cada peça perde {amount}."],
   "flag.deadZone": ["Raised to {price}: between {from} and {until} {channel}'s next fee step leaves you less.", "Subiu para {price}: entre {from} e {until} a próxima faixa de taxa de {channel} rende menos."],
   "flag.orderBelowBreakEven": ["The order loses {amount} once setup and order costs are counted.", "O pedido perde {amount} quando entram a preparação e os custos do pedido."],
+  "flag.filamentShort": ["Spoolman shows {have} of {filament} left; this quote prints {need}.", "O Spoolman mostra {have} de {filament}; este orçamento imprime {need}."],
   "flag.belowMarkup": ["Markup {markup} is under the {target} you set, after discount or minimum.", "O markup de {markup} fica abaixo dos {target} definidos, depois do desconto ou do mínimo."],
   "flag.belowTarget": ["Margin {margin} is under the {target} your markup aims for, after discount or minimum.", "A margem de {margin} fica abaixo dos {target} que o seu markup busca, depois do desconto ou do mínimo."],
   "flag.minimum": ["Price per piece raised so the order reaches the {amount} minimum.", "Preço por peça aumentado para o pedido chegar ao mínimo de {amount}."],

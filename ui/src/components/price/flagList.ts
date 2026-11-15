@@ -1,6 +1,8 @@
 // The flags under the hero price, as plain data in the spec's order (docs/ux.md §6.12): bad first, then info.
 import { LEGACY_CALC, MARKUP_CALC, type ChannelOk, type QuoteInput } from "../../engine/quote";
-import { t } from "../../i18n";
+import { grams } from "../../format";
+import { intlLocale, t } from "../../i18n";
+import type { FilamentShort } from "../../state/extrasDemand";
 import type { Derived } from "../../state/derive";
 import { markupOf } from "../../state/markup";
 
@@ -31,7 +33,7 @@ const itemText = (c: Derived["notCounted"][number]): string =>
       : c.kind === "grams" ? t("notCounted.grams", { slot: c.slot, n: c.plate })
         : t(`notCounted.${c.kind}`);
 
-export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; invalid?: boolean; currencyFrom?: string | null }): Flag[] {
+export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; invalid?: boolean; currencyFrom?: string | null; short?: readonly FilamentShort[] }): Flag[] {
   const bad: Flag[] = [];
   const info: Flag[] = [];
   const sel = d.selected && d.selected.ok ? d.selected : null;
@@ -71,6 +73,7 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
       info.push({ id: "discount", tone: "info", text: t("flag.discount", { pct: f.pct(sel.effectiveDiscountBp), q: tier }) });
     }
   }
+  for (const s of opts.short ?? []) info.push({ id: `filamentShort-${s.filamentId}`, tone: "info", text: t("flag.filamentShort", { filament: s.name, have: grams(s.haveG, intlLocale()), need: grams(s.needG, intlLocale()) }) });
   if (opts.currencyFrom) info.push({ id: "currencyMismatch", tone: "info", text: t("currency.mismatch", { old: opts.currencyFrom }), action: { label: t("nav.settings"), kind: "fees" } });
   if (opts.stale) info.push({ id: "stale", tone: "info", text: t("flag.stale") });
   const preset = [...includedIdx].some((i) => (d.slotMatches[i] ?? []).some((v) => v.priceSource === "preset"));

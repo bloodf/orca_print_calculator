@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+- Filament stock note under the price: when a quote prints more of a Spoolman filament than its spools that are not archived have left, counting every plate copy and run, the price panel says how much is left and how much the quote needs. Filament with no remaining weight in Spoolman is not checked, and nothing is deducted.
+
 ### Changed
 - Prices of new quotes on a channel with fees or tax are lower than before. Markup now means what its help says: profit after the channel's fees and tax is the markup times the cost (calculation version 3). Before, the markup was turned into a margin on the gross price, so fees were charged on top of the profit as well: a 10.00 cost at 100% markup on a 20% fee channel was priced 33.32 (16.66 profit) and is now 25.00 (10.00 profit). With no fees and no tax nothing changes. Quotes saved earlier keep their numbers; "Reprice with the current calculation" moves one to version 3. The "under target" note now compares markups, and "No price works" can only happen to quotes saved before this version.
 

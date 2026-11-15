@@ -1014,6 +1014,12 @@ Several not-counted items join into one flag: "Not counted yet: energy, labor." 
 | `deadZoneJumped` | info | `flag.deadZone` | `price`, `from`/`until` = zone that contained the raw price (first zone with `untilCents < price`), `channel` |
 | `discounted` | info | `flag.discount` | `pct` = **`effectiveDiscountBp`** (what the customer actually gets), `q` = tier minQty |
 
+Filament stock (not an engine flag; `state/extrasDemand.ts` `filamentShortages`, only while Spoolman state is `ok`): for each
+Spoolman filament matched by a slot of an included plate, grams × plate copies × runs, summed, against the summed
+`remainingWeight` of its spools that are not archived. A filament with no spool reporting a remaining weight is not judged.
+Each shortage is one info flag `filamentShort-<filamentId>`, key `flag.filamentShort` (`filament` = Spoolman name, `have`,
+`need` formatted with `grams`), placed after the engine flags. Read-only; nothing is deducted.
+
 Then UI flags: stale `flag.stale`; preset prices `flag.presetPrices`.
 
 ### 6.13 Narrow (N, 760px) [`narrow`]
@@ -1445,6 +1451,7 @@ via `Intl.PluralRules` with `_one` / `_other` suffixed keys. `i18n.ts` exports `
 | flag.belowBreakEven | Below break-even on {channel}: each piece loses {amount}. | Abaixo do empate em {channel}: cada peça perde {amount}. |
 | flag.deadZone | Raised to {price}: between {from} and {until} {channel}'s next fee step leaves you less. | Subiu para {price}: entre {from} e {until} a próxima faixa de taxa de {channel} rende menos. |
 | flag.orderBelowBreakEven | The order loses {amount} once setup and order costs are counted. | O pedido perde {amount} quando entram a preparação e os custos do pedido. |
+| flag.filamentShort | Spoolman shows {have} of {filament} left; this quote prints {need}. | O Spoolman mostra {have} de {filament}; este orçamento imprime {need}. |
 | flag.belowMarkup | Markup {markup} is under the {target} you set, after discount or minimum. | O markup de {markup} fica abaixo dos {target} definidos, depois do desconto ou do mínimo. |
 | flag.belowTarget | Margin {margin} is under the {target} your markup aims for, after discount or minimum. | A margem de {margin} fica abaixo dos {target} que o seu markup busca, depois do desconto ou do mínimo. |
 | flag.minimum | Price per piece raised so the order reaches the {amount} minimum. | Preço por peça aumentado para o pedido chegar ao mínimo de {amount}. |

@@ -192,7 +192,7 @@ describe("flags", () => {
   test("a discount that only misses the target is info (belowTarget)", async () => {
     load("ok", { draft: (d) => ({ ...d, quantity: 10, discountTiers: [{ minQty: 10, discountBp: 1000 }] }) });
     const el = await show(PriceFlags);
-    const f = flagsOf(el);
+    const f = flagsOf(el).filter((x) => !x.id.startsWith("filamentShort-")); // 10 sets also outrun the fixture's spools: its own note
     expect(f.map((x) => x.id)).toEqual(["belowTarget", "discount"]);
     expect(f[0]!.text).toMatch(/^Note: Markup \d+\.\d% is under the 42\.9% you set, after discount or minimum\.$/);
     expect(f.every((x) => x.tone === "info")).toBe(true);
