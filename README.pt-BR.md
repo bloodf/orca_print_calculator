@@ -16,41 +16,41 @@ Complete seu fluxo no OrcaSlicer: organizar, calcular, gerenciar filamento e imp
 <table>
   <tr>
     <td width="33%" valign="top">
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54"><img src="docs/related-plugins/orca_organizer-icon.png" width="40" height="40" alt="Organizer"></a>
-      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54">Organizer</a></h3>
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54"><img src="docs/related-plugins/orca_organizer-preview.jpg" width="280" alt="Organizer: prévia"></a>
+      <a href="https://cloud.orcaslicer.com/p/5bf381fd42d4"><img src="docs/related-plugins/orca_organizer-icon.png" width="40" height="40" alt="Organizer"></a>
+      <h3><a href="https://cloud.orcaslicer.com/p/5bf381fd42d4">Organizer</a></h3>
+      <a href="https://cloud.orcaslicer.com/p/5bf381fd42d4"><img src="docs/related-plugins/orca_organizer-preview.jpg" width="280" alt="Organizer: prévia"></a>
       <p>Organize os objetos pelo contorno real e preencha a mesa com mais cópias.</p>
-      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5bae3da1-7fcc-4cbd-ae25-53678e392d54">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/orca_organizer">Código no GitHub →</a></p>
+      <p><a href="https://cloud.orcaslicer.com/p/5bf381fd42d4">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/orca_organizer">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368"><img src="docs/related-plugins/spooler-icon.png" width="40" height="40" alt="Spooler"></a>
-      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368">Spooler</a></h3>
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368"><img src="docs/related-plugins/spooler-preview.png" width="280" alt="Spooler: prévia"></a>
+      <a href="https://cloud.orcaslicer.com/p/50c35dcbd6f3"><img src="docs/related-plugins/spooler-icon.png" width="40" height="40" alt="Spooler"></a>
+      <h3><a href="https://cloud.orcaslicer.com/p/50c35dcbd6f3">Spooler</a></h3>
+      <a href="https://cloud.orcaslicer.com/p/50c35dcbd6f3"><img src="docs/related-plugins/spooler-preview.png" width="280" alt="Spooler: prévia"></a>
       <p>Suas bobinas do Spoolman e os perfis de filamento no OrcaSlicer, com quanto resta em cada bobina.</p>
-      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5c523246-d53c-44bc-a129-fe2470da6368">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/spooler">Código no GitHub →</a></p>
+      <p><a href="https://cloud.orcaslicer.com/p/50c35dcbd6f3">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/spooler">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f"><img src="docs/related-plugins/u1control-icon.png" width="40" height="40" alt="U1 Control"></a>
-      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f">U1 Control</a></h3>
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f"><img src="docs/related-plugins/u1control-preview.png" width="280" alt="U1 Control: prévia"></a>
+      <a href="https://cloud.orcaslicer.com/p/55b8c347d443"><img src="docs/related-plugins/u1control-icon.png" width="40" height="40" alt="U1 Control"></a>
+      <h3><a href="https://cloud.orcaslicer.com/p/55b8c347d443">U1 Control</a></h3>
+      <a href="https://cloud.orcaslicer.com/p/55b8c347d443"><img src="docs/related-plugins/u1control-preview.png" width="280" alt="U1 Control: prévia"></a>
       <p>A Snapmaker U1 no OrcaSlicer: configuração de impressão, câmera, cabeças, RFID, Spoolman e gerenciador de arquivos.</p>
-      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/544a836a-bcbe-4517-ae33-90f33930682f">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/u1control">Código no GitHub →</a></p>
+      <p><a href="https://cloud.orcaslicer.com/p/55b8c347d443">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/u1control">Código no GitHub →</a></p>
     </td>
   </tr>
   <tr>
     <td width="33%" valign="top">
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982"><img src="docs/related-plugins/kobracontrol-icon.png" width="40" height="40" alt="Kobra Control"></a>
-      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982">Kobra Control</a></h3>
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982"><img src="docs/related-plugins/kobracontrol-preview.png" width="280" alt="Kobra Control: prévia"></a>
+      <a href="https://cloud.orcaslicer.com/p/59c786285255"><img src="docs/related-plugins/kobracontrol-icon.png" width="40" height="40" alt="Kobra Control"></a>
+      <h3><a href="https://cloud.orcaslicer.com/p/59c786285255">Kobra Control</a></h3>
+      <a href="https://cloud.orcaslicer.com/p/59c786285255"><img src="docs/related-plugins/kobracontrol-preview.png" width="280" alt="Kobra Control: prévia"></a>
       <p>A Anycubic Kobra X no OrcaSlicer: Print and Send, a aba Device, slots do ACE e um painel.</p>
-      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/kobracontrol">Código no GitHub →</a></p>
+      <p><a href="https://cloud.orcaslicer.com/p/59c786285255">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/kobracontrol">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b"><img src="docs/related-plugins/embedder-icon.png" width="40" height="40" alt="Embedder"></a>
-      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b">Embedder</a></h3>
-      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b"><img src="docs/related-plugins/embedder-preview.png" width="280" alt="Embedder: prévia"></a>
+      <a href="https://cloud.orcaslicer.com/p/58222d4f9e52"><img src="docs/related-plugins/embedder-icon.png" width="40" height="40" alt="Embedder"></a>
+      <h3><a href="https://cloud.orcaslicer.com/p/58222d4f9e52">Embedder</a></h3>
+      <a href="https://cloud.orcaslicer.com/p/58222d4f9e52"><img src="docs/related-plugins/embedder-preview.png" width="280" alt="Embedder: prévia"></a>
       <p>Abra cavidades para ímãs e etiquetas NFC na peça, com uma pausa na camada certa para colocar cada inserto.</p>
-      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/embedder">Código no GitHub →</a></p>
+      <p><a href="https://cloud.orcaslicer.com/p/58222d4f9e52">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/embedder">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top"></td>
   </tr>
@@ -108,7 +108,7 @@ Capturas atuais com host simulado (Chrome headless numa build local com o host d
 
 ## Instalação
 
-O plugin está no hub de plugins do OrcaCloud: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f (o hub mostra a última versão publicada, que pode ser mais antiga que esta árvore). Assine por lá e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. Ele ainda não foi verificado dentro do OrcaSlicer, então espere arestas.
+O plugin está no hub de plugins do OrcaCloud: https://cloud.orcaslicer.com/p/521c07cf6de2 (o hub mostra a última versão publicada, que pode ser mais antiga que esta árvore). Assine por lá e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. Ele ainda não foi verificado dentro do OrcaSlicer, então espere arestas.
 
 Para testar um build local no macOS:
 
