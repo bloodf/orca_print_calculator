@@ -69,7 +69,7 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
       <div class="hero-wrap" data-price-hero>
         <div v-if="hero.kind === 'price' && sel" class="oui-hero hero-box" :class="{ 'oui-on-band': band }" :data-tone="band ? undefined : incomplete ? 'warn' : 'danger'">
           <OuiReadout class="hero" size="hero" :label="label" :incomplete="incomplete">
-            <span class="price-amber" :class="{ partial: incomplete }" data-testid="hero-price">{{ m(sel.price) }}</span>
+            <span class="price-figure" :class="{ partial: incomplete }" data-testid="hero-price">{{ m(sel.price) }}</span>
             <template v-if="sub || priceFromFallback" #sub>
               <span v-if="sub" class="num sub" :class="{ 'order-line': orderLine }" data-testid="order-line">{{ sub }}</span>
               <span v-if="priceFromFallback" class="origin" data-testid="price-origin">{{ t("price.originFallback") }}</span>

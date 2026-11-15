@@ -46,7 +46,8 @@ img { max-width: 100%; }
   .app-chrome, .oui-appbar { display: none !important; }
 }
 
-/* ---- semantic data tables (batch, channel comparison, saved quotes, stock): read-only grids on the palette tokens. PrimeVue's
+/* ---- foundation-gap: no shared read-only table style (4.0.2 should add .oui-table); the foundation points at PrimeVue DataTable,
+   which adds about 240 kB here. Semantic data tables (batch, channel comparison, saved quotes, stock): read-only grids on the palette tokens. PrimeVue's
    DataTable (sorting, paging, selection) is not needed here and would add about 240 kB of minified JS. ---- */
 .opc-table-wrap { position: relative; max-width: 100%; overflow-x: auto; } /* relative keeps absolutely-positioned .oui-sr cells inside the scroller */
 .opc-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }

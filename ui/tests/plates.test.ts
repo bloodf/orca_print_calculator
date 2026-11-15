@@ -40,7 +40,7 @@ beforeEach(() => { root = document.createElement("div"); document.body.appendChi
 afterEach(() => { app?.unmount(); app = null; root.remove(); });
 
 describe("PlateList rendering", () => {
-  test("ok: one card per plate with name, chips, cost, copies and no amber class", async () => {
+  test("ok: one card per plate with name, chips, cost, copies and no price figure or stale class", async () => {
     seed("ok");
     await mount(PlateList);
     const cards = root.querySelectorAll("article");
@@ -58,7 +58,7 @@ describe("PlateList rendering", () => {
     hdr.mount(bar); await flush();
     expect(bar.textContent).toContain("Desk organizer");
     hdr.unmount(); bar.remove();
-    expect(root.querySelector(".stale, [class*=amber]")).toBeNull();
+    expect(root.querySelector(".stale, [class*=price-figure]")).toBeNull();
     expect(root.textContent).not.toContain("May be out of date");
   });
   test("stale: badge on every card and a project-wide alert", async () => {

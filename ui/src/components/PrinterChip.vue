@@ -49,10 +49,10 @@ const more = () => { close(); gotoSettings("settings-printers"); };
 <style scoped>
 .chip { flex: 0 1 auto; min-width: 0; gap: 6px; padding-inline: 6px; }
 .chip.none { padding: 0 4px; }
-.model { flex: 0 1 auto; min-width: 0; }
+.model { flex: 0 1 auto; min-width: 6ch; } /* never shrinks to nothing: at least the start of the model shows */
 .w { flex: none; }
 .sugg { margin-top: var(--oui-s2); }
 .acts { margin-top: var(--oui-s2); justify-content: space-between; }
 /* the full text (model, watts, estimated) stays in the button's accessible name; what is drawn gives way to the tabs */
-@container oui-appbar (max-width: 1279px) { .est { display: none; } }
+@container oui-appbar (max-width: 1439px) { .est { display: none; } }
 </style>

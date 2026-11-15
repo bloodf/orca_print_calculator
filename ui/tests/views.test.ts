@@ -258,14 +258,14 @@ describe("Pieces", () => {
     app = createApp({ render: () => h(PriceBar, { hidden: false }) });
     app.mount(root);
     await nextTick();
-    expect(root.querySelector(".price-amber")!.textContent).toMatch(/\d/);
+    expect(root.querySelector(".price-figure")!.textContent).toMatch(/\d/);
     btn(root, "Details").click();
     expect(el.scrollIntoView).toHaveBeenCalled();
     app.unmount();
     app = createApp({ render: () => h(PriceBar, { hidden: true }) });
     app.mount(root);
     await nextTick();
-    expect(root.querySelector(".price-amber")).toBeNull();
+    expect(root.querySelector(".price-figure")).toBeNull();
     el.remove();
   });
   test("PriceBar with no price shows the reason", async () => {

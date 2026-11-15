@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// foundation-gap: no shared toast. 4.0.2 should add OuiToast (tone, text, one action, close, pause on hover/focus); this card composes
+// OuiIcon and the --oui-* tone tokens only.
 import Button from "primevue/button";
 import { nextTick, watch } from "vue";
 import { t } from "../../i18n";

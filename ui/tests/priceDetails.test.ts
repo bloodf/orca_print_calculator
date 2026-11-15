@@ -87,7 +87,7 @@ describe("channel comparison", () => {
     expect(el.querySelector("[data-section=compare]")).toBeNull();
     expect(el.querySelector("table")).toBeNull();
   });
-  test("with two channels it is collapsed by default, opens, marks the selection and keeps prices out of amber", async () => {
+  test("with two channels it is collapsed by default, opens, marks the selection and keeps prices out of the price figure style", async () => {
     load("ok");
     const el = await show(ChannelComparison);
     expect(el.querySelector("[data-section=compare]")).not.toBeNull();
@@ -100,7 +100,7 @@ describe("channel comparison", () => {
     expect((el.querySelector("tr.sel") as HTMLElement).dataset.channel).toBe(derived.value.selectedChannelId);
     expect(txt(el.querySelector("tr.sel .oui-sr"))).toBe("selected");
     expect(el.querySelector("tr[aria-selected]")).toBeNull();
-    expect(el.querySelector(".price-amber")).toBeNull();
+    expect(el.querySelector(".price-figure")).toBeNull();
     expect(el.querySelector("caption")?.textContent).toBe("Price and profit per piece on each channel");
     rows.find((r) => r.dataset.channel === "direct")!.click(); await nextTick();
     expect(store.draft.channelId).toBe("direct");

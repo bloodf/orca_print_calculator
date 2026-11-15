@@ -15,6 +15,7 @@ import PriceFlags from "../src/components/price/PriceFlags.vue";
 import QuoteActions from "../src/components/quotes/QuoteActions.vue";
 import { setLocale } from "../src/i18n";
 import { exportBlock, sheetFor } from "../src/quoteFlow";
+import { DEFAULT_ACCENT } from "../src/state/sheet";
 import { closeQuote, openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import { derived, flushSettings, patchSettings, setView, store } from "../src/state/store";
 import { clearToasts, toasts } from "../src/state/toast";
@@ -332,7 +333,7 @@ describe("sheet details are frozen at save time", () => {
     // brand text fields are frozen too; the logo and the next number are not
     expect(q?.sheet).toEqual({
       shopName: "Old Shop", footer: "Old footer", validityDays: 7, taxId: "", phone: "+55 11 5550-0100", email: "hello@studiolayer.example",
-      website: "", address: "Rua das Camadas, 120\nSão Paulo, SP", payment: "", accent: "#00675B",
+      website: "", address: "Rua das Camadas, 120\nSão Paulo, SP", payment: "", accent: DEFAULT_ACCENT, // the fixture never chose a colour
     });
     patchSettings((s) => ({ sheet: { ...s.sheet, shopName: "New Shop", footer: "New footer", validityDays: 30 } }));
     const m = sheetFor(store.quotes.find((x) => x.id === q!.id)!)!;

@@ -35,6 +35,13 @@ describe("the page's colours meet 4.5:1 for text, from the shared palette with t
       expect(ratio(c("success"), c("successBg")), "ok").toBeGreaterThanOrEqual(4.5);
     });
   }
+  test("the primary background is the palette's own accent, so a host accent cannot lower the pair", () => {
+    // the app installs the shared preset with the lime accent and writes no --oui-primary of its own anywhere in src
+    const SOURCES = import.meta.glob("../src/**/*.{ts,vue,css}", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
+    for (const [f, text] of Object.entries(SOURCES)) expect(text, f).not.toMatch(/--oui-primary\s*:|--p-primary-color\s*:/);
+    expect(css).not.toMatch(/var\(--orca-/);
+    for (const theme of ["light", "dark"] as const) expect(palette[theme].lime, theme).toMatch(/^#[0-9a-f]{6}$/i);
+  });
   test("no colour is written as a literal in the page's own stylesheet: only shared tokens and system colours", () => {
     const rules = css.replace(/\/\*[\s\S]*?\*\//g, "");
     expect(rules).not.toMatch(/#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|light-dark\(/i);

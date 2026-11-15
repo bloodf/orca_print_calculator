@@ -40,6 +40,8 @@ const isOpen = computed(() => props.open || props.invalid);
         <span v-if="amount !== undefined" class="sec-amt num" :class="amount === null || partial ? 'gap' : 'oui-strong'" data-amount>
           <template v-if="amount === null"><span aria-hidden="true">—</span><span class="oui-sr">{{ t("a11y.unknown") }}</span></template>
           <template v-else>{{ amount }}</template>
+          <!-- partial is said in words too, not by the amber colour alone -->
+          <span v-if="amount !== null && partial" class="oui-chip sec-part" data-tone="warn" data-partial><span class="oui-sr">· </span>{{ t("price.partial") }}</span>
         </span>
         <span v-if="icon" class="chev" :class="{ on: isOpen }"><OuiIcon :icon="I.chevronRight" :size="14" /></span>
       </Button>
@@ -63,7 +65,8 @@ const isOpen = computed(() => props.open || props.invalid);
 .sec-name { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .sec-title { min-width: 0; }
 .sec-sum { font-weight: 400; }
-.sec-amt { justify-self: end; }
+.sec-amt { justify-self: end; display: grid; justify-items: end; gap: 2px; }
+.sec-part { font-weight: 600; }
 .chev { display: inline-flex; color: var(--oui-muted); transition: transform var(--oui-fast) var(--oui-ease); }
 .chev.on { transform: rotate(90deg); }
 .bad-icon { color: var(--oui-danger); display: inline-flex; }

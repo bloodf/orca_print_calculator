@@ -22,33 +22,33 @@ const show = async (c: Parameters<typeof mount>[0], props?: Record<string, unkno
 beforeEach(() => { en(); clearToasts(); });
 afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; });
 
-const AMBER = ".price-amber";
+const FIGURE = ".price-figure";
 
-describe("amber price", () => {
-  test.each(SCENARIO_NAMES.filter((n) => n !== "loading" && n !== "hostError"))("state %s: at most one amber element, exactly one when there is a price", async (name) => {
+describe("the price figure", () => {
+  test.each(SCENARIO_NAMES.filter((n) => n !== "loading" && n !== "hostError"))("state %s: at most one price figure, exactly one when there is a price", async (name) => {
     load(name);
     const el = await show(PricePanel);
     const hasPrice = derived.value.selected?.ok === true && derived.value.result.ok && derived.value.quoteInput.plates.length > 0;
-    expect(el.querySelectorAll(AMBER).length).toBe(hasPrice ? 1 : 0);
+    expect(el.querySelectorAll(FIGURE).length).toBe(hasPrice ? 1 : 0);
     expect(el.querySelector("#price-title")).not.toBeNull();
   });
-  test("ok state: the amber element holds the selected channel price and nothing else is amber", async () => {
+  test("ok state: the price figure holds the selected channel price and nothing else is styled as one", async () => {
     load("ok");
     const el = await show(PricePanel);
     const sel = derived.value.selected;
     expect(sel?.ok).toBe(true);
-    expect(el.querySelectorAll(AMBER)).toHaveLength(1);
-    expect(txt(el.querySelector(AMBER))).toMatch(/\d/);
-    expect(el.querySelector("table")?.querySelector(AMBER) ?? null).toBeNull();
+    expect(el.querySelectorAll(FIGURE)).toHaveLength(1);
+    expect(txt(el.querySelector(FIGURE))).toMatch(/\d/);
+    expect(el.querySelector("table")?.querySelector(FIGURE) ?? null).toBeNull();
   });
-  test("PriceBar: hidden holds no amber number; shown holds exactly one (and the panel never shows two at once)", async () => {
+  test("PriceBar: hidden holds no price figure; shown holds exactly one (and the panel never shows two at once)", async () => {
     load("ok");
     const hidden = await show(PriceBar, { hidden: true });
-    expect(hidden.querySelectorAll(AMBER)).toHaveLength(0);
+    expect(hidden.querySelectorAll(FIGURE)).toHaveLength(0);
     expect(hidden.querySelector(".price-bar")?.getAttribute("aria-hidden")).toBe("true");
     app?.unmount(); root?.remove();
     const shown = await show(PriceBar, { hidden: false });
-    expect(shown.querySelectorAll(AMBER)).toHaveLength(1);
+    expect(shown.querySelectorAll(FIGURE)).toHaveLength(1);
     expect(txt(shown)).toContain("Details");
   });
 });
@@ -57,7 +57,7 @@ describe("hero states", () => {
   test("impossible margin: title, body and two actions, no number, no tiles", async () => {
     load("impossible");
     const el = await show(PricePanel);
-    expect(el.querySelector(AMBER)).toBeNull();
+    expect(el.querySelector(FIGURE)).toBeNull();
     const h = el.querySelector("[data-testid=hero-impossible]")!;
     expect(txt(h)).toContain("No price works on Online store");
     expect(txt(h)).toContain("Fees, tax and your markup leave no price that works. Lower the markup or the channel fees.");

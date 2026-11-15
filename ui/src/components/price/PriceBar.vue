@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 // Narrow layout only: a 56px bar at the bottom while #price is off-screen (CalculatorView owns the IntersectionObserver).
-// Contents render only while shown, so at most one amber number is ever in the DOM.
+// Contents render only while shown, so at most one price figure is ever in the DOM.
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { derived, store } from "../../state/store";
@@ -27,7 +27,7 @@ function toDetails(): void {
   <div class="price-bar app-chrome" data-price-bar :hidden="hidden" :aria-hidden="hidden">
     <template v-if="!hidden">
       <template v-if="sel">
-        <span class="price-amber num" :class="{ partial: missingCount > 0 }">{{ m(sel.price) }}</span>
+        <span class="price-figure num" :class="{ partial: missingCount > 0 }">{{ m(sel.price) }}</span>
         <span v-if="missingCount > 0" class="oui-chip" data-tone="warn">{{ t("bar.incomplete") }}</span>
         <span v-else-if="priceFromFallback" class="oui-meta">{{ t("bar.origin") }}</span>
         <span class="oui-meta num">{{ pct(sel.marginBp) }}</span>
@@ -45,8 +45,8 @@ function toDetails(): void {
   border-top: 1px solid var(--oui-border); box-shadow: 0 -6px 16px rgb(0 0 0 / .12); transform: none; transition: transform var(--oui-base) var(--oui-ease); }
 /* slides away instead of vanishing; its contents are already gone (one price at a time), visibility ends the tab stops */
 .price-bar[hidden] { display: flex !important; transform: translateY(100%); visibility: hidden; pointer-events: none; transition: transform var(--oui-fast) var(--oui-ease), visibility 0s linear var(--oui-fast); }
-.price-amber { font-size: 22px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: var(--oui-primary); }
-.price-amber.partial { color: var(--oui-muted); text-decoration: underline dashed; text-underline-offset: 4px; }
+.price-figure { font-size: 22px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: var(--oui-primary); }
+.price-figure.partial { color: var(--oui-muted); text-decoration: underline dashed; text-underline-offset: 4px; }
 .total { white-space: nowrap; }
 .msg { min-width: 0; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .details { margin-inline-start: auto; gap: var(--oui-s1); }

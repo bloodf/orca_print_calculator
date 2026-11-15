@@ -62,6 +62,13 @@ describe("SpoolmanStatus", () => {
     expect(label("ok", { spools: 1 })).toBe("Spoolman · 1 spool");
     expect(label("offline")).toBe(t("spoolman.offline"));
   });
+  test("each Spoolman state has its own mark, not only its own colour (the text hides below 1500 px)", () => {
+    seed();
+    const mark = (state: string) => { const s = mount(SpoolmanStatus, { state }).querySelector(".oui-status")!; return s.querySelector("svg")?.innerHTML ?? `dot:${s.getAttribute("data-state")}`; };
+    const marks = ["ok", "offline", "connecting", "unset"].map(mark);
+    expect(new Set(marks).size).toBe(4);
+    expect(marks[1]).not.toMatch(/^dot:/); // offline: the offline glyph
+  });
   test("dot class follows the state", () => {
     seed();
     expect(mount(SpoolmanStatus, { state: "offline" }).querySelector(".dot")!.className).toContain("offline");

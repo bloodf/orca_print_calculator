@@ -47,7 +47,7 @@ defineProps<{ model: SheetModel }>();
 </template>
 
 <style scoped>
-.quote-sheet { --paper: #FFFFFF; --ink: #1F2328; --mu: #5C6664; --rule: #00675B; --line: #DDE1E0; --band: #F4F6F5;
+.quote-sheet { --paper: #FFFFFF; --ink: #1F2328; --mu: #5C6664; --rule: #446600; --line: #DDE1E0; --band: #F4F6F5;
   width: 720px; max-width: 100%; margin: 0 auto; padding: 32px; background: var(--paper); color: var(--ink); font-size: 11pt; line-height: 1.45; border: 1px solid var(--line); }
 .top, .meta, .sum, .total { display: flex; justify-content: space-between; align-items: baseline; }
 .top { align-items: flex-start; }

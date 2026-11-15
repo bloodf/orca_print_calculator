@@ -108,7 +108,7 @@ export function buildSheetModel(s: SheetSource): SheetModel {
 }
 
 /** Paper palette: the sheet is always light (docs/ux.md §5.3 QuotePreview). */
-export const PAPER = { bg: "#FFFFFF", fg: "#1F2328", muted: "#5C6664", rule: "#00675B", band: "#F4F6F5", line: "#DDE1E0" } as const;
+export const PAPER = { bg: "#FFFFFF", fg: "#1F2328", muted: "#5C6664", rule: "#446600", band: "#F4F6F5", line: "#DDE1E0" } as const;
 
 export const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
 
