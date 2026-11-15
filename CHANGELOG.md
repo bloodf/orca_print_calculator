@@ -10,6 +10,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Two filament presets matched to the same Spoolman filament, when Spoolman has no price for it and each preset has its own cost, no longer stop the quote with "Same filament with two prices".
 - A saved quote whose date in `quotes.json` cannot be read (or whose validity is out of range) no longer breaks the quote sheet, print and HTML export; the date and "valid until" lines are left empty.
 - A saved quote with a currency code that is not three letters is set aside as an unreadable row (kept in `quotes.json` and counted) instead of breaking the Quotes list.
+- A negative filament weight in G-code or in an imported `.gcode.3mf` reads as unknown instead of reaching the price engine, which refused the whole quote. An imported plate numbered 0 or below takes its position in the file instead of becoming "Plate 0".
 
 ## [0.3.1] - 2026-11-14
 
