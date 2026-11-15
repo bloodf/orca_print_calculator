@@ -3,6 +3,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, type Ref, type WritableComputedRef } from "vue";
 import { money, percent } from "../../format";
 import { t } from "../../i18n";
+import { feeFor } from "../../engine/costs";
 import type { ChannelOk, ChannelQuote } from "../../engine/quote";
 import { currency, derived, locale, result, selected, setSectionOpen, setView, store } from "../../state/store";
 import { slotsWithoutPrice } from "./flagList";
@@ -66,6 +67,15 @@ export async function focusMissing(): Promise<void> {
 
 /** The selected channel when it has a price, else null. */
 export const priced = computed<ChannelOk | null>(() => (hero.value.kind === "price" ? hero.value.sel : null));
+
+/** What the selected channel takes from one piece at its price (its own fees, and the tax). Null while there is no price. */
+export const charges = computed<{ fees: number; tax: number } | null>(() => {
+  const sel = priced.value;
+  if (!sel) return null;
+  const ch = derived.value.quoteInput.channels.find((c) => c.id === sel.id);
+  const f = ch ? feeFor(ch, sel.price) : null;
+  return { fees: f ? f.pctCents + f.fixedCents + f.shippingCents : sel.fees, tax: f ? f.taxCents : 0 };
+});
 
 /** Remembered open state of a details section (settings.ui.open), with a default for first use. */
 export function useOpen(id: string, dflt: () => boolean): WritableComputedRef<boolean> {

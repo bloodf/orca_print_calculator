@@ -11,6 +11,10 @@ import { setLocale } from "../src/i18n";
 import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
 import { spoolman } from "../src/mock/fixtures";
 import PlateList from "../src/components/plates/PlateList.vue";
+import PlateNotices from "../src/components/plates/PlateNotices.vue";
+import AppHeader from "../src/components/AppHeader.vue";
+// what the calculator shows above and in the Plates panel: the page notices, then the list
+const Plates = { render: () => [h(PlateNotices), h(PlateList)] };
 import ImportButton from "../src/components/plates/ImportButton.vue";
 import { importFile, importState, checkFile } from "../src/components/plates/importFlow";
 import { settle } from "./pv";
@@ -36,7 +40,7 @@ beforeEach(() => { root = document.createElement("div"); document.body.appendChi
 afterEach(() => { app?.unmount(); app = null; root.remove(); });
 
 describe("PlateList rendering", () => {
-  test("ok: one card per plate with name, chips, cost, copies and no amber class", async () => {
+  test("ok: one card per plate with name, chips, cost, copies and no price figure or stale class", async () => {
     seed("ok");
     await mount(PlateList);
     const cards = root.querySelectorAll("article");
@@ -46,28 +50,35 @@ describe("PlateList rendering", () => {
     expect(cards[0]!.querySelectorAll(".chip")).toHaveLength(2);
     expect(cards[0]!.querySelector(".cost")!.textContent).toMatch(/\d/);
     expect(cards[0]!.querySelector("[aria-label='Copies per run, plate 1']")).not.toBeNull();
-    expect(root.textContent).toContain("Desk organizer");
     expect(root.textContent).toContain("3 plates");
-    expect(root.querySelector(".stale, [class*=amber]")).toBeNull();
+    // the project name is said once, in the app bar
+    store.status = "ready";
+    const bar = document.body.appendChild(document.createElement("div"));
+    const hdr = createApp({ render: () => h(AppHeader, { view: "calc" }) });
+    hdr.mount(bar); await flush();
+    expect(bar.textContent).toContain("Desk organizer");
+    hdr.unmount(); bar.remove();
+    expect(root.querySelector(".stale, [class*=price-figure]")).toBeNull();
     expect(root.textContent).not.toContain("May be out of date");
   });
   test("stale: badge on every card and a project-wide alert", async () => {
     seed("stale");
-    await mount(PlateList);
+    await mount(Plates);
     expect(root.textContent!.match(/May be out of date/g)).toHaveLength(3);
     expect(root.querySelector("[role=status]")?.textContent).toContain("Plates may be out of date");
   });
-  test("unknown: time and grams render as em dash with sr text, never 0", async () => {
+  test("unknown: time and grams say so in words, marked as a gap, never 0", async () => {
     seed("unknown");
     await mount(PlateList);
     const meta = root.querySelector(".meta")!;
-    expect(meta.textContent).toContain("—");
-    expect(meta.querySelector(".sr-only")?.textContent).toBe("unknown");
+    expect(meta.textContent).toContain("time unknown");
+    expect(meta.textContent).toContain("weight unknown");
+    expect(meta.querySelectorAll(".gap")).toHaveLength(2);
     expect(meta.textContent).not.toMatch(/\b0 ?(g|s|m)\b/);
   });
   test("imported: shows from-file provenance and the info alert", async () => {
     seed("imported");
-    await mount(PlateList);
+    await mount(Plates);
     expect(root.querySelector("article")!.textContent).toContain("from desk-organizer.gcode.3mf");
     expect(root.querySelector("[role=status]")?.textContent).toContain("Plates from desk-organizer.gcode.3mf");
   });
@@ -123,7 +134,7 @@ describe("chips, rows and picker", () => {
     const spool = Array.from(opts).find((o) => o.querySelector(".opt.spool"))!;
     spool.click(); await settle();
     expect(Object.keys(store.settings.slotOverrides)).toHaveLength(1);
-    const reset = root.querySelector<HTMLButtonElement>(".mrow .actions .icon-btn")!;
+    const reset = root.querySelector<HTMLButtonElement>(".mrow .actions .icon-btn-sm")!;
     expect(reset).not.toBeNull();
     reset.click(); await flush();
     expect(store.settings.slotOverrides).toEqual({});

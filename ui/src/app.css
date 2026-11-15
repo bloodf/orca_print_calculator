@@ -1,0 +1,59 @@
+/* Orca Print Calculator: what is local to this page. Colour, type, spacing, controls and the shared components come from
+   ui/shared (--oui-* written by applyOrcaTheme, base.css, the PrimeVue preset). The host decides light/dark through
+   html[data-orca-theme]; src/orcaUi.ts mirrors it onto the palette. Never prefers-color-scheme, never light-dark(). */
+html { -webkit-text-size-adjust: 100%; }
+.p-button[aria-busy="true"] { cursor: progress; }
+.p-button[aria-disabled="true"] { cursor: default; }
+img { max-width: 100%; }
+
+/* ---- text and row helpers the shared set has no equivalent for ---- */
+.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.sm { font-size: var(--oui-text-sm); line-height: 1.4; }
+.lg { font-size: var(--oui-text-lg); line-height: 1.3; font-weight: 650; }
+.sm.bad, td.bad { color: var(--oui-danger); } /* error lines and loss cells */
+.gap { color: var(--oui-warning); font-weight: 600; } /* a value that is not known yet */
+.hairline { border-top: 1px solid var(--oui-border); }
+.row { display: flex; align-items: center; }
+.row > * + * { margin-left: var(--oui-s2); }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: var(--oui-s3); }
+/* the "edited" marker next to an overridden field or section */
+.ovr-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--oui-primary); flex: none; }
+.skeleton { background: var(--oui-raised); border-radius: var(--oui-radius-lg); }
+/* .p-button sets position: relative; the doubled class keeps the skip link out of flow until it is focused */
+.p-button.skip-link { position: absolute; left: 8px; top: -64px; z-index: 50; background: var(--oui-surface); border: 1px solid var(--oui-border); color: var(--oui-primary); }
+.p-button.skip-link:focus, .p-button.skip-link:focus-visible { top: 8px; }
+.p-button.icon-btn { width: var(--oui-control); height: var(--oui-control); padding: 0; flex: none; }
+.p-button.icon-btn-sm { width: var(--oui-control-sm); height: var(--oui-control-sm); padding: 0; }
+.opc-pop { min-width: 240px; max-width: min(360px, calc(100vw - 16px)); max-height: 320px; overflow-y: auto; }
+
+/* ---- motion: transform and opacity only; nothing waits on an animation. Reduced motion is handled by the shared base.css. ---- */
+@keyframes opc-enter { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: opc-enter var(--oui-fast) var(--oui-ease); }
+/* skeleton -> content: the real blocks fade up in place */
+.reveal-children > * { animation: opc-enter var(--oui-base) var(--oui-ease); }
+
+/* ---- forced colors (Windows high contrast): box-shadow and background fills are dropped, so focus and the current item need
+   system-colour outlines of their own ---- */
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid CanvasText; outline-offset: 2px; box-shadow: none; }
+  .seg-opt[aria-checked="true"], .oui-appbar-tab[aria-selected="true"] { background: Highlight; color: HighlightText; forced-color-adjust: none; }
+  .ovr-dot { background: CanvasText; forced-color-adjust: none; }
+  .p-button, .p-inputtext, .p-select, .p-checkbox-box { forced-color-adjust: auto; }
+}
+
+/* ---- print: everything with .app-chrome disappears; the quote sheet prints alone ---- */
+@media print {
+  .app-chrome, .oui-appbar { display: none !important; }
+}
+
+/* ---- foundation-gap: no shared read-only table style (4.0.2 should add .oui-table); the foundation points at PrimeVue DataTable,
+   which adds about 240 kB here. Semantic data tables (batch, channel comparison, saved quotes, stock): read-only grids on the palette tokens. PrimeVue's
+   DataTable (sorting, paging, selection) is not needed here and would add about 240 kB of minified JS. ---- */
+.opc-table-wrap { position: relative; max-width: 100%; overflow-x: auto; } /* relative keeps absolutely-positioned .oui-sr cells inside the scroller */
+.opc-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.opc-table th { padding: 6px 12px; text-align: start; font-size: var(--oui-text-xs); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--oui-muted); white-space: nowrap; background: var(--oui-raised); border-bottom: 1px solid var(--oui-border); }
+.opc-table td { padding: 6px 12px; height: 40px; border-bottom: 1px solid var(--oui-border); }
+.opc-table tbody tr:last-child td { border-bottom: 0; }
+.opc-table th.r, .opc-table td.r { text-align: end; }
+.opc-table.dense { font-size: var(--oui-text-sm); }
+.opc-table.dense th, .opc-table.dense td { padding-block: 4px; height: 30px; }

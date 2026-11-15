@@ -5,8 +5,8 @@ import { grams, safeColor } from "../../format";
 import { t } from "../../i18n";
 import { locale } from "../../state/store";
 import type { HostSlot, SlotMatchView } from "../../state/types";
-import Badge from "../base/Badge.vue";
-import { chipLabel, sourceText, sourceTone, UNKNOWN } from "./slots";
+import { OuiSwatch } from "../../../shared/src/components";
+import { chipLabel, sourceText, sourceTone } from "./slots";
 
 const props = defineProps<{ slot: HostSlot; match: SlotMatchView }>();
 defineEmits<{ toggle: [] }>();
@@ -16,18 +16,16 @@ const label = computed(() => t("a11y.chip", { preset: chipLabel(props.match), gr
 </script>
 
 <template>
-  <Button :id="`chip-${match.plateIndex}-${slot.n}`" type="button" severity="secondary" outlined rounded size="small" class="chip" :aria-label="label" :title="slot.preset" @click="$emit('toggle')">
-    <span class="dot" :class="{ hatched: !swatch }" :style="swatch ? { background: swatch } : undefined" aria-hidden="true" />
-    <span class="name xs truncate" aria-hidden="true">{{ chipLabel(match) }}</span>
-    <span class="num xs muted" aria-hidden="true">{{ g ?? UNKNOWN }}</span>
-    <Badge :tone="sourceTone(match)" :text="sourceText(match)" aria-hidden="true" />
+  <Button :id="`chip-${match.plateIndex}-${slot.n}`" type="button" severity="secondary" text size="small" class="chip" :aria-label="label" :title="slot.preset" @click="$emit('toggle')">
+    <OuiSwatch :color="swatch" />
+    <span class="name oui-strong oui-truncate" aria-hidden="true">{{ chipLabel(match) }}</span>
+    <span class="num" :class="g ? 'oui-muted' : 'gap'" aria-hidden="true">{{ g ?? t("a11y.unknown") }}</span>
+    <span v-if="sourceTone(match) !== 'neutral'" class="oui-chip src" :data-tone="sourceTone(match) === 'bad' ? 'danger' : 'warn'" aria-hidden="true">{{ sourceText(match) }}</span>
   </Button>
 </template>
 
 <style scoped>
-.chip { max-width: 100%; padding: 2px 6px 2px 10px; font-weight: 400; color: var(--opc-fg); }
-.dot { flex: none; width: 10px; height: 10px; border-radius: 50%; box-shadow: 0 0 0 1px var(--opc-bar); } /* --opc-bar: 3:1 against the chip in both themes (WCAG 1.4.11) */
-.dot.hatched { background: repeating-linear-gradient(45deg, var(--opc-track), var(--opc-track) 2px, var(--opc-raised) 2px, var(--opc-raised) 4px); }
-.name { text-align: left; flex: 0 1 auto; min-width: 8ch; max-width: 28ch; font-size: var(--opc-fs-sm); font-weight: 400; }
-.chip :deep(.badge) { flex: none; }
+.chip { max-width: 100%; gap: 6px; padding: 2px 6px; font-weight: 400; color: var(--oui-text); }
+.name { flex: 0 1 auto; max-width: 28ch; }
+.src { flex: none; }
 </style>

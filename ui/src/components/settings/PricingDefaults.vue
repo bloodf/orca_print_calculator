@@ -29,7 +29,7 @@ const setShipping = (mode: ShippingMode): void => patchDefaults({ shipping: { mo
       />
     </div>
     <div class="ship">
-      <p class="sm muted lbl" id="settings-ship-l">{{ t("field.shipping") }}</p>
+      <p class="sm oui-muted lbl" id="settings-ship-l">{{ t("field.shipping") }}</p>
       <div class="row ship-row">
         <Segmented :options="shippingOptions()" :model-value="d.shipping.mode" :label="t('field.shipping')" @update:model-value="setShipping" />
         <MoneyField
@@ -37,10 +37,10 @@ const setShipping = (mode: ShippingMode): void => patchDefaults({ shipping: { mo
           @update:model-value="(v) => v !== null && patchDefaults({ shipping: { mode: d.shipping.mode, minor: v } })"
         />
       </div>
-      <p v-if="d.shipping.mode !== 'none'" class="sm muted">{{ t(d.shipping.mode === "customer" ? "shipping.customerHelp" : "shipping.absorbedHelp") }}</p>
+      <p v-if="d.shipping.mode !== 'none'" class="sm oui-muted">{{ t(d.shipping.mode === "customer" ? "shipping.customerHelp" : "shipping.absorbedHelp") }}</p>
     </div>
     <div>
-      <p class="sm muted lbl">{{ t("pricing.defaultTiers") }}</p>
+      <p class="sm oui-muted lbl">{{ t("pricing.defaultTiers") }}</p>
       <DiscountTierEditor :model-value="d.discountTiers" @update:model-value="(v: DiscountTier[]) => patchDefaults({ discountTiers: v })" />
     </div>
   </div>

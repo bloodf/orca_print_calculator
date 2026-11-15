@@ -9,7 +9,8 @@ import { confirmGap, useCurrentSlice } from "../../state/quotes";
 import { derived, store } from "../../state/store";
 import { toast } from "../../state/toast";
 import { requestPick } from "../plates/pickRequest";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 
 const frozen = computed(() => !!store.draft.frozenPlates);
 const included = (index: number): boolean => store.draft.plates[index]?.include !== false;
@@ -35,28 +36,26 @@ async function confirm(g: Gap): Promise<void> {
 </script>
 
 <template>
-  <div v-if="rows.length" class="gaps" data-gaps tabindex="-1" role="group" :aria-label="t('gap.lead', { n: rows.length })">
-    <p class="sm lead" role="status">{{ t("gap.lead", { n: rows.length }) }}</p>
+  <div v-if="rows.length" id="quote-gaps" class="gaps oui-well" data-gaps tabindex="-1" role="group" :aria-label="t('gap.lead', { n: rows.length })">
+    <p class="lead oui-strong" role="status">{{ t("gap.lead", { n: rows.length }) }}</p>
     <ul>
-      <li v-for="r in rows" :key="r.id" class="sm" :data-gap="r.id">
-        <span class="ic"><Icon name="alert-circle" /></span>
+      <li v-for="r in rows" :key="r.id" :data-gap="r.id">
+        <OuiIcon :icon="I.warning" :size="14" tone="warn" />
         <span class="tx">{{ r.text }}</span>
-        <Button v-if="r.pick" text type="button" data-gap-pick @click="requestPick(r.pick.plate, r.pick.slot)">{{ t("flag.pickSpool") }}</Button>
-        <Button v-if="r.confirmLabel" text type="button" data-gap-confirm :aria-label="r.confirmLabel" @click="confirm(r.g)">{{ t("gap.confirm") }}</Button>
+        <Button v-if="r.pick" text severity="secondary" size="small" type="button" data-gap-pick @click="requestPick(r.pick.plate, r.pick.slot)">{{ t("flag.pickSpool") }}</Button>
+        <Button v-if="r.confirmLabel" text severity="secondary" size="small" type="button" data-gap-confirm :aria-label="r.confirmLabel" @click="confirm(r.g)">{{ t("gap.confirm") }}</Button>
       </li>
     </ul>
-    <p class="sm muted">{{ frozen ? t("gap.fromSaved") : t("gap.reslice") }}</p>
-    <Button v-if="frozen" text type="button" class="use" @click="useCurrentSlice">{{ t("quote.useCurrent") }}</Button>
+    <p class="oui-meta">{{ frozen ? t("gap.fromSaved") : t("gap.reslice") }}</p>
+    <Button v-if="frozen" severity="secondary" size="small" type="button" class="use" @click="useCurrentSlice">{{ t("quote.useCurrent") }}</Button>
   </div>
 </template>
 
 <style scoped>
-.gaps > * + * { margin-top: 6px; }
-.lead { font-weight: 500; }
-ul { list-style: none; margin: 0; padding: 0; }
-li { display: flex; align-items: flex-start; padding: 3px 0; color: var(--opc-bad); }
-.ic { display: inline-flex; padding-top: 1px; margin-right: 8px; }
+.gaps { display: grid; gap: 6px; padding: var(--oui-s3); }
+ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+li { display: flex; align-items: center; gap: var(--oui-s2); min-height: 26px; }
+li > :deep(.oui-icon) { flex: none; }
 .tx { flex: 1 1 auto; min-width: 0; }
-li :deep(.p-button) { flex: none; margin-left: 8px; padding: 2px 8px; }
-.use { margin-left: -8px; }
+.use { justify-self: start; }
 </style>

@@ -1,14 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, type App } from "vue";
 import { createOrcaApp as createApp } from "../src/orcaUi";
-import Badge from "../src/components/base/Badge.vue";
-import EmptyState from "../src/components/base/EmptyState.vue";
-import InlineAlert from "../src/components/base/InlineAlert.vue";
+import { OuiBanner, OuiEmpty } from "../shared/src/components";
+import * as SHARED_ICONS from "../shared/src/icons";
 import Popover from "../src/components/base/Popover.vue";
 import Section from "../src/components/base/Section.vue";
 import Segmented from "../src/components/base/Segmented.vue";
 import ToastHost from "../src/components/base/ToastHost.vue";
-import { ICONS } from "../src/components/base/icons";
 import { setLocale } from "../src/i18n";
 import { clearToasts, toast, toasts } from "../src/state/toast";
 
@@ -19,9 +17,12 @@ afterEach(() => { app?.unmount(); app = null; root.remove(); });
 const mount = (render: () => unknown) => { app = createApp({ render: render as never }); app.mount(root); };
 
 describe("icons", () => {
-  test("every name in the spec's icon list exists", () => {
-    const spec = ["mark", "chevron-down", "chevron-right", "arrow-left", "plus", "minus", "x", "check", "refresh", "reset", "sliders", "list", "calc", "alert-triangle", "alert-circle", "help", "info", "printer-3d", "print", "download", "upload", "copy", "trash", "pencil", "link", "link-off", "clock", "more", "search", "bolt", "box"];
-    expect(Object.keys(ICONS).sort()).toEqual([...spec].sort());
+  test("every icon the page names comes from the shared set (no local icon files)", () => {
+    const SOURCES = import.meta.glob("../src/**/*.{ts,vue}", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
+    const used = new Set(Object.values(SOURCES).flatMap((text) => [...text.matchAll(/\bI\.([a-zA-Z0-9]+)\b/g)].map((m) => m[1]!)));
+    expect(used.size).toBeGreaterThan(20);
+    expect([...used].filter((n) => !(n in SHARED_ICONS))).toEqual([]);
+    expect(Object.keys(SOURCES).some((f) => f.endsWith("icons.ts") || f.endsWith("Icon.vue"))).toBe(false);
   });
   test("rendered svg is decorative", () => {
     mount(() => h(Section, { id: "s", title: "T", open: false }));
@@ -45,7 +46,7 @@ describe("Section", () => {
   test("invalid forces open and shows the error icon; overridden adds sr text", () => {
     mount(() => h(Section, { id: "s", title: "T", open: false, invalid: true, overridden: true }, () => "body"));
     expect(root.querySelector("button")!.getAttribute("aria-expanded")).toBe("true");
-    expect(root.querySelector(".sr-only")?.textContent).toBe("Edited");
+    expect(root.querySelector(".oui-sr")?.textContent).toBe("Edited");
   });
 });
 
@@ -65,26 +66,22 @@ describe("Segmented", () => {
   });
 });
 
-describe("Badge, InlineAlert, EmptyState", () => {
-  test("badge is text", () => {
-    mount(() => h(Badge, { tone: "warn", text: "May be out of date" }));
-    expect(root.textContent).toBe("May be out of date");
-  });
+describe("banners and empty states as the page uses them", () => {
   test("alert roles and actions", () => {
     const run = vi.fn();
-    mount(() => h("div", [h(InlineAlert, { tone: "bad", actions: [{ label: "Retry", run }] }, () => "boom"), h(InlineAlert, { tone: "warn" }, () => "careful")]));
-    const [bad, warn] = Array.from(root.querySelectorAll(".alert"));
+    mount(() => h("div", [h(OuiBanner, { tone: "error", title: "boom" }, { actions: () => h("button", { onClick: run }, "Retry") }), h(OuiBanner, { tone: "warn", title: "careful" })]));
+    const [bad, warn] = Array.from(root.querySelectorAll(".oui-banner"));
     expect(bad?.getAttribute("role")).toBe("alert");
     expect(warn?.getAttribute("role")).toBe("status");
-    (root.querySelector(".alert-actions button") as HTMLButtonElement).click();
+    (root.querySelector(".oui-banner-actions button") as HTMLButtonElement).click();
     expect(run).toHaveBeenCalled();
   });
-  test("empty state inlines the art without the English role/label", () => {
-    mount(() => h(EmptyState, { art: "plate", title: "Slice to see a price", body: "b" }));
-    const svg = root.querySelector("svg")!;
-    expect(svg).not.toBeNull();
-    expect(svg.getAttribute("aria-label")).toBeNull();
-    expect(svg.getAttribute("aria-hidden")).toBe("true");
+  test("empty state shows the illustration as decoration, never as English text", () => {
+    mount(() => h(OuiEmpty, { image: "data:image/webp;base64,AA==", title: "Slice to see a price", text: "b" }));
+    const img = root.querySelector("img")!;
+    expect(img).not.toBeNull();
+    expect(img.getAttribute("alt")).toBe("");
+    expect(img.getAttribute("aria-label")).toBeNull();
     expect(root.textContent).toContain("Slice to see a price");
   });
 });

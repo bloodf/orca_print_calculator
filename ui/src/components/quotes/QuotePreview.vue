@@ -3,8 +3,9 @@
 import Button from "primevue/button";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { elOf } from "../base/el";
-import Icon from "../base/Icon.vue";
-import InlineAlert from "../base/InlineAlert.vue";
+import { OuiBanner, OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
+import { lead } from "../base/lead";
 import Segmented from "../base/Segmented.vue";
 import { t } from "../../i18n";
 import { exportBlock, exportQuote, savedOf } from "../../quoteFlow";
@@ -46,28 +47,32 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 <template>
   <main class="preview" :aria-label="t('quote.print')">
     <div class="toolbar app-chrome">
-      <Button :ref="(c) => (back = elOf(c))" text type="button" @click="close"><Icon name="arrow-left" /><span>{{ t("sheet.back") }}</span></Button>
+      <Button :ref="(c) => (back = elOf(c))" text type="button" @click="close"><OuiIcon :icon="I.chevronRight" class="back-chev" /><span>{{ t("sheet.back") }}</span></Button>
       <Segmented v-model="mode" :label="t('quote.print')" :options="[{ value: 'itemized', label: t('sheet.itemized') }, { value: 'summary', label: t('sheet.summary') }]" />
       <span class="grow" />
-      <span v-if="savedOf()?.sheet" class="sm muted">{{ t("sheet.frozenHint") }}</span>
-      <Button text type="button" @click="editDetails"><Icon name="pencil" /><span>{{ t("sheet.editDetails") }}</span></Button>
+      <span v-if="savedOf()?.sheet" class="sm oui-muted">{{ t("sheet.frozenHint") }}</span>
+      <Button text type="button" @click="editDetails"><OuiIcon :icon="I.edit" /><span>{{ t("sheet.editDetails") }}</span></Button>
       <template v-if="!block">
-        <Button severity="secondary" outlined type="button" @click="exportQuote('html')"><Icon name="download" /><span>{{ t("sheet.saveHtml") }}</span></Button>
-        <Button type="button" @click="printNow"><Icon name="print" /><span>{{ t("sheet.printPdf") }}</span></Button>
+        <Button severity="secondary" type="button" @click="exportQuote('html')"><OuiIcon :icon="I.download" /><span>{{ t("sheet.saveHtml") }}</span></Button>
+        <Button type="button" @click="printNow"><OuiIcon :icon="I.file" /><span>{{ t("sheet.printPdf") }}</span></Button>
       </template>
     </div>
-    <div v-if="stale" class="warn app-chrome"><InlineAlert tone="warn">{{ t("sheet.staleWarning") }}</InlineAlert></div>
-    <div v-if="imported" class="warn app-chrome"><InlineAlert tone="info">{{ t("sheet.importedWarning") }}</InlineAlert></div>
+    <OuiBanner v-if="stale" class="warn app-chrome" tone="warn" :title="lead(t('sheet.staleWarning'))[0]">{{ lead(t("sheet.staleWarning"))[1] }}</OuiBanner>
+    <OuiBanner v-if="imported" class="warn app-chrome" tone="info" :title="lead(t('sheet.importedWarning'))[0]">{{ lead(t("sheet.importedWarning"))[1] }}</OuiBanner>
     <QuoteSheet v-if="model && !block" :model="model" />
-    <p v-else class="muted sm app-chrome none" role="status">{{ t(block || "quote.blockedNoPrice") }}</p>
+    <p v-else class="oui-muted sm app-chrome none" role="status">{{ t(block || "quote.blockedNoPrice") }}</p>
   </main>
 </template>
 
 <style scoped>
-.preview { min-height: calc(100vh - var(--opc-header-h)); background: var(--opc-bg); padding-bottom: 32px; }
-.toolbar { display: flex; align-items: center; flex-wrap: wrap; min-height: 44px; padding: 6px 12px; background: var(--opc-raised); border-bottom: 1px solid var(--opc-border); margin-bottom: 16px; }
+.preview { min-height: calc(100vh - 52px); background: var(--oui-background); padding-bottom: 32px; }
+.toolbar { display: flex; align-items: center; flex-wrap: wrap; min-height: 44px; padding: 6px 12px; background: var(--oui-surface); border-bottom: 1px solid var(--oui-border); margin-bottom: 16px; }
 .toolbar > * + * { margin-left: 8px; }
 .grow { flex: 1; }
+/* foundation-gap: the icon set has no chevronLeft/arrowLeft; 4.0.2 should add one. Until then the right chevron is mirrored, which
+   points back in left-to-right text; in a right-to-left page it is drawn as is, so it still points back. */
+.back-chev { transform: scaleX(-1); }
+:dir(rtl) .back-chev { transform: none; }
 .warn { width: 720px; max-width: calc(100% - 24px); margin: 0 auto 12px; }
 .none { text-align: center; padding: 24px; }
 .preview > .quote-sheet { margin-bottom: 0; }

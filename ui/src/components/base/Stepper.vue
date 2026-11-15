@@ -4,7 +4,8 @@ import InputText from "primevue/inputtext";
 import { ref, watch } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { count } from "../../format";
-import Icon from "./Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import { clamp, keyDelta } from "./numeric";
 
 const props = defineProps<{ modelValue: number; min: number; max: number; label: string }>();
@@ -40,17 +41,17 @@ function onKey(e: KeyboardEvent): void {
 
 <template>
   <div class="stepper" role="group" :aria-label="label">
-    <Button type="button" severity="secondary" outlined class="stepper-btn" :aria-label="t('a11y.decrease', { label })" :aria-disabled="modelValue <= min ? 'true' : undefined" @click="modelValue > min && set(modelValue - 1)"><Icon name="minus" /></Button>
+    <Button type="button" severity="secondary" class="stepper-btn" :aria-label="t('a11y.decrease', { label })" :aria-disabled="modelValue <= min ? 'true' : undefined" @click="modelValue > min && set(modelValue - 1)"><OuiIcon :icon="I.minus" /></Button>
     <InputText type="text" inputmode="numeric" autocomplete="off" spellcheck="false" class="num stepper-input" :model-value="text" :aria-label="label" @input="onInput" @keydown="onKey" @blur="onBlur" @focus="(e: FocusEvent) => (e.target as HTMLInputElement).select()" />
-    <Button type="button" severity="secondary" outlined class="stepper-btn" :aria-label="t('a11y.increase', { label })" :aria-disabled="modelValue >= max ? 'true' : undefined" @click="modelValue < max && set(modelValue + 1)"><Icon name="plus" /></Button>
+    <Button type="button" severity="secondary" class="stepper-btn" :aria-label="t('a11y.increase', { label })" :aria-disabled="modelValue >= max ? 'true' : undefined" @click="modelValue < max && set(modelValue + 1)"><OuiIcon :icon="I.plus" /></Button>
   </div>
 </template>
 
 <style scoped>
 .stepper { display: inline-grid; grid-template-columns: 36px minmax(48px, 72px) 36px; align-items: stretch; }
 .stepper :deep(.stepper-btn) { width: 36px; padding: 0; }
-.stepper :deep(.stepper-btn:first-child) { border-radius: var(--opc-r-control) 0 0 var(--opc-r-control); }
-.stepper :deep(.stepper-btn:last-child) { border-radius: 0 var(--opc-r-control) var(--opc-r-control) 0; }
+.stepper :deep(.stepper-btn:first-child) { border-radius: var(--oui-radius) 0 0 var(--oui-radius); }
+.stepper :deep(.stepper-btn:last-child) { border-radius: 0 var(--oui-radius) var(--oui-radius) 0; }
 .stepper :deep(.stepper-input) { border-radius: 0; text-align: center; min-width: 0; width: 100%; margin: 0 -1px; }
 .stepper :deep(.p-inputtext:focus-visible), .stepper :deep(.p-button:focus-visible) { position: relative; z-index: 1; }
 </style>

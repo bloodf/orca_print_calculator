@@ -5,7 +5,7 @@ import { createOrcaApp as createApp } from "../src/orcaUi";
 
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn(async () => ({})) }));
 import { BridgeError, call } from "../src/bridge";
-import PlateList from "../src/components/plates/PlateList.vue";
+import PlateNotices from "../src/components/plates/PlateNotices.vue";
 import PricePanel from "../src/components/price/PricePanel.vue";
 import { setLocale } from "../src/i18n";
 import { deleteQuote, openQuote, saveQuote } from "../src/state/quotes";
@@ -52,7 +52,7 @@ describe("MEDIUM: a saved quote renders and computes in its own currency", () =>
     load("savedQuote");
     S.store.settings = { ...S.store.settings, currency: "USD" };
     S.store.spoolman = { ...S.store.spoolman, data: { ...S.store.spoolman.data, currency: null } };
-    const el = await mountC(PlateList);
+    const el = await mountC(PlateNotices);
     const banner = el.querySelector("[data-quote-banner]")!;
     expect(banner.textContent).toMatch(/BRL/);
     expect(banner.textContent).toMatch(/USD/);
@@ -61,7 +61,7 @@ describe("MEDIUM: a saved quote renders and computes in its own currency", () =>
   });
   test("same currency: unchanged banner with Use current slice", async () => {
     load("savedQuote");
-    const el = await mountC(PlateList);
+    const el = await mountC(PlateNotices);
     expect(el.querySelector("[data-quote-banner]")!.textContent).toContain("Use current slice");
   });
   test("closing the quote returns to the live currency", () => {

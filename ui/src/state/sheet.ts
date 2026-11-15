@@ -1,7 +1,8 @@
 // Quote sheet branding: logo and company details (pure rules; the canvas work is in logoFile.ts).
 import type { SheetBrand } from "./types";
 
-export const DEFAULT_ACCENT = "#00675B";
+// The rule colour of a new quote sheet: the brand's deep green. Only the default: a colour saved in settings.json stays as stored.
+export const DEFAULT_ACCENT = "#446600";
 export const MAX_LOGO_CHARS = 400_000; // ~300 KB image as a data URI; it rides in settings.json on every save
 export const EMPTY_BRAND: SheetBrand = { logo: "", taxId: "", phone: "", email: "", website: "", address: "", payment: "", accent: DEFAULT_ACCENT };
 

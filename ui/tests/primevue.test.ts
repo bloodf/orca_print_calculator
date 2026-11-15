@@ -61,9 +61,9 @@ describe("language and theme reach PrimeVue", () => {
     app = createOrcaApp({ render: () => h(AppRoot) });
     app.mount(root);
     await settle(60);
-    document.querySelector<HTMLElement>('[role=tab][aria-label="Quotes"]')?.click();
+    document.querySelector<HTMLElement>('[role=tab][data-tab="quotes"]')?.click();
     await settle(60);
-    document.querySelector<HTMLElement>('[role=tab][aria-label="Calculator"]')?.click();
+    document.querySelector<HTMLElement>('[role=tab][data-tab="calc"]')?.click();
     await settle(60);
     expect(document.activeElement?.id).toBe("plates-title");
     const opener = root.querySelector<HTMLElement>('[data-testid=help-open]');

@@ -14,7 +14,7 @@ The other plugins of this family publish the same way.
 
 - The tag is `vX.Y.Z` (numeric) and equals `version` in `pyproject.toml`; `scripts/build.py --release-tag` checks it again.
 - The same gates as CI: shared UI snapshot, lint, typecheck, coverage thresholds, contract fixtures, build,
-  bundle size (960,000 B), Python tests.
+  bundle size (1,010,000 B), Python tests.
 - `dist/SHA256SUMS` matches the wheel, and the wheel's metadata and `VERSION` equal the version.
 - `CHANGELOG.md` has a non-empty `## [X.Y.Z] - date` section. It becomes the GitHub release notes (when empty)
   and the Orca Cloud changelog. Orca Cloud keeps at most 4000 characters, so `scripts/release_notes.py` cuts the

@@ -25,6 +25,13 @@ describe("migrateSettings / mergeSettings", () => {
     expect(mergeSettings({ channels: ["x", 3, null] } as never, base()).channels.map((c) => c.id)).toEqual(["direct"]);
     expect(mergeSettings({ channels: [{ id: 1 }] } as never, base()).channels.map((c) => c.id)).toEqual(["direct"]);
   });
+  test("the quote sheet colour: a stored colour stays as stored (the old teal included); only a missing one takes the new default", () => {
+    expect(base().sheet.accent).toBe("#446600");
+    expect(mergeSettings({ sheet: { shopName: "S" } } as never, base()).sheet.accent).toBe("#446600"); // never chosen, never stored
+    expect(mergeSettings({ sheet: { accent: "#00675B" } } as never, base()).sheet.accent).toBe("#00675B"); // stored: kept
+    expect(mergeSettings({ sheet: { accent: "#123456" } } as never, base()).sheet.accent).toBe("#123456");
+    expect(mergeSettings({ sheet: { accent: "teal" } } as never, base()).sheet.accent).toBe("#446600"); // unreadable: the default
+  });
   test("wrong-typed pieces are ignored, valid ones kept", () => {
     const s = mergeSettings({ defaults: "x", sheet: { nextNo: "7", shopName: "S" }, manualPrices: { a: 100, b: "x" }, slotOverrides: { p: { filamentId: 1 }, q: 5 }, extrasCatalog: [{ key: "k", label: "L", unitMinor: 5, qtyE3: 1000, per: "piece" }, { label: 1 }] } as never, base());
     expect(s.defaults).toEqual(base().defaults);

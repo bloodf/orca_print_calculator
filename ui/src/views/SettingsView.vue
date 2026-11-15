@@ -1,10 +1,10 @@
 <script setup lang="ts">
-// Settings view: one group at a time behind PrimeVue tabs, "Saved" status, no Save button.
+// Settings: every group on one page behind a section index that follows the scroll. Nothing here has a Save button: changes are
+// saved as they are made, and the one bar at the bottom says so (or says that saving failed, with Retry).
 import Button from "primevue/button";
-import Tab from "primevue/tab";
-import TabList from "primevue/tablist";
-import Tabs from "primevue/tabs";
-import { computed } from "vue";
+import { computed, nextTick, onMounted, watch } from "vue";
+import { OuiFormSection, OuiIcon, OuiSettings, OuiStatus, type OuiIconData, type OuiTone } from "../../shared/src/components";
+import * as I from "../../shared/src/icons";
 import { t } from "../i18n";
 import { SETTINGS_TABS, settingsTab, type SettingsTab } from "../state/settingsTab";
 import { flushSettings, store } from "../state/store";
@@ -21,51 +21,49 @@ const COMPS = {
   spoolman: SpoolmanSettings, costs: CostDefaults, pricing: PricingDefaults, channels: ChannelEditor,
   printers: PrinterProfiles, sheet: SheetSettings, language: LanguageCurrency, about: AboutSettings,
 } as const;
+// each group in the hue of its subject (DESIGN.md, hue by domain)
+const LOOK: Record<SettingsTab, { icon: OuiIconData; tone: OuiTone }> = {
+  spoolman: { icon: I.spoolman, tone: "magenta" }, costs: { icon: I.coins, tone: "orange" }, pricing: { icon: I.tag, tone: "accent" }, channels: { icon: I.store, tone: "teal" },
+  printers: { icon: I.printer, tone: "cobalt" }, sheet: { icon: I.receipt, tone: "accent" }, language: { icon: I.languages, tone: "neutral" }, about: { icon: I.info, tone: "neutral" },
+};
 const HELP: Partial<Record<SettingsTab, string>> = { costs: "settings.costsHelp" };
-const help = computed(() => HELP[settingsTab.value]);
+const sections = computed(() => SETTINGS_TABS.map((id) => ({ id: `settings-${id}`, label: t(`settings.group.${id}`), icon: LOOK[id].icon })));
+// the two reading columns; the quote sheet has its live sample beside the form, so it takes the full width under them
+const COLUMNS: SettingsTab[][] = [["spoolman", "costs", "pricing"], ["channels", "printers", "language", "about"]];
 
-const select = (id: SettingsTab): void => { settingsTab.value = id; };
+// A shortcut from elsewhere ("Printer price and lifetime", the currency chip) asked for a group: go to it.
+const reveal = (id: SettingsTab): void => void nextTick(() => document.getElementById(`settings-${id}`)?.scrollIntoView?.({ block: "start" }));
+onMounted(() => { if (settingsTab.value !== SETTINGS_TABS[0]) reveal(settingsTab.value); });
+watch(settingsTab, reveal); // asked for again while Settings is already open
 </script>
 
 <template>
-  <main class="settings" :aria-label="t('settings.title')">
-    <div class="head row">
-      <h1 class="view-title" tabindex="-1" data-view-title>{{ t("settings.title") }}</h1>
-      <span class="sm status" :class="{ bad: store.saveStatus === 'error' }" role="status">
-        <template v-if="store.saveStatus === 'saved'">{{ t("settings.saved") }}</template>
-        <template v-else-if="store.saveStatus === 'error'">{{ t("settings.saveFailed") }} <Button text size="small" type="button" @click="flushSettings()">{{ t("settings.retry") }}</Button></template>
-      </span>
-    </div>
-    <Tabs :value="settingsTab" select-on-focus class="rail app-chrome" @update:value="select($event as SettingsTab)">
-      <TabList :aria-label="t('settings.nav')">
-        <Tab v-for="id in SETTINGS_TABS" :id="`settings-tab-${id}`" :key="id" :value="id" :aria-controls="id === settingsTab ? `settings-${id}` : undefined">{{ t(`settings.group.${id}`) }}</Tab>
-      </TabList>
-    </Tabs>
-    <section :id="`settings-${settingsTab}`" :key="settingsTab" class="grp" :class="{ wide: settingsTab === 'sheet' }" role="tabpanel" :aria-labelledby="`settings-tab-${settingsTab}`" tabindex="0">
-      <h2 class="lg">{{ t(`settings.group.${settingsTab}`) }}</h2>
-      <p v-if="help" class="sm muted help">{{ t(help) }}</p>
-      <component :is="COMPS[settingsTab]" />
-    </section>
+  <main class="settings" :aria-label="t('settings.title')" tabindex="-1">
+    <h2 class="oui-sr" tabindex="-1" data-view-title>{{ t("settings.title") }}</h2>
+    <OuiSettings :sections="sections" :nav-label="t('settings.nav')">
+      <div v-for="(col, i) in COLUMNS" :key="i" class="oui-stack">
+        <OuiFormSection v-for="id in col" :id="`settings-${id}`" :key="id" class="grp" :title="t(`settings.group.${id}`)" :icon="LOOK[id].icon" :tone="LOOK[id].tone" :description="HELP[id] ? t(HELP[id]!) : undefined" :data-group="id">
+          <div class="grp-body"><component :is="COMPS[id]" /></div>
+        </OuiFormSection>
+      </div>
+      <OuiFormSection id="settings-sheet" class="grp wide" :title="t('settings.group.sheet')" :icon="LOOK.sheet.icon" :tone="LOOK.sheet.tone" data-group="sheet">
+        <div class="grp-body"><SheetSettings /></div>
+      </OuiFormSection>
+      <template #footer>
+        <span class="status" :class="{ bad: store.saveStatus === 'error' }" role="status">
+          <OuiStatus v-if="store.saveStatus === 'saved'" state="ok" variant="plain">{{ t("settings.saved") }}</OuiStatus>
+          <template v-else-if="store.saveStatus === 'error'"><OuiStatus state="error" variant="plain">{{ t("settings.saveFailed") }}</OuiStatus> <Button severity="secondary" size="small" type="button" @click="flushSettings()"><OuiIcon :icon="I.refresh" :size="14" /><span>{{ t("settings.retry") }}</span></Button></template>
+        </span>
+        <span class="oui-meta">{{ t("settings.autosave") }}</span>
+      </template>
+    </OuiSettings>
   </main>
 </template>
 
 <style scoped>
-.settings { padding: 12px; }
-.head { min-height: 32px; margin-bottom: 12px; }
-.head > * + * { margin-left: 12px; }
-.status { color: var(--opc-muted); min-height: 20px; }
-.status.bad { color: var(--opc-bad); }
-.rail { margin-bottom: 8px; }
-/* eight groups: wrap them instead of hiding some behind scroll arrows at narrow widths or zoom; the current one is marked by fill */
-.rail :deep(.p-tablist-content) { overflow: visible; }
-.rail :deep(.p-tablist-tab-list) { flex-wrap: wrap; border: 0; background: transparent; gap: 4px; }
-.rail :deep(.p-tablist-active-bar) { display: none; }
-.rail :deep(.p-tab) { padding: 8px 14px; white-space: nowrap; border: 0; border-radius: var(--opc-r-control); }
-.rail :deep(.p-tab-active) { background: var(--opc-selected); }
-.grp { max-width: 760px; min-width: 0; padding: 16px 0 24px; scroll-margin-top: calc(var(--opc-header-h) + 12px); }
-.grp.wide { max-width: none; } /* the quote editor puts its live sample beside the form */
-.grp > h2 { margin-bottom: 4px; }
-.grp > .help { margin-bottom: 8px; }
-.grp > h2 + :not(.help) { margin-top: 12px; }
-@media (min-width: 900px) { .settings { padding: 16px; } }
+.settings:focus { outline: none; }
+.grp-body { padding: var(--oui-s3) var(--oui-s4) var(--oui-s4); min-width: 0; }
+.wide { grid-column: 1 / -1; }
+.status { display: inline-flex; align-items: center; gap: var(--oui-s2); }
+.status:empty { display: none; }
 </style>

@@ -9,7 +9,9 @@ import { currency, derived, digits, patchSettings, selected, store } from "../..
 import type { ChannelDef, OverridableKey, PrettyMode } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import PercentField from "../base/PercentField.vue";
+import * as I from "../../../shared/src/icons";
 import Section from "../base/Section.vue";
+import { charges, m } from "../price/priceState";
 import FrozenNote from "./FrozenNote.vue";
 import SelectField from "./SelectField.vue";
 import { gotoSettings, hasOverride, hasProblem, saveSectionDefaults, useDefault, useOpen } from "./shared";
@@ -49,10 +51,12 @@ const summary = computed(() => {
   return t("summary.sales", { pct: percent(tr.pctBp, loc), fixed: money(tr.fixedMinor, currency.value, loc), tax: percent(c.taxBp, loc) });
 });
 const modes = computed(() => PRETTY_MODES.map((v) => ({ value: v, label: t(`pretty.${v}`) })));
+// what the channel takes from one piece at the price: its fees plus the tax
+const amount = computed(() => (charges.value ? m(charges.value.fees + charges.value.tax) : null));
 </script>
 
 <template>
-  <Section id="sales" help="sales" :title="t('section.sales')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="bad" @update:open="setOpen">
+  <Section id="sales" help="sales" :icon="I.store" tone="teal" :amount="amount" :title="t('section.sales')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="bad" @update:open="setOpen">
     <FrozenNote v-if="frozen" />
     <div v-if="channel && tier && single" class="form-grid">
       <PercentField :model-value="tier.pctBp" :label="t('field.fee')" :max="9000 - channel.taxBp" :step="50" :helper="t('field.feeHelp')" :readonly="frozen" @update:model-value="setFee" />
@@ -79,6 +83,6 @@ const modes = computed(() => PRETTY_MODES.map((v) => ({ value: v, label: t(`pret
 
 <style scoped>
 .steps { justify-content: space-between; }
-.more { margin-top: var(--opc-s3); padding-top: var(--opc-s3); }
-.foot { margin-top: var(--opc-s3); }
+.more { margin-top: var(--oui-s3); padding-top: var(--oui-s3); }
+.foot { margin-top: var(--oui-s3); }
 </style>

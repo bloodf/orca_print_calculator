@@ -1,30 +1,35 @@
 <script setup lang="ts">
+// The Price panel, the page's hero: the suggested price in a block of the accent (or its warning-tinted stand-in while the
+// figure is partial), profit, margin and break-even; then what the price depends on, where it goes, and the quote's actions.
+// The price itself is announced by the shared live region in App.vue (debounced), so the visible number is not live.
 import Button from "primevue/button";
-// The right column: PriceSummary (controls, hero, tiles, flags, actions) over the details sections (docs/ux.md §5.3).
-// Keep `id="price-title"` on the hero label: the aside is aria-labelledby it. The price itself is announced by the
-// shared live region in App.vue (debounced), so the visible number is not live.
 import { computed } from "vue";
+import { OuiIcon, OuiPanel, OuiReadout, OuiStatus } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import { computeQuote } from "../../engine/quote";
 import { t } from "../../i18n";
-import { derived, result, store } from "../../state/store";
+import { exportBlock } from "../../quoteFlow";
+import { currency, currencySource, derived, result, store } from "../../state/store";
+import { gotoSettings } from "../costs/shared";
+import GapList from "../quotes/GapList.vue";
 import QuoteActions from "../quotes/QuoteActions.vue";
+import QuoteFields from "../quotes/QuoteFields.vue";
 import BatchTable from "./BatchTable.vue";
 import BreakdownBars from "./BreakdownBars.vue";
 import ChannelComparison from "./ChannelComparison.vue";
 import OrderControls from "./OrderControls.vue";
 import PriceFlags from "./PriceFlags.vue";
 import { editChannelFees, focusMissing, focusSelector, hasPlates, hero, m, missingCount, pct, priceFromFallback, signed } from "./priceState";
-import Icon from "../base/Icon.vue";
-
-// `all` is the wide column; at N the page renders the summary, then the sections, then the details (docs/ux.md §6.13).
-withDefaults(defineProps<{ part?: "all" | "summary" | "details" }>(), { part: "all" });
-const hasDetails = computed(() => hero.value.kind === "price" || (result.value.ok && result.value.channels.length >= 2));
 
 const incomplete = computed(() => missingCount.value > 0);
 const label = computed(() => (incomplete.value ? t("price.labelIncomplete") : t("price.label")));
 const sel = computed(() => (hero.value.kind === "price" ? hero.value.sel : null));
+// The accent band is for a whole, profitable price; a partial figure takes the warning tint and a loss the danger tint, so neither reads as done.
+const band = computed(() => !incomplete.value && !!sel.value && sel.value.profit >= 0);
 const sentence = computed(() => (hero.value.kind === "sentence" ? hero.value : null));
 const q = computed(() => store.draft.quantity);
+const source = computed(() => t(currencySource.value === "spoolman" ? "header.currencyFromSpoolman" : "header.currencyFromSettings"));
+const gapBlock = computed(() => { const b = exportBlock(); return b === "quote.blockedUnknown" || b === "quote.blockedIncomplete"; });
 // The price before rounding, from the same engine with rounding off (the engine does not report it).
 const exactPrice = computed<number | null>(() => {
   const input = derived.value.quoteInput;
@@ -49,91 +54,78 @@ const orderQualifier = computed(() => {
   if (q.value > 1) return t("tile.orderProfit", { amount: signed(s.orderProfit) });
   return s.profitPerPrintHour === null ? "" : t("tile.perHour", { amount: signed(s.profitPerPrintHour) });
 });
+const hasDetails = computed(() => hero.value.kind === "price" || (result.value.ok && result.value.channels.length >= 2));
 </script>
 
 <template>
-  <div v-if="part !== 'details' || hasDetails" class="panel surface" data-price-panel :class="`part-${part}`">
-    <div v-if="part !== 'details'" class="summary">
-      <OrderControls />
-      <p id="price-title" class="sm muted label">{{ label }}</p>
+  <OuiPanel class="panel" :icon="I.tag" tone="accent" data-price-panel>
+    <template #title><span id="price-title">{{ t("price.title") }}</span></template>
+    <template v-if="sel && incomplete" #meta><OuiStatus state="warn">{{ t("price.incompleteStatus") }}</OuiStatus></template>
+    <template #actions>
+      <Button severity="secondary" text size="small" type="button" class="cur num" :title="source" :aria-label="`${t('currency.label')}: ${currency}. ${source}`" @click="gotoSettings('settings-language')">{{ currency }}</Button>
+    </template>
 
+    <div class="summary">
       <div class="hero-wrap" data-price-hero>
-      <div v-if="hero.kind === 'price' && sel" class="hero-box">
-        <p class="price-amber num" :class="{ partial: incomplete }" data-testid="hero-price">{{ m(sel.price) }}</p>
-        <p v-if="incomplete" class="inc-line sm" data-testid="incomplete-line">
-          <span class="inc-ic"><Icon name="alert-circle" /></span><span class="inc-tx">{{ t("price.incomplete", { n: missingCount }) }}</span>
-          <Button text type="button" class="inc-act" data-testid="see-missing" @click="focusMissing">{{ t("price.seeMissing") }}</Button>
-        </p>
-        <p class="num sub" :class="orderLine ? 'order-line' : 'sm muted'" data-testid="order-line">{{ sub }}</p>
-        <p v-if="priceFromFallback" class="sm origin" data-testid="price-origin">{{ t("price.originFallback") }}</p>
-      </div>
+        <div v-if="hero.kind === 'price' && sel" class="oui-hero hero-box" :class="{ 'oui-on-band': band }" :data-tone="band ? undefined : incomplete ? 'warn' : 'danger'">
+          <OuiReadout class="hero" size="hero" :label="label" :incomplete="incomplete">
+            <span class="price-figure" :class="{ partial: incomplete }" data-testid="hero-price">{{ m(sel.price) }}</span>
+            <template v-if="sub || priceFromFallback" #sub>
+              <span v-if="sub" class="num sub" :class="{ 'order-line': orderLine }" data-testid="order-line">{{ sub }}</span>
+              <span v-if="priceFromFallback" class="origin" data-testid="price-origin">{{ t("price.originFallback") }}</span>
+            </template>
+          </OuiReadout>
+          <div class="tiles">
+            <OuiReadout class="tile" :class="{ bad: sel.profit < 0 }" :label="t('tile.profit')" :incomplete="incomplete" :sub="orderQualifier || undefined"><span :class="{ bad: sel.profit < 0 }" data-testid="profit">{{ signed(sel.profit) }}</span><span v-if="incomplete" class="oui-sr"> · {{ t("price.partial") }}</span></OuiReadout>
+            <OuiReadout class="tile" :class="{ bad: sel.marginBp < 0 }" :label="t('tile.margin')" :incomplete="incomplete"><span :class="{ bad: sel.marginBp < 0 }" data-testid="margin">{{ pct(sel.marginBp) }}</span><span v-if="incomplete" class="oui-sr"> · {{ t("price.partial") }}</span></OuiReadout>
+            <OuiReadout class="tile" :label="t('tile.breakEvenLabel')" :incomplete="incomplete"><span data-testid="break-even">{{ m(sel.breakEven) }}</span></OuiReadout>
+          </div>
+        </div>
 
-      <div v-else-if="hero.kind === 'impossible'" class="hero-box" data-testid="hero-impossible">
-        <p class="xl-sentence">{{ t("price.impossibleTitle", { channel: hero.channel }) }}</p>
-        <p class="sm muted body">{{ t("price.impossibleBody") }}</p>
-        <div class="acts">
-          <Button text type="button" @click="focusSelector('#price-margin')">{{ t("price.lowerMargin") }}</Button>
-          <Button text type="button" @click="editChannelFees()">{{ t("field.editChannelFees") }}</Button>
+        <div v-else-if="hero.kind === 'impossible'" class="oui-hero hero-box" data-tone="danger" data-testid="hero-impossible">
+          <p class="xl-sentence">{{ t("price.impossibleTitle", { channel: hero.channel }) }}</p>
+          <p class="oui-meta">{{ t("price.impossibleBody") }}</p>
+        </div>
+
+        <div v-else-if="sentence" class="oui-hero hero-box" data-tone="neutral" data-testid="hero-sentence">
+          <p :class="sentence.quiet ? 'oui-muted' : 'xl-sentence'">{{ sentence.text }}</p>
         </div>
       </div>
-
-      <div v-else-if="sentence" class="hero-box" data-testid="hero-sentence">
-        <p :class="sentence.quiet ? 'sm muted' : 'xl-sentence'">{{ sentence.text }}</p>
-        <div v-if="sentence.fees" class="acts"><Button text type="button" @click="editChannelFees()">{{ t("field.editChannelFees") }}</Button></div>
+      <!-- a hero holds no buttons: what it offers sits under it -->
+      <p v-if="sel && incomplete" class="inc-line" data-testid="incomplete-line">
+        <OuiIcon :icon="I.warning" :size="14" tone="warn" /><span class="inc-tx">{{ t("price.incomplete", { n: missingCount }) }}</span>
+        <Button text severity="secondary" size="small" type="button" class="inc-act" data-testid="see-missing" @click="focusMissing">{{ t("price.seeMissing") }}</Button>
+      </p>
+      <div v-if="hero.kind === 'impossible'" class="oui-row acts" data-testid="hero-actions">
+        <Button severity="secondary" size="small" type="button" @click="focusSelector('#price-margin')">{{ t("price.lowerMargin") }}</Button>
+        <Button text severity="secondary" size="small" type="button" @click="editChannelFees()">{{ t("field.editChannelFees") }}</Button>
       </div>
-      </div>
+      <div v-else-if="sentence?.fees" class="oui-row acts" data-testid="hero-actions"><Button severity="secondary" size="small" type="button" @click="editChannelFees()">{{ t("field.editChannelFees") }}</Button></div>
 
-      <div v-if="hero.kind === 'price' && sel" class="tiles">
-        <div class="tile">
-          <p class="sm muted">{{ t("tile.profit") }}<span v-if="incomplete" class="part"> · {{ t("price.partial") }}</span></p>
-          <p class="val num" :class="{ bad: sel.profit < 0 }" data-testid="profit">{{ signed(sel.profit) }}</p>
-          <p class="sm muted num qual">{{ orderQualifier }}</p>
-        </div>
-        <div class="tile">
-          <p class="sm muted">{{ t("tile.margin") }}<span v-if="incomplete" class="part"> · {{ t("price.partial") }}</span></p>
-          <p class="val num" :class="{ bad: sel.marginBp < 0 }" data-testid="margin">{{ pct(sel.marginBp) }}</p>
-          <p class="sm muted num qual">{{ t("tile.breakEven", { amount: m(sel.breakEven) }) }}</p>
-        </div>
-      </div>
-
+      <GapList v-if="hasPlates() && gapBlock" />
       <PriceFlags class="flags" />
-      <QuoteActions v-if="hasPlates()" />
+      <OrderControls />
+      <QuoteFields v-if="hasPlates()" />
     </div>
-    <div v-if="part !== 'summary'" class="details">
+    <div v-if="hasDetails" class="details">
       <template v-if="hero.kind === 'price'"><BreakdownBars /></template>
       <ChannelComparison />
       <template v-if="hero.kind === 'price'"><BatchTable /></template>
     </div>
-  </div>
+    <template v-if="hasPlates()" #footer><QuoteActions /></template>
+  </OuiPanel>
 </template>
 
 <style scoped>
-.panel { display: flex; flex-direction: column; min-height: 0; }
-.summary { flex: none; padding: 16px; }
-.summary > * + * { margin-top: 12px; }
-.label { margin-top: 16px !important; margin-bottom: 0; }
-.hero-wrap, .hero-box { margin-top: 0 !important; }
-.price-amber { font-size: var(--opc-fs-price); font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; color: var(--opc-price); margin-top: 0; }
-.price-amber.partial { color: var(--opc-fg); text-decoration: underline dashed var(--opc-muted); text-decoration-thickness: 2px; text-underline-offset: 6px; } /* a partial price is not the one amber, success-looking number */
-.inc-line { display: flex; align-items: flex-start; flex-wrap: wrap; margin-top: 6px; color: var(--opc-warn); font-weight: 500; }
-.inc-ic { display: inline-flex; padding-top: 1px; margin-right: 6px; }
-.inc-act { height: 24px; margin-left: 4px; padding: 0 6px; }
-.part { font-weight: 500; color: var(--opc-warn); }
-.origin { margin-top: 4px; color: var(--opc-muted); }
-.sub { margin-top: 4px; min-height: 1.35em; white-space: normal; }
-.order-line { overflow-wrap: anywhere; font-size: var(--opc-fs-md); font-weight: 500; line-height: 1.3; color: var(--opc-fg); }
-.tiles { display: grid; grid-template-columns: 1fr 1fr; margin-top: 16px !important; }
-.tile { min-width: 0; padding-right: 12px; }
-.tile + .tile { padding-left: 12px; padding-right: 0; border-left: 1px solid var(--opc-border); }
-.val { font-size: var(--opc-fs-xl); font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
-.val.bad { color: var(--opc-bad); }
-.qual { min-height: 1.35em; white-space: normal; }
-.xl-sentence { font-size: var(--opc-fs-xl); font-weight: 600; line-height: 1.2; }
-.body { margin-top: 4px; }
-.acts { margin-top: 8px; margin-left: -10px; }
-.acts .p-button + .p-button { margin-left: 4px; }
-.details { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0 16px 16px; }
-@media (min-width: 900px) and (min-height: 720px) { .panel { height: 100%; } }
-@media (max-width: 899px), (max-height: 719px) { .details { overflow: visible; } }
-@media (min-width: 900px) and (max-width: 1099px) { .price-amber { font-size: 34px; } }
+.summary { display: grid; gap: var(--oui-s3); min-width: 0; }
+.hero :deep(.oui-readout-value) { font-size: 48px; }
+.sub, .origin { display: block; }
+.order-line { font-size: var(--oui-text-md); font-weight: 600; overflow-wrap: anywhere; white-space: normal; }
+.tiles { display: flex; flex-wrap: wrap; gap: var(--oui-s3) var(--oui-s6); padding-top: var(--oui-s3); border-top: 1px solid var(--oui-border); }
+.oui-hero:not(.oui-on-band) .tile.bad :deep(.oui-readout-value) { color: var(--oui-danger); }
+.xl-sentence { font-size: var(--oui-text-xl); font-weight: 650; line-height: 1.2; }
+.inc-line { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-weight: 600; color: var(--oui-warning); }
+.inc-act { margin-inline-start: auto; }
+.details { display: grid; margin-top: var(--oui-s4); min-width: 0; }
+.cur { font-weight: 650; }
 </style>

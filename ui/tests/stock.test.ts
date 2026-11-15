@@ -128,7 +128,7 @@ describe("StockView", () => {
     seed({ settings: { extrasCatalog: [{ key: "c1", label: "Ring", unitMinor: 50, qtyE3: 1000, per: "piece", stockE3: 0 }, { key: "c2", label: "Box", unitMinor: 50, qtyE3: 1000, per: "piece" }] } });
     const root = mount(StockView);
     await flush();
-    expect(root.querySelector("h1[data-view-title]")?.textContent).toBe("Extras and stock");
+    expect(root.querySelector("[data-view-title]")?.textContent).toBe("Extras and stock");
     const badges = [...root.querySelectorAll(".ec-item")].map((li) => li.querySelector(".badge")?.textContent ?? null);
     expect(badges).toEqual(["Out of stock", null]);
     const stock = [...root.querySelectorAll("label")].filter((l) => l.textContent?.trim() === "In stock").map((l) => root.querySelector<HTMLInputElement>(`#${CSS.escape(l.htmlFor)}`)!);
@@ -162,7 +162,7 @@ describe("StockView", () => {
     const root = mount(StockView);
     await flush();
     const rows = [...root.querySelectorAll("[data-testid=filament-table] tbody tr")].map((tr) => [...tr.querySelectorAll("td")].map((td) => td.textContent?.trim()));
-    expect(rows).toEqual([["PLA Black", "Acme · PLA", "2", "651 g"], ["PETG Blue", "PETG", "1", "—"]]);
+    expect(rows).toEqual([["PLA Black", "PLAAcme", "2", "651 g"], ["PETG Blue", "PETG", "1", "—"]]); // material chip, then the vendor
     expect(root.textContent).not.toContain("192.168");
   });
 

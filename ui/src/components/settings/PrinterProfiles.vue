@@ -9,8 +9,8 @@ import { currency, digits, patchSettings, store } from "../../state/store";
 import { toast } from "../../state/toast";
 import { presetFor } from "../../state/markup";
 import type { PrinterProfile } from "../../state/types";
-import Badge from "../base/Badge.vue";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
 import { patchPrinter } from "../costs/shared";
@@ -39,15 +39,15 @@ function remove(model: string): void {
 
 <template>
   <div class="pp">
-    <p class="sm muted">{{ t("printers.help") }}</p>
-    <p v-if="!models.length" class="muted">{{ t("printers.empty") }}</p>
+    <p class="sm oui-muted">{{ t("printers.help") }}</p>
+    <p v-if="!models.length" class="oui-muted">{{ t("printers.empty") }}</p>
     <ul v-else class="pp-list">
       <li v-for="m in models" :key="m" class="pp-card surface">
         <div class="row pp-head">
-          <span class="lg truncate">{{ m }}</span>
-          <Badge v-if="m === current" tone="neutral" :text="t('printers.current')" />
+          <span class="lg oui-truncate">{{ m }}</span>
+          <span v-if="m === current" class="oui-chip badge" data-tone="accent">{{ t("printers.current") }}</span>
           <span class="pp-grow" />
-          <Button text severity="secondary" v-if="profile(m)" type="button" class="icon-btn" :aria-label="t('common.removeNamed', { name: m })" @click="remove(m)"><Icon name="trash" /></Button>
+          <Button text severity="secondary" v-if="profile(m)" type="button" class="icon-btn" :aria-label="t('common.removeNamed', { name: m })" @click="remove(m)"><OuiIcon :icon="I.trash" /></Button>
         </div>
         <div class="form-grid">
           <div>
@@ -55,7 +55,7 @@ function remove(model: string): void {
               :model-value="shownWatts10(m)" :label="t('field.watts')" :scale="10" :step="100" :min="10" :max="50000" :unit="UNIT.watt" :default-value="Math.round(match(m).watts * 10)"
               @update:model-value="(v) => v !== null && patchPrinter(m, { watts: v / 10 })" @reset="patchPrinter(m, { watts: null })"
             />
-            <p class="sm muted pp-sug">{{ t("printer.suggested", { watts: match(m).watts, how: t(`printer.how.${match(m).how}`) }) }} <Badge v-if="match(m).estimated" tone="neutral" :text="t('printer.estimated')" /></p>
+            <p class="sm oui-muted pp-sug">{{ t("printer.suggested", { watts: match(m).watts, how: t(`printer.how.${match(m).how}`) }) }} <span v-if="match(m).estimated" class="oui-chip badge" data-tone="warn">{{ t("printer.estimated") }}</span></p>
           </div>
           <MoneyField
             :model-value="profile(m)?.acquisitionMinor ?? presetFor(currency)?.printerMinor ?? null" :label="t('field.printerPrice')" :digits="digits" :currency="currency" :step="major" :max="10 ** 9 * major" nullable

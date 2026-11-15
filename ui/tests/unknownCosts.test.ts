@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { nextTick, type App } from "vue";
 import BreakdownBars from "../src/components/price/BreakdownBars.vue";
 import MachineSection from "../src/components/costs/MachineSection.vue";
+import SectionsArea from "../src/views/SectionsArea.vue";
 import { unknownLines } from "../src/components/price/unknownLines";
 import { setLocale } from "../src/i18n";
 import { derived } from "../src/state/store";
@@ -26,17 +27,27 @@ describe("unknown cost lines", () => {
     expect(txt(energy)).toContain("unknown"); // the screen-reader text next to the dash
     expect(txt(el.querySelector("[data-row=depreciation]"))).toContain("time unknown");
     expect(txt(el.querySelector("[data-row=costTotal]"))).toContain("Cost per piece · partial");
-    expect(el.querySelector("[data-row=energy] .bar")).toBeNull(); // no bar for an amount nobody knows
+    expect(el.querySelector("[data-seg=energy]")).toBeNull(); // no segment for an amount nobody knows
   });
   test("a known line that leaves something out says partial, with the amount kept", async () => {
     load("unknown");
     const el = await show(BreakdownBars);
-    expect(txt(el.querySelector("[data-row=filament]"))).toMatch(/Filament · partialR\$/);
+    expect(txt(el.querySelector("[data-row=filament]"))).toMatch(/Filament · partial[\d.]+%R\$/);
   });
   test("an energy price that is not set is named as such (not 'time')", async () => {
     load("ok", { settings: (s) => ({ ...s, defaults: { ...s.defaults, energyPerKwh: null } }) });
     const el = await show(BreakdownBars);
     expect(txt(el.querySelector("[data-row=energy]"))).toContain("Energy · not set");
+  });
+  test("a partial section amount says partial in words, not only in amber", async () => {
+    load("unknown");
+    const el = await show(SectionsArea);
+    const amt = el.querySelector('[data-section="machine"] [data-amount]')!;
+    expect(amt.classList.contains("gap")).toBe(true);
+    expect(txt(amt.querySelector("[data-partial]"))).toBe("· partial");
+    load("ok");
+    await nextTick();
+    expect(el.querySelector("[data-partial]")).toBeNull();
   });
   test("nothing unknown: no dash rows and no partial mark", async () => {
     load("ok");

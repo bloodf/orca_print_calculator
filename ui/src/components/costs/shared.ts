@@ -7,6 +7,9 @@ import { clearOverride, derived, patchDefaults, patchDraft, patchSettings, resul
 import { openSettingsTab } from "../../state/settingsTab";
 import { toast } from "../../state/toast";
 import type { Defaults, OverridableKey, PrinterProfile } from "../../state/types";
+import { money } from "../../format";
+import { currency, locale } from "../../state/store";
+import { unknownLines, type Unknown } from "../price/unknownLines";
 
 /** One overridable default: effective value, the saved default, set (writes an override) and reset (with Undo). */
 export function useDefault<K extends OverridableKey>(key: K): {
@@ -78,4 +81,16 @@ export { newKey } from "../../ids";
 export function perPiece(...ids: string[]): number | null {
   const r = result.value;
   return r.ok ? r.lines.filter((l) => ids.includes(l.id)).reduce((sum, l) => sum + l.perPiece, 0) : null;
+}
+
+/**
+ * The amount on a Costs row: the sum of the section's engine lines per piece, as text. `null` (a dash) while the quote cannot
+ * be computed, or while a line is unknown and nothing else in the section costs anything; `partial` when a known sum leaves a line out.
+ */
+export function sectionAmount(...ids: string[]): { amount: string | null; partial: boolean } {
+  const sum = perPiece(...ids);
+  if (sum === null) return { amount: null, partial: false };
+  const unknown = unknownLines(derived.value) as Unknown & Record<string, unknown>;
+  const gap = ids.some((id) => unknown[id] !== undefined);
+  return gap && sum === 0 ? { amount: null, partial: false } : { amount: money(sum, currency.value, locale.value), partial: gap };
 }

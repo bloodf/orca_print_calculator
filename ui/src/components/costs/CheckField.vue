@@ -14,7 +14,7 @@ const fid = `cf-${useId()}`;
   <div class="cf row">
     <Checkbox :input-id="fid" binary :model-value="modelValue" @update:model-value="(v: boolean) => $emit('update:modelValue', v)" />
     <span v-if="overridden" class="ovr-dot" aria-hidden="true" />
-    <span v-if="overridden" class="sr-only">{{ t("a11y.edited") }}</span>
+    <span v-if="overridden" class="oui-sr">{{ t("a11y.edited") }}</span>
     <label :for="fid" class="sm">{{ label }}</label>
     <ResetButton v-if="overridden" :label="label" :default-text="defaultText" @click="$emit('reset')" />
   </div>

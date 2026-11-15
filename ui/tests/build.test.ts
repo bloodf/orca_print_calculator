@@ -21,7 +21,7 @@ async function built(): Promise<string> {
 }
 
 /** 387,010 B before the Vue + PrimeVue migration; 877 kB after (Vue Options API, PrimeVue components, the shared Aura preset). The CI gate uses the same figure. */
-const BUDGET = 960_000; // PrimeVue 5 (license verifier, motion) added ~56 kB over 4.5.5
+const BUDGET = 1_010_000; // measured 988,746 B with Orca UI foundation 4.0.1 (Manrope font, shared components), rounded up to 990,000 + 20,000
 
 describe("built index.html", () => {
   test("carries the CSP meta, before the first <script", async () => {
@@ -29,7 +29,7 @@ describe("built index.html", () => {
     const csp = html.indexOf('http-equiv="Content-Security-Policy"');
     expect(csp > -1).toBe(true);
     expect(csp < html.indexOf("<script")).toBe(true);
-    expect(html.includes("default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'")).toBe(true);
+    expect(html.includes("default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src 'none'")).toBe(true);
   }, 60_000);
   test("is one self-contained file: no external script, style or image reference", async () => {
     const html = await built();
@@ -49,6 +49,6 @@ describe("built index.html", () => {
   }, 60_000);
   test("PrimeVue's Options API path is compiled in (its components are Options API objects)", async () => {
     const html = await built();
-    expect(html.includes("pcTabs") || html.includes("$pcTabs")).toBe(true); // PrimeVue's own injection keys are in the bundle: it was bundled, not stubbed
+    expect(html.includes("$pcButton")).toBe(true); // PrimeVue's own injection keys are in the bundle: it was bundled, not stubbed
   }, 60_000);
 });

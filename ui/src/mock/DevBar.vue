@@ -31,14 +31,14 @@ const bar = q.get("bar") !== "0"; // `?bar=0` hides this bar in screenshots
 
 <template>
   <div v-if="bar" class="devbar app-chrome" role="group" aria-label="Dev harness">
-    <span class="xs">dev · {{ scenario }}</span>
-    <Button type="button" size="small" severity="secondary" outlined @click="theme = theme === 'dark' ? 'light' : 'dark'">{{ theme }}</Button>
-    <Button type="button" size="small" severity="secondary" outlined @click="setLanguage(store.settings.language === 'pt-BR' ? 'en' : 'pt-BR')">{{ store.settings.language === "pt-BR" ? "pt-BR" : "en" }}</Button>
+    <span class="sm">dev · {{ scenario }}</span>
+    <Button type="button" size="small" severity="secondary" @click="theme = theme === 'dark' ? 'light' : 'dark'">{{ theme }}</Button>
+    <Button type="button" size="small" severity="secondary" @click="setLanguage(store.settings.language === 'pt-BR' ? 'en' : 'pt-BR')">{{ store.settings.language === "pt-BR" ? "pt-BR" : "en" }}</Button>
   </div>
 </template>
 
 <style scoped>
-.devbar { position: fixed; left: 8px; bottom: 8px; z-index: 90; display: flex; align-items: center; padding: 4px 8px; background: var(--opc-raised); border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); opacity: 0.85; }
+.devbar { position: fixed; left: 8px; bottom: 8px; z-index: 90; display: flex; align-items: center; padding: 4px 8px; background: var(--oui-surface); border: 1px solid var(--oui-border); border-radius: var(--oui-radius-lg); opacity: 0.85; }
 .devbar > * + * { margin-left: 8px; }
 @media (max-width: 899px) { .devbar { bottom: 64px; } }
 </style>

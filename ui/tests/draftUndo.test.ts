@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { nextTick, toRaw, type App } from "vue";
 
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn(async () => ({})) }));
-import PlateList from "../src/components/plates/PlateList.vue";
+import PlateNotices from "../src/components/plates/PlateNotices.vue";
 import { setLocale } from "../src/i18n";
 import { exportText, isDirty } from "../src/quoteFlow";
 import { hasUnsavedWork } from "../src/state/dirty";
@@ -103,7 +103,7 @@ describe("closing the open quote", () => {
     const q = await savedQuote();
     openQuote(q.id);
     patchDraft({ note: "kept" });
-    const m = mount(PlateList);
+    const m = mount(PlateNotices);
     mounted.push(m);
     await nextTick();
     const close = [...m.root.querySelectorAll<HTMLButtonElement>("[data-quote-banner] button")].find((b) => /Close quote/.test(b.textContent ?? ""))!;

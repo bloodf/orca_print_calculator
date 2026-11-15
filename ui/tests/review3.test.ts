@@ -115,10 +115,10 @@ describe("unreadable files", () => {
   test("get_state `unreadable` is remembered and shown as a persistent banner instead of first run", async () => {
     await bootWith(["settings"]);
     expect(S.store.unreadable).toEqual(["settings"]);
-    const { default: PlatesArea } = await import("../src/views/PlatesArea.vue");
+    const { default: CalcPage } = await import("../src/views/CalculatorView.vue"); // the notices and the first run open the calculator page
     root = document.createElement("div");
     document.body.appendChild(root);
-    app = createApp({ render: () => h(PlatesArea) });
+    app = createApp({ render: () => h(CalcPage) });
     app.mount(root);
     await nextTick();
     const banner = root.querySelector("[data-unreadable]")!;

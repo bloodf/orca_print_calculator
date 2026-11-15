@@ -56,7 +56,7 @@ class WheelPackaging(unittest.TestCase):
         di = "orca_print_calculator-%s.dist-info/licenses/" % PROJECT["version"]
         names = set(self.zip.namelist())
         self.assertEqual(self.zip.read(di + "LICENSE"), (ROOT / "LICENSE").read_bytes())
-        for name in ("Vue.txt", "PrimeVue.txt", "PrimeUIX.txt"):
+        for name in ("Vue.txt", "PrimeVue.txt", "PrimeUIX.txt", "Lucide.txt", "Manrope.txt"):
             self.assertIn(di + name, names)
 
     def test_page_is_offline(self):
@@ -83,7 +83,7 @@ class PublishWorkflow(unittest.TestCase):
         ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text("utf-8")
         for step in ("pnpm -C ui install --frozen-lockfile", "node ui/shared/scripts/check.mjs", "pnpm -C ui lint",
                      "pnpm -C ui typecheck", "pnpm -C ui test:coverage", "scripts/gen_contract.py --check",
-                     "python -m unittest discover tests", "-le 960000"):
+                     "python -m unittest discover tests", "-le 1010000"):
             self.assertIn(step, ci, step)
             self.assertIn(step, PUBLISH, step)
 

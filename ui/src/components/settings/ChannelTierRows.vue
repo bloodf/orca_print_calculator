@@ -6,7 +6,8 @@ import { MAX_TIERS } from "../../engine/channels";
 import { money, percent } from "../../format";
 import { t } from "../../i18n";
 import { currency, digits, locale } from "../../state/store";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import PercentField from "../base/PercentField.vue";
 import { addTier, channelById, problemMessage, problemsFor, removeTier, updateTier } from "./channelOps";
@@ -21,8 +22,8 @@ const fmt = (n: number): string => money(n, currency.value, locale.value);
 
 <template>
   <div class="tr">
-    <p class="sm muted">{{ t("channel.tiersHelp") }}</p>
-    <div class="tr-grid tr-head sm muted" aria-hidden="true"><span>{{ t("field.tierFrom") }}</span><span>{{ t("field.fee") }}</span><span>{{ t("field.fixedFee") }}</span><span /></div>
+    <p class="sm oui-muted">{{ t("channel.tiersHelp") }}</p>
+    <div class="tr-grid tr-head sm oui-muted" aria-hidden="true"><span>{{ t("field.tierFrom") }}</span><span>{{ t("field.fee") }}</span><span>{{ t("field.fixedFee") }}</span><span /></div>
     <div v-for="(tier, i) in tiers" :key="i" class="tr-item">
       <div class="tr-grid" :class="{ first: i === 0 }">
         <template v-if="i === 0">
@@ -32,12 +33,12 @@ const fmt = (n: number): string => money(n, currency.value, locale.value);
           <MoneyField :model-value="tier.minMinor" :label="t('field.tierFrom')" :digits="digits" :currency="currency" :step="major" @update:model-value="(v) => v !== null && updateTier(channelId, i, { minMinor: v })" />
           <PercentField :model-value="tier.pctBp" :label="t('field.fee')" :step="50" :max="9000" @update:model-value="(v) => v !== null && updateTier(channelId, i, { pctBp: v })" />
           <MoneyField :model-value="tier.fixedMinor" :label="t('field.fixedFee')" :digits="digits" :currency="currency" :step="major" @update:model-value="(v) => v !== null && updateTier(channelId, i, { fixedMinor: v })" />
-          <Button text severity="secondary" type="button" class="icon-btn" :aria-label="t('common.removeNamed', { name: `${t('field.tierFrom')} ${fmt(tier.minMinor)}` })" @click="removeTier(channelId, i)"><Icon name="trash" /></Button>
+          <Button text severity="secondary" type="button" class="icon-btn" :aria-label="t('common.removeNamed', { name: `${t('field.tierFrom')} ${fmt(tier.minMinor)}` })" @click="removeTier(channelId, i)"><OuiIcon :icon="I.trash" /></Button>
         </template>
       </div>
       <p v-for="m in errors(i)" :key="m" class="sm bad" role="alert">{{ m }}</p>
     </div>
-    <Button text type="button" :aria-disabled="full" @click="!full && addTier(channelId, major)"><Icon name="plus" /><span>{{ t("channel.addTier") }}</span></Button>
+    <Button text type="button" :aria-disabled="full" @click="!full && addTier(channelId, major)"><OuiIcon :icon="I.plus" /><span>{{ t("channel.addTier") }}</span></Button>
   </div>
 </template>
 
@@ -48,5 +49,5 @@ const fmt = (n: number): string => money(n, currency.value, locale.value);
 .tr-head { margin-bottom: -4px; }
 .tr-grid :deep(.nf-head) { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 .tr-grid :deep(.nf-help) { display: none; }
-.bad { color: var(--opc-bad); margin-top: 2px; }
+.bad { color: var(--oui-danger); margin-top: 2px; }
 </style>

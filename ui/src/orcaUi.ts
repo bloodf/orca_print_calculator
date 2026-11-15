@@ -6,7 +6,7 @@ import { currentLocale } from "./i18n";
 
 export function createOrcaApp(root: Component, props?: Record<string, unknown> | null): App {
   const app = createVueApp(root, props);
-  installOrcaUI(app, currentLocale());
+  installOrcaUI(app, currentLocale(), "lime");
   if (typeof document !== "undefined") document.body.classList.add("orca-ui");
   return app;
 }

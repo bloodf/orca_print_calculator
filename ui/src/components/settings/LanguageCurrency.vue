@@ -4,7 +4,9 @@ import { computed, ref, watch } from "vue";
 import { t } from "../../i18n";
 import { currency, patchSettings, setLanguage, store } from "../../state/store";
 import type { Lang } from "../../state/types";
-import InlineAlert from "../base/InlineAlert.vue";
+import Button from "primevue/button";
+import { OuiBanner } from "../../../shared/src/components";
+import { lead } from "../base/lead";
 import SelectField from "../costs/SelectField.vue";
 import TextField from "./TextField.vue";
 
@@ -36,10 +38,13 @@ const mismatch = computed(() => !!store.settings.defaultsCurrency && store.setti
   <div class="stack">
     <div class="form-grid">
       <SelectField :model-value="store.settings.language" :label="t('header.language')" :options="langs()" @update:model-value="(v) => setLanguage(v as Lang)" />
-      <p v-if="fromSpoolman" class="sm muted cur"><span class="sm muted">{{ t("currency.label") }}</span><br /><span class="num">{{ t("currency.fromSpoolman", { currency: fromSpoolman }) }}</span></p>
+      <p v-if="fromSpoolman" class="sm oui-muted cur"><span class="sm oui-muted">{{ t("currency.label") }}</span><br /><span class="num">{{ t("currency.fromSpoolman", { currency: fromSpoolman }) }}</span></p>
       <TextField v-else :model-value="code" :label="t('currency.label')" :maxlength="3" width="sm" upper :error="codeError" @update:model-value="setCode" />
     </div>
-    <InlineAlert v-if="mismatch" tone="warn" :actions="[{ label: t('currency.fine'), run: () => patchSettings({ defaultsCurrency: currency }) }]">{{ t("currency.mismatch", { old: store.settings.defaultsCurrency ?? "" }) }}</InlineAlert>
+    <OuiBanner v-if="mismatch" tone="warn" :title="lead(t('currency.mismatch', { old: store.settings.defaultsCurrency ?? '' }))[0]">
+      {{ lead(t("currency.mismatch", { old: store.settings.defaultsCurrency ?? "" }))[1] }}
+      <template #actions><Button severity="secondary" size="small" type="button" @click="patchSettings({ defaultsCurrency: currency })">{{ t("currency.fine") }}</Button></template>
+    </OuiBanner>
   </div>
 </template>
 

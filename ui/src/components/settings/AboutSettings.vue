@@ -36,12 +36,12 @@ function reset(): void {
 <template>
   <div class="stack">
     <p class="num">{{ t("about.version", { v: store.host.pluginVersion || "—" }) }}</p>
-    <p class="sm muted perm">{{ t("setup.permission") }}</p>
+    <p class="sm oui-muted perm">{{ t("setup.permission") }}</p>
     <div>
-      <p class="sm muted lbl">{{ t("about.readme") }}</p>
+      <p class="sm oui-muted lbl">{{ t("about.readme") }}</p>
       <CopyValue :value="README_URL" :label="t('about.readme')" />
     </div>
-    <Button severity="danger" outlined type="button" :aria-live="armed ? 'polite' : undefined" @click="reset">{{ armed ? t("about.resetConfirm") : t("about.resetAll") }}</Button>
+    <Button severity="danger" type="button" :aria-live="armed ? 'polite' : undefined" @click="reset">{{ armed ? t("about.resetConfirm") : t("about.resetAll") }}</Button>
   </div>
 </template>
 

@@ -9,7 +9,8 @@ import { pricePerKg } from "../../engine/match";
 import { t } from "../../i18n";
 import { currency, digits, locale, store } from "../../state/store";
 import type { SlotMatchView } from "../../state/types";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import Popover from "../base/Popover.vue";
 import { kgMoney, perKg, setManualPrice, setSlotOverride, UNKNOWN } from "./slots";
@@ -70,28 +71,28 @@ const typed = computed(() => store.settings.manualPrices[preset.value] ?? null);
     <div class="picker">
       <template v-if="ready">
         <IconField class="search">
-          <InputIcon><Icon name="search" /></InputIcon>
+          <InputIcon><OuiIcon :icon="I.search" /></InputIcon>
           <InputText v-model="q" type="text" autocomplete="off" spellcheck="false" fluid :aria-label="t('picker.search')" :placeholder="t('picker.search')" @keydown="onSearchKey" />
         </IconField>
         <Listbox
           :id="lid" ref="list" class="list" :model-value="selectedId" :options="groups" option-label="title" option-value="id" option-group-label="material" option-group-children="opts"
           :aria-label="t('picker.search')" @change="(e) => e.value && pick(byId(e.value))"
         >
-          <template #optiongroup="{ option }"><span class="xs muted group">{{ option.material }}</span></template>
+          <template #optiongroup="{ option }"><span class="sm oui-muted group">{{ option.material }}</span></template>
           <template #option="{ option }">
             <span class="opt" :class="{ spool: option.spool }" @click.stop="pick(option)">
-              <span v-if="!option.spool" class="title truncate">{{ option.title }}</span>
-              <span v-if="!option.spool" class="num sm muted">{{ option.price }}</span>
-              <span v-else class="num sm muted sub">{{ option.sub }}</span>
+              <span v-if="!option.spool" class="title oui-truncate">{{ option.title }}</span>
+              <span v-if="!option.spool" class="num sm oui-muted">{{ option.price }}</span>
+              <span v-else class="num sm oui-muted sub">{{ option.sub }}</span>
             </span>
           </template>
-          <template #empty><span class="sm muted empty">{{ t("picker.empty", { q }) }}</span></template>
+          <template #empty><span class="sm oui-muted empty">{{ t("picker.empty", { q }) }}</span></template>
         </Listbox>
       </template>
-      <p v-else class="sm muted">{{ t("picker.connect") }}</p>
+      <p v-else class="sm oui-muted">{{ t("picker.connect") }}</p>
       <div class="hairline typed">
         <MoneyField :model-value="typed" :label="t('picker.typePrice')" :digits="digits" :currency="currency" :step="10 ** Math.max(0, digits - 1)" unit="/kg" nullable @update:model-value="(v) => setManualPrice(preset, v)" />
-        <p v-if="match.source === 'none' || match.source === 'preset'" class="xs muted">{{ t("picker.noPresetCost") }}</p>
+        <p v-if="match.source === 'none' || match.source === 'preset'" class="sm oui-muted">{{ t("picker.noPresetCost") }}</p>
       </div>
     </div>
   </Popover>

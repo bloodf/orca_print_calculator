@@ -84,7 +84,7 @@ describe("Pricing defaults", () => {
   test("markup, rounding and minimum order write the defaults", async () => {
     await open("pricing");
     await type("Markup", "40");
-    await choose(root!, "Ends in 0 or 5");
+    await choose(root!.querySelector("#settings-pricing")!, "Ends in 0 or 5");
     await type("Minimum order", "50");
     await flush();
     const d = store.settings.defaults;
@@ -92,48 +92,43 @@ describe("Pricing defaults", () => {
   });
 });
 
-describe("tabs", () => {
-  const tabs = () => [...root!.querySelectorAll<HTMLButtonElement>("[role=tab]")];
-  const panels = () => [...root!.querySelectorAll("[role=tabpanel]")];
-  test("one panel at a time, labelled by its tab, with roving tabindex", () => {
-    expect(panels()).toHaveLength(1);
-    expect(panels()[0]!.id).toBe("settings-spoolman");
-    expect(panels()[0]!.getAttribute("aria-labelledby")).toBe("settings-tab-spoolman");
-    expect(tabs().map((b) => b.getAttribute("tabindex"))).toEqual(["0", "-1", "-1", "-1", "-1", "-1", "-1", "-1"]);
-    expect(tabs().filter((b) => b.getAttribute("aria-selected") === "true").map((b) => b.id)).toEqual(["settings-tab-spoolman"]);
+describe("section index", () => {
+  const links = () => [...root!.querySelectorAll<HTMLAnchorElement>("nav a")];
+  const groups = () => [...root!.querySelectorAll(".grp")].map((g) => g.id);
+  test("every group on one page in reading order, one index entry per group, the first marked current", () => {
+    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "sheet", "spoolman"].map((id) => `settings-${id}`));
+    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "About"]);
+    expect(links().filter((l) => l.getAttribute("aria-current") === "true").map((l) => l.getAttribute("href"))).toEqual(["#settings-spoolman"]);
     expect(root!.querySelector("#settings-extras")).toBeNull();
   });
-  test("a click switches the panel", async () => {
-    tabs().find((b) => b.textContent?.trim() === "Printers")!.click();
-    await flush();
-    expect(panels().map((p) => p.id)).toEqual(["settings-printers"]);
-    expect(settingsTab.value).toBe("printers");
+  test("a click on an entry goes to its group and marks it current", async () => {
+    const seen: string[] = [];
+    const scroll = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function (this: Element) { seen.push(this.id); };
+    try {
+      links().find((l) => l.textContent?.trim() === "Printers")!.click();
+      await flush();
+    } finally { Element.prototype.scrollIntoView = scroll; }
+    expect(seen).toContain("settings-printers");
+    expect(links().find((l) => l.getAttribute("aria-current") === "true")?.getAttribute("href")).toBe("#settings-printers");
   });
-  test("openSettingsTab('settings-printers') selects Printers", async () => {
-    const { openSettingsTab } = await import("../src/state/settingsTab");
-    openSettingsTab("settings-printers");
-    await flush();
-    expect(document.getElementById("settings-tab-printers")!.getAttribute("aria-selected")).toBe("true");
-    expect(panels().map((p) => p.id)).toEqual(["settings-printers"]);
-    openSettingsTab("nowhere");
-    expect(settingsTab.value).toBe("printers");
+  test("openSettingsTab('settings-printers') brings Printers into view; an unknown anchor changes nothing", async () => {
+    const seen: string[] = [];
+    const scroll = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = function (this: Element) { seen.push(this.id); };
+    try {
+      const { openSettingsTab } = await import("../src/state/settingsTab");
+      openSettingsTab("settings-printers");
+      await flush();
+      expect(settingsTab.value).toBe("printers");
+      expect(seen).toEqual(["settings-printers"]);
+      openSettingsTab("nowhere");
+      await flush();
+      expect(settingsTab.value).toBe("printers");
+      expect(seen).toEqual(["settings-printers"]);
+    } finally { Element.prototype.scrollIntoView = scroll; }
   });
-  test("arrow keys, Home and End move and activate", async () => {
-    // PrimeVue Tabs: a horizontal tablist (Left/Right/Home/End on the focused tab), selecting on focus like the old rail did.
-    const key = async (k: string) => { (document.activeElement as HTMLElement).dispatchEvent(new KeyboardEvent("keydown", { key: k, code: k, bubbles: true })); await flush(); };
-    document.getElementById(`settings-tab-${settingsTab.value}`)!.focus();
-    await key("ArrowRight");
-    expect(settingsTab.value).toBe("costs");
-    expect(document.activeElement?.id).toBe("settings-tab-costs");
-    await key("ArrowLeft"); await key("ArrowLeft");
-    expect(settingsTab.value).toBe("about"); // wraps
-    await key("Home");
-    expect(settingsTab.value).toBe("spoolman");
-    await key("End");
-    expect(settingsTab.value).toBe("about");
-    await key("ArrowRight");
-    expect(settingsTab.value).toBe("spoolman");
-    await key("Tab");
-    expect(settingsTab.value).toBe("spoolman");
+  test("the index is reachable with Tab: entries are links in page order", () => {
+    expect(links().every((l) => l.tabIndex === 0 && l.getAttribute("href")!.startsWith("#settings-"))).toBe(true);
   });
 });

@@ -47,14 +47,15 @@ describe("breakdown bars", () => {
   test("rows carry amount, share and a bar scaled to the largest row", async () => {
     load("ok", { settings: (s) => ({ ...s, ui: { ...s.ui, open: { breakdown: true } } }) });
     const el = await show(BreakdownBars);
-    const scales = Object.fromEntries([...el.querySelectorAll<HTMLElement>("[data-row] .bar")].map((b) => [b.closest("[data-row]")!.getAttribute("data-row")!, Number(b.dataset.scale)]));
+    // one segmented bar: each segment grows by its amount, so the segments are scaled to each other and to the price
+    const segs = Object.fromEntries([...el.querySelectorAll<HTMLElement>("[data-seg]")].map((b) => [b.dataset.seg!, Number(b.dataset.minor)]));
     const r = result.value;
     if (!r.ok) throw new Error("expected a quote");
     const per = Object.fromEntries(r.lines.filter((l) => l.perPiece > 0).map((l) => [l.id, l.perPiece]));
     const top = Math.max(...Object.values(per), derived.value.selected && derived.value.selected.ok ? derived.value.selected.profit : 0);
-    expect(Math.max(...Object.values(scales))).toBe(1);
-    for (const [id, minor] of Object.entries(per)) expect(scales[id]).toBeCloseTo(minor / top, 3);
-    expect(el.querySelector("[data-row=filament] .bar")?.getAttribute("style")).toContain("scaleX(");
+    expect(Math.max(...Object.values(segs))).toBe(top);
+    for (const [id, minor] of Object.entries(per)) expect(segs[id]).toBe(minor);
+    expect(el.querySelector("[data-seg=filament]")?.getAttribute("style")).toContain(`flex-grow: ${per.filament}`);
     expect(txt(el.querySelector("[data-row=filament] .shr"))).toMatch(/%$/);
   });
   test("zero rows are omitted; the total row is the unit cost at the quantity", async () => {
@@ -66,7 +67,7 @@ describe("breakdown bars", () => {
     expect(ids).toContain("costTotal");
     expect(ids.indexOf("costTotal")).toBeLessThan(ids.indexOf("fees"));
     expect(txt(el.querySelector("[data-row=costTotal]"))).toContain("Cost per piece");
-    expect(el.querySelector("[data-row=profit] .bar")?.classList.contains("profit")).toBe(true);
+    expect(el.querySelector("[data-seg=profit]")?.classList.contains("profit")).toBe(true);
   });
   test("filament expands to per-material detail", async () => {
     load("ok", { settings: (s) => ({ ...s, ui: { ...s.ui, open: { breakdown: true } } }) });
@@ -86,7 +87,7 @@ describe("channel comparison", () => {
     expect(el.querySelector("[data-section=compare]")).toBeNull();
     expect(el.querySelector("table")).toBeNull();
   });
-  test("with two channels it is collapsed by default, opens, marks the selection and keeps prices out of amber", async () => {
+  test("with two channels it is collapsed by default, opens, marks the selection and keeps prices out of the price figure style", async () => {
     load("ok");
     const el = await show(ChannelComparison);
     expect(el.querySelector("[data-section=compare]")).not.toBeNull();
@@ -97,9 +98,9 @@ describe("channel comparison", () => {
     expect(rows).toHaveLength(2);
     expect(el.querySelectorAll("tr.sel")).toHaveLength(1);
     expect((el.querySelector("tr.sel") as HTMLElement).dataset.channel).toBe(derived.value.selectedChannelId);
-    expect(txt(el.querySelector("tr.sel .sr-only"))).toBe("selected");
+    expect(txt(el.querySelector("tr.sel .oui-sr"))).toBe("selected");
     expect(el.querySelector("tr[aria-selected]")).toBeNull();
-    expect(el.querySelector(".price-amber")).toBeNull();
+    expect(el.querySelector(".price-figure")).toBeNull();
     expect(el.querySelector("caption")?.textContent).toBe("Price and profit per piece on each channel");
     rows.find((r) => r.dataset.channel === "direct")!.click(); await nextTick();
     expect(store.draft.channelId).toBe("direct");

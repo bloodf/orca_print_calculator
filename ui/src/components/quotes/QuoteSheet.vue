@@ -47,32 +47,35 @@ defineProps<{ model: SheetModel }>();
 </template>
 
 <style scoped>
-.quote-sheet { --paper: #FFFFFF; --ink: #2B2B2B; --mu: #5C6664; --rule: #00675B; --price: #8A5800; --line: #D9D9D9;
+.quote-sheet { --paper: #FFFFFF; --ink: #1F2328; --mu: #5C6664; --rule: #446600; --line: #DDE1E0; --band: #F4F6F5;
   width: 720px; max-width: 100%; margin: 0 auto; padding: 32px; background: var(--paper); color: var(--ink); font-size: 11pt; line-height: 1.45; border: 1px solid var(--line); }
 .top, .meta, .sum, .total { display: flex; justify-content: space-between; align-items: baseline; }
 .top { align-items: flex-start; }
 .logo { display: block; max-height: 64px; max-width: 240px; margin-bottom: 8px; }
-.co { font-size: var(--opc-fs-sm); color: var(--mu); overflow-wrap: anywhere; }
+.co { font-size: var(--oui-text-sm); color: var(--mu); overflow-wrap: anywhere; }
 .top > * + *, .meta > * + * { margin-left: 16px; }
-.shop { font-size: var(--opc-fs-lg); font-weight: 600; }
+.shop { font-size: var(--oui-text-xl); font-weight: 700; letter-spacing: -.01em; }
 .no, .mu, .small { color: var(--mu); }
-.small { font-size: var(--opc-fs-sm); margin-top: 4px; }
+.no { font-size: var(--oui-text-lg); font-weight: 600; letter-spacing: .01em; color: var(--ink); white-space: nowrap; }
+.small { font-size: var(--oui-text-sm); margin-top: 4px; }
 .meta { margin-top: 6px; }
 .rule { border: 0; border-top: 2px solid var(--rule); margin: 12px 0; }
-.title { font-size: var(--opc-fs-lg); font-weight: 500; margin: 0 0 8px; }
+.title { font-size: var(--oui-text-lg); font-weight: 650; margin: 0 0 8px; }
 table { width: 100%; border-collapse: collapse; }
-th { padding: 4px 0; height: auto; font-weight: 500; color: var(--mu); border-bottom: 1px solid var(--mu); }
+th { padding: 6px 0; height: auto; text-align: start; font-size: var(--oui-text-xs); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--mu); border-bottom: 1px solid var(--mu); }
 th.r, td.r { text-align: right; white-space: nowrap; padding-left: 12px; }
-td { padding: 6px 0; border-bottom: 1px solid var(--line); }
+td { padding: 8px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .sum { margin-top: 6px; }
-.total { margin-top: 12px; padding: 8px 12px; border: 1px solid var(--ink); align-items: center; }
-.total strong { font-size: var(--opc-fs-xl); font-weight: 600; color: var(--price); }
+/* the total: a light band under a rule in the shop's own colour; the figure in ink, so any accent stays readable and prints */
+.total { margin-top: 14px; padding: 10px 12px; background: var(--band); border-top: 2px solid var(--rule); align-items: center; font-weight: 600; }
+.total strong { font-size: var(--oui-text-2xl); font-weight: 700; letter-spacing: -.01em; color: var(--ink); font-variant-numeric: tabular-nums; }
 .free { margin-top: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .title, .shop, td { overflow-wrap: anywhere; }
 @media (max-width: 759px) { .quote-sheet { padding: 16px; } }
 @media print {
   .quote-sheet { width: auto; margin: 0; padding: 0; border: 0; box-shadow: none; background: none; color: #000; font-size: 11pt; }
   .no, .mu, .small, .co, th { color: #000; }
-  .total strong { color: var(--price); }
+  .total { background: none; }
+.total strong { color: #000; }
 }
 </style>

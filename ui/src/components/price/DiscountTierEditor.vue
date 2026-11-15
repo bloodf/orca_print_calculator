@@ -6,7 +6,8 @@ import { computed } from "vue";
 import { t } from "../../i18n";
 import { toast } from "../../state/toast";
 import type { DiscountTier } from "../../state/types";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import PercentField from "../base/PercentField.vue";
 import ResetButton from "../base/ResetButton.vue";
 import Stepper from "../base/Stepper.vue";
@@ -46,18 +47,18 @@ function remove(i: number): void {
 <template>
   <div class="tiers">
     <div v-if="overridden" class="row edited">
-      <span class="ovr-dot" aria-hidden="true" /><span class="sr-only">{{ t("a11y.edited") }}</span>
+      <span class="ovr-dot" aria-hidden="true" /><span class="oui-sr">{{ t("a11y.edited") }}</span>
       <ResetButton :label="t('tier.add')" :default-text="defaultText" @click="emit('reset')" />
     </div>
     <div v-for="(tier, i) in modelValue" :key="i" class="tier" data-tier @focusout="sortOnBlur">
       <div class="trow">
-        <div class="cell"><p class="sm muted lbl">{{ t("tier.from") }}</p><Stepper :model-value="tier.minQty" :min="2" :max="100000" :label="t('tier.from')" @update:model-value="(v) => patch(i, { minQty: v })" /></div>
+        <div class="cell"><p class="sm oui-muted lbl">{{ t("tier.from") }}</p><Stepper :model-value="tier.minQty" :min="2" :max="100000" :label="t('tier.from')" @update:model-value="(v) => patch(i, { minQty: v })" /></div>
         <PercentField :model-value="tier.discountBp" :label="t('tier.discount')" :min="0" :max="9900" :step="100" @update:model-value="(v) => v !== null && patch(i, { discountBp: v })" />
-        <Button text severity="secondary" type="button" class="rm icon-btn" :aria-label="t('common.removeNamed', { name: `${t('tier.add')} ${tier.minQty}` })" @click="remove(i)"><Icon name="trash" /></Button>
+        <Button text severity="secondary" type="button" class="rm icon-btn" :aria-label="t('common.removeNamed', { name: `${t('tier.add')} ${tier.minQty}` })" @click="remove(i)"><OuiIcon :icon="I.trash" /></Button>
       </div>
       <p v-if="dupes.has(tier.minQty)" class="sm err" role="alert">{{ t("field.error.duplicateTier") }}</p>
     </div>
-    <Button text v-if="modelValue.length < MAX_TIERS" type="button" class="add" @click="add"><Icon name="plus" /><span>{{ t("tier.add") }}</span></Button>
+    <Button text v-if="modelValue.length < MAX_TIERS" type="button" class="add" @click="add"><OuiIcon :icon="I.plus" /><span>{{ t("tier.add") }}</span></Button>
   </div>
 </template>
 
@@ -66,7 +67,7 @@ function remove(i: number): void {
 .trow { display: grid; grid-template-columns: auto minmax(0, 1fr) 24px; gap: 8px; align-items: end; }
 .lbl { min-height: 24px; display: flex; align-items: center; }
 .rm { margin-bottom: 2px; }
-.err { color: var(--opc-bad); margin-top: 2px; }
+.err { color: var(--oui-danger); margin-top: 2px; }
 .add { margin-top: 8px; margin-left: -10px; }
 .edited { height: 24px; }
 </style>

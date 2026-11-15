@@ -6,7 +6,7 @@ English | [Português (Brasil)](README.pt-BR.md)
 
 Orca Print Calculator is a plugin for OrcaSlicer 2.5. It adds a tab to the main window that prices every build plate of the open project. Filament cost comes from your Spoolman inventory, electricity is suggested from your printer model, and you add labor, depreciation, failure rate, extras, shipping, tax and sales-channel fees. The result is a suggested selling price, a channel comparison, batch pricing, saved quotes and a quote you can print or export for the customer.
 
-**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). The version in this tree is 0.4.0 ([changelog](CHANGELOG.md)). Tests are mock-only (mock host, fixtures, a fake `orca` module, headless Chrome); nothing has run against a real OrcaSlicer, Spoolman server, printer or camera. The OrcaCloud hub lists a version only after its release is published, so it can be behind this tree. OrcaSlicer's plugin API offers no way to merge or hide tabs, so this plugin's tab sits beside the tabs of other plugins (Spooler, U1 Control) instead of inside one.
+**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). The version in this tree is 0.5.0 ([changelog](CHANGELOG.md)). Tests are mock-only (mock host, fixtures, a fake `orca` module, headless Chrome); nothing has run against a real OrcaSlicer, Spoolman server, printer or camera. The OrcaCloud hub lists a version only after its release is published, so it can be behind this tree. OrcaSlicer's plugin API offers no way to merge or hide tabs, so this plugin's tab sits beside the tabs of other plugins (Spooler, U1 Control) instead of inside one.
 
 <!-- related-plugins:start -->
 ## Explore the other plugins
@@ -97,9 +97,9 @@ Current mock captures (headless Chrome on a local build with the dev mock host; 
 - **Quantity and batches.** Quantity, discount tiers, and a batch table with unit cost, unit price, order total, order profit and margin per tier. When a run makes more pieces than the order needs, the spare pieces are charged to the order. Each cost line is rounded once on the whole order, not per piece (calculation version 2), and the markup is measured on cost after fees and tax (calculation version 3). Quotes saved earlier keep the numbers they were saved with; "Reprice with the current calculation" in the quote's own notes applies the current calculation on purpose.
 - **Saved quotes.** A quote keeps its own inputs, plates, prices and currency. Opening it later shows the numbers as saved, even if you changed settings or currency since. Whatever the slice did not report (print time, filament weight or usage, a filament price) is saved as unknown, never as zero: you can save such a draft, but it cannot be exported, printed or sent until it is complete.
 - **Quote output.** "Print quote" opens a quote sheet (itemized or summary) and the print dialog, where you can save a PDF. CSV and HTML export write a file to the plugin data folder, and the tab shows the path. The sheet carries your logo, company details, payment terms and accent color, set in Settings › Quote sheet with a live sample beside the form. In the Quotes tab, "Export list" writes one CSV row per quote shown (search applied): number, date, customer, title, currency, channel, quantity, unit price, total, margin and whether the quote is complete, all from the numbers saved with each quote.
-- **Settings.** One group per tab: Spoolman, costs, pricing, sales channels, printers, quote sheet, language and currency, about. Changes save on their own.
+- **Settings.** One page with every group (Spoolman, costs, pricing, sales channels, printers, quote sheet, language and currency, about) and an index beside it that jumps to each. Changes save on their own.
 - **Languages and currency.** English and Brazilian Portuguese. Any currency, taken from Spoolman or set in Settings.
-- **Theme.** The interface is built to follow OrcaSlicer's dark and light themes. This is not verified inside Orca yet.
+- **Theme.** The interface is built to follow OrcaSlicer's dark and light themes, in the plugin's lime colour with a deep green bar. This is not verified inside Orca yet.
 
 ## Requirements
 
@@ -177,7 +177,7 @@ A sliced `.gcode.3mf` import is limited to 100 MB.
 
 ## Development
 
-The UI is Vue 3 and PrimeVue 5 (shared Orca theme in `ui/shared`) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
+The UI is Vue 3 and PrimeVue 5 (shared Orca UI foundation 4.0.1 in `ui/shared`: theme, components, icons and the Manrope font) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
 
 ```bash
 pnpm -C ui install

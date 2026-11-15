@@ -1,13 +1,12 @@
 <script setup lang="ts">
-// App shell: skip link, header, view switch, host-error screen, price live region, toasts (docs/ux.md §2, §3, §7.8).
+// App shell: skip link, app bar, the view for the selected tab, host-error screen, price live region, toasts.
 import Button from "primevue/button";
 import { usePrimeVue } from "primevue/config";
-import Fieldset from "primevue/fieldset";
-import Message from "primevue/message";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import HelpGuide from "./components/HelpGuide.vue";
-import Icon from "./components/base/Icon.vue";
+import { OuiEmpty, OuiIcon, OuiPanel } from "../shared/src/components";
+import * as I from "../shared/src/icons";
 import ToastHost from "./components/base/ToastHost.vue";
 import { t } from "./i18n";
 import { primeLocale } from "./orcaUi";
@@ -26,6 +25,7 @@ const enLocale = { ...pv.config.locale } as NonNullable<typeof pv.config.locale>
 watch(locale, (l) => { pv.config.locale = l === "pt-BR" ? ({ ...enLocale, ...primeLocale("pt-BR") } as typeof enLocale) : enLocale; }, { immediate: true });
 
 const live = ref("");
+const tech = ref(false); // the raw host code stays behind a disclosure
 const announcement = computed(() => priceAnnouncement(derived.value, { currency: currency.value, locale: locale.value, hasPlates: store.plates.length > 0 || !!store.draft.frozenPlates }));
 let settle: ReturnType<typeof setTimeout> | undefined;
 // Announce once per settle (1 s after the last change), and only when the text actually changed.
@@ -53,33 +53,36 @@ onBeforeUnmount(() => { stop?.(); clearTimeout(settle); });
 <template>
   <Button v-if="store.view === 'calc' && store.status !== 'error'" type="button" text size="small" class="skip-link app-chrome" @click="skipToPrice">{{ t("nav.skipToPrice") }}</Button>
   <AppHeader :view="store.view" @update:view="setView" />
-  <main v-if="store.status === 'error'" class="host-error">
-    <Message severity="error" :closable="false" role="alert">
-      <template #icon><Icon name="alert-circle" :size="20" /></template>
-      <div class="msg">
-        <h1 class="view-title" tabindex="-1" data-view-title>{{ t("host.errorTitle") }}</h1>
-        <p>{{ t("host.errorBody") }}</p>
-        <div class="row"><Button type="button" @click="loadState()">{{ t("host.tryAgain") }}</Button></div>
-      </div>
-    </Message>
-    <Fieldset :legend="t('host.details')" toggleable collapsed class="tech sm" data-tech-details>
-      <code class="details">{{ store.error }}</code>
-    </Fieldset>
-  </main>
-  <CalculatorView v-else-if="store.view === 'calc'" />
-  <QuotesView v-else-if="store.view === 'quotes'" />
-  <StockView v-else-if="store.view === 'stock'" />
-  <SettingsView v-else />
-  <div class="sr-only app-chrome" aria-live="polite" aria-atomic="true">{{ live }}</div>
+  <div class="view" role="tabpanel" :aria-labelledby="`oui-tab-${store.view}`">
+    <main v-if="store.status === 'error'" class="oui-page host-error">
+      <OuiPanel>
+        <OuiEmpty state="error" :title="t('host.errorTitle')">
+          <span class="msg">{{ t("host.errorBody") }}</span>
+          <template #actions><Button type="button" @click="loadState()"><OuiIcon :icon="I.refresh" :size="14" /><span>{{ t("host.tryAgain") }}</span></Button></template>
+        </OuiEmpty>
+        <template #footer>
+          <div class="tech" data-tech-details>
+            <Button text severity="secondary" size="small" type="button" :aria-expanded="tech" aria-controls="host-error-detail" @click="tech = !tech">
+              <OuiIcon :icon="tech ? I.chevronDown : I.chevronRight" :size="14" /><span>{{ t("host.details") }}</span>
+            </Button>
+            <code v-show="tech" id="host-error-detail" class="oui-error-detail">{{ store.error }}</code>
+          </div>
+        </template>
+      </OuiPanel>
+    </main>
+    <CalculatorView v-else-if="store.view === 'calc'" />
+    <QuotesView v-else-if="store.view === 'quotes'" />
+    <StockView v-else-if="store.view === 'stock'" />
+    <SettingsView v-else />
+  </div>
+  <div class="oui-sr app-chrome" aria-live="polite" aria-atomic="true">{{ live }}</div>
   <HelpGuide />
   <ToastHost />
   <component :is="DevBar" v-if="DevBar" />
 </template>
 
 <style scoped>
-.host-error { max-width: 520px; margin: 64px auto 0; padding: 0 16px; }
-.host-error .msg > * + * { margin-top: 8px; }
-.host-error .msg h1 { margin: 0; }
-.tech { margin-top: 12px; }
-.tech code { display: block; overflow-wrap: anywhere; white-space: pre-wrap; user-select: text; }
+.host-error { max-width: 560px; margin: var(--oui-s8) auto 0; }
+.tech { display: grid; gap: var(--oui-s2); min-width: 0; }
+.tech code { user-select: text; -webkit-user-select: text; }
 </style>

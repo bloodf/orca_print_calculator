@@ -2,7 +2,6 @@
 import InputGroup from "primevue/inputgroup";
 import InputGroupAddon from "primevue/inputgroupaddon";
 import InputText from "primevue/inputtext";
-import Message from "primevue/message";
 import { computed, onBeforeUnmount, ref, useId, watch } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { markInvalid } from "../../state/invalid";
@@ -98,8 +97,8 @@ function onKey(e: KeyboardEvent): void {
   <div class="nf" :class="width">
     <div class="nf-head row">
       <span v-if="overridden" class="ovr-dot" aria-hidden="true" />
-      <span v-if="overridden" class="sr-only">{{ t("a11y.edited") }}</span>
-      <label :for="fid" class="sm muted">{{ label }}</label>
+      <span v-if="overridden" class="oui-sr">{{ t("a11y.edited") }}</span>
+      <label :for="fid" class="sm oui-muted">{{ label }}</label>
       <ResetButton v-if="overridden" :label="label" :default-text="defaultText" @click="emit('reset')" />
     </div>
     <InputGroup class="nf-box">
@@ -111,7 +110,7 @@ function onKey(e: KeyboardEvent): void {
       />
       <InputGroupAddon v-if="unit" class="num">{{ unit }}</InputGroupAddon>
     </InputGroup>
-    <Message v-if="shownError" :id="`${fid}-d`" class="nf-help bad" severity="error" size="small" variant="simple" role="alert">{{ shownError }}</Message>
+    <p v-if="shownError" :id="`${fid}-d`" class="sm nf-help bad" role="alert">{{ shownError }}</p>
     <p v-else-if="helperText" :id="`${fid}-d`" class="sm nf-help">{{ helperText }}</p>
   </div>
 </template>
@@ -123,7 +122,7 @@ function onKey(e: KeyboardEvent): void {
 .nf-head { min-height: 24px; }
 .nf-head > * + * { margin-left: 4px; }
 .nf-box :deep(.nf-input) { flex: 1 1 auto; min-width: 0; text-align: right; }
-.nf-box :deep(.p-inputgroupaddon) { padding-inline: 8px; font-size: var(--opc-fs-sm); }
-.nf-help { margin: 2px 0 0; color: var(--opc-muted); }
-.nf-help.bad { color: var(--opc-bad); }
+.nf-box :deep(.p-inputgroupaddon) { padding-inline: 8px; font-size: var(--oui-text-sm); }
+.nf-help { margin: 2px 0 0; color: var(--oui-muted); }
+.nf-help.bad { color: var(--oui-danger); }
 </style>

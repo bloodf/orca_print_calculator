@@ -1,15 +1,16 @@
 <script setup lang="ts">
-// "Where the price goes": per-piece cost lines, channel fees, tax and profit as label, amount, share and a bar.
-// Bars are scaled to the largest row so small lines stay readable; the share column is amount / price.
+// "Where the price goes": one segmented bar of the price (each cost line, the channel fees, the tax and the profit, in the
+// hue of its subject) over a legend with each line's share and amount. The number is always in text beside the mark.
 import Button from "primevue/button";
 import { computed, ref } from "vue";
-import { feeFor, mulDivRound } from "../../engine/costs";
+import { mulDivRound } from "../../engine/costs";
 import { EXACT_COST_CALC, LEGACY_CALC } from "../../engine/quote";
 import { t } from "../../i18n";
 import { derived, result } from "../../state/store";
-import Icon from "../base/Icon.vue";
+import { OuiIcon, type OuiTone } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import Section from "../base/Section.vue";
-import { m, pct, priced, useOpen } from "./priceState";
+import { charges, m, pct, priced, useOpen } from "./priceState";
 import { LINE_ORDER, unknownLines, type Why } from "./unknownLines";
 
 /** `why`: the amount is not known (shown as a dash with the reason); `partial`: a known amount that leaves something out. */
@@ -43,45 +44,53 @@ const rows = computed<Row[]>(() => {
   const order = (id: string): number => { const i = (LINE_ORDER as readonly string[]).indexOf(id); return i < 0 ? LINE_ORDER.length : i; };
   out.sort((a, b) => order(a.id) - order(b.id));
   out.push({ id: "costTotal", label: t("line.costTotal"), minor: r.unitCostAtQuantity, total: true, ...(Object.keys(unknown).length ? { partial: true as const } : {}) });
-  const ch = derived.value.quoteInput.channels.find((c) => c.id === sel.id);
-  const f = ch ? feeFor(ch, sel.price) : null;
-  const fees = f ? f.pctCents + f.fixedCents + f.shippingCents : sel.fees;
-  if (fees > 0) out.push({ id: "fees", label: t("line.fees"), minor: fees });
-  if (f && f.taxCents > 0) out.push({ id: "tax", label: t("line.tax"), minor: f.taxCents });
+  const c = charges.value;
+  if (c && c.fees > 0) out.push({ id: "fees", label: t("line.fees"), minor: c.fees });
+  if (c && c.tax > 0) out.push({ id: "tax", label: t("line.tax"), minor: c.tax });
   if (sel.profit > 0) out.push({ id: "profit", label: t("line.profit"), minor: sel.profit, profit: true });
   return out;
 });
-const biggest = computed(() => Math.max(1, ...rows.value.filter((x) => !x.total && !x.why).map((x) => x.minor)));
-const scale = (x: number): string => `scaleX(${(x / biggest.value).toFixed(4)})`;
+// The hue of what each line is about, the same as everywhere else on the page (DESIGN.md, hue by domain); profit is the accent.
+const TONE: Record<string, OuiTone> = {
+  filament: "magenta", energy: "orange", depreciation: "cobalt", maintenance: "cobalt", failure: "violet", labor: "sky", setup: "sky",
+  fixed: "neutral", extras: "violet", orderExtras: "violet", shipping: "cobalt", fees: "teal", tax: "neutral", profit: "accent",
+};
+const tone = (id: string): OuiTone => TONE[id] ?? "neutral";
+/** The parts of the bar: every line with a known amount, in the order of the legend. Unknown lines have no segment. */
+const segments = computed(() => rows.value.filter((x) => !x.total && !x.why && x.minor > 0));
 const share = (x: number): string => pct(Math.round((x * 10000) / (priced.value?.price || 1)));
 const toggle = (id: string): void => { expanded.value = { ...expanded.value, [id]: !expanded.value[id] }; };
 </script>
 
 <template>
   <Section id="breakdown" :title="t('breakdown.title')" variant="flush" :open="open" @update:open="(v) => (open = v)">
+    <div v-if="priced" class="stack" aria-hidden="true">
+      <span v-for="x in segments" :key="x.id" class="seg" :class="{ profit: x.profit }" :data-seg="x.id" :data-tone="tone(x.id)" :data-minor="x.minor" :style="{ flexGrow: x.minor }" />
+    </div>
     <ul v-if="priced" class="rows">
       <template v-for="row in rows" :key="row.id">
         <li v-if="row.total" class="total row-grid" data-row="costTotal">
-          <span class="lbl sm">{{ row.label }}<span v-if="row.partial" class="why"> · {{ t("price.partial") }}</span></span><span class="amt num">{{ m(row.minor) }}</span>
+          <span /><span class="lbl oui-strong">{{ row.label }} <span v-if="row.partial" class="oui-chip" data-tone="warn"><span class="oui-sr">· </span>{{ t("price.partial") }}</span></span><span /><span class="amt num oui-strong">{{ m(row.minor) }}</span>
         </li>
         <li v-else-if="row.why" class="row-grid unk" :data-row="row.id" data-unknown>
-          <span class="lbl sm">{{ row.label }}<span class="why"> · {{ t(`breakdown.unknown.${row.why}`) }}</span></span>
-          <span class="amt num"><span aria-hidden="true">—</span><span class="sr-only">{{ t("a11y.unknown") }}</span></span>
+          <span class="key" :data-tone="tone(row.id)" aria-hidden="true" />
+          <span class="lbl">{{ row.label }} <span class="oui-chip why" data-tone="warn"><span class="oui-sr">· </span>{{ t(`breakdown.unknown.${row.why}`) }}</span></span><span />
+          <span class="amt num gap"><span aria-hidden="true">—</span><span class="oui-sr">{{ t("a11y.unknown") }}</span></span>
         </li>
         <template v-else>
           <li class="row-grid" :data-row="row.id">
-            <span class="lbl sm">
+            <span class="key" :data-tone="tone(row.id)" aria-hidden="true" />
+            <span class="lbl" :class="{ 'oui-strong': row.profit }">
               <Button v-if="row.detail" type="button" text severity="secondary" size="small" class="exp" :aria-expanded="!!expanded[row.id]" @click="toggle(row.id)">
-                <span class="chev" :class="{ on: expanded[row.id] }"><Icon name="chevron-right" /></span><span>{{ row.label }}</span>
+                <span>{{ row.label }}</span><span class="chev" :class="{ on: expanded[row.id] }"><OuiIcon :icon="I.chevronRight" :size="12" /></span>
               </Button>
-              <template v-else>{{ row.label }}</template><span v-if="row.partial" class="why"> · {{ t("price.partial") }}</span>
+              <template v-else>{{ row.label }}</template> <span v-if="row.partial" class="oui-chip why" data-tone="warn"><span class="oui-sr">· </span>{{ t("price.partial") }}</span>
             </span>
-            <span class="amt num">{{ m(row.minor) }}</span>
-            <span class="shr num sm muted">{{ share(row.minor) }}</span>
-            <span class="track" aria-hidden="true"><span class="bar" :class="{ profit: row.profit }" :style="{ transform: scale(row.minor) }" :data-scale="(row.minor / biggest).toFixed(4)" /></span>
+            <span class="shr num oui-muted">{{ share(row.minor) }}</span>
+            <span class="amt num" :class="{ 'oui-strong': row.profit }">{{ m(row.minor) }}</span>
           </li>
-          <li v-for="d in expanded[row.id] ? row.detail : []" :key="`${row.id}-${d.label}`" class="row-grid det sm muted">
-            <span class="lbl">{{ d.label }}</span><span class="amt num">{{ m(d.minor) }}</span>
+          <li v-for="d in expanded[row.id] ? row.detail : []" :key="`${row.id}-${d.label}`" class="row-grid det oui-meta">
+            <span /><span class="lbl">{{ d.label }}</span><span /><span class="amt num">{{ m(d.minor) }}</span>
           </li>
         </template>
       </template>
@@ -90,19 +99,18 @@ const toggle = (id: string): void => { expanded.value = { ...expanded.value, [id
 </template>
 
 <style scoped>
-.rows { list-style: none; margin: 0; padding: 0; }
-.row-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(88px, max-content) 64px; column-gap: 8px; align-items: center; min-height: 24px; padding-top: 6px; }
-.row-grid.det { padding-top: 2px; padding-left: 20px; }
+/* a composition: one 10 px segmented bar with a legend of squares */
+.stack { display: flex; gap: 2px; height: 10px; margin-bottom: var(--oui-s3); }
+.seg { flex: 0 1 0; min-width: 3px; border-radius: 3px; background: var(--oui-tone); transition: flex-grow var(--oui-base) var(--oui-ease); }
+.rows { list-style: none; padding: 0; display: grid; gap: 6px; }
+.row-grid { display: grid; grid-template-columns: 10px minmax(0, 1fr) 52px minmax(72px, max-content); align-items: center; gap: var(--oui-s2); min-height: 20px; }
+.key { width: 10px; height: 10px; border-radius: 3px; background: var(--oui-tone); }
 .lbl { min-width: 0; }
-.why { color: var(--opc-warn); font-weight: 500; }
-.unk .amt { color: var(--opc-muted); }
-.amt, .shr { text-align: right; }
-.track { grid-column: 1 / -1; display: block; height: 4px; margin-top: 4px; background: var(--opc-track); border-radius: var(--opc-r-pill); overflow: hidden; }
-.bar { display: block; height: 100%; width: 100%; background: var(--opc-bar); transform-origin: left center; transition: transform var(--opc-dur) var(--opc-ease); }
-.bar.profit { background: var(--opc-bar-profit); }
-@media (forced-colors: active) { .track { border: 1px solid CanvasText; } .bar { background: CanvasText; forced-color-adjust: none; } }
-.total { margin-top: 8px; border-top: 1px solid var(--opc-border); padding-top: 8px; font-weight: 500; }
-.lbl :deep(.exp) { padding: 0 6px 0 0; min-height: 0; color: inherit; font: inherit; line-height: inherit; font-weight: 400; gap: 0; vertical-align: baseline; }
-.chev { display: inline-flex; margin-right: 4px; color: var(--opc-muted); transition: transform var(--opc-dur-fast) var(--opc-ease); }
+.amt, .shr { text-align: end; }
+.total { margin-block: 2px; padding-block: 6px; border-block: 1px solid var(--oui-border); }
+.lbl :deep(.exp) { height: auto; min-height: 0; padding: 0; gap: 2px; color: inherit; font: inherit; line-height: inherit; vertical-align: baseline; }
+.lbl :deep(.exp:hover) { background: none; text-decoration: underline; }
+.chev { display: inline-flex; color: var(--oui-muted); transition: transform var(--oui-fast) var(--oui-ease); }
 .chev.on { transform: rotate(90deg); }
+@media (forced-colors: active) { .seg, .key { background: CanvasText; forced-color-adjust: none; } }
 </style>

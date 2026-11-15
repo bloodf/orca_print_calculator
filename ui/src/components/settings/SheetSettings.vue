@@ -10,7 +10,8 @@ import { sampleSheetModel } from "../../quoteExport";
 import { DEFAULT_ACCENT } from "../../state/sheet";
 import { currency, patchSettings, store } from "../../state/store";
 import { toast } from "../../state/toast";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import NumberField from "../base/NumberField.vue";
 import QuoteSheet from "../quotes/QuoteSheet.vue";
 import TextField from "./TextField.vue";
@@ -50,15 +51,15 @@ function removeLogo(): void {
   <div class="se">
     <div class="se-form">
       <fieldset class="se-group">
-        <legend class="sm muted">{{ t("sheet.groupBrand") }}</legend>
+        <legend class="sm oui-muted">{{ t("sheet.groupBrand") }}</legend>
         <div class="se-logo row">
-          <span class="se-thumb" :class="{ empty: !sheet.logo }"><img v-if="sheet.logo" :src="sheet.logo" :alt="t('sheet.logo')"><Icon v-else name="upload" /></span>
+          <span class="se-thumb" :class="{ empty: !sheet.logo }"><img v-if="sheet.logo" :src="sheet.logo" :alt="t('sheet.logo')"><OuiIcon v-else :icon="I.upload" /></span>
           <div>
             <div class="row se-logo-btns">
-              <Button severity="secondary" outlined type="button" :aria-busy="busy ? 'true' : undefined" @click="file?.click()"><Icon name="upload" /><span>{{ t(sheet.logo ? "sheet.logoReplace" : "sheet.logoAdd") }}</span></Button>
-              <Button v-if="sheet.logo" text type="button" @click="removeLogo"><Icon name="trash" /><span>{{ t("sheet.logoRemove") }}</span></Button>
+              <Button severity="secondary" type="button" :aria-busy="busy ? 'true' : undefined" @click="file?.click()"><OuiIcon :icon="I.upload" /><span>{{ t(sheet.logo ? "sheet.logoReplace" : "sheet.logoAdd") }}</span></Button>
+              <Button v-if="sheet.logo" text type="button" @click="removeLogo"><OuiIcon :icon="I.trash" /><span>{{ t("sheet.logoRemove") }}</span></Button>
             </div>
-            <p class="sm muted">{{ t("sheet.logoHelp") }}</p>
+            <p class="sm oui-muted">{{ t("sheet.logoHelp") }}</p>
           </div>
           <input ref="file" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" tabindex="-1" aria-hidden="true" data-testid="logo-file" @change="onPick">
         </div>
@@ -66,7 +67,7 @@ function removeLogo(): void {
           <TextField :model-value="sheet.shopName" :label="t('sheet.shopName')" :maxlength="60" @update:model-value="(v) => patchSheet({ shopName: v })" />
           <TextField :model-value="sheet.taxId" :label="t('sheet.taxId')" :maxlength="40" :helper="t('sheet.taxIdHelp')" @update:model-value="(v) => patchSheet({ taxId: v })" />
           <div class="se-color">
-            <label for="sheet-accent" class="sm muted">{{ t("sheet.accent") }}</label>
+            <label for="sheet-accent" class="sm oui-muted">{{ t("sheet.accent") }}</label>
             <div class="row">
               <ColorPicker format="hex" :model-value="sheet.accent.replace('#', '')" :pt="{ preview: { 'aria-label': t('sheet.accent') } }" @update:model-value="(v) => patchSheet({ accent: `#${String(v).replace('#', '')}` })" />
               <InputText id="sheet-accent" class="num se-hex" maxlength="7" spellcheck="false" autocomplete="off" :model-value="sheet.accent" :invalid="!HEX.test(sheet.accent)" @input="onHex" />
@@ -76,7 +77,7 @@ function removeLogo(): void {
         </div>
       </fieldset>
       <fieldset class="se-group">
-        <legend class="sm muted">{{ t("sheet.groupContact") }}</legend>
+        <legend class="sm oui-muted">{{ t("sheet.groupContact") }}</legend>
         <div class="form-grid">
           <TextField :model-value="sheet.phone" :label="t('sheet.phone')" :maxlength="40" @update:model-value="(v) => patchSheet({ phone: v })" />
           <TextField :model-value="sheet.email" :label="t('sheet.email')" :maxlength="80" @update:model-value="(v) => patchSheet({ email: v })" />
@@ -85,7 +86,7 @@ function removeLogo(): void {
         <TextField :model-value="sheet.address" :label="t('sheet.address')" :maxlength="280" multiline :rows="2" @update:model-value="(v) => patchSheet({ address: v })" />
       </fieldset>
       <fieldset class="se-group">
-        <legend class="sm muted">{{ t("sheet.groupTerms") }}</legend>
+        <legend class="sm oui-muted">{{ t("sheet.groupTerms") }}</legend>
         <TextField :model-value="sheet.payment" :label="t('sheet.payment')" :maxlength="280" multiline :rows="2" :helper="t('sheet.paymentHelp')" @update:model-value="(v) => patchSheet({ payment: v })" />
         <TextField :model-value="sheet.footer" :label="t('sheet.footer')" :maxlength="280" multiline :rows="2" :helper="t('sheet.footerHelp')" @update:model-value="(v) => patchSheet({ footer: v })" />
         <div class="form-grid">
@@ -98,7 +99,7 @@ function removeLogo(): void {
       </fieldset>
     </div>
     <div class="se-preview">
-      <p class="sm muted">{{ t("sheet.previewLabel") }}</p>
+      <p class="sm oui-muted">{{ t("sheet.previewLabel") }}</p>
       <QuoteSheet :model="sample" />
     </div>
   </div>
@@ -111,7 +112,7 @@ function removeLogo(): void {
 .se-group > * + * { margin-top: 12px; }
 .se-logo > * + * { margin-left: 12px; }
 .se-logo-btns > * + * { margin-left: 8px; }
-.se-thumb { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 56px; padding: 4px; background: var(--opc-raised); border: 1px solid var(--opc-border); border-radius: var(--opc-r-control); color: var(--opc-muted); }
+.se-thumb { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 56px; padding: 4px; background: var(--oui-surface); border: 1px solid var(--oui-border); border-radius: var(--oui-radius); color: var(--oui-muted); }
 .se-thumb.empty { border-style: dashed; }
 .se-thumb img { max-width: 100%; max-height: 100%; }
 .se-color label { display: block; min-height: 24px; line-height: 24px; }
@@ -121,6 +122,6 @@ function removeLogo(): void {
 .se-preview :deep(.quote-sheet) { width: 100%; margin: 0; padding: 20px; font-size: 9.5pt; }
 @media (min-width: 1280px) {
   .se { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-column-gap: 24px; align-items: start; }
-  .se-preview { position: sticky; top: calc(var(--opc-header-h) + 12px); }
+  .se-preview { position: sticky; top: calc(52px + 12px); }
 }
 </style>

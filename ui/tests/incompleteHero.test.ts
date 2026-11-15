@@ -27,11 +27,11 @@ describe("incomplete price (C03, B-26)", () => {
     expect(price.classList.contains("partial")).toBe(true);
     const line = txt(el.querySelector("[data-testid=incomplete-line]"));
     expect(line).toMatch(/^Incomplete: \d+ items? missing/);
-    expect(txt(el.querySelector(".tiles"))).toMatch(/Profit per piece · partial.*Margin · partial/);
-    // the line sits right under the number, before the order line and before the actions
-    expect(price.nextElementSibling?.getAttribute("data-testid")).toBe("incomplete-line");
+    expect(txt(el.querySelector(".tiles"))).toMatch(/Profit per piece.* · partial.*Margin.* · partial/);
+    // the line sits right under the price block, before the order controls and before the actions
+    expect(el.querySelector("[data-price-hero]")!.nextElementSibling?.getAttribute("data-testid")).toBe("incomplete-line");
   });
-  test("a complete price keeps the amber hero with no incomplete marks", async () => {
+  test("a complete price keeps the accent hero with no incomplete marks", async () => {
     load("ok");
     const el = await show(PricePanel);
     expect(el.querySelector("[data-testid=hero-price]")!.classList.contains("partial")).toBe(false);
@@ -82,7 +82,7 @@ describe("incomplete price (C03, B-26)", () => {
   test("the narrow bar is neutral and says incomplete too", async () => {
     load("unknown");
     const el = await show(PriceBar, { hidden: false });
-    expect(el.querySelector(".price-amber")!.classList.contains("partial")).toBe(true);
+    expect(el.querySelector(".price-figure")!.classList.contains("partial")).toBe(true);
     expect(txt(el)).toContain("incomplete");
   });
 });

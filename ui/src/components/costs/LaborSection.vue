@@ -8,8 +8,9 @@ import { currency, digits } from "../../state/store";
 import type { OverridableKey } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
+import * as I from "../../../shared/src/icons";
 import Section from "../base/Section.vue";
-import { hasOverride, hasProblem, perPiece, saveSectionDefaults, useDefault, useOpen } from "./shared";
+import { hasOverride, hasProblem, perPiece, saveSectionDefaults, sectionAmount, useDefault, useOpen } from "./shared";
 
 const KEYS: OverridableKey[] = ["laborPerHourMinor", "laborMinutes", "setupMinutes"];
 const rate = useDefault("laborPerHourMinor");
@@ -21,10 +22,11 @@ const summary = computed(() => {
   const amount = perPiece("labor", "setup");
   return amount === null ? "—" : t("summary.labor", { minutes: count(mins.value.value, intlLocale()), amount: money(amount, currency.value, intlLocale()) });
 });
+const amount = computed(() => sectionAmount("labor", "setup"));
 </script>
 
 <template>
-  <Section id="labor" help="labor" :title="t('section.labor')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('setup', 'costs.labor')" @update:open="setOpen">
+  <Section id="labor" help="labor" :icon="I.hand" tone="sky" :amount="amount.amount" :partial="amount.partial" :title="t('section.labor')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('setup', 'costs.labor')" @update:open="setOpen">
     <div class="form-grid">
       <MoneyField
         id="field-laborPerHourMinor" :model-value="rate.value.value" :label="t('field.laborRate')" :digits="digits" :currency="currency" :step="10 ** digits" unit="/h" nullable
@@ -44,5 +46,5 @@ const summary = computed(() => {
 </template>
 
 <style scoped>
-.foot { margin-top: var(--opc-s3); padding-top: var(--opc-s2); }
+.foot { margin-top: var(--oui-s3); padding-top: var(--oui-s2); }
 </style>

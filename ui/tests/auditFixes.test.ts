@@ -9,11 +9,13 @@ import FirstRunChecklist from "../src/components/FirstRunChecklist.vue";
 import NumberField from "../src/components/base/NumberField.vue";
 import Segmented from "../src/components/base/Segmented.vue";
 import PlateList from "../src/components/plates/PlateList.vue";
+import PlateNotices from "../src/components/plates/PlateNotices.vue";
 import PricePanel from "../src/components/price/PricePanel.vue";
 import PriceFlags from "../src/components/price/PriceFlags.vue";
 import QuoteActions from "../src/components/quotes/QuoteActions.vue";
 import { setLocale } from "../src/i18n";
 import { exportBlock, sheetFor } from "../src/quoteFlow";
+import { DEFAULT_ACCENT } from "../src/state/sheet";
 import { closeQuote, openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import { derived, flushSettings, patchSettings, setView, store } from "../src/state/store";
 import { clearToasts, toasts } from "../src/state/toast";
@@ -59,20 +61,26 @@ describe("F13 export block reasons", () => {
     expect(derived.value.notCounted.map((n) => n.kind)).toEqual(expect.arrayContaining(["energy", "labor"]));
     expect(exportBlock()).toBe("");
   });
-  test("QuoteActions shows the reason instead of the buttons", async () => {
+  test("the price panel lists the reason and Print and CSV are disabled, pointing at it", async () => {
     load("unknown");
-    const el = await show(QuoteActions);
+    const el = await show(PricePanel);
     expect(txt(el)).toContain("Not ready to send: 2 things to fix.");
     expect(txt(el)).toContain("Plate 1: print time is unknown.");
     expect(txt(el)).toContain("Slice again in OrcaSlicer, then Refresh.");
-    expect(el.textContent).not.toContain("CSV");
+    const qa = await show(QuoteActions);
+    for (const id of ["print", "csv"]) {
+      const b = qa.querySelector<HTMLButtonElement>(`[data-testid=${id}]`)!;
+      expect(b.disabled).toBe(true);
+      expect(b.getAttribute("aria-describedby")).toBe("quote-gaps");
+    }
+    expect(el.querySelector("#quote-gaps")).not.toBeNull();
   });
 });
 
 describe("F4 saved-quote banner and escape hatches", () => {
   test("banner with both actions; Close quote returns to a live draft", async () => {
     load("savedQuote");
-    const el = await show(PlateList);
+    const el = await show(PlateNotices);
     const banner = el.querySelector("[data-quote-banner]")!;
     expect(txt(banner)).toMatch(/Quote #\d{4} · saved/);
     expect(banner.textContent).toContain("Use current slice");
@@ -84,7 +92,7 @@ describe("F4 saved-quote banner and escape hatches", () => {
   });
   test("Use current slice keeps the other fields and thaws the plates", async () => {
     load("savedQuote");
-    const el = await show(PlateList);
+    const el = await show(PlateNotices);
     const customer = store.draft.customer;
     btn(el, "Use current slice").click();
     await flush();
@@ -95,7 +103,7 @@ describe("F4 saved-quote banner and escape hatches", () => {
     load("savedQuote");
     const fresh: HostPlate[] = fixturePlates().slice(0, 1);
     store.pendingPlates = fresh;
-    const el = await show(PlateList);
+    const el = await show(PlateNotices);
     expect(txt(el.querySelector("[data-quote-banner]"))).toContain("New slice from OrcaSlicer.");
     useCurrentSlice();
     expect(store.plates).toEqual(fresh);
@@ -113,7 +121,7 @@ describe("F5 offline alert", () => {
   test("warn alert with the URL, Retry and Settings", async () => {
     load("ok");
     store.spoolman = { ...store.spoolman, state: "offline", error: "net" };
-    const el = await show(PlateList);
+    const el = await show(PlateNotices);
     const a = el.querySelector("[data-spoolman-offline]")!;
     expect(txt(a)).toContain("isn't responding at");
     btn(a as HTMLElement, "Settings").click();
@@ -121,7 +129,7 @@ describe("F5 offline alert", () => {
   });
   test("no alert while Spoolman is fine", async () => {
     load("ok");
-    const el = await show(PlateList);
+    const el = await show(PlateNotices);
     expect(el.querySelector("[data-spoolman-offline]")).toBeNull();
   });
 });
@@ -167,7 +175,7 @@ describe("F9 empty state", () => {
     expect(txt(list)).toContain("Slice the project in OrcaSlicer.");
     const panel = await show(PricePanel);
     const s = panel.querySelector('[data-testid="hero-sentence"] p')!;
-    expect(s.className).toContain("sm");
+    expect(s.className).toContain("oui-muted");
     expect(s.className).not.toContain("xl-sentence");
     expect(panel.querySelector(".qa")).toBeNull();
   });
@@ -220,20 +228,21 @@ describe("F12 provenance and snapshot", () => {
   });
 });
 
-describe("F15 header tabs: manual activation", () => {
-  test("arrows and End move focus only; Enter/click activates", async () => {
+describe("F15 header tabs: keyboard", () => {
+  test("arrows and End move focus and select the tab (the shared app bar); click activates", async () => {
     const seen: string[] = [];
     const el = await show(AppHeader, { view: "calc", "onUpdate:view": (v: string) => seen.push(v) });
     const tabs = [...el.querySelectorAll<HTMLElement>("[role=tab]")];
-    const key = async (to: HTMLElement, code: string) => { to.dispatchEvent(new KeyboardEvent("keydown", { key: code, code, bubbles: true })); await flush(); };
+    const frame = () => new Promise((r) => requestAnimationFrame(() => r(null)));
+    const key = async (to: HTMLElement, code: string) => { to.dispatchEvent(new KeyboardEvent("keydown", { key: code, code, bubbles: true })); await flush(); await frame(); };
     tabs[0]!.focus();
     await key(tabs[0]!, "ArrowRight");
     expect(document.activeElement).toBe(tabs[1]);
     await key(tabs[1]!, "End");
     expect(document.activeElement).toBe(tabs[3]);
-    expect(seen).toEqual([]); // moving focus never switches the view
-    tabs[3]!.click();
-    expect(seen).toEqual(["settings"]);
+    expect(seen).toEqual(["quotes", "settings"]);
+    tabs[0]!.click();
+    expect(seen).toEqual(["quotes", "settings", "calc"]);
   });
   test("automatic mode still selects on arrow", async () => {
     const seen: string[] = [];
@@ -324,7 +333,7 @@ describe("sheet details are frozen at save time", () => {
     // brand text fields are frozen too; the logo and the next number are not
     expect(q?.sheet).toEqual({
       shopName: "Old Shop", footer: "Old footer", validityDays: 7, taxId: "", phone: "+55 11 5550-0100", email: "hello@studiolayer.example",
-      website: "", address: "Rua das Camadas, 120\nSão Paulo, SP", payment: "", accent: "#00675B",
+      website: "", address: "Rua das Camadas, 120\nSão Paulo, SP", payment: "", accent: DEFAULT_ACCENT, // the fixture never chose a colour
     });
     patchSettings((s) => ({ sheet: { ...s.sheet, shopName: "New Shop", footer: "New footer", validityDays: 30 } }));
     const m = sheetFor(store.quotes.find((x) => x.id === q!.id)!)!;

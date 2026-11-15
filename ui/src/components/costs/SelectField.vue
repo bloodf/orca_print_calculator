@@ -15,14 +15,14 @@ const fid = `sf-${useId()}`;
 
 <template>
   <div class="sf">
-    <div class="sf-head row" :class="{ 'sr-only': hideLabel }">
+    <div class="sf-head row" :class="{ 'oui-sr': hideLabel }">
       <span v-if="overridden" class="ovr-dot" aria-hidden="true" />
-      <span v-if="overridden" class="sr-only">{{ t("a11y.edited") }}</span>
-      <label :id="`${fid}-l`" class="sm muted">{{ label }}</label>
+      <span v-if="overridden" class="oui-sr">{{ t("a11y.edited") }}</span>
+      <label :id="`${fid}-l`" class="sm oui-muted">{{ label }}</label>
       <ResetButton v-if="overridden" :label="label" :default-text="defaultText" @click="$emit('reset')" />
     </div>
     <Select :input-id="fid" :model-value="modelValue" :options="options" option-label="label" option-value="value" :aria-labelledby="`${fid}-l`" :aria-describedby="helper ? `${fid}-d` : undefined" fluid @update:model-value="(v: string) => $emit('update:modelValue', v)" />
-    <p v-if="helper" :id="`${fid}-d`" class="sm muted sf-help">{{ helper }}</p>
+    <p v-if="helper" :id="`${fid}-d`" class="sm oui-muted sf-help">{{ helper }}</p>
   </div>
 </template>
 
