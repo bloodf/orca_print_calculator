@@ -6,7 +6,7 @@
 
 Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na janela principal que precifica cada placa do projeto aberto. O custo do filamento vem do seu estoque no Spoolman, a energia é sugerida pelo modelo da impressora, e você soma mão de obra, depreciação, taxa de falha, extras, frete, imposto e taxas dos canais de venda. O resultado é um preço de venda sugerido, a comparação entre canais, o preço por lote, orçamentos salvos e um orçamento para imprimir ou exportar para o cliente.
 
-**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão desta árvore é 0.3.1 ([changelog](CHANGELOG.md)). Os testes usam só simulações (host simulado, fixtures, um módulo `orca` falso, Chrome headless); nada foi executado contra um OrcaSlicer, servidor Spoolman, impressora ou câmera reais. Na última checagem (2026-11-11) o hub do OrcaCloud listava a 0.1.1; ele só lista a 0.2.0 depois que a versão 0.2.0 for publicada. A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então a aba deste plugin fica ao lado das de outros plugins (Spooler, U1 Control).
+**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão desta árvore é 0.3.1 ([changelog](CHANGELOG.md)). Os testes usam só simulações (host simulado, fixtures, um módulo `orca` falso, Chrome headless); nada foi executado contra um OrcaSlicer, servidor Spoolman, impressora ou câmera reais. O hub do OrcaCloud só lista uma versão depois que ela é publicada, então ele pode estar atrás desta árvore. A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então a aba deste plugin fica ao lado das de outros plugins (Spooler, U1 Control).
 
 <!-- related-plugins:start -->
 ## Conheça os outros plugins
@@ -70,7 +70,7 @@ Capturas atuais com host simulado (Chrome headless numa build local com o host d
 - **Fatiamento.** Fatie uma placa no OrcaSlicer e o plugin lê o G-code que o Orca gera. O "Fatiar tudo" do OrcaSlicer preenche todas as placas, uma depois da outra.
 - **Aviso de desatualizado.** O Orca não diz qual placa mudou. Quando algo muda depois de um fatiamento, a aba marca o projeto como "pode estar desatualizado". Ela não percebe espelhar, centralizar e mudanças de ajuste sem salvar. Fatie de novo depois dessas ações.
 - **Importar `.gcode.3mf` fatiado.** "Importar arquivo fatiado" lê as placas de um arquivo exportado em Arquivo, Exportar, Exportar todos os arquivos fatiados. As placas importadas continuam na tela quando você fatia no Orca; um aviso de "Novo fatiamento" oferece "Usar" para trocar para o novo fatiamento.
-- **Preço do filamento.** Primeiro o Spoolman, depois o preço do perfil, depois um preço digitado por você. Veja [Correspondência com o Spoolman](#correspondência-com-o-spoolman).
+- **Preço do filamento.** Primeiro o Spoolman, depois um preço digitado por você para o perfil de filamento, depois o preço do perfil. Veja [Correspondência com o Spoolman](#correspondência-com-o-spoolman).
 - **Potência da impressora.** O plugin sugere os watts médios pelo modelo e mostra o selo "Estimado". Muitos modelos não têm entrada, e esses recebem um valor genérico de 120 W. Calibre com uma tomada inteligente (kWh dividido pelas horas de impressão, vezes 1000) e digite o seu valor. O seu valor prevalece.
 - **Seções de custo.** Máquina e energia (potência, preço e vida útil da impressora, preço do kWh, manutenção, custo fixo por hora de impressão, taxa de falha), Mão de obra, Extras e acessórios (do seu catálogo), Frete e Taxa de venda.
 - **Extras e estoque.** Uma aba para o catálogo de extras, com a quantidade em estoque opcional por item, e um resumo somente leitura do filamento no Spoolman (carretéis e gramas restantes). A calculadora avisa quando um orçamento precisa de mais de um extra do que você tem, somando todas as linhas do mesmo item, por peça (inclusive as sobras), por cópia de placa e rodada, e por pedido. Nada é descontado sozinho.
@@ -91,7 +91,7 @@ Capturas atuais com host simulado (Chrome headless numa build local com o host d
 
 ## Instalação
 
-O plugin está no hub de plugins do OrcaCloud: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f (a 0.1.1 era a mais recente na última checagem; a 0.2.0 aparece lá depois de publicada). Assine por lá e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. Ele ainda não foi verificado dentro do OrcaSlicer, então espere arestas.
+O plugin está no hub de plugins do OrcaCloud: https://cloud.orcaslicer.com/app/plugins/shared-plugins/5f807b01-bfb8-4ad4-a77d-e85e337e4c7f (o hub mostra a última versão publicada, que pode ser mais antiga que esta árvore). Assine por lá e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. Ele ainda não foi verificado dentro do OrcaSlicer, então espere arestas.
 
 Para testar um build local no macOS:
 
@@ -111,7 +111,7 @@ Cada slot de filamento do projeto é ligado ao Spoolman nesta ordem. A primeira 
 2. O mapeamento do plugin Spooler, se você usa o Spooler.
 3. `(#ID)` no nome do perfil de filamento.
 4. `Spoolman filament N` nas `filament_notes` do perfil.
-5. Sem correspondência: o `filament_cost` do perfil por kg, marcado como "Preço do perfil". Se o perfil não tem custo, digite um preço no slot ("Digitado"). Um slot sem preço conta como 0 e o painel de preço avisa. Um slot ligado a um filamento do Spoolman sem preço (nenhum carretel com preço, nenhum preço no filamento) segue a mesma regra: preço digitado, depois preço do perfil.
+5. Sem correspondência: um preço por kg digitado por você para esse perfil ("Digitado"), senão o `filament_cost` do perfil por kg, marcado como "Preço do perfil". Um slot sem preço conta como 0 e o painel de preço avisa. Um slot ligado a um filamento do Spoolman sem preço (nenhum carretel com preço, nenhum preço no filamento) segue a mesma regra: preço digitado, depois preço do perfil.
 
 O preço por kg vem do carretel usado mais recentemente que não esteja arquivado (preço do carretel dividido pelo peso inicial). Sem carretel, vem do preço do filamento dividido pelo peso dele.
 
