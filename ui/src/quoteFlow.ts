@@ -4,7 +4,7 @@ import { copyText } from "./clipboard";
 import { failText } from "./hostError";
 import { computeQuote } from "./engine/quote";
 import { t } from "./i18n";
-import { buildCsv } from "./quoteCsv";
+import { buildCsv, buildQuoteListCsv } from "./quoteCsv";
 import { buildSheetModel, sheetHtml, type SheetModel } from "./quoteExport";
 import { exportBlockOf, type ExportBlock } from "./state/completeness";
 import { isDirty, savedOf } from "./state/dirty";
@@ -77,6 +77,16 @@ export async function exportQuote(kind: ExportKind, q: SavedQuote | null = null)
   if (rec && refuse(rec)) return;
   const file = rec ? exportText(rec, kind) : null;
   if (!file) { toast({ text: t("export.failed"), tone: "bad" }); return; }
+  await sendFile(file);
+}
+
+/** The saved quotes (as listed, filter applied) as one CSV for bookkeeping, named for the local day: `quotes-YYYY-MM-DD.csv`. */
+export async function exportQuoteList(quotes: readonly SavedQuote[], now: Date = new Date()): Promise<void> {
+  const day = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  await sendFile({ name: `quotes-${day}.csv`, text: buildQuoteListCsv(quotes, (q) => !savedExportBlock(q)) });
+}
+
+async function sendFile(file: { name: string; text: string }): Promise<void> {
   try {
     const { path } = await call("export_file", file);
     toast({ text: t("export.saved", { path }), action: { label: t("export.copyPath"), run: () => void copyText(path).then((ok) => { if (ok) toast({ text: t("export.copied") }); }) }, ms: 12000 });

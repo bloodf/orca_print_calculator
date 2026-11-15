@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { computeQuote } from "../src/engine/quote";
 import { setLocale } from "../src/i18n";
 import { savedQuotes } from "../src/mock/fixtures";
-import { CSV_BOM, CSV_HEADER, buildCsv, csvMoney, csvText } from "../src/quoteCsv";
+import { CSV_BOM, CSV_HEADER, QUOTE_LIST_HEADER, buildCsv, buildQuoteListCsv, csvMoney, csvText } from "../src/quoteCsv";
 import { brandOf, buildSheetModel, sampleSheetModel, esc, sheetHtml, splitLargestRemainder, type SheetModel, type SheetSource } from "../src/quoteExport";
 
 beforeEach(() => { setLocale("en"); });
@@ -174,5 +174,29 @@ describe("hand-edited dates", () => {
     const m = buildSheetModel(source({ dateIso: "yesterday" }));
     expect(m.dateValue).toBe("");
     expect(m.validValue).toBe("");
+  });
+});
+
+describe("buildQuoteListCsv: one row per saved quote, for bookkeeping", () => {
+  test("header, exact money in each quote's own currency, formula guard, completeness", () => {
+    const [a, b] = savedQuotes();
+    const yen = { ...b!, id: "q-y", no: 9, currency: "JPY", customer: "=HYPERLINK(1)", summary: { ...b!.summary, price: 1234, grandTotal: 12340 } };
+    const out = buildQuoteListCsv([a!, yen], (q) => q.id !== "q-y");
+    expect(out.startsWith(CSV_BOM)).toBe(true);
+    const lines = out.slice(1).split("\r\n").filter(Boolean);
+    expect(lines[0]).toBe(QUOTE_LIST_HEADER.join(","));
+    expect(QUOTE_LIST_HEADER).toEqual(["quote_no", "date", "customer", "title", "currency", "channel", "quantity", "unit_price", "total", "margin_pct", "complete"]);
+    expect(lines).toHaveLength(3);
+    const first = lines[1]!.split(",");
+    expect(first[0]).toBe(String(a!.no).padStart(4, "0"));
+    expect(first[7]).toBe(csvMoney(a!.summary.price, 2));
+    expect(first.at(-1)).toBe("yes");
+    expect(lines[2]).toContain(",'=HYPERLINK(1),");
+    expect(lines[2]).toContain(",JPY,");
+    expect(lines[2]!.split(",").slice(7, 9)).toEqual(["1234", "12340"]);
+    expect(lines[2]!.endsWith(",no")).toBe(true);
+  });
+  test("an empty list is just the header", () => {
+    expect(buildQuoteListCsv([], () => true)).toBe(CSV_BOM + QUOTE_LIST_HEADER.join(",") + "\r\n");
   });
 });

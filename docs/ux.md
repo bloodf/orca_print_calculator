@@ -753,7 +753,12 @@ field rule; auto-expanded when filled): Title (defaults to project name), Custom
 - Print and CSV on an unsaved draft save first (toast "Saved as quote #{no}").
 
 **QuotesView**: header row: title "Quotes" xl 600, count muted, search input (240px, `search` icon prefix,
-filters title/customer/number). Table: No. (`#0042`), Title, Customer, Date (updatedAt, date medium), Qty,
+filters title/customer/number), then `.btn` "Export list" (`download` icon, `title` `quotes.exportListHelp`, shown while
+at least one row is listed): `quoteFlow.exportQuoteList(shown)` sends `export_file` `quotes-YYYY-MM-DD.csv` (local day)
+built by `quoteCsv.buildQuoteListCsv`: BOM, CRLF, header `quote_no,date,customer,title,currency,channel,quantity,unit_price,
+total,margin_pct,complete`, one row per listed quote from its frozen `summary` (never recomputed), money in the quote's own
+currency digits, text cells through the formula guard, `complete` = `yes` when `savedExportBlock` allows export. Same
+saved-path toast as a single export. Table: No. (`#0042`), Title, Customer, Date (updatedAt, date medium), Qty,
 Channel, Total (`summary.grandTotal`, fg), Margin (muted), actions: `.btn` "Open" + `more` menu (Duplicate,
 Print, CSV, Delete). Sorted updatedAt desc. Row height 36. Open → Calculator with the quote loaded (frozen
 plates banner §6.10). Delete → immediate, toast "Quote #0042 deleted" + Undo (8 s). No amber anywhere.
@@ -1545,6 +1550,8 @@ via `Intl.PluralRules` with `_one` / `_other` suffixed keys. `i18n.ts` exports `
 | quotes.count_one | {n} quote | {n} orçamento |
 | quotes.count_other | {n} quotes | {n} orçamentos |
 | quotes.search | Search quotes | Buscar orçamentos |
+| quotes.exportList | Export list | Exportar lista |
+| quotes.exportListHelp | One CSV row per quote shown, from its saved numbers | Uma linha de CSV por orçamento listado, com os números salvos |
 | quotes.noMatch | No quote matches “{q}”. | Nenhum orçamento encontrado para “{q}”. |
 | quotes.col.no | No. | Nº |
 | quotes.col.title | Title | Título |

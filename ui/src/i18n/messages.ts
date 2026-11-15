@@ -333,6 +333,8 @@ export const messages: Record<string, readonly [string, string?]> = {
   "quotes.skipped_other": ["{n} saved quotes could not be read. They stay untouched in the file.", "{n} orçamentos salvos não puderam ser lidos. Eles continuam intactos no arquivo."],
   "quotes.count_other": ["{n} quotes", "{n} orçamentos"],
   "quotes.search": ["Search quotes", "Buscar orçamentos"],
+  "quotes.exportList": ["Export list", "Exportar lista"],
+  "quotes.exportListHelp": ["One CSV row per quote shown, from its saved numbers", "Uma linha de CSV por orçamento listado, com os números salvos"],
   "quotes.noMatch": ["No quote matches “{q}”.", "Nenhum orçamento encontrado para “{q}”."],
   "quotes.col.no": ["No.", "Nº"],
   "quotes.col.actions": ["Actions", "Ações"],
