@@ -14,7 +14,7 @@ The other plugins of this family publish the same way.
 
 - The tag is `vX.Y.Z` (numeric) and equals `version` in `pyproject.toml`; `scripts/build.py --release-tag` checks it again.
 - The same gates as CI: shared UI snapshot, lint, typecheck, coverage thresholds, contract fixtures, build,
-  bundle size (900,000 B), Python tests.
+  bundle size (960,000 B), Python tests.
 - `dist/SHA256SUMS` matches the wheel, and the wheel's metadata and `VERSION` equal the version.
 - `CHANGELOG.md` has a non-empty `## [X.Y.Z] - date` section. It becomes the GitHub release notes (when empty)
   and the Orca Cloud changelog. Orca Cloud keeps at most 4000 characters, so `scripts/release_notes.py` cuts the
@@ -26,7 +26,7 @@ The other plugins of this family publish the same way.
 1. On Orca Cloud: the plugin is connected to this repository under Edit plugin > GitHub publishing (one repository
    publishes to exactly one plugin; the plugin page is listed in `brand/hub-listing.md`). A 401 from the publish
    step means this is missing.
-2. The version is higher than the one the hub lists (0.1.1 when last checked, 2026-11-11).
+2. The version is higher than the one the hub lists.
 3. GitHub Actions is enabled for the repository and the release is not a draft.
 
 ## Steps
@@ -44,7 +44,7 @@ The other plugins of this family publish the same way.
 - The run is green and its last step printed HTTP 201 (`response.json`) and "Published vX.Y.Z to Orca Cloud".
 - The release lists `orca_print_calculator_any.whl` and `SHA256SUMS`; the attached `SHA256SUMS` is the authority
   for what was published. Rebuilds on one machine are byte-identical (the release report checks
-  this), and the toolchain is pinned in the workflow (Node 24.22.2, pnpm 12.18.0, Python 3.12, `--frozen-lockfile`),
+  this), and the toolchain is pinned in the workflow (Node 26.13.1, pnpm 12.18.0, Python 3.15, `--frozen-lockfile`),
   but a build on another OS is not guaranteed to match byte for byte: compare it, and treat a difference as
   something to explain, not as a failed release.
 - The hub page lists the new version and changelog. Subscribing and enabling the plugin inside OrcaSlicer is
