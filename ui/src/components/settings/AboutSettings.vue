@@ -41,7 +41,7 @@ function reset(): void {
       <p class="sm oui-muted lbl">{{ t("about.readme") }}</p>
       <CopyValue :value="README_URL" :label="t('about.readme')" />
     </div>
-    <Button severity="danger" outlined type="button" :aria-live="armed ? 'polite' : undefined" @click="reset">{{ armed ? t("about.resetConfirm") : t("about.resetAll") }}</Button>
+    <Button severity="danger" type="button" :aria-live="armed ? 'polite' : undefined" @click="reset">{{ armed ? t("about.resetConfirm") : t("about.resetAll") }}</Button>
   </div>
 </template>
 

@@ -27,7 +27,20 @@ function observe(): void {
   const el = document.querySelector("#price [data-price-hero]") ?? document.getElementById("price");
   if (el && io) io.observe(el);
 }
+// The price column fits the window from where it starts: under the banners before the page scrolls, under the app bar once
+// it sticks. Its body scrolls inside that, so the missing-items list and the actions are never cut off at the bottom edge.
+const grid = ref<HTMLElement | null>(null);
+let frame = 0;
+function fitPrice(): void {
+  cancelAnimationFrame(frame);
+  frame = requestAnimationFrame(() => { const g = grid.value; if (g) g.style.setProperty("--price-top", `${Math.max(64, Math.round(g.getBoundingClientRect().top))}px`); });
+}
+let ro: ResizeObserver | null = null;
 onMounted(() => {
+  window.addEventListener("scroll", fitPrice, { passive: true });
+  window.addEventListener("resize", fitPrice);
+  if (typeof ResizeObserver === "function") { ro = new ResizeObserver(fitPrice); ro.observe(document.body); }
+  fitPrice();
   if (typeof window.matchMedia === "function") {
     mq = window.matchMedia("(max-width: 931px)"); // the page container is 900 px wide here: one column below it
     narrow.value = mq.matches;
@@ -39,7 +52,10 @@ onMounted(() => {
   }
 });
 watch([loading, narrow], () => void nextTick(observe));
-onBeforeUnmount(() => { mq?.removeEventListener("change", onMq); io?.disconnect(); });
+onBeforeUnmount(() => {
+  mq?.removeEventListener("change", onMq); io?.disconnect(); ro?.disconnect(); cancelAnimationFrame(frame);
+  window.removeEventListener("scroll", fitPrice); window.removeEventListener("resize", fitPrice);
+});
 </script>
 
 <template>
@@ -54,7 +70,7 @@ onBeforeUnmount(() => { mq?.removeEventListener("change", onMq); io?.disconnect(
     <template v-else>
       <PlateNotices />
       <FirstRunChecklist v-if="!store.settings.onboarded && !store.unreadable.length" />
-      <div class="calc-grid">
+      <div ref="grid" class="calc-grid">
         <div class="calc-left"><PlateList /><SectionsArea /></div>
         <PriceAside class="right" />
       </div>
@@ -73,7 +89,7 @@ onBeforeUnmount(() => { mq?.removeEventListener("change", onMq); io?.disconnect(
   .calc-grid { grid-template-columns: minmax(0, 1fr) minmax(380px, 440px); }
   /* the price stays in view while the plates and costs scroll; when it is taller than the window its own body scrolls, so the
      hero and the actions are never cut off */
-  .right { position: sticky; top: 64px; max-height: calc(100vh - 76px); display: flex; flex-direction: column; }
+  .right { position: sticky; top: 64px; max-height: calc(100vh - var(--price-top, 64px) - 12px); display: flex; flex-direction: column; }
 }
 @container oui-page (min-width: 1500px) {
   .calc-grid { grid-template-columns: minmax(0, 1fr) 460px; }

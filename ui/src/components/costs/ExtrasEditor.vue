@@ -105,7 +105,7 @@ const menuItems = computed<MenuRow[]>(() => [
       <div v-if="r.label.trim() && !inCatalog(r)" class="xsave"><Button text type="button" @click="saveToCatalog(r)">{{ t("extras.saveToCatalog") }}</Button></div>
     </div>
     <div class="add">
-      <Button :ref="(c) => (addBtn = elOf(c))" severity="secondary" outlined type="button" aria-haspopup="menu" aria-controls="extras-menu" :aria-label="t('extras.menu')" @click="menu?.toggle($event)"><OuiIcon :icon="I.plus" /><span>{{ t("extras.add") }}</span></Button>
+      <Button :ref="(c) => (addBtn = elOf(c))" severity="secondary" type="button" aria-haspopup="menu" aria-controls="extras-menu" :aria-label="t('extras.menu')" @click="menu?.toggle($event)"><OuiIcon :icon="I.plus" /><span>{{ t("extras.add") }}</span></Button>
     </div>
     <Menu id="extras-menu" ref="menu" popup :model="menuItems" :aria-label="t('extras.menu')" class="opc-menu">
       <template #item="{ item, props }">

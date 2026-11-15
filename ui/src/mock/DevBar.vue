@@ -32,8 +32,8 @@ const bar = q.get("bar") !== "0"; // `?bar=0` hides this bar in screenshots
 <template>
   <div v-if="bar" class="devbar app-chrome" role="group" aria-label="Dev harness">
     <span class="sm">dev · {{ scenario }}</span>
-    <Button type="button" size="small" severity="secondary" outlined @click="theme = theme === 'dark' ? 'light' : 'dark'">{{ theme }}</Button>
-    <Button type="button" size="small" severity="secondary" outlined @click="setLanguage(store.settings.language === 'pt-BR' ? 'en' : 'pt-BR')">{{ store.settings.language === "pt-BR" ? "pt-BR" : "en" }}</Button>
+    <Button type="button" size="small" severity="secondary" @click="theme = theme === 'dark' ? 'light' : 'dark'">{{ theme }}</Button>
+    <Button type="button" size="small" severity="secondary" @click="setLanguage(store.settings.language === 'pt-BR' ? 'en' : 'pt-BR')">{{ store.settings.language === "pt-BR" ? "pt-BR" : "en" }}</Button>
   </div>
 </template>
 

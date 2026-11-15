@@ -9,7 +9,7 @@ import { t } from "../i18n";
 import { currency, digits, finishOnboarding, locale, patchDefaults, store } from "../state/store";
 import { markupOf } from "../state/markup";
 import { toast } from "../state/toast";
-import { OuiIcon } from "../../shared/src/components";
+import { OuiIcon, OuiPanel } from "../../shared/src/components";
 import * as I from "../../shared/src/icons";
 import MoneyField from "./base/MoneyField.vue";
 import MarkupField from "./base/MarkupField.vue";
@@ -56,8 +56,8 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
 </script>
 
 <template>
-  <section class="fr surface" aria-labelledby="setup-title">
-    <h2 id="setup-title" class="lg">{{ t("setup.title") }}</h2>
+  <OuiPanel class="fr" :icon="I.wrench" tone="accent" aria-labelledby="setup-title">
+    <template #title><span id="setup-title">{{ t("setup.title") }}</span></template>
     <ol class="fr-rows">
       <li v-for="row in rows" :key="row" class="fr-row" :data-row="row" @focusout="leave(row, $event)">
         <span class="fr-mark" :class="{ on: done[row] }" aria-hidden="true"><OuiIcon v-if="done[row]" :icon="I.check" :size="12" /></span>
@@ -71,12 +71,12 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
             <template v-if="row === 'filament'">
               <template v-if="spoolerUrl">
                 <p class="sm oui-muted">{{ t("setup.spoolerFound", { url: spoolerUrl }) }}</p>
-                <div class="row fr-act"><Button severity="secondary" outlined type="button" @click="useSpooler">{{ t("setup.useSpoolman") }}</Button><Button text type="button" @click="skip">{{ t("setup.skip") }}</Button></div>
+                <div class="row fr-act"><Button severity="secondary" type="button" @click="useSpooler">{{ t("setup.useSpoolman") }}</Button><Button text type="button" @click="skip">{{ t("setup.skip") }}</Button></div>
               </template>
               <template v-else>
                 <div class="fr-url">
                   <InputText v-model="sp.url.value" type="text" inputmode="url" autocomplete="off" spellcheck="false" :placeholder="EXAMPLE_URL" :aria-label="t('spoolman.url')" :invalid="!!sp.error.value" :aria-invalid="sp.error.value ? 'true' : undefined" @keydown.enter="connect" />
-                  <Button severity="secondary" outlined type="button" @click="connect">{{ t("setup.connect") }}</Button>
+                  <Button severity="secondary" type="button" @click="connect">{{ t("setup.connect") }}</Button>
                 </div>
                 <p v-if="sp.error.value" class="sm bad" role="alert">{{ sp.error.value }}</p>
                 <Button text type="button" class="fr-skip" @click="skip">{{ t("setup.skip") }}</Button>
@@ -95,18 +95,18 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
       </li>
     </ol>
     <p class="sm oui-muted fr-perm">{{ t("setup.permission") }}</p>
-    <div class="fr-foot"><Button type="button" @click="finishOnboarding()">{{ t("setup.done") }}</Button></div>
-  </section>
+    <template #footer><Button type="button" @click="finishOnboarding()"><OuiIcon :icon="I.check" :size="14" /><span>{{ t("setup.done") }}</span></Button></template>
+  </OuiPanel>
 </template>
 
 <style scoped>
-.fr { padding: 12px 16px 16px; }
-.fr-rows { list-style: none; margin: 8px 0 0; padding: 0; }
-.fr-row { display: grid; grid-template-columns: 20px minmax(0, 1fr); grid-column-gap: 12px; padding: 10px 0; border-top: 1px solid var(--oui-border); }
+.fr-rows { list-style: none; margin: 0; padding: 0; }
+.fr-row { display: grid; grid-template-columns: 20px minmax(0, 1fr); grid-column-gap: 12px; padding: 10px 0; }
+.fr-row + .fr-row { border-top: 1px solid var(--oui-border); }
 .fr-mark { width: 18px; height: 18px; margin-top: 1px; border: 1.5px solid var(--oui-border); border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; }
 .fr-mark.on { background: var(--oui-primary); border-color: var(--oui-primary); color: var(--oui-on-primary); }
 .fr-mark :deep(svg) { width: 12px; height: 12px; }
-.fr-title { font-weight: 500; }
+.fr-title { font-weight: 600; }
 .fr-main > * + * { margin-top: 6px; }
 .fr-line :deep(.fr-edit) { padding: 2px 6px; }
 .fr-url { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-column-gap: 8px; max-width: 460px; }
@@ -114,5 +114,4 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
 .fr-skip { margin-left: -10px; }
 .fr-time { align-items: flex-start; }
 .fr-perm { margin-top: 8px; max-width: 64ch; }
-.fr-foot { margin-top: 12px; }
 </style>

@@ -56,7 +56,7 @@ function removeLogo(): void {
           <span class="se-thumb" :class="{ empty: !sheet.logo }"><img v-if="sheet.logo" :src="sheet.logo" :alt="t('sheet.logo')"><OuiIcon v-else :icon="I.upload" /></span>
           <div>
             <div class="row se-logo-btns">
-              <Button severity="secondary" outlined type="button" :aria-busy="busy ? 'true' : undefined" @click="file?.click()"><OuiIcon :icon="I.upload" /><span>{{ t(sheet.logo ? "sheet.logoReplace" : "sheet.logoAdd") }}</span></Button>
+              <Button severity="secondary" type="button" :aria-busy="busy ? 'true' : undefined" @click="file?.click()"><OuiIcon :icon="I.upload" /><span>{{ t(sheet.logo ? "sheet.logoReplace" : "sheet.logoAdd") }}</span></Button>
               <Button v-if="sheet.logo" text type="button" @click="removeLogo"><OuiIcon :icon="I.trash" /><span>{{ t("sheet.logoRemove") }}</span></Button>
             </div>
             <p class="sm oui-muted">{{ t("sheet.logoHelp") }}</p>

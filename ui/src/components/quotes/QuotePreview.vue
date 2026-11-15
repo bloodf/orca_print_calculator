@@ -47,13 +47,13 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 <template>
   <main class="preview" :aria-label="t('quote.print')">
     <div class="toolbar app-chrome">
-      <Button :ref="(c) => (back = elOf(c))" text type="button" @click="close"><OuiIcon :icon="I.chevronRight" /><span>{{ t("sheet.back") }}</span></Button>
+      <Button :ref="(c) => (back = elOf(c))" text type="button" @click="close"><OuiIcon :icon="I.chevronRight" class="back-chev" /><span>{{ t("sheet.back") }}</span></Button>
       <Segmented v-model="mode" :label="t('quote.print')" :options="[{ value: 'itemized', label: t('sheet.itemized') }, { value: 'summary', label: t('sheet.summary') }]" />
       <span class="grow" />
       <span v-if="savedOf()?.sheet" class="sm oui-muted">{{ t("sheet.frozenHint") }}</span>
       <Button text type="button" @click="editDetails"><OuiIcon :icon="I.edit" /><span>{{ t("sheet.editDetails") }}</span></Button>
       <template v-if="!block">
-        <Button severity="secondary" outlined type="button" @click="exportQuote('html')"><OuiIcon :icon="I.download" /><span>{{ t("sheet.saveHtml") }}</span></Button>
+        <Button severity="secondary" type="button" @click="exportQuote('html')"><OuiIcon :icon="I.download" /><span>{{ t("sheet.saveHtml") }}</span></Button>
         <Button type="button" @click="printNow"><OuiIcon :icon="I.file" /><span>{{ t("sheet.printPdf") }}</span></Button>
       </template>
     </div>
@@ -69,6 +69,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 .toolbar { display: flex; align-items: center; flex-wrap: wrap; min-height: 44px; padding: 6px 12px; background: var(--oui-surface); border-bottom: 1px solid var(--oui-border); margin-bottom: 16px; }
 .toolbar > * + * { margin-left: 8px; }
 .grow { flex: 1; }
+.back-chev { transform: scaleX(-1); } /* a back arrow: the shared set has the right-pointing chevron only */
 .warn { width: 720px; max-width: calc(100% - 24px); margin: 0 auto 12px; }
 .none { text-align: center; padding: 24px; }
 .preview > .quote-sheet { margin-bottom: 0; }

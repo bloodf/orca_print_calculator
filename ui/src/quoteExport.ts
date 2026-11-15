@@ -108,7 +108,7 @@ export function buildSheetModel(s: SheetSource): SheetModel {
 }
 
 /** Paper palette: the sheet is always light (docs/ux.md §5.3 QuotePreview). */
-export const PAPER = { bg: "#FFFFFF", fg: "#2B2B2B", muted: "#5C6664", rule: "#00675B", total: "#8A5800" } as const;
+export const PAPER = { bg: "#FFFFFF", fg: "#1F2328", muted: "#5C6664", rule: "#00675B", band: "#F4F6F5", line: "#DDE1E0" } as const;
 
 export const esc = (s: string): string => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
 
@@ -116,17 +116,17 @@ const CSS = `
 *{box-sizing:border-box}body{margin:0;background:${PAPER.bg};color:${PAPER.fg};font:11pt/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:720px;margin:0 auto;padding:32px}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.logo{display:block;max-height:64px;max-width:240px;margin-bottom:8px}.co{font-size:12px;color:${PAPER.muted};margin:2px 0 0}
-.shop{font-size:18px;font-weight:600}.muted{color:${PAPER.muted}}.small{font-size:12px;color:${PAPER.muted}}
+.shop{font-size:20px;font-weight:700;letter-spacing:-.01em}.no{font-size:17px;font-weight:600;white-space:nowrap}.muted{color:${PAPER.muted}}.small{font-size:12px;color:${PAPER.muted}}
 .meta{display:flex;justify-content:space-between;margin-top:6px;gap:16px}
 hr.rule{border:0;border-top:2px solid var(--accent,${PAPER.rule});margin:12px 0}
-h1{font-size:18px;font-weight:500;margin:0 0 8px}
-table{width:100%;border-collapse:collapse}th{text-align:left;font-weight:500;color:${PAPER.muted};font-size:12px;padding:4px 0;border-bottom:1px solid ${PAPER.muted}}
-td{padding:6px 0;border-bottom:1px solid #D9D9D9}.r{text-align:right;white-space:nowrap}
+h1{font-size:17px;font-weight:650;margin:0 0 8px}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-weight:700;color:${PAPER.muted};font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:6px 0;border-bottom:1px solid ${PAPER.muted}}
+td{padding:8px 0;border-bottom:1px solid ${PAPER.line};font-variant-numeric:tabular-nums}.r{text-align:right;white-space:nowrap}
 .sum{display:flex;justify-content:space-between;margin-top:6px}
-.total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:8px 12px;border:1px solid ${PAPER.fg}}
-.total strong{font-size:20px;font-weight:600;color:${PAPER.total}}
+.total{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding:10px 12px;background:${PAPER.band};border-top:2px solid var(--accent,${PAPER.rule});font-weight:600}
+.total strong{font-size:22px;font-weight:700;letter-spacing:-.01em;color:${PAPER.fg};font-variant-numeric:tabular-nums}
 p.n{margin:12px 0 0;white-space:pre-wrap}
-@page{margin:16mm}@media print{body{color:#000;background:none}.muted,.small,th{color:#000}main{padding:0}}
+@page{margin:16mm}@media print{body{color:#000;background:none}.muted,.small,th{color:#000}main{padding:0}.total{background:none}.total strong{color:#000}}
 `;
 
 const dl = (a: string, b: string) => (b ? `<span><span class="muted">${esc(a)}</span> ${esc(b)}</span>` : "<span></span>");
@@ -140,7 +140,7 @@ export function sheetHtml(m: SheetModel): string {
     ? `<tr><td>${esc(r.label)}</td><td class="r">${esc(r.amount)}</td></tr>`
     : `<tr><td>${esc(r.label)}</td><td class="r">${esc(r.qty)}</td><td class="r">${esc(r.unit)}</td><td class="r">${esc(r.amount)}</td></tr>`)).join("");
   const body = [
-    `<div class="top"><div>${m.logo ? `<img class="logo" alt="" src="${esc(m.logo)}">` : ""}<span class="shop">${esc(m.shop)}</span>${m.contact.map((c) => `<p class="co">${esc(c)}</p>`).join("")}</div><span class="muted">${esc(m.heading)}</span></div>`,
+    `<div class="top"><div>${m.logo ? `<img class="logo" alt="" src="${esc(m.logo)}">` : ""}<span class="shop">${esc(m.shop)}</span>${m.contact.map((c) => `<p class="co">${esc(c)}</p>`).join("")}</div><span class="no">${esc(m.heading)}</span></div>`,
     `<div class="meta">${dl(m.forLabel, m.customer)}${dl(m.dateLabel, m.dateValue)}</div>`,
     m.validValue ? `<div class="meta"><span></span>${dl(m.validLabel, m.validValue)}</div>` : "",
     `<hr class="rule">`,

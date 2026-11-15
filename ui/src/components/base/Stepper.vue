@@ -41,9 +41,9 @@ function onKey(e: KeyboardEvent): void {
 
 <template>
   <div class="stepper" role="group" :aria-label="label">
-    <Button type="button" severity="secondary" outlined class="stepper-btn" :aria-label="t('a11y.decrease', { label })" :aria-disabled="modelValue <= min ? 'true' : undefined" @click="modelValue > min && set(modelValue - 1)"><OuiIcon :icon="I.minus" /></Button>
+    <Button type="button" severity="secondary" class="stepper-btn" :aria-label="t('a11y.decrease', { label })" :aria-disabled="modelValue <= min ? 'true' : undefined" @click="modelValue > min && set(modelValue - 1)"><OuiIcon :icon="I.minus" /></Button>
     <InputText type="text" inputmode="numeric" autocomplete="off" spellcheck="false" class="num stepper-input" :model-value="text" :aria-label="label" @input="onInput" @keydown="onKey" @blur="onBlur" @focus="(e: FocusEvent) => (e.target as HTMLInputElement).select()" />
-    <Button type="button" severity="secondary" outlined class="stepper-btn" :aria-label="t('a11y.increase', { label })" :aria-disabled="modelValue >= max ? 'true' : undefined" @click="modelValue < max && set(modelValue + 1)"><OuiIcon :icon="I.plus" /></Button>
+    <Button type="button" severity="secondary" class="stepper-btn" :aria-label="t('a11y.increase', { label })" :aria-disabled="modelValue >= max ? 'true' : undefined" @click="modelValue < max && set(modelValue + 1)"><OuiIcon :icon="I.plus" /></Button>
   </div>
 </template>
 

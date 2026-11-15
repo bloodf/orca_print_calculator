@@ -74,7 +74,7 @@ async function toggle(slotN: number): Promise<void> {
       <FilamentChip v-for="m in matches" :key="m.slot.n" :slot="m.slot" :match="m" :aria-expanded="open ? 'true' : 'false'" :aria-controls="open ? id : undefined" @toggle="toggle(m.slot.n)" />
     </div>
     <div class="copies">
-      <span class="oui-meta cp-lbl" aria-hidden="true">{{ t("plate.copiesLabel") }}</span>
+      <span class="oui-meta cp-lbl" aria-hidden="true">{{ t("plate.copiesLabel") }}</span><span class="oui-meta cp-x" aria-hidden="true" :title="t('plate.copiesLabel')">×</span>
       <Stepper :model-value="copies" :min="1" :max="999" :label="t('plate.copies', { n })" @update:model-value="(v) => emit('update:copies', v)" />
     </div>
     <div class="side">
@@ -103,6 +103,9 @@ async function toggle(slotN: number): Promise<void> {
 .meta { min-width: 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 0 var(--oui-s2); min-width: 0; }
 .copies { display: flex; align-items: center; gap: var(--oui-s1); }
+/* the words fit beside the stepper only on a wide Plates panel; narrower, a × stands in (the stepper's name keeps the words) */
+.cp-x { display: none; }
+@container plates (max-width: 899px) { .cp-lbl { display: none; } .cp-x { display: inline; } }
 .side { display: grid; justify-items: end; gap: 2px; min-width: 84px; margin-inline-start: auto; text-align: end; }
 .warn-icon { display: inline-flex; vertical-align: -2px; margin-inline-end: 4px; color: var(--oui-danger); }
 .card.off .cost strong { font-weight: 400; }

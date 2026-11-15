@@ -46,7 +46,7 @@ async function runTest(): Promise<void> {
           id="settings-spoolman-url" v-model="url" type="text" inputmode="url" autocomplete="off" spellcheck="false" :placeholder="EXAMPLE_URL"
           :invalid="!!error" :aria-invalid="error ? 'true' : undefined" :aria-describedby="error ? 'settings-spoolman-err' : 'settings-spoolman-hint'" @change="commit" @keydown.enter="commit"
         />
-        <Button severity="secondary" outlined type="button" :aria-disabled="!canTest" :aria-busy="test.state === 'testing'" @click="runTest">
+        <Button severity="secondary" type="button" :aria-disabled="!canTest" :aria-busy="test.state === 'testing'" @click="runTest">
           {{ test.state === "testing" ? t("spoolman.testing") : t("spoolman.test") }}
         </Button>
       </div>

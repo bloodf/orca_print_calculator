@@ -55,6 +55,7 @@ const units = computed(() => t("plates.unitsPerSet", { n: store.draft.unitsPerSe
 
 <style scoped>
 .plates :deep(.bar) { height: 4px; border-radius: 0; }
+.grid { container: plates / inline-size; }
 .grid > :deep(.card + .card) { border-top: 1px solid var(--oui-border); }
 .units { display: flex; flex-wrap: wrap; align-items: center; gap: var(--oui-s2); }
 </style>
