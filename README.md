@@ -6,7 +6,7 @@ English | [Português (Brasil)](README.pt-BR.md)
 
 Orca Print Calculator is a plugin for OrcaSlicer 2.5. It adds a tab to the main window that prices every build plate of the open project. Filament cost comes from your Spoolman inventory, electricity is suggested from your printer model, and you add labor, depreciation, failure rate, extras, shipping, tax and sales-channel fees. The result is a suggested selling price, a channel comparison, batch pricing, saved quotes and a quote you can print or export for the customer.
 
-**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). The version in this tree is 0.2.0 ([changelog](CHANGELOG.md)). Tests are mock-only (mock host, fixtures, a fake `orca` module, headless Chrome); nothing has run against a real OrcaSlicer, Spoolman server, printer or camera. When last checked (2026-11-11) the OrcaCloud hub listed 0.1.1; it lists 0.2.0 only after the 0.2.0 release is published. OrcaSlicer's plugin API offers no way to merge or hide tabs, so this plugin's tab sits beside the tabs of other plugins (Spooler, U1 Control) instead of inside one.
+**Status: in development. The plugin has not been run inside OrcaSlicer yet.** The interface and the pricing engine are tested outside Orca with a mock host, and the Python host is tested against a fake `orca` module. The live-run procedure is in [docs/live-run.md](docs/live-run.md). The version in this tree is 0.3.1 ([changelog](CHANGELOG.md)). Tests are mock-only (mock host, fixtures, a fake `orca` module, headless Chrome); nothing has run against a real OrcaSlicer, Spoolman server, printer or camera. When last checked (2026-11-11) the OrcaCloud hub listed 0.1.1; it lists 0.2.0 only after the 0.2.0 release is published. OrcaSlicer's plugin API offers no way to merge or hide tabs, so this plugin's tab sits beside the tabs of other plugins (Spooler, U1 Control) instead of inside one.
 
 <!-- related-plugins:start -->
 ## Explore the other plugins
@@ -160,7 +160,7 @@ A sliced `.gcode.3mf` import is limited to 100 MB.
 
 ## Development
 
-The UI is Vue 3 and PrimeVue 4 (shared Orca theme in `ui/shared`) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
+The UI is Vue 3 and PrimeVue 5 (shared Orca theme in `ui/shared`) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
 
 ```bash
 pnpm -C ui install

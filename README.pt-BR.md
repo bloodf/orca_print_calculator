@@ -6,7 +6,7 @@
 
 Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na janela principal que precifica cada placa do projeto aberto. O custo do filamento vem do seu estoque no Spoolman, a energia é sugerida pelo modelo da impressora, e você soma mão de obra, depreciação, taxa de falha, extras, frete, imposto e taxas dos canais de venda. O resultado é um preço de venda sugerido, a comparação entre canais, o preço por lote, orçamentos salvos e um orçamento para imprimir ou exportar para o cliente.
 
-**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão desta árvore é 0.2.0 ([changelog](CHANGELOG.md)). Os testes usam só simulações (host simulado, fixtures, um módulo `orca` falso, Chrome headless); nada foi executado contra um OrcaSlicer, servidor Spoolman, impressora ou câmera reais. Na última checagem (2026-11-11) o hub do OrcaCloud listava a 0.1.1; ele só lista a 0.2.0 depois que a versão 0.2.0 for publicada. A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então a aba deste plugin fica ao lado das de outros plugins (Spooler, U1 Control).
+**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão desta árvore é 0.3.1 ([changelog](CHANGELOG.md)). Os testes usam só simulações (host simulado, fixtures, um módulo `orca` falso, Chrome headless); nada foi executado contra um OrcaSlicer, servidor Spoolman, impressora ou câmera reais. Na última checagem (2026-11-11) o hub do OrcaCloud listava a 0.1.1; ele só lista a 0.2.0 depois que a versão 0.2.0 for publicada. A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então a aba deste plugin fica ao lado das de outros plugins (Spooler, U1 Control).
 
 <!-- related-plugins:start -->
 ## Conheça os outros plugins
@@ -160,7 +160,7 @@ A importação de `.gcode.3mf` fatiado tem limite de 100 MB.
 
 ## Desenvolvimento
 
-A interface usa Vue 3 e PrimeVue 4 (tema compartilhado Orca em `ui/shared`) com TypeScript e Vite, compilada em um único arquivo HTML offline. O host é Python 3.12, sem dependências.
+A interface usa Vue 3 e PrimeVue 5 (tema compartilhado Orca em `ui/shared`) com TypeScript e Vite, compilada em um único arquivo HTML offline. O host é Python 3.12, sem dependências.
 
 ```bash
 pnpm -C ui install
