@@ -94,10 +94,24 @@ async function toggle(slotN: number): Promise<void> {
 
 <style scoped>
 /* One plate is one row of the Plates panel: what it is, its filaments, how many copies, what it costs. */
-.card { display: flex; flex-wrap: wrap; align-items: center; gap: var(--oui-s2) var(--oui-s3); padding: var(--oui-s3) var(--oui-s4); }
-.card.off { color: var(--oui-muted); }
+.card { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto minmax(84px, auto); grid-template-areas: "inc thumb main chips copies side" "rows rows rows rows rows rows";
+  align-items: center; gap: var(--oui-s2) var(--oui-s3); padding: var(--oui-s3) var(--oui-s4); }
+/* narrower Plates panel: the filaments take a line of their own under the name, so the stepper and the cost keep their column */
+@container plates (max-width: 899px) {
+  .card { grid-template-columns: auto auto minmax(0, 1fr) auto minmax(84px, auto); grid-template-areas: "inc thumb main copies side" ". . chips chips chips" "rows rows rows rows rows"; }
+}
+@container plates (max-width: 519px) {
+  .card { grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-areas: "inc thumb main side" ". . chips chips" ". . copies copies" "rows rows rows rows"; }
+}
+.inc { grid-area: inc; }
+.thumb { grid-area: thumb; }
+.main { grid-area: main; }
+.chips { grid-area: chips; }
+.copies { grid-area: copies; }
+.side { grid-area: side; }
+.rows { grid-area: rows; }
 .thumb { border-radius: var(--oui-radius-lg); }
-.main { flex: 1 1 130px; display: grid; gap: 1px; min-width: 0; }
+.main { display: grid; gap: 1px; min-width: 0; }
 .head { display: flex; flex-wrap: wrap; align-items: center; gap: 2px var(--oui-s2); min-width: 0; }
 .head h3 { min-width: 0; max-width: 100%; }
 .meta { min-width: 0; }
@@ -106,8 +120,8 @@ async function toggle(slotN: number): Promise<void> {
 /* the words fit beside the stepper only on a wide Plates panel; narrower, a × stands in (the stepper's name keeps the words) */
 .cp-x { display: none; }
 @container plates (max-width: 899px) { .cp-lbl { display: none; } .cp-x { display: inline; } }
-.side { display: grid; justify-items: end; gap: 2px; min-width: 84px; margin-inline-start: auto; text-align: end; }
+.side { display: grid; justify-items: end; gap: 2px; text-align: end; }
 .warn-icon { display: inline-flex; vertical-align: -2px; margin-inline-end: 4px; color: var(--oui-danger); }
 .card.off .cost strong { font-weight: 400; }
-.rows { flex: 1 0 100%; padding: 0 var(--oui-s3); background: var(--oui-inset); border-radius: var(--oui-radius); }
+.rows { padding: 0 var(--oui-s3); background: var(--oui-inset); border-radius: var(--oui-radius); }
 </style>
