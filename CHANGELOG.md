@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-11-14
+
 ### Added
 - Filament stock note under the price: when a quote prints more of a Spoolman filament than its spools that are not archived have left, counting every plate copy and run, the price panel says how much is left and how much the quote needs. Filament with no remaining weight in Spoolman is not checked, and nothing is deducted.
 - "Export list" in the Quotes tab writes the quotes shown (search applied) to one CSV for bookkeeping: number, date, customer, title, currency, channel, quantity, unit price, total, margin and whether each quote is complete, from the numbers saved with each quote.
