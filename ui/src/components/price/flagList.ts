@@ -1,6 +1,8 @@
 // The flags under the hero price, as plain data in the spec's order (docs/ux.md §6.12): bad first, then info.
+import { LEGACY_CALC, MARKUP_CALC, type ChannelOk, type QuoteInput } from "../../engine/quote";
 import { t } from "../../i18n";
 import type { Derived } from "../../state/derive";
+import { markupOf } from "../../state/markup";
 
 export type FlagTone = "bad" | "info";
 export type FlagAction = { label: string; kind: "spool" | "set" | "fees"; plate?: number; slot?: number; item?: "energy" | "labor" | "wear" };
@@ -15,6 +17,12 @@ export function slotsWithoutPrice(d: Derived): { plate: number; n: number; prese
     for (const v of d.slotMatches[p.index] ?? []) if (v.pricePerKg === null) out.push({ plate: p.index, n: v.slot.n, preset: v.slot.preset });
   }
   return out;
+}
+
+/** "Under target" in the terms the quote was priced with: markup on cost (calc 3), else margin on the price. */
+export function belowTargetText(sel: ChannelOk, input: Pick<QuoteInput, "calc" | "targetMarginBp">, pct: (bp: number) => string): string {
+  if ((input.calc ?? LEGACY_CALC) >= MARKUP_CALC && sel.markupBp !== null) return t("flag.belowMarkup", { markup: pct(sel.markupBp), target: pct(markupOf(input.targetMarginBp)) });
+  return t("flag.belowTarget", { margin: pct(sel.marginBp), target: pct(input.targetMarginBp) });
 }
 
 const itemText = (c: Derived["notCounted"][number]): string =>
@@ -52,7 +60,7 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
 
   if (sel) {
     const fl = sel.flags;
-    if (fl.belowTarget && !fl.belowBreakEven && !fl.orderBelowBreakEven) info.push({ id: "belowTarget", tone: "info", text: t("flag.belowTarget", { margin: f.pct(sel.marginBp), target: f.pct(d.quoteInput.targetMarginBp) }) });
+    if (fl.belowTarget && !fl.belowBreakEven && !fl.orderBelowBreakEven) info.push({ id: "belowTarget", tone: "info", text: belowTargetText(sel, d.quoteInput, f.pct) });
     if (fl.minimumApplied) info.push({ id: "minimum", tone: "info", text: t("flag.minimum", { amount: f.m(d.quoteInput.minOrderMinor) }) });
     if (fl.deadZoneJumped) {
       const zone = sel.deadZones.find((z) => z.untilCents < sel.price) ?? sel.deadZones[sel.deadZones.length - 1];

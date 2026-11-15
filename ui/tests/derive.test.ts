@@ -89,7 +89,10 @@ describe("deriveQuote: host plates to engine input", () => {
   });
   test("impossible margin comes back as a channel problem, not a throw", () => {
     const { state } = buildScenario("impossible");
-    const d = deriveQuote(input({ settings: state.settings! }));
+    const live = deriveQuote(input({ settings: state.settings! }));
+    expect(live.selected).toMatchObject({ ok: true }); // calc 3: markup on cost after fees always has a price
+    const s = state.settings!;
+    const d = deriveQuote(input({ settings: s, draft: { ...newDraft(s), frozenInput: { ...live.quoteInput, calc: 2 }, frozenPlates: live.snapshots } }));
     expect(d.result.ok).toBe(true);
     expect(d.selected).toMatchObject({ ok: false, problem: "margin_impossible" });
   });
