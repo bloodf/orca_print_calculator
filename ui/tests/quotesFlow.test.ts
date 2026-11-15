@@ -125,13 +125,13 @@ describe("export the quote list", () => {
     expect(sent.name).toBe("quotes-2026-11-14.csv");
     expect(sent.text.split("\r\n").filter(Boolean)).toHaveLength(2); // header + Bruno's quote only
     expect(sent.text).toContain(",Bruno,");
-    expect(toasts.list.at(-1)?.text).toBe(t("export.saved", { path: "/out/quotes-2026-11-14.csv" }));
+    expect(toasts.list[toasts.list.length - 1]?.text).toBe(t("export.saved", { path: "/out/quotes-2026-11-14.csv" }));
   });
   test("a host failure says so", async () => {
     await saveQuote(true);
     failExport = "denied";
     await exportQuoteList(store.quotes);
-    expect(toasts.list.at(-1)?.tone).toBe("bad");
+    expect(toasts.list[toasts.list.length - 1]?.tone).toBe("bad");
   });
 });
 

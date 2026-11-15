@@ -190,7 +190,7 @@ describe("buildQuoteListCsv: one row per saved quote, for bookkeeping", () => {
     const first = lines[1]!.split(",");
     expect(first[0]).toBe(String(a!.no).padStart(4, "0"));
     expect(first[7]).toBe(csvMoney(a!.summary.price, 2));
-    expect(first.at(-1)).toBe("yes");
+    expect(first[first.length - 1]).toBe("yes");
     expect(lines[2]).toContain(",'=HYPERLINK(1),");
     expect(lines[2]).toContain(",JPY,");
     expect(lines[2]!.split(",").slice(7, 9)).toEqual(["1234", "12340"]);

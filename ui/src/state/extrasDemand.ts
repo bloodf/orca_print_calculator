@@ -6,7 +6,7 @@ import type { CatalogExtra, HostSlot, QuoteExtra, QuoteInput, SlotMatchView, Spo
 export type ProductionPlan = { pieces: number; copies: number; runs: number };
 
 /** Runs, pieces printed and plate copies per run, read from the quote's own input (the same numbers the engine prices). */
-export function planOf(input: Pick<QuoteInput, "plates" | "quantity" | "unitsPerSet">): ProductionPlan {
+export function planOf(input: { plates: readonly Pick<QuoteInput["plates"][number], "include" | "copies">[]; quantity: number; unitsPerSet?: number }): ProductionPlan {
   const unitsPerSet = Math.max(1, input.unitsPerSet ?? 1);
   const runs = Math.max(1, Math.ceil(Math.max(1, input.quantity) / unitsPerSet));
   const copies = input.plates.reduce((sum, p) => sum + (p.include ? p.copies : 0), 0);
