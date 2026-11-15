@@ -1,29 +1,25 @@
 <script setup lang="ts">
-// Save / print / CSV row of the price panel (docs/ux.md §5.3 QuoteActions). Blocked exports show a reason, never a disabled button.
+// The quote's actions, in the price panel's footer: save, print, CSV, and the order total. A blocked print or export is
+// disabled and points at its reason (the incomplete notice, or the line here), which is said once.
 import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import Textarea from "primevue/textarea";
-import { computed, nextTick, ref } from "vue";
-import { elOf } from "../base/el";
-import Icon from "../base/Icon.vue";
+import { computed } from "vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import { intlLocale, t } from "../../i18n";
 import { quoteNo } from "../../format";
 import { exportBlock, exportQuote, isDirty, savedOf } from "../../quoteFlow";
 import { saveBusy, saveQuote } from "../../state/quotes";
-import { patchDraft, setView, store } from "../../state/store";
-import GapList from "./GapList.vue";
+import { setView, store } from "../../state/store";
+import { priced, m } from "../price/priceState";
 
-const draft = computed(() => store.draft);
 const saved = computed(() => savedOf());
 const dirty = computed(() => isDirty());
 const blockKey = computed(() => exportBlock());
 const gapBlock = computed(() => blockKey.value === "quote.blockedUnknown" || blockKey.value === "quote.blockedIncomplete");
-const open = ref(false);
-const showMore = computed(() => open.value || !!draft.value.customer || !!draft.value.note);
-const customer = ref<HTMLElement | null>(null);
-async function reveal(): Promise<void> { open.value = true; await nextTick(); customer.value?.focus(); }
+// where a disabled Print or CSV finds its reason: the list of what is missing, else the line below
+const why = computed(() => (!blockKey.value ? undefined : gapBlock.value ? "quote-gaps" : "qa-block"));
 const no = computed(() => (saved.value ? quoteNo(saved.value.no, intlLocale()) : ""));
-const onInput = (key: "title" | "customer" | "note", e: Event): void => patchDraft({ [key]: (e.target as HTMLInputElement).value });
+const total = computed(() => (priced.value && store.draft.quantity > 1 ? t("bar.total", { total: m(priced.value.grandTotal), n: store.draft.quantity }) : ""));
 async function print(): Promise<void> {
   if (isDirty() && !(await saveQuote())) return;
   store.preview = true;
@@ -32,44 +28,26 @@ async function print(): Promise<void> {
 
 <template>
   <div class="qa">
-    <div class="field">
-      <label class="sm muted" for="qa-title">{{ t("quote.title") }}</label>
-      <InputText id="qa-title" type="text" :model-value="draft.title" :placeholder="store.host.projectName ?? ''" fluid @input="onInput('title', $event)" />
-    </div>
-    <Button v-if="!showMore" text type="button" class="add" @click="reveal"><Icon name="plus" /><span>{{ t("quote.addCustomer") }}</span></Button>
-    <template v-else>
-      <div class="field">
-        <label class="sm muted" for="qa-customer">{{ t("quote.customer") }}</label>
-        <InputText id="qa-customer" :ref="(c) => (customer = elOf(c))" type="text" :model-value="draft.customer" fluid @input="onInput('customer', $event)" />
-      </div>
-      <div class="field">
-        <label class="sm muted" for="qa-note">{{ t("quote.note") }}</label>
-        <Textarea id="qa-note" rows="2" auto-resize :model-value="draft.note" fluid @input="onInput('note', $event)" />
-      </div>
-    </template>
-    <div class="row actions">
+    <div class="oui-row actions">
       <template v-if="!saved || dirty">
-        <Button id="qa-save" type="button" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote()">{{ saved ? t("quote.saveChanges") : t("quote.save") }}</Button>
-        <Button v-if="saved" text type="button" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</Button>
+        <Button id="qa-save" type="button" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote()"><OuiIcon :icon="I.save" :size="14" /><span>{{ saved ? t("quote.saveChanges") : t("quote.save") }}</span></Button>
+        <Button v-if="saved" text severity="secondary" type="button" :disabled="saveBusy" :aria-busy="saveBusy ? 'true' : undefined" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</Button>
       </template>
       <template v-else>
-        <span class="sm muted">{{ t("quote.savedAs", { no }) }}</span>
-        <Button text type="button" :disabled="saveBusy" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</Button>
-        <Button text type="button" @click="setView('quotes')">{{ t("quote.openList") }}</Button>
+        <span class="oui-meta saved"><OuiIcon :icon="I.check" :size="14" tone="success" />{{ t("quote.savedAs", { no }) }}</span>
+        <Button text severity="secondary" type="button" :disabled="saveBusy" @click="saveQuote(true)">{{ t("quote.saveAsNew") }}</Button>
+        <Button text severity="secondary" type="button" @click="setView('quotes')">{{ t("quote.openList") }}</Button>
       </template>
+      <Button severity="secondary" type="button" :disabled="!!blockKey" :aria-describedby="why" data-testid="print" @click="print">{{ t("quote.print") }}</Button>
+      <Button severity="secondary" text type="button" :disabled="!!blockKey" :aria-describedby="why" data-testid="csv" @click="exportQuote('csv')"><OuiIcon :icon="I.download" :size="14" /><span>{{ t("quote.csv") }}</span></Button>
+      <span v-if="total" class="oui-meta num total">{{ total }}</span>
     </div>
-    <GapList v-if="gapBlock" />
-    <p v-else-if="blockKey" class="sm muted" role="status">{{ t(blockKey) }}</p>
-    <div v-else class="row actions">
-      <Button severity="secondary" outlined type="button" @click="print"><Icon name="print" /><span>{{ t("quote.print") }}</span></Button>
-      <Button severity="secondary" outlined type="button" @click="exportQuote('csv')"><Icon name="download" /><span>{{ t("quote.csv") }}</span></Button>
-    </div>
+    <p v-if="blockKey && !gapBlock" id="qa-block" class="oui-meta" role="status">{{ t(blockKey) }}</p>
   </div>
 </template>
 
 <style scoped>
-.qa > * + * { margin-top: 8px; }
-.field { display: grid; grid-row-gap: 4px; }
-.add { justify-self: start; margin-left: -8px; }
-.actions { flex-wrap: wrap; }
+.qa { flex: 1 1 auto; display: grid; gap: var(--oui-s1); min-width: 0; }
+.saved { display: inline-flex; align-items: center; gap: var(--oui-s1); }
+.total { margin-inline-start: auto; }
 </style>

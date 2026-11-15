@@ -259,8 +259,8 @@ describe("LOW: no silent zeroing, flags, unreadable files", () => {
   test("the banner lists both files with 'and', in both languages", async () => {
     load("ok");
     S.store.unreadable = ["settings", "quotes"];
-    const { default: PlatesArea } = await import("../src/views/PlatesArea.vue");
-    const el = await mountC(PlatesArea);
+    const { default: CalcPage } = await import("../src/views/CalculatorView.vue"); // the notices and the first run open the calculator page
+    const el = await mountC(CalcPage);
     expect(el.querySelector("[data-unreadable]")!.textContent).toMatch(/settings and quotes/i);
     setLocale("pt-BR");
     await flush();

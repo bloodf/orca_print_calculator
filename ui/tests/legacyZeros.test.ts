@@ -139,19 +139,20 @@ describe("GapList", () => {
   test("names each field, offers Confirm 0 only where it can, and moves focus on", async () => {
     const old = await legacyQuote();
     openQuote(old.id);
-    const m = mount(QuoteActions); mounted.push(m); await flush();
+    const qa = mount(QuoteActions); mounted.push(qa); await flush();
+    expect(qa.root.querySelector<HTMLButtonElement>("[data-testid=csv]")!.disabled).toBe(true); // no export while blocked
+    const m = mount(GapList); mounted.push(m); await flush();
     expect(txt(m.root)).toContain("Not ready to send: 1 thing to fix.");
     expect(txt(m.root)).toContain("Plate 1, slot 1: weight was saved as 0 g");
-    expect(m.root.textContent).not.toContain("CSV"); // no export buttons while blocked
     const btn = m.root.querySelector<HTMLButtonElement>("[data-gap-confirm]")!;
     expect(btn.getAttribute("aria-label")).toBe("Confirm 0 g for slot 1 on plate 1");
     expect(txt(m.root)).toContain("Use current slice");
     document.body.focus();
     btn.click(); await flush();
     expect(m.root.querySelector("[data-gaps]")).toBeNull();
-    expect(m.root.textContent).toContain("CSV");
+    expect(qa.root.querySelector<HTMLButtonElement>("[data-testid=csv]")!.disabled).toBe(false);
     expect(document.activeElement?.id).toBe("qa-save"); // not dropped to the page
-    expect(txt(m.root)).toContain("Save changes");
+    expect(txt(qa.root)).toContain("Save changes");
   });
 
   test("a live slice with a missing time offers no confirm, only the way to fix it", async () => {

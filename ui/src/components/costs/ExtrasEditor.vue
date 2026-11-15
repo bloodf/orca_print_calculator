@@ -3,7 +3,6 @@
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Menu from "primevue/menu";
-import Message from "primevue/message";
 import { computed, nextTick, ref } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { money } from "../../format";
@@ -11,7 +10,8 @@ import { currency, derived, digits, patchDraft, patchSettings, store } from "../
 import { catalogItemOf, demandByItem, planOf } from "../../state/extrasDemand";
 import { toast } from "../../state/toast";
 import type { CatalogExtra, QuoteExtra } from "../../state/types";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
 import { elOf } from "../base/el";
@@ -83,34 +83,34 @@ const menuItems = computed<MenuRow[]>(() => [
 
 <template>
   <div class="ex">
-    <p v-if="!rows.length" class="sm muted">{{ t("extras.help") }}</p>
+    <p v-if="!rows.length" class="sm oui-muted">{{ t("extras.help") }}</p>
     <div v-for="(r, i) in rows" :key="r.key" class="xrow" :class="{ later: i > 0 }">
       <div class="xname">
-        <label :for="`xn-${r.key}`" class="sm muted xl">{{ t("field.extraName") }}</label>
+        <label :for="`xn-${r.key}`" class="sm oui-muted xl">{{ t("field.extraName") }}</label>
         <InputText
           :id="`xn-${r.key}`" data-extra-name type="text" autocomplete="off" spellcheck="false" :model-value="r.label" :invalid="touched.has(r.key) && !r.label.trim()"
           :aria-invalid="touched.has(r.key) && !r.label.trim() ? 'true' : undefined" required
           @input="patchRow(r.key, { label: ($event.target as HTMLInputElement).value })" @blur="touched = new Set(touched).add(r.key)"
         />
-        <Message v-if="touched.has(r.key) && !r.label.trim()" class="bad-text" severity="error" size="small" variant="simple" role="alert">{{ t("field.extraNameRequired") }}</Message>
+        <p v-if="touched.has(r.key) && !r.label.trim()" class="sm bad-text" role="alert">{{ t("field.extraNameRequired") }}</p>
       </div>
       <MoneyField :model-value="r.unitMinor" :label="t('field.extraCost')" :digits="digits" :currency="currency" :step="smallStep(digits)" @update:model-value="(v) => patchRow(r.key, { unitMinor: v ?? 0 })" />
       <NumberField :model-value="r.qtyE3" :label="t('field.extraQty')" :scale="1000" :step="1000" :max="1000000" required @update:model-value="(v) => patchRow(r.key, { qtyE3: v ?? 0 })" />
       <SelectField :model-value="r.per" :label="t('field.extraPer')" :options="pers" @update:model-value="(v) => patchRow(r.key, { per: v as Per })" />
-      <Button text severity="secondary" type="button" class="xdel icon-btn" :aria-label="t('common.removeNamed', { name: r.label || t('field.extraName') })" :title="t('common.remove')" @click="remove(r)"><Icon name="trash" /></Button>
+      <Button text severity="secondary" type="button" class="xdel icon-btn" :aria-label="t('common.removeNamed', { name: r.label || t('field.extraName') })" :title="t('common.remove')" @click="remove(r)"><OuiIcon :icon="I.trash" /></Button>
       <p v-if="stockOf(r)" class="xstock sm">
-        <span class="muted">{{ t("extras.inStock", { n: stockOf(r)!.have }) }}</span>
-        <span v-if="stockOf(r)!.short" class="short"><Icon name="alert-triangle" /><span>{{ stockOf(r)!.short }}</span></span>
+        <span class="oui-muted">{{ t("extras.inStock", { n: stockOf(r)!.have }) }}</span>
+        <span v-if="stockOf(r)!.short" class="short"><OuiIcon :icon="I.warning" /><span>{{ stockOf(r)!.short }}</span></span>
       </p>
       <div v-if="r.label.trim() && !inCatalog(r)" class="xsave"><Button text type="button" @click="saveToCatalog(r)">{{ t("extras.saveToCatalog") }}</Button></div>
     </div>
     <div class="add">
-      <Button :ref="(c) => (addBtn = elOf(c))" severity="secondary" outlined type="button" aria-haspopup="menu" aria-controls="extras-menu" :aria-label="t('extras.menu')" @click="menu?.toggle($event)"><Icon name="plus" /><span>{{ t("extras.add") }}</span></Button>
+      <Button :ref="(c) => (addBtn = elOf(c))" severity="secondary" outlined type="button" aria-haspopup="menu" aria-controls="extras-menu" :aria-label="t('extras.menu')" @click="menu?.toggle($event)"><OuiIcon :icon="I.plus" /><span>{{ t("extras.add") }}</span></Button>
     </div>
     <Menu id="extras-menu" ref="menu" popup :model="menuItems" :aria-label="t('extras.menu')" class="opc-menu">
       <template #item="{ item, props }">
         <a v-bind="props.action" class="mi" :class="{ custom: (item as MenuRow).custom }">
-          <span class="truncate">{{ item.label }}</span><span v-if="(item as MenuRow).price" class="sm muted num">{{ (item as MenuRow).price }}</span>
+          <span class="oui-truncate">{{ item.label }}</span><span v-if="(item as MenuRow).price" class="sm oui-muted num">{{ (item as MenuRow).price }}</span>
         </a>
       </template>
     </Menu>
@@ -118,23 +118,22 @@ const menuItems = computed<MenuRow[]>(() => [
 </template>
 
 <style scoped>
-.bad-text :deep(.p-message-text) { color: var(--opc-bad); }
-.xrow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: var(--opc-s2) var(--opc-s3); align-items: end; padding: var(--opc-s2) 0; border-bottom: 1px solid var(--opc-border); }
+.xrow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: var(--oui-s2) var(--oui-s3); align-items: end; padding: var(--oui-s2) 0; border-bottom: 1px solid var(--oui-border); }
 .xrow:first-of-type { padding-top: 0; }
 .xname { grid-column: 1 / -1; min-width: 0; }
 .xname :deep(.p-inputtext) { width: 100%; }
 .xl { display: block; min-height: 24px; line-height: 24px; }
-.bad-text { color: var(--opc-bad); margin-top: 2px; }
+.bad-text { color: var(--oui-danger); margin-top: 2px; }
 .xdel { justify-self: end; margin-bottom: 2px; }
 .xsave { grid-column: 1 / -1; justify-self: start; }
 .xstock { grid-column: 1 / -1; }
 .xstock > * + * { margin-left: 12px; }
-.short { display: inline-flex; align-items: center; color: var(--opc-warn); }
+.short { display: inline-flex; align-items: center; color: var(--oui-warning); }
 .short > * + * { margin-left: 4px; }
-.add { margin-top: var(--opc-s2); }
+.add { margin-top: var(--oui-s2); }
 .mi { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 8px 12px; text-decoration: none; color: inherit; cursor: pointer; }
 .mi > * + * { margin-left: 12px; }
-.mi.custom { color: var(--opc-accent-text); }
+.mi.custom { color: var(--oui-primary); }
 @media (min-width: 1100px) {
   .xrow { grid-template-columns: minmax(0, 2fr) 128px 96px 140px 36px; }
   .xname { grid-column: auto; }

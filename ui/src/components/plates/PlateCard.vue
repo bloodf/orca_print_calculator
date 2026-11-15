@@ -6,15 +6,13 @@ import { duration, grams, money, slicedTime, date } from "../../format";
 import { t } from "../../i18n";
 import { currency, locale, store } from "../../state/store";
 import type { HostPlate, PlateSnapshot, SlotMatchView } from "../../state/types";
-import Badge from "../base/Badge.vue";
-import Icon from "../base/Icon.vue";
+import { OuiIcon, OuiThumb } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import Stepper from "../base/Stepper.vue";
 import FilamentChip from "./FilamentChip.vue";
 import MaterialRow from "./MaterialRow.vue";
 import { pickRequest } from "./pickRequest";
 import { UNKNOWN } from "./slots";
-import emptyPlate from "../../assets/empty-plate.svg?raw";
-import Art from "../base/Art.vue";
 
 const props = defineProps<{ plate: HostPlate | PlateSnapshot; row: PlateRow | null; matches: SlotMatchView[]; include: boolean; copies: number; stale: boolean; frozen: boolean }>();
 const emit = defineEmits<{ "update:include": [value: boolean]; "update:copies": [value: number] }>();
@@ -42,6 +40,8 @@ const savedDate = computed(() => {
 });
 
 watch(() => pickRequest.seq, () => { if (pickRequest.plate === props.plate.index) open.value = true; });
+// a cost that leaves out an unknown time or weight is partial, and says so
+const partial = computed(() => !!props.row && (seconds.value === null || totalGrams.value === null));
 const unpriced = computed(() => props.include && props.matches.some((m) => m.pricePerKg === null));
 
 async function toggle(slotN: number): Promise<void> {
@@ -55,67 +55,56 @@ async function toggle(slotN: number): Promise<void> {
 <template>
   <article class="card" :class="{ off: !include }" :aria-label="title">
     <Checkbox binary class="inc" :model-value="include" :aria-label="t('plate.include', { n })" @update:model-value="(v: boolean) => emit('update:include', v)" />
-    <img v-if="host?.thumb" class="thumb" :src="host.thumb" alt="" width="64" height="64" />
-    <span v-else class="thumb none"><Art :svg="emptyPlate" /></span>
+    <OuiThumb v-if="host?.thumb" class="thumb" :src="host.thumb" :size="34" :icon="I.plate" />
+    <OuiIcon v-else class="thumb none" :icon="I.plate" :size="22" tile :tone="include ? 'cobalt' : 'neutral'" />
     <div class="main">
       <div class="head">
-        <h3 class="lg truncate">{{ title }}</h3>
-        <Badge v-if="frozen && savedDate" tone="neutral" :text="t('plate.saved', { date: savedDate })" />
-        <Badge v-else-if="stale" class="badge-in" tone="warn" :text="t('plate.stale')" :title="t('plate.staleWhy')" />
+        <h3 class="oui-strong oui-truncate">{{ title }}</h3>
+        <span v-if="frozen && savedDate" class="oui-chip">{{ t("plate.saved", { date: savedDate }) }}</span>
+        <span v-else-if="stale" class="oui-chip stale" data-tone="warn" :title="t('plate.staleWhy')">{{ t("plate.stale") }}</span>
       </div>
-      <p class="meta muted sm">
-        <span class="num"><template v-if="seconds !== null">{{ duration(seconds, locale) }}</template><template v-else><span aria-hidden="true">{{ UNKNOWN }}</span><span class="sr-only">{{ t("a11y.unknown") }}</span></template></span>
-        <span class="sep" aria-hidden="true">·</span>
-        <span class="num"><template v-if="totalGrams !== null">{{ grams(totalGrams, locale) }}</template><template v-else><span aria-hidden="true">{{ UNKNOWN }}</span><span class="sr-only">{{ t("a11y.unknown") }}</span></template></span>
+      <p class="meta oui-meta">
+        <span class="num" :class="{ gap: seconds === null }">{{ seconds !== null ? duration(seconds, locale) : t("breakdown.unknown.time") }}</span>
+        <span class="sep" aria-hidden="true"> · </span>
+        <span class="num" :class="{ gap: totalGrams === null }">{{ totalGrams !== null ? grams(totalGrams, locale) : t("breakdown.unknown.grams") }}</span>
+        <template v-if="provenance"><span class="sep" aria-hidden="true"> · </span><span class="prov" :title="provenance">{{ provenance }}</span></template>
       </p>
-      <p v-if="provenance" class="prov sm muted truncate" :title="provenance">{{ provenance }}</p>
     </div>
-    <div class="side">
-      <p class="cost num"><span v-if="unpriced" class="warn-icon"><Icon name="alert-circle" /><span class="sr-only">{{ t("plate.missingPrice") }} </span></span>
-        <span v-if="!include" class="sm muted">{{ t("plate.excluded") }}</span>
-        <template v-else-if="row"><span class="sr-only">{{ t("a11y.costPrefix") }} </span>{{ money(row.totalMinor, currency, locale) }}</template>
-        <template v-else><span aria-hidden="true">{{ UNKNOWN }}</span><span class="sr-only">{{ t("a11y.unknown") }}</span></template>
-      </p>
-      <p v-if="include" class="sm muted num">{{ copies > 1 ? t("plate.costTimes", { n: copies }) : t("plate.cost") }}</p>
-    </div>
-    <div class="chips"><!-- DOM order = visual order = §7.7: checkbox, chips, copies -->
+    <div class="chips"><!-- DOM order = visual order: checkbox, chips, copies -->
       <FilamentChip v-for="m in matches" :key="m.slot.n" :slot="m.slot" :match="m" :aria-expanded="open ? 'true' : 'false'" :aria-controls="open ? id : undefined" @toggle="toggle(m.slot.n)" />
     </div>
     <div class="copies">
-      <span class="sm muted cp-lbl" aria-hidden="true">{{ t("plate.copiesLabel") }}</span>
+      <span class="oui-meta cp-lbl" aria-hidden="true">{{ t("plate.copiesLabel") }}</span>
       <Stepper :model-value="copies" :min="1" :max="999" :label="t('plate.copies', { n })" @update:model-value="(v) => emit('update:copies', v)" />
     </div>
-    <div v-if="open" :id="id" ref="list" class="rows hairline">
+    <div class="side">
+      <p class="cost num"><span v-if="unpriced" class="warn-icon"><OuiIcon :icon="I.error" :size="14" /><span class="oui-sr">{{ t("plate.missingPrice") }} </span></span>
+        <span v-if="!include" class="oui-meta">{{ t("plate.excluded") }}</span>
+        <template v-else-if="row"><span class="oui-sr">{{ t("a11y.costPrefix") }} </span><strong>{{ money(row.totalMinor, currency, locale) }}</strong></template>
+        <template v-else><span aria-hidden="true">{{ UNKNOWN }}</span><span class="oui-sr">{{ t("a11y.unknown") }}</span></template>
+      </p>
+      <span v-if="include && partial" class="oui-chip" data-tone="warn">{{ t("price.partial") }}</span>
+      <p v-else-if="include && copies > 1" class="oui-meta num">{{ t("plate.costTimes", { n: copies }) }}</p>
+    </div>
+    <div v-if="open" :id="id" ref="list" class="rows">
       <MaterialRow v-for="m in matches" :key="m.slot.n" :match="m" />
     </div>
   </article>
 </template>
 
 <style scoped>
-.card { display: grid; grid-template-columns: 20px 64px minmax(0, 1fr) auto; column-gap: 12px; align-items: start; min-height: 88px; padding: 12px; background: var(--opc-raised); border: 1px solid var(--opc-border); border-radius: var(--opc-r-surface); }
-.card.off { border-style: dashed; color: var(--opc-muted); }
-.inc { margin: 2px 0 0; }
-.thumb { width: 64px; height: 64px; object-fit: cover; border-radius: var(--opc-r-control); background: var(--opc-track); display: flex; align-items: center; justify-content: center; }
-.thumb.none { color: var(--opc-muted); overflow: hidden; }
-.thumb.none :deep(svg) { width: 64px; height: 43px; }
-.main { min-width: 0; }
-.head { display: flex; flex-wrap: wrap; align-items: center; min-width: 0; } /* the badge drops under the title instead of squeezing it */
-.head > * { margin-right: 8px; }
-.head h3 { margin: 0; min-width: 0; max-width: 100%; }
-.meta { margin-top: 2px; display: flex; min-width: 0; white-space: nowrap; }
-.meta .num { flex: none; }
-.sep { flex: none; padding: 0 0.5em; }
-.prov { margin-top: 1px; }
-/* Chips take the whole card width under the title row, so a material name never competes with the copies stepper. */
-.chips { grid-column: 3 / -1; grid-row: 2; display: flex; flex-wrap: wrap; margin-left: -4px; }
-.chips > * { margin: 4px 0 0 4px; }
-.warn-icon { display: inline-flex; vertical-align: -2px; margin-right: 4px; color: var(--opc-bad); }
-.side { grid-column: 4; grid-row: 1; display: flex; flex-direction: column; align-items: flex-end; }
-.side > * + * { margin-top: 2px; }
-.copies { grid-column: 3 / -1; grid-row: 3; justify-self: end; margin-top: 8px; display: flex; align-items: center; }
-.cp-lbl { margin-right: 8px; }
-.cost { font-size: var(--opc-fs-lg); font-weight: 500; color: var(--opc-fg); line-height: 1.25; }
-.rows { grid-column: 1 / -1; margin-top: 12px; }
-.card.off .cost { font-weight: 400; }
-@media (max-width: 420px) { .card { grid-template-columns: 20px 48px minmax(0, 1fr); } .thumb { width: 48px; height: 48px; } .side { grid-column: 3; grid-row: 2; align-items: flex-start; } .chips { grid-row: 3; } .copies { grid-column: 3; grid-row: 4; justify-self: start; } }
+/* One plate is one row of the Plates panel: what it is, its filaments, how many copies, what it costs. */
+.card { display: flex; flex-wrap: wrap; align-items: center; gap: var(--oui-s2) var(--oui-s3); padding: var(--oui-s3) var(--oui-s4); }
+.card.off { color: var(--oui-muted); }
+.thumb { border-radius: var(--oui-radius-lg); }
+.main { flex: 1 1 130px; display: grid; gap: 1px; min-width: 0; }
+.head { display: flex; flex-wrap: wrap; align-items: center; gap: 2px var(--oui-s2); min-width: 0; }
+.head h3 { min-width: 0; max-width: 100%; }
+.meta { min-width: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 0 var(--oui-s2); min-width: 0; }
+.copies { display: flex; align-items: center; gap: var(--oui-s1); }
+.side { display: grid; justify-items: end; gap: 2px; min-width: 84px; margin-inline-start: auto; text-align: end; }
+.warn-icon { display: inline-flex; vertical-align: -2px; margin-inline-end: 4px; color: var(--oui-danger); }
+.card.off .cost strong { font-weight: 400; }
+.rows { flex: 1 0 100%; padding: 0 var(--oui-s3); background: var(--oui-inset); border-radius: var(--oui-radius); }
 </style>

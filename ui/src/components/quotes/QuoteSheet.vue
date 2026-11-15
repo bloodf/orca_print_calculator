@@ -52,21 +52,21 @@ defineProps<{ model: SheetModel }>();
 .top, .meta, .sum, .total { display: flex; justify-content: space-between; align-items: baseline; }
 .top { align-items: flex-start; }
 .logo { display: block; max-height: 64px; max-width: 240px; margin-bottom: 8px; }
-.co { font-size: var(--opc-fs-sm); color: var(--mu); overflow-wrap: anywhere; }
+.co { font-size: var(--oui-text-sm); color: var(--mu); overflow-wrap: anywhere; }
 .top > * + *, .meta > * + * { margin-left: 16px; }
-.shop { font-size: var(--opc-fs-lg); font-weight: 600; }
+.shop { font-size: var(--oui-text-lg); font-weight: 600; }
 .no, .mu, .small { color: var(--mu); }
-.small { font-size: var(--opc-fs-sm); margin-top: 4px; }
+.small { font-size: var(--oui-text-sm); margin-top: 4px; }
 .meta { margin-top: 6px; }
 .rule { border: 0; border-top: 2px solid var(--rule); margin: 12px 0; }
-.title { font-size: var(--opc-fs-lg); font-weight: 500; margin: 0 0 8px; }
+.title { font-size: var(--oui-text-lg); font-weight: 500; margin: 0 0 8px; }
 table { width: 100%; border-collapse: collapse; }
 th { padding: 4px 0; height: auto; font-weight: 500; color: var(--mu); border-bottom: 1px solid var(--mu); }
 th.r, td.r { text-align: right; white-space: nowrap; padding-left: 12px; }
 td { padding: 6px 0; border-bottom: 1px solid var(--line); }
 .sum { margin-top: 6px; }
 .total { margin-top: 12px; padding: 8px 12px; border: 1px solid var(--ink); align-items: center; }
-.total strong { font-size: var(--opc-fs-xl); font-weight: 600; color: var(--price); }
+.total strong { font-size: var(--oui-text-xl); font-weight: 600; color: var(--price); }
 .free { margin-top: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
 .title, .shop, td { overflow-wrap: anywhere; }
 @media (max-width: 759px) { .quote-sheet { padding: 16px; } }

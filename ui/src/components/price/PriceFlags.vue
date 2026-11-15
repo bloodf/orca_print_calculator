@@ -6,7 +6,8 @@ import { t } from "../../i18n";
 import { derived, liveCurrency, store } from "../../state/store";
 import { requestPick } from "../plates/pickRequest";
 import { invalidFields } from "../../state/invalid";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import { filamentShortages } from "../../state/extrasDemand";
 import { buildFlags, type Flag, type FlagAction } from "./flagList";
 import { editChannelFees, focusSelector, m, pct } from "./priceState";
@@ -35,19 +36,19 @@ function run(f: Flag): void {
 
 <template>
   <ul v-if="flags.length" class="flags">
-    <li v-for="f in flags" :key="f.id" class="flag sm" :class="f.tone" :data-flag="f.id" :data-tone="f.tone" tabindex="-1">
-      <span class="flag-icon"><Icon :name="f.tone === 'bad' ? 'alert-circle' : 'info'" /></span>
-      <span class="flag-text"><span class="sr-only">{{ `${f.tone === "bad" ? t("flag.srBad") : t("flag.srInfo")} ` }}</span>{{ f.text }}</span>
-      <Button text v-if="f.action" type="button" class="flag-act" @click="run(f)">{{ f.action.label }}</Button>
+    <li v-for="f in flags" :key="f.id" class="flag" :class="f.tone" :data-flag="f.id" :data-tone="f.tone" tabindex="-1">
+      <OuiIcon class="flag-icon" :icon="f.tone === 'bad' ? I.error : I.info" :size="14" :tone="f.tone === 'bad' ? 'danger' : 'neutral'" />
+      <span class="flag-text"><span class="oui-sr">{{ `${f.tone === "bad" ? t("flag.srBad") : t("flag.srInfo")} ` }}</span>{{ f.text }}</span>
+      <Button v-if="f.action" text severity="secondary" size="small" type="button" class="flag-act" @click="run(f)">{{ f.action.label }}</Button>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.flags { list-style: none; margin: 0; padding: 0; }
-.flag { display: flex; align-items: flex-start; padding: 4px 0; color: var(--opc-muted); }
-.flag.bad { color: var(--opc-bad); }
-.flag-icon { display: inline-flex; padding-top: 1px; margin-right: 8px; }
-.flag-text { flex: 1 1 auto; min-width: 0; }
-.flag-act { flex: none; height: 24px; margin-left: 8px; padding: 0 6px; }
+.flags { list-style: none; padding: 0; display: grid; gap: 2px; }
+.flag { display: flex; align-items: flex-start; gap: var(--oui-s2); font-size: var(--oui-text-sm); line-height: 1.4; color: var(--oui-muted); }
+.flag.bad { color: var(--oui-danger); font-weight: 600; }
+.flag-icon { flex: none; margin-top: 2px; }
+.flag-text { flex: 1 1 auto; min-width: 0; padding-block: 1px; }
+.flag-act { flex: none; margin-block: -3px; }
 </style>

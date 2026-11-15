@@ -8,6 +8,7 @@ vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src
 import AppHeader from "../src/components/AppHeader.vue";
 import PrinterChip from "../src/components/PrinterChip.vue";
 import SpoolmanStatus from "../src/components/SpoolmanStatus.vue";
+import PricePanel from "../src/components/price/PricePanel.vue";
 import { t } from "../src/i18n";
 import { setLanguage, store } from "../src/state/store";
 import { click, field, mount, seed, type, unmount } from "./costsHarness";
@@ -21,9 +22,9 @@ describe("PrinterChip", () => {
     const est = mount(PrinterChip, { model: "Bambu Lab X1 Carbon", watts: 120, source: "match", estimated: true });
     expect(est.textContent).toContain("Bambu Lab X1 Carbon");
     expect(est.textContent).toContain("120 W");
-    expect(est.textContent).toContain(t("printer.estimated"));
+    expect(est.textContent).toContain(t("printer.estimatedPower"));
     const saved = mount(PrinterChip, { model: "Snapmaker U1", watts: 150, source: "saved", estimated: true });
-    expect(saved.textContent).not.toContain(t("printer.estimated"));
+    expect(saved.textContent).not.toContain(t("printer.estimatedPower"));
   });
   test("no model reads No printer and has no popover", () => {
     seed();
@@ -92,24 +93,25 @@ describe("SpoolmanStatus", () => {
 });
 
 describe("AppHeader", () => {
-  test("shows project name, printer chip and currency; the language select lives in Settings, not here", async () => {
+  test("shows project name and printer chip; the currency sits on the price panel; the language select lives in Settings, not here", async () => {
     seed();
     const r = mount(AppHeader, { view: "calc" });
     expect(r.textContent).toContain("Desk organizer");
     expect(r.textContent).toContain("Snapmaker U1");
-    expect(r.querySelector(".cur")!.textContent).toBe("BRL");
     expect(r.querySelector("select")).toBeNull();
     setLanguage("pt-BR"); // the Settings select calls this
     await nextTick();
     expect(store.settings.language).toBe("pt-BR");
-    expect(r.querySelector("[role=tablist] [role=tab]")!.getAttribute("aria-label")).toBe("Calculadora");
+    expect(r.querySelector("[role=tablist] [role=tab] span")!.textContent).toBe("Calculadora");
+    setLanguage("en");
+    expect(mount(PricePanel).querySelector(".cur")!.textContent).toBe("BRL");
   });
-  test("the tab group never shrinks and only the current tab keeps its name when narrow", () => {
+  test("every tab keeps its name; the current one is marked selected (narrow bars put the tabs on their own scrolling line)", () => {
     seed();
     const r = mount(AppHeader, { view: "quotes" });
     expect(r.querySelector("[role=tablist]")).not.toBeNull();
-    const labels = [...r.querySelectorAll<HTMLElement>("[role=tab]")].map((b) => ({ on: b.getAttribute("aria-selected") === "true", hides: b.querySelector(".tab-label")!.classList.contains("hide-narrow") }));
-    expect(labels).toEqual([{ on: false, hides: true }, { on: true, hides: false }, { on: false, hides: true }, { on: false, hides: true }]);
+    const labels = [...r.querySelectorAll<HTMLElement>("[role=tab]")].map((b) => ({ on: b.getAttribute("aria-selected") === "true", name: b.querySelector("span")!.textContent }));
+    expect(labels).toEqual([{ on: false, name: "Calculator" }, { on: true, name: "Quotes" }, { on: false, name: "Extras and stock" }, { on: false, name: "Settings" }]);
   });
   test("the Spoolman chip keeps its full text as the accessible name and tooltip even when the label is cut", () => {
     seed();
@@ -122,19 +124,20 @@ describe("AppHeader", () => {
     seed({ host: { ...BAMBU_HOST, projectName: null } });
     const r = mount(AppHeader, { view: "calc" });
     expect(r.textContent).toContain(t("header.untitled"));
-    expect(r.querySelector(".cur")!.getAttribute("title")).toBe(t("header.currencyFromSpoolman"));
+    expect(mount(PricePanel).querySelector(".cur")!.getAttribute("title")).toBe(t("header.currencyFromSpoolman"));
   });
 });
 
 describe("AppHeader tabs", () => {
-  test("tabs collapse to icons below the wide breakpoint but keep the full label as title and aria-label", () => {
+  test("every tab has an icon and its name as text, which is its accessible name", () => {
     seed();
     const r = mount(AppHeader, { view: "calc" });
     const btns = [...r.querySelectorAll<HTMLElement>("[role=tab]")];
     expect(btns).toHaveLength(4);
     for (const b of btns) {
-      expect(b.getAttribute("title")).toBeTruthy();
-      expect(b.getAttribute("aria-label")).toBe(b.getAttribute("title"));
+      expect(b.querySelector("svg")).not.toBeNull();
+      expect(b.querySelector("span")!.textContent!.trim()).toBeTruthy();
+      expect(b.getAttribute("aria-label")).toBeNull(); // the text names it, with the count when there is one
     }
   });
 });

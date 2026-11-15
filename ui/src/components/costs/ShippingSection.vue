@@ -8,9 +8,10 @@ import { currency, digits } from "../../state/store";
 import type { OverridableKey, ShippingMode } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import ResetButton from "../base/ResetButton.vue";
+import * as I from "../../../shared/src/icons";
 import Section from "../base/Section.vue";
 import Segmented from "../base/Segmented.vue";
-import { hasOverride, hasProblem, saveSectionDefaults, useDefault, useOpen } from "./shared";
+import { hasOverride, hasProblem, saveSectionDefaults, sectionAmount, useDefault, useOpen } from "./shared";
 
 const KEYS: OverridableKey[] = ["shipping"];
 const ship = useDefault("shipping");
@@ -28,14 +29,15 @@ const defaultText = computed(() => {
 });
 const setMode = (v: ShippingMode) => ship.set({ ...ship.value.value, mode: v });
 const setAmount = (v: number | null) => ship.set({ ...ship.value.value, minor: v ?? 0 });
+const amount = computed(() => sectionAmount("shipping"));
 </script>
 
 <template>
-  <Section id="shipping" help="shipping" :title="t('section.shipping')" :summary="summary" :open="open" :overridden="edited" :invalid="hasProblem('shipping')" @update:open="setOpen">
+  <Section id="shipping" help="shipping" :icon="I.truck" tone="cobalt" :amount="amount.amount" :title="t('section.shipping')" :summary="summary" :open="open" :overridden="edited" :invalid="hasProblem('shipping')" @update:open="setOpen">
     <div v-if="edited" class="head row">
       <span class="ovr-dot" aria-hidden="true" />
-      <span class="sr-only">{{ t("a11y.edited") }}</span>
-      <span class="sm muted">{{ t("field.shipping") }}</span>
+      <span class="oui-sr">{{ t("a11y.edited") }}</span>
+      <span class="sm oui-muted">{{ t("field.shipping") }}</span>
       <ResetButton :label="t('field.shipping')" :default-text="defaultText" @click="ship.reset" />
     </div>
     <Segmented :options="options" :model-value="mode" :label="t('field.shipping')" @update:model-value="setMode" />
@@ -49,6 +51,6 @@ const setAmount = (v: number | null) => ship.set({ ...ship.value.value, minor: v
 <style scoped>
 .head { min-height: 24px; margin-bottom: 4px; }
 .head > * + * { margin-left: 4px; }
-.amount { margin-top: var(--opc-s3); max-width: 240px; }
-.foot { margin-top: var(--opc-s3); padding-top: var(--opc-s2); }
+.amount { margin-top: var(--oui-s3); max-width: 240px; }
+.foot { margin-top: var(--oui-s3); padding-top: var(--oui-s2); }
 </style>

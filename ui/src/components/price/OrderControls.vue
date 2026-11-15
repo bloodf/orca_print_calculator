@@ -28,26 +28,32 @@ const onMargin = (v: number | null): void => { if (v !== null) margin.set(v); };
 
 <template>
   <div class="oc">
-    <ChannelSelect v-if="multi" :model-value="derived.selectedChannelId" @update:model-value="(id) => patchDraft({ channelId: id })" />
-    <div class="oc-row">
-      <div class="oc-qty">
-        <p class="sm muted oc-lbl">{{ t("field.quantity") }}</p>
-        <Stepper :model-value="store.draft.quantity" :min="1" :max="100000" :label="t('field.quantity')" @update:model-value="(v) => patchDraft({ quantity: v })" />
-        <p v-if="run" class="sm muted oc-sum" data-testid="qty-summary">{{ run.summary }}<template v-if="run.plates"><br>{{ run.plates }}</template></p>
-        <p v-if="spare > 0" class="sm muted num oc-spare">{{ t("price.spare", { n: spare }) }}. {{ t('price.spareWhy', { set: store.draft.unitsPerSet, n: spare }) }}</p>
-      </div>
-      <MarkupField
-        id="price-margin" :model-value="derived.defaults.targetMarginBp" :label="t('field.margin')" :helper="t('field.marginHelp')"
-        :default-value="store.settings.defaults.targetMarginBp" @update:model-value="onMargin" @reset="margin.reset"
-      />
+    <div v-if="multi" class="oui-field">
+      <span class="oc-lbl">{{ t("price.channel") }}</span>
+      <ChannelSelect :model-value="derived.selectedChannelId" @update:model-value="(id) => patchDraft({ channelId: id })" />
     </div>
+    <div class="oui-field oc-qty">
+      <span class="oc-lbl">{{ t("field.quantity") }}</span>
+      <Stepper :model-value="store.draft.quantity" :min="1" :max="100000" :label="t('field.quantity')" @update:model-value="(v) => patchDraft({ quantity: v })" />
+    </div>
+    <p v-if="run || spare > 0" class="oui-meta oc-note">
+      <span v-if="run" class="oc-sum" data-testid="qty-summary">{{ run.summary }}<template v-if="run.plates"><br>{{ run.plates }}</template></span>
+      <span v-if="spare > 0" class="num oc-spare">{{ t("price.spare", { n: spare }) }}. {{ t('price.spareWhy', { set: store.draft.unitsPerSet, n: spare }) }}</span>
+    </p>
+    <MarkupField
+      id="price-margin" class="oc-markup" :model-value="derived.defaults.targetMarginBp" :label="t('field.margin')" :helper="t('field.marginHelp')"
+      :default-value="store.settings.defaults.targetMarginBp" @update:model-value="onMargin" @reset="margin.reset"
+    />
   </div>
 </template>
 
 <style scoped>
-.oc > * + * { margin-top: 8px; }
-.oc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: start; }
-.oc-lbl { min-height: 24px; display: flex; align-items: center; }
-.oc-sum { margin-top: 4px; white-space: normal; }
-.oc-spare { margin-top: 4px; }
+.oc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--oui-s3); align-items: start; }
+.oc-lbl { font-size: var(--oui-text-sm); font-weight: 600; color: var(--oui-muted); }
+.oc-note { grid-column: 1 / -1; display: grid; gap: 2px; white-space: normal; margin-top: calc(-1 * var(--oui-s1)); }
+.oc-spare { white-space: normal; }
+/* Markup: the field on the left, what it means beside it, so the one long explanation does not push the form down. */
+.oc-markup { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--oui-s3); align-items: start; }
+.oc-markup :deep(.nf-head), .oc-markup :deep(.nf-box) { grid-column: 1; }
+.oc-markup :deep(.nf-help) { grid-column: 2; grid-row: 1 / span 2; margin: 0; align-self: center; }
 </style>

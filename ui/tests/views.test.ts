@@ -31,7 +31,8 @@ const btn = (el: ParentNode, text: string): HTMLButtonElement => {
   return b;
 };
 const item = (text: string): HTMLElement => [...document.querySelectorAll<HTMLElement>("[role=menuitem] .mi")].find((x) => x.textContent?.includes(text))!;
-const tab = (el: ParentNode, name: string): HTMLElement => el.querySelector<HTMLElement>(`[role=tab][aria-label="${name}"]`)!;
+// a tab by its visible name (the shared app bar's tabs are named by their text; a count follows the name)
+const tab = (el: ParentNode, name: string): HTMLElement => [...el.querySelectorAll<HTMLElement>("[role=tab]")].find((b) => b.querySelector("span")?.textContent?.trim() === name)!;
 
 beforeEach(() => { Element.prototype.scrollIntoView = Element.prototype.scrollIntoView ?? (() => undefined); vi.useFakeTimers(); setLocale("en"); clearToasts(); });
 afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; delete window.orca; store.preview = false; store.view = "calc"; vi.useRealTimers(); });
@@ -86,7 +87,7 @@ describe("App shell", () => {
     await tick();
     expect(store.view).toBe("quotes");
     expect(document.activeElement?.id).toBe("quotes-title");
-    expect(document.activeElement?.tagName).toBe("H1");
+    expect(document.activeElement?.parentElement?.tagName).toBe("H2"); // the title of the Quotes panel
     for (const [name, id] of [["Settings", ""], ["Extras and stock", ""]] as const) { // the other routes still land on their own titles
       tab(el, name).click();
       await tick();

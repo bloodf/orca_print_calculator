@@ -32,7 +32,9 @@ const btn = (el: ParentNode, text: string, nth = 0): HTMLButtonElement => {
   return all[nth]!;
 };
 const menuItem = (text: string): HTMLElement => [...document.querySelectorAll<HTMLElement>("[role=menuitem] .mi")].find((x) => x.textContent?.includes(text))!;
-const tab = (el: ParentNode, name: string): HTMLElement => el.querySelector<HTMLElement>(`[role=tab][aria-label="${name}"]`)!;
+// a tab by its visible name (the shared app bar's tabs are named by their text; a count follows the name)
+const tabName = (b: Element): string => b.querySelector("span")?.textContent?.trim() ?? "";
+const tab = (el: ParentNode, name: string): HTMLElement => [...el.querySelectorAll<HTMLElement>("[role=tab]")].find((b) => tabName(b) === name)!;
 const typeInto = async (input: HTMLInputElement | HTMLTextAreaElement, value: string) => { input.value = value; input.dispatchEvent(new Event("input", { bubbles: true })); await tick(); };
 const undoToast = () => toasts.list.find((x) => x.action?.label === "Undo" || x.action?.label === "Desfazer");
 const lastSave = () => { const all = saved(); return all[all.length - 1]!; };
@@ -47,9 +49,7 @@ afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; delet
 describe("quote lifecycle", () => {
   test("save, list, open, edit, close dirty, Undo, save changes, reopen, export, all through the UI", async () => {
     const el = await boot("ok");
-    // 1. new quote with a customer, saved from the calculator
-    btn(el, "Customer").click();
-    await tick();
+    // 1. new quote with a customer, saved from the calculator (the customer field is always there)
     await typeInto(el.querySelector<HTMLInputElement>("#qa-customer")!, "Ana Souza");
     btn(el, "Save quote").click();
     await tick(100);
@@ -110,7 +110,7 @@ describe("quote lifecycle", () => {
     expect(rows.length).toBe(2);
     btn(rows[0]!, "Open").click();
     await tick();
-    await typeInto(el.querySelector<HTMLInputElement>("#qa-customer") ?? (btn(el, "Customer").click(), await tick(), el.querySelector<HTMLInputElement>("#qa-customer")!), "Edited, unsaved");
+    await typeInto(el.querySelector<HTMLInputElement>("#qa-customer")!, "Edited, unsaved");
     const first = store.draft.quoteId;
     tab(el, "Quotes").click();
     await tick();
@@ -140,12 +140,14 @@ describe("icon spacing (C09)", () => {
 });
 
 describe("incomplete quote", () => {
-  test("a draft can be saved but not sent: the price is marked partial, Print and CSV are absent, the list refuses with a way to fix it", async () => {
+  test("a draft can be saved but not sent: the price is marked partial, Print and CSV are disabled with the reason, the list refuses with a way to fix it", async () => {
     const el = await boot("unknown");
     expect(el.querySelector("[data-testid=hero-price]")!.classList.contains("partial")).toBe(true);
     expect(el.querySelector("[data-testid=incomplete-line]")!.textContent).toContain("Incomplete");
     expect(el.querySelector("[data-gaps]")).not.toBeNull();
-    expect([...el.querySelectorAll("button")].some((b) => b.textContent?.trim() === "CSV")).toBe(false);
+    const csv = [...el.querySelectorAll("button")].find((b) => b.textContent?.trim() === "CSV")!;
+    expect(csv.disabled).toBe(true);
+    expect(el.querySelector(`#${csv.getAttribute("aria-describedby")}[data-gaps]`)).not.toBeNull();
     btn(el, "Save quote").click();
     await tick(100);
     expect(store.quotes).toHaveLength(3); // the two seeded ones and this draft
@@ -186,7 +188,7 @@ describe("Extras and Settings", () => {
     const el = await boot("ok");
     tab(el, "Extras and stock").click();
     await tick();
-    expect(el.querySelector("main.stock h1")).not.toBeNull();
+    expect(el.querySelector("main.stock [data-view-title]")?.textContent).toBe("Extras and stock");
     expect(el.querySelector("[data-testid=filament-table]")).not.toBeNull(); // Spoolman is ok: the stock table is there
     tab(el, "Settings").click();
     await tick();
@@ -202,7 +204,7 @@ describe("Extras and Settings", () => {
     const el = await boot("firstRun");
     setLanguage("pt-BR");
     await tick();
-    const names = [...el.querySelectorAll<HTMLElement>("header [role=tab]")].map((b) => b.getAttribute("aria-label"));
+    const names = [...el.querySelectorAll<HTMLElement>("header [role=tab]")].map(tabName);
     expect(names).toEqual(["Calculadora", "Orçamentos", "Extras e estoque", "Ajustes"]);
     expect(el.querySelector("header select")).toBeNull();
     const sp = [...el.querySelectorAll<HTMLElement>("header .chip")].find((c) => /Spoolman/.test(c.getAttribute("aria-label") ?? ""));

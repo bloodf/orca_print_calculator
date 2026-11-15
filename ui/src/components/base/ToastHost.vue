@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Button from "primevue/button";
-import Message from "primevue/message";
 import { nextTick, watch } from "vue";
 import { t } from "../../i18n";
 import { dismiss, pause, resume, toasts } from "../../state/toast";
-import Icon from "./Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 
-const severity = { bad: "error", ok: "success", info: "info" } as const;
+const TONE = { bad: "danger", ok: "success", info: "info" } as const;
 const returnFocus = new Map<number, HTMLElement>();
 function focusIn(id: number, e: FocusEvent): void {
   pause(id);
@@ -33,12 +33,13 @@ watch(() => toasts.list.map((x) => x.id), (ids) => {
 
 <template>
   <div class="toast-host app-chrome">
-    <Message v-for="x in toasts.list" :key="x.id" :data-toast-id="x.id" class="toast" :class="x.tone" :severity="severity[x.tone]" :role="x.tone === 'bad' ? 'alert' : 'status'" :aria-live="x.tone === 'bad' ? 'assertive' : 'polite'" closable :close-button-props="{ 'aria-label': t('common.close') }" @close="dismiss(x.id)"
-             @focusin="focusIn(x.id, $event)" @focusout="resumeOutside(x.id, $event)" @mouseenter="pause(x.id)" @mouseleave="resumeOutside(x.id, $event)">
-      <template #icon><Icon :name="x.tone === 'bad' ? 'alert-circle' : x.tone === 'ok' ? 'check' : 'info'" /></template>
+    <div v-for="x in toasts.list" :key="x.id" :data-toast-id="x.id" class="toast" :class="x.tone" :data-tone="TONE[x.tone]" :role="x.tone === 'bad' ? 'alert' : 'status'" :aria-live="x.tone === 'bad' ? 'assertive' : 'polite'"
+         @focusin="focusIn(x.id, $event)" @focusout="resumeOutside(x.id, $event)" @mouseenter="pause(x.id)" @mouseleave="resumeOutside(x.id, $event)">
+      <OuiIcon :icon="x.tone === 'bad' ? I.error : x.tone === 'ok' ? I.check : I.info" :size="14" tile :tone="TONE[x.tone]" />
       <span class="toast-text">{{ x.text }}</span>
       <Button v-if="x.action" type="button" text size="small" @click="x.action.run(); dismiss(x.id)">{{ x.action.label }}</Button>
-    </Message>
+      <Button type="button" text severity="secondary" size="small" class="icon-btn-sm toast-close" :aria-label="t('common.close')" @click="dismiss(x.id)"><OuiIcon :icon="I.x" :size="14" /></Button>
+    </div>
   </div>
 </template>
 
@@ -46,7 +47,9 @@ watch(() => toasts.list.map((x) => x.id), (ids) => {
 .toast-host { position: fixed; right: 16px; bottom: 16px; z-index: 100; width: 360px; max-width: calc(100vw - 32px); display: grid; grid-row-gap: 8px; pointer-events: none; }
 /* narrow layout: the sticky price bar owns the bottom edge */
 @media (max-width: 899px) { .toast-host { bottom: 80px; } }
-.toast-host :deep(.p-message) { pointer-events: auto; box-shadow: var(--opc-shadow); }
-.toast-host :deep(.p-message-text) { display: flex; align-items: center; flex-wrap: wrap; min-width: 0; }
-.toast-text { flex: 1 1 auto; min-width: 0; color: var(--opc-fg); }
+/* a toast is a small raised card on the page's surface, tinted by its tone like a banner */
+.toast { pointer-events: auto; display: flex; align-items: center; gap: var(--oui-s2); min-height: 44px; padding: 6px 6px 6px 8px; border-radius: var(--oui-radius-lg);
+  background: var(--oui-surface); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--oui-tone) 45%, transparent), var(--oui-shadow-overlay); }
+.toast-text { flex: 1 1 auto; min-width: 0; color: var(--oui-text); }
+.toast-close { flex: none; color: var(--oui-muted); }
 </style>

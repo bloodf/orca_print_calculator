@@ -21,13 +21,13 @@ describe("FilamentChip swatch", () => {
     return root;
   };
   test("a valid hex is painted", () => {
-    const dot = render("#2E6FBF").querySelector<HTMLElement>(".dot")!;
-    expect(dot.style.background).toMatch(/rgb\(46, 111, 191\)|#2e6fbf/i);
-    expect(dot.classList.contains("hatched")).toBe(false);
+    const dot = render("#2E6FBF").querySelector<HTMLElement>(".oui-swatch")!;
+    expect(dot.style.getPropertyValue("--oui-swatch")).toMatch(/rgb\(46, 111, 191\)|#2e6fbf/i);
+    expect(dot.hasAttribute("data-unknown")).toBe(false);
   });
   test.each(["url(http://x)", "red;background:url(http://x/y.png)", "#fff"])("hostile or short value %j is never rendered; the hatched neutral swatch shows", (v) => {
-    const dot = render(v).querySelector<HTMLElement>(".dot")!;
+    const dot = render(v).querySelector<HTMLElement>(".oui-swatch")!;
     expect(dot.getAttribute("style") ?? "").not.toMatch(/url|red|#fff/i);
-    expect(dot.classList.contains("hatched")).toBe(true);
+    expect(dot.hasAttribute("data-unknown")).toBe(true);
   });
 });

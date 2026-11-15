@@ -15,15 +15,15 @@ const sameCurrency = computed(() => !store.draft.currency || store.draft.currenc
 
 <template>
   <div class="frozen-note row">
-    <span class="sm muted">{{ t("quote.frozenNote") }}</span>
+    <span class="sm oui-muted">{{ t("quote.frozenNote") }}</span>
     <Button text v-if="sameCurrency" type="button" @click="useCurrentSettings">{{ t("quote.useSettings") }}</Button>
     <template v-if="hasOlderCalc()">
-      <span class="sm muted">{{ olderText }}</span>
+      <span class="sm oui-muted">{{ olderText }}</span>
       <Button text type="button" @click="repriceWithCurrentCalc">{{ t("quote.repriceCalc") }}</Button>
     </template>
   </div>
 </template>
 
 <style scoped>
-.frozen-note { flex-wrap: wrap; margin-bottom: var(--opc-s2); }
+.frozen-note { flex-wrap: wrap; margin-bottom: var(--oui-s2); }
 </style>

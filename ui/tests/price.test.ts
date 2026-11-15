@@ -61,7 +61,8 @@ describe("hero states", () => {
     const h = el.querySelector("[data-testid=hero-impossible]")!;
     expect(txt(h)).toContain("No price works on Online store");
     expect(txt(h)).toContain("Fees, tax and your markup leave no price that works. Lower the markup or the channel fees.");
-    expect([...h.querySelectorAll("button")].map(txt)).toEqual(["Lower markup", "Edit channel fees"]);
+    expect(h.querySelector("button")).toBeNull(); // a hero holds no buttons: its actions sit right under it
+    expect([...el.querySelectorAll("[data-testid=hero-actions] button")].map(txt)).toEqual(["Lower markup", "Edit channel fees"]);
     expect(el.querySelector(".tiles")).toBeNull();
     expect(el.querySelector("[data-row]")).toBeNull();
   });
@@ -90,7 +91,7 @@ describe("hero states", () => {
     const el = await show(PricePanel);
     const h = el.querySelector("[data-testid=hero-sentence]")!;
     expect(txt(h)).toContain("This channel's fees are invalid. Fix them in settings.");
-    expect(txt(h)).toContain("Edit channel fees");
+    expect(txt(el.querySelector("[data-testid=hero-actions]"))).toContain("Edit channel fees");
   });
   test("problem codes map to their messages", () => {
     expect(problemSentence(["no_plates", "negative"])).toBe("Include at least one plate.");
@@ -107,10 +108,11 @@ describe("hero states", () => {
   test("incomplete label while something is not counted", async () => {
     load("unknown");
     const el = await show(PricePanel);
-    expect(txt(el.querySelector("#price-title"))).toBe("Suggested price (incomplete) · per piece");
+    const label = () => txt(el.querySelector("[data-price-hero] .oui-label"));
+    expect(label()).toBe("Suggested price (incomplete) · per piece");
     load("ok");
     await nextTick();
-    expect(txt(el.querySelector("#price-title"))).toBe("Suggested price · per piece");
+    expect(label()).toBe("Suggested price · per piece");
   });
 });
 

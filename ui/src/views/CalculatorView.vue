@@ -1,11 +1,13 @@
 <script setup lang="ts">
-// Calculator shell: grid, breakpoints and scroll containers (docs/ux.md §3). Below 900px the price panel sits between the
-// plates and the sections (so DOM order = visual order) with its details after the sections; at 900px and up it is the right column.
+// The calculator page: what the page needs said (once) under the app bar, then Plates and Costs beside the Price panel. Three
+// columns on a wide tab, two from about 900 px, one below; when the price is off screen in one column, a bar at the bottom carries it.
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { store } from "../state/store";
 import PriceBar from "../components/price/PriceBar.vue";
 import QuotePreview from "../components/quotes/QuotePreview.vue";
-import PlatesArea from "./PlatesArea.vue";
+import FirstRunChecklist from "../components/FirstRunChecklist.vue";
+import PlateList from "../components/plates/PlateList.vue";
+import PlateNotices from "../components/plates/PlateNotices.vue";
 import PriceAside from "./PriceAside.vue";
 import SectionsArea from "./SectionsArea.vue";
 import { t } from "../i18n";
@@ -27,12 +29,12 @@ function observe(): void {
 }
 onMounted(() => {
   if (typeof window.matchMedia === "function") {
-    mq = window.matchMedia("(max-width: 899px)");
+    mq = window.matchMedia("(max-width: 931px)"); // the page container is 900 px wide here: one column below it
     narrow.value = mq.matches;
     mq.addEventListener("change", onMq);
   }
   if (typeof IntersectionObserver === "function") {
-    io = new IntersectionObserver((e) => { priceVisible.value = e.some((x) => x.isIntersecting); }, { rootMargin: "-44px 0px -56px 0px" });
+    io = new IntersectionObserver((e) => { priceVisible.value = e.some((x) => x.isIntersecting); }, { rootMargin: "-52px 0px -56px 0px" });
     observe();
   }
 });
@@ -42,37 +44,39 @@ onBeforeUnmount(() => { mq?.removeEventListener("change", onMq); io?.disconnect(
 
 <template>
   <QuotePreview v-if="store.preview" />
-  <main v-else class="calc" tabindex="-1" :class="{ n: narrow, 'bar-on': narrow && !priceVisible, 'reveal-children': reveal }" :aria-label="t('a11y.plates')">
-    <div v-if="loading" class="left" aria-busy="true">
-      <div v-for="i in 3" :key="i" class="skeleton sk-plate" />
+  <main v-else class="oui-page calc" tabindex="-1" :class="{ n: narrow, 'bar-on': narrow && !priceVisible, 'reveal-children': reveal }" :aria-label="t('a11y.plates')">
+    <div v-if="loading" class="calc-grid">
+      <div class="calc-left" aria-busy="true"><div v-for="i in 2" :key="i" class="skeleton sk-plate" /></div>
+      <aside class="right skeleton sk-price" aria-labelledby="price-title">
+        <p class="oui-meta sk-status" role="status">{{ t("price.waiting") }}</p><p id="price-title" class="oui-sr">{{ t("price.label") }}</p>
+      </aside>
     </div>
-    <template v-else-if="narrow">
-      <PlatesArea /><PriceAside part="summary" /><SectionsArea /><PriceAside part="details" />
-    </template>
     <template v-else>
-      <div class="left"><PlatesArea /><div class="gap" /><SectionsArea /></div>
-      <PriceAside class="right" />
+      <PlateNotices />
+      <FirstRunChecklist v-if="!store.settings.onboarded && !store.unreadable.length" />
+      <div class="calc-grid">
+        <div class="calc-left"><PlateList /><SectionsArea /></div>
+        <PriceAside class="right" />
+      </div>
+      <PriceBar v-if="narrow" :hidden="priceVisible" />
     </template>
-    <aside v-if="loading" class="right" aria-labelledby="price-title">
-      <div class="skeleton sk-block" /><div class="skeleton sk-block" /><div class="skeleton sk-price" /><p class="sm muted sk-status" role="status">{{ t("price.waiting") }}</p><p id="price-title" class="sr-only">{{ t("price.label") }}</p>
-    </aside>
-    <PriceBar v-if="narrow && !loading" :hidden="priceVisible" />
   </main>
 </template>
 
 <style scoped>
-.calc { padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr); grid-row-gap: 12px; }
-.calc.bar-on { padding-bottom: 68px; }
-.sk-plate { height: 88px; margin-bottom: 8px; }
-.sk-block { height: 28px; margin-bottom: 8px; }
-.sk-price { height: 40px; margin-bottom: 8px; }
-.sk-status { margin-top: 8px; }
-.gap { height: 12px; }
-@media (min-width: 900px) {
-  .calc { height: calc(100vh - var(--opc-header-h)); grid-template-columns: minmax(0, 1fr) 340px; grid-column-gap: 12px; grid-template-rows: minmax(0, 1fr); }
-  .left, .right { min-height: 0; overflow-y: auto; }
-  .right { display: flex; flex-direction: column; }
+.calc:focus { outline: none; }
+.calc.bar-on { padding-bottom: 76px; }
+.calc-grid, .calc-left { display: grid; gap: var(--oui-s3); grid-template-columns: minmax(0, 1fr); align-items: start; min-width: 0; }
+.sk-plate { height: 180px; }
+.sk-price { min-height: 240px; display: grid; place-items: center; }
+@container oui-page (min-width: 900px) {
+  .calc-grid { grid-template-columns: minmax(0, 1fr) minmax(380px, 440px); }
+  /* the price stays in view while the plates and costs scroll; when it is taller than the window its own body scrolls, so the
+     hero and the actions are never cut off */
+  .right { position: sticky; top: 64px; max-height: calc(100vh - 76px); display: flex; flex-direction: column; }
 }
-@media (min-width: 1100px) { .calc { padding: 16px; grid-template-columns: minmax(0, 1fr) 384px; grid-column-gap: 16px; } }
-@media (min-width: 1440px) { .calc { grid-template-columns: minmax(0, 1fr) 440px; grid-column-gap: 24px; width: 100%; max-width: 1680px; margin: 0 auto; } }
+@container oui-page (min-width: 1500px) {
+  .calc-grid { grid-template-columns: minmax(0, 1fr) 460px; }
+  .calc-left { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 </style>

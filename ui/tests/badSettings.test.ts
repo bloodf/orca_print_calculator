@@ -63,10 +63,10 @@ describe("the notice", () => {
     stop = boot(s);
     await flush();
     expect(S.store.settingsReset.sort()).toEqual(["discountTiers", "failureBp"]);
-    const { default: PlatesArea } = await import("../src/views/PlatesArea.vue");
+    const { default: CalcPage } = await import("../src/views/CalculatorView.vue"); // the notices and the first run open the calculator page
     root = document.createElement("div");
     document.body.appendChild(root);
-    app = createApp({ render: () => h(PlatesArea) });
+    app = createApp({ render: () => h(CalcPage) });
     app.mount(root);
     await nextTick();
     const note = root.querySelector("[data-settings-reset]")!;

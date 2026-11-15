@@ -10,12 +10,13 @@ import type { OverridableKey } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
 import PercentField from "../base/PercentField.vue";
+import * as I from "../../../shared/src/icons";
 import Section from "../base/Section.vue";
 import CheckField from "./CheckField.vue";
 import FrozenNote from "./FrozenNote.vue";
 import { unknownLines } from "../price/unknownLines";
 import SelectField from "./SelectField.vue";
-import { energyText, energyUnits, hasOverride, hasProblem, patchPrinter, perPiece, saveSectionDefaults, smallStep, useDefault, useOpen } from "./shared";
+import { energyText, energyUnits, hasOverride, hasProblem, patchPrinter, perPiece, sectionAmount, saveSectionDefaults, smallStep, useDefault, useOpen } from "./shared";
 
 const KEYS: OverridableKey[] = ["energyPerKwh", "maintenancePerHourMinor", "fixedPerPrintHourMinor", "failureBp", "failureMode", "failureIncludesMachine", "depreciationEnabled"];
 const energy = useDefault("energyPerKwh");
@@ -59,10 +60,11 @@ const summary = computed(() => {
 });
 const modes = computed(() => (["markup", "expected_waste"] as const).map((v) => ({ value: v, label: t(`field.failureMode.${v}`) })));
 const wearText = (b: boolean) => t(b ? "common.on" : "common.off");
+const amount = computed(() => sectionAmount("energy", "depreciation", "maintenance", "fixed", "failure"));
 </script>
 
 <template>
-  <Section id="machine" help="machine" :title="t('section.machine')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('costs')" @update:open="setOpen">
+  <Section id="machine" help="machine" :icon="I.zap" tone="orange" :amount="amount.amount" :partial="amount.partial" :title="t('section.machine')" :summary="summary" :open="open" :overridden="hasOverride(KEYS)" :invalid="hasProblem('costs')" @update:open="setOpen">
     <div class="form-grid">
       <template v-if="model || frozen">
         <FrozenNote v-if="frozen" class="wide" />
@@ -111,14 +113,14 @@ const wearText = (b: boolean) => t(b ? "common.on" : "common.off");
         :default-text="wearText(wear.base.value)" @update:model-value="wear.set" @reset="wear.reset"
       />
     </div>
-    <p v-if="!model" class="sm muted nomodel">{{ t("header.noPrinter") }}</p>
+    <p v-if="!model" class="sm oui-muted nomodel">{{ t("header.noPrinter") }}</p>
     <div v-if="hasOverride(KEYS)" class="foot hairline"><Button text type="button" @click="saveSectionDefaults(KEYS)">{{ t("section.saveDefaults") }}</Button></div>
   </Section>
 </template>
 
 <style scoped>
-.checks { margin-top: var(--opc-s2); display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); grid-column-gap: var(--opc-s3); }
-.nomodel { margin-top: var(--opc-s2); }
+.checks { margin-top: var(--oui-s2); display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); grid-column-gap: var(--oui-s3); }
+.nomodel { margin-top: var(--oui-s2); }
 .wide { grid-column: 1 / -1; }
-.foot { margin-top: var(--opc-s3); padding-top: var(--opc-s2); }
+.foot { margin-top: var(--oui-s3); padding-top: var(--oui-s2); }
 </style>

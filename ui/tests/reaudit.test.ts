@@ -1,7 +1,7 @@
 // T4.10 round 2: defects from the T4.9 re-audit. Each test was run red before its fix.
 import cardSrc from "../src/components/plates/PlateCard.vue?raw";
 import fieldSrc from "../src/components/settings/TextField.vue?raw";
-import themeCss from "../src/theme.css?raw";
+import themeCss from "../src/app.css?raw";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { defineComponent, h, nextTick, ref } from "vue";
 

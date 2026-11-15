@@ -26,12 +26,12 @@ describe("unknown cost lines", () => {
     expect(txt(energy)).toContain("unknown"); // the screen-reader text next to the dash
     expect(txt(el.querySelector("[data-row=depreciation]"))).toContain("time unknown");
     expect(txt(el.querySelector("[data-row=costTotal]"))).toContain("Cost per piece · partial");
-    expect(el.querySelector("[data-row=energy] .bar")).toBeNull(); // no bar for an amount nobody knows
+    expect(el.querySelector("[data-seg=energy]")).toBeNull(); // no segment for an amount nobody knows
   });
   test("a known line that leaves something out says partial, with the amount kept", async () => {
     load("unknown");
     const el = await show(BreakdownBars);
-    expect(txt(el.querySelector("[data-row=filament]"))).toMatch(/Filament · partialR\$/);
+    expect(txt(el.querySelector("[data-row=filament]"))).toMatch(/Filament · partial[\d.]+%R\$/);
   });
   test("an energy price that is not set is named as such (not 'time')", async () => {
     load("ok", { settings: (s) => ({ ...s, defaults: { ...s.defaults, energyPerKwh: null } }) });

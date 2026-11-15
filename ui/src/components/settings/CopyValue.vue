@@ -4,7 +4,8 @@ import Button from "primevue/button";
 import { onBeforeUnmount, ref } from "vue";
 import { copyText } from "../../clipboard";
 import { t } from "../../i18n";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 
 const props = defineProps<{ value: string; label: string }>();
 const copied = ref(false); // a copy was attempted
@@ -24,13 +25,13 @@ async function copy(): Promise<void> {
   <div class="cv row">
     <span class="cv-text num sm">{{ value }}</span>
     <Button text severity="secondary" type="button" class="icon-btn" :aria-label="t('common.copyLabel', { label })" :title="t('common.copy')" @click="copy">
-      <Icon :name="copied && ok ? 'check' : 'copy'" />
+      <OuiIcon :icon="copied && ok ? I.check : I.copy" />
     </Button>
-    <span class="sm muted" role="status">{{ copied ? t(ok ? "common.copied" : "common.copyFailed") : "" }}</span>
+    <span class="sm oui-muted" role="status">{{ copied ? t(ok ? "common.copied" : "common.copyFailed") : "" }}</span>
   </div>
 </template>
 
 <style scoped>
 .cv { min-height: 28px; }
-.cv-text { user-select: text; -webkit-user-select: text; white-space: normal; overflow-wrap: anywhere; padding: 2px 6px; border-radius: var(--opc-r-control); background: var(--opc-raised); border: 1px solid var(--opc-border); }
+.cv-text { user-select: text; -webkit-user-select: text; white-space: normal; overflow-wrap: anywhere; padding: 2px 6px; border-radius: var(--oui-radius); background: var(--oui-surface); border: 1px solid var(--oui-border); }
 </style>

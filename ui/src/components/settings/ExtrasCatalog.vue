@@ -6,8 +6,8 @@ import { t } from "../../i18n";
 import { currency, digits, patchSettings, store } from "../../state/store";
 import { toast } from "../../state/toast";
 import type { CatalogExtra } from "../../state/types";
-import Badge from "../base/Badge.vue";
-import Icon from "../base/Icon.vue";
+import { OuiIcon } from "../../../shared/src/components";
+import * as I from "../../../shared/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
 import SelectField from "../costs/SelectField.vue";
@@ -33,7 +33,7 @@ function remove(key: string): void {
 
 <template>
   <div class="ec">
-    <p v-if="!items.length" class="muted">{{ t("catalog.empty") }}</p>
+    <p v-if="!items.length" class="oui-muted">{{ t("catalog.empty") }}</p>
     <ul v-else class="ec-list">
       <li v-for="x in items" :key="x.key" class="ec-item">
         <div class="ec-grid">
@@ -42,19 +42,19 @@ function remove(key: string): void {
           <NumberField :model-value="x.qtyE3" :label="t('field.extraQty')" :scale="1000" :step="1000" :max="1000000" @update:model-value="(v) => v !== null && edit(x.key, { qtyE3: v })" />
           <SelectField :model-value="x.per" :label="t('field.extraPer')" :options="pers()" @update:model-value="(v) => edit(x.key, { per: v as CatalogExtra['per'] })" />
           <NumberField :model-value="x.stockE3 ?? null" :label="t('field.extraStock')" :scale="1000" :step="1000" :max="1000000000" nullable :helper="t('field.extraStockHelp')" @update:model-value="(v) => edit(x.key, { stockE3: v })" />
-          <Button text severity="secondary" type="button" class="ec-rm icon-btn" :aria-label="t('common.removeNamed', { name: x.label || t('extras.custom') })" @click="remove(x.key)"><Icon name="trash" /></Button>
+          <Button text severity="secondary" type="button" class="ec-rm icon-btn" :aria-label="t('common.removeNamed', { name: x.label || t('extras.custom') })" @click="remove(x.key)"><OuiIcon :icon="I.trash" /></Button>
         </div>
-        <Badge v-if="x.stockE3 === 0" tone="warn" :text="t('stock.out')" class="ec-out" />
+        <span v-if="x.stockE3 === 0" class="oui-chip badge ec-out" data-tone="warn">{{ t("stock.out") }}</span>
       </li>
     </ul>
-    <Button text type="button" @click="add"><Icon name="plus" /><span>{{ t("catalog.add") }}</span></Button>
+    <Button text type="button" @click="add"><OuiIcon :icon="I.plus" /><span>{{ t("catalog.add") }}</span></Button>
   </div>
 </template>
 
 <style scoped>
 .ec > * + * { margin-top: 8px; }
 .ec-list { list-style: none; margin: 0; padding: 0; }
-.ec-item { padding: 4px 0 12px; border-bottom: 1px solid var(--opc-border); }
+.ec-item { padding: 4px 0 12px; border-bottom: 1px solid var(--oui-border); }
 .ec-item + .ec-item { padding-top: 12px; }
 .ec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; align-items: start; }
 .ec-rm { margin-top: 24px; }

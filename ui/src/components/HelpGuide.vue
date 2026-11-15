@@ -21,7 +21,7 @@ async function onShow(): Promise<void> {
 
 <template>
   <Dialog :visible="visible" modal dismissable-mask :draggable="false" :header="t('help.title')" class="help app-chrome" @update:visible="onVisible" @show="onShow" @after-hide="focus.restore()">
-    <p class="muted help-intro">{{ t("help.intro") }}</p>
+    <p class="oui-muted help-intro">{{ t("help.intro") }}</p>
     <ol class="help-steps">
       <li v-for="(s, i) in HELP_STEPS" :key="s" :data-step="s" :class="{ on: s === helpStep }" :aria-current="s === helpStep ? 'step' : undefined">
         <span class="help-n num" aria-hidden="true">{{ i + 1 }}</span>
@@ -38,9 +38,9 @@ async function onShow(): Promise<void> {
 .p-dialog.help { width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 64px); }
 .help .help-intro { margin: 0; }
 .help .help-steps { list-style: none; margin: 12px 0 0; padding: 0; }
-.help .help-steps li { display: flex; padding: 10px 8px; border-left: 2px solid transparent; border-top: 1px solid var(--opc-border); scroll-margin-top: 8px; }
-.help .help-steps li.on { border-left-color: var(--opc-accent-text); background: var(--opc-hover); }
-.help .help-n { flex: none; width: 24px; color: var(--opc-accent-text); font-weight: 600; }
+.help .help-steps li { display: flex; padding: 10px 8px; border-left: 2px solid transparent; border-top: 1px solid var(--oui-border); scroll-margin-top: 8px; }
+.help .help-steps li.on { border-left-color: var(--oui-primary); background: var(--oui-raised); }
+.help .help-n { flex: none; width: 24px; color: var(--oui-primary); font-weight: 600; }
 .help .help-steps h3 { margin: 0 0 2px; font-size: inherit; font-weight: 600; }
-.help .help-steps p { margin: 0; color: var(--opc-muted); }
+.help .help-steps p { margin: 0; color: var(--oui-muted); }
 </style>

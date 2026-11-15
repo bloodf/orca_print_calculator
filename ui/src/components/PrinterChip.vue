@@ -5,9 +5,9 @@ import { computed, ref } from "vue";
 import { intlLocale, t } from "../i18n";
 import { watts as fmtWatts } from "../format";
 import { derived } from "../state/store";
-import Badge from "./base/Badge.vue";
 import { elOf } from "./base/el";
-import Icon from "./base/Icon.vue";
+import { OuiIcon, OuiStatus } from "../../shared/src/components";
+import * as I from "../../shared/src/icons";
 import NumberField from "./base/NumberField.vue";
 import Popover from "./base/Popover.vue";
 import { gotoSettings, patchPrinter } from "./costs/shared";
@@ -24,22 +24,22 @@ const more = () => { close(); gotoSettings("settings-printers"); };
 </script>
 
 <template>
-  <span v-if="!model" class="chip none sm muted">{{ t("header.noPrinter") }}</span>
+  <span v-if="!model" class="chip none">{{ t("header.noPrinter") }}</span>
   <template v-else>
-    <Button :ref="(c) => (anchor = elOf(c))" severity="secondary" outlined size="small" type="button" class="chip" :aria-label="`${model}, ${wattText}${estimated ? `, ${t('printer.estimated')}` : ''}`"
-      aria-haspopup="dialog" :aria-expanded="open" @click="open = !open">
-      <Icon name="printer-3d" />
-      <span class="model truncate">{{ model }}</span>
-      <span class="w num sm muted"><span class="dotsep" aria-hidden="true">·</span> {{ wattText }}</span>
-      <Badge v-if="source === 'match' && estimated" tone="info" :text="t('printer.estimated')" />
+    <Button :ref="(c) => (anchor = elOf(c))" severity="secondary" text size="small" type="button" class="chip" :aria-label="`${model}, ${wattText}${estimated ? `, ${t('printer.estimatedPower')}` : ''}`"
+      :title="model" aria-haspopup="dialog" :aria-expanded="open" @click="open = !open">
+      <OuiIcon :icon="I.printer" :size="14" />
+      <span class="model oui-truncate">{{ model }}</span>
+      <span class="w num"><span aria-hidden="true">· </span>{{ wattText }}</span>
     </Button>
+    <OuiStatus v-if="source === 'match' && estimated" class="est" state="warn">{{ t("printer.estimatedPower") }}</OuiStatus>
     <Popover :open="open" :anchor="anchor" :label="t('printer.power')" @close="close">
       <div class="pc">
         <NumberField :model-value="watts" :label="t('printer.power')" :scale="1" :step="10" :min="1" :max="5000" unit="W" :helper="t('printer.powerHelp')" required @update:model-value="save" />
-        <p class="sm muted sugg">{{ t("printer.suggested", { watts: match.watts, how: t(`printer.how.${match.how}`) }) }}</p>
-        <div class="row acts">
-          <Button v-if="source === 'saved'" severity="secondary" outlined type="button" @click="useSuggested">{{ t("printer.useSuggested") }}</Button>
-          <Button text type="button" @click="more">{{ t("printer.moreSettings") }}</Button>
+        <p class="oui-meta sugg">{{ t("printer.suggested", { watts: match.watts, how: t(`printer.how.${match.how}`) }) }}</p>
+        <div class="oui-row acts">
+          <Button v-if="source === 'saved'" severity="secondary" type="button" @click="useSuggested">{{ t("printer.useSuggested") }}</Button>
+          <Button text severity="secondary" type="button" @click="more">{{ t("printer.moreSettings") }}</Button>
         </div>
       </div>
     </Popover>
@@ -47,16 +47,12 @@ const more = () => { close(); gotoSettings("settings-printers"); };
 </template>
 
 <style scoped>
-.chip { min-width: 0; max-width: 100%; overflow: hidden; }
-.chip > .w, .chip :deep(.badge) { flex: none; }
+.chip { flex: 0 1 auto; min-width: 0; gap: 6px; padding-inline: 6px; }
 .chip.none { padding: 0 4px; }
-.model { max-width: 18ch; min-width: 0; flex: 0 1 auto; }
-.dotsep { margin-right: 2px; }
-.sugg { margin-top: var(--opc-s2); }
-.acts { margin-top: var(--opc-s2); justify-content: space-between; flex-wrap: wrap; }
-/* the full text (model, watts, Estimated) stays in the button's accessible name; what is drawn gives way to the tabs */
-@media (max-width: 1279px) { .chip :deep(.badge) { display: none; } }
-@media (max-width: 1099px) { .model { max-width: 12ch; } }
-@media (max-width: 899px) { .model, .dotsep { display: none; } }
-@media (max-width: 599px) { .w { display: none; } }
+.model { flex: 0 1 auto; min-width: 0; }
+.w { flex: none; }
+.sugg { margin-top: var(--oui-s2); }
+.acts { margin-top: var(--oui-s2); justify-content: space-between; }
+/* the full text (model, watts, estimated) stays in the button's accessible name; what is drawn gives way to the tabs */
+@container oui-appbar (max-width: 1279px) { .est { display: none; } }
 </style>
