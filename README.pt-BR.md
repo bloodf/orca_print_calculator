@@ -39,18 +39,18 @@ Complete seu fluxo no OrcaSlicer: organizar, calcular, gerenciar filamento e imp
   </tr>
   <tr>
     <td width="33%" valign="top">
-      <a href="https://github.com/bloodf/kobracontrol"><img src="docs/related-plugins/kobracontrol-icon.png" width="40" height="40" alt="Kobra Control"></a>
-      <h3><a href="https://github.com/bloodf/kobracontrol">Kobra Control</a></h3>
-      <a href="https://github.com/bloodf/kobracontrol"><img src="docs/related-plugins/kobracontrol-preview.png" width="280" alt="Kobra Control: prévia"></a>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982"><img src="docs/related-plugins/kobracontrol-icon.png" width="40" height="40" alt="Kobra Control"></a>
+      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982">Kobra Control</a></h3>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982"><img src="docs/related-plugins/kobracontrol-preview.png" width="280" alt="Kobra Control: prévia"></a>
       <p>A Anycubic Kobra X no OrcaSlicer: Print and Send, a aba Device, slots do ACE e um painel.</p>
-      <p><a href="https://github.com/bloodf/kobracontrol">Código no GitHub →</a></p>
+      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/5d572581-28dc-4c72-a044-36a3d26f7982">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/kobracontrol">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top">
-      <a href="https://github.com/bloodf/embedder"><img src="docs/related-plugins/embedder-icon.png" width="40" height="40" alt="Embedder"></a>
-      <h3><a href="https://github.com/bloodf/embedder">Embedder</a></h3>
-      <a href="https://github.com/bloodf/embedder"><img src="docs/related-plugins/embedder-preview.png" width="280" alt="Embedder: prévia"></a>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b"><img src="docs/related-plugins/embedder-icon.png" width="40" height="40" alt="Embedder"></a>
+      <h3><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b">Embedder</a></h3>
+      <a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b"><img src="docs/related-plugins/embedder-preview.png" width="280" alt="Embedder: prévia"></a>
       <p>Abra cavidades para ímãs e etiquetas NFC na peça, com uma pausa na camada certa para colocar cada inserto.</p>
-      <p><a href="https://github.com/bloodf/embedder">Código no GitHub →</a></p>
+      <p><a href="https://cloud.orcaslicer.com/app/plugins/shared-plugins/50673720-ff2d-494e-9f71-d7742770671b">Instalar pelo Orca Cloud →</a><br><a href="https://github.com/bloodf/embedder">Código no GitHub →</a></p>
     </td>
     <td width="33%" valign="top"></td>
   </tr>
