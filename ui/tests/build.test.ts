@@ -21,7 +21,7 @@ async function built(): Promise<string> {
 }
 
 /** 387,010 B before the Vue + PrimeVue migration; 877 kB after (Vue Options API, PrimeVue components, the shared Aura preset). The CI gate uses the same figure. */
-const BUDGET = 1_010_000; // measured 985,826 B with Orca UI foundation 4.0.1 (Manrope font, shared components), rounded up to 990,000 + 20,000
+const BUDGET = 1_010_000; // measured 988,342 B with Orca UI foundation 4.0.1 (Manrope font, shared components), rounded up to 990,000 + 20,000
 
 describe("built index.html", () => {
   test("carries the CSP meta, before the first <script", async () => {

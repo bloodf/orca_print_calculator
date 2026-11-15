@@ -6,7 +6,7 @@
 
 Orca Print Calculator é um plugin para o OrcaSlicer 2.5. Ele cria uma aba na janela principal que precifica cada placa do projeto aberto. O custo do filamento vem do seu estoque no Spoolman, a energia é sugerida pelo modelo da impressora, e você soma mão de obra, depreciação, taxa de falha, extras, frete, imposto e taxas dos canais de venda. O resultado é um preço de venda sugerido, a comparação entre canais, o preço por lote, orçamentos salvos e um orçamento para imprimir ou exportar para o cliente.
 
-**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão desta árvore é 0.4.0 ([changelog](CHANGELOG.md)). Os testes usam só simulações (host simulado, fixtures, um módulo `orca` falso, Chrome headless); nada foi executado contra um OrcaSlicer, servidor Spoolman, impressora ou câmera reais. O hub do OrcaCloud só lista uma versão depois que ela é publicada, então ele pode estar atrás desta árvore. A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então a aba deste plugin fica ao lado das de outros plugins (Spooler, U1 Control).
+**Status: em desenvolvimento. O plugin ainda não foi executado dentro do OrcaSlicer.** A interface e o motor de preços são testados fora do Orca, com um host simulado, e o host em Python é testado contra um módulo `orca` falso. O roteiro do teste ao vivo está em [docs/live-run.md](docs/live-run.md) (em inglês). A versão desta árvore é 0.5.0 ([changelog](CHANGELOG.md)). Os testes usam só simulações (host simulado, fixtures, um módulo `orca` falso, Chrome headless); nada foi executado contra um OrcaSlicer, servidor Spoolman, impressora ou câmera reais. O hub do OrcaCloud só lista uma versão depois que ela é publicada, então ele pode estar atrás desta árvore. A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então a aba deste plugin fica ao lado das de outros plugins (Spooler, U1 Control).
 
 <!-- related-plugins:start -->
 ## Conheça os outros plugins
@@ -97,9 +97,9 @@ Capturas atuais com host simulado (Chrome headless numa build local com o host d
 - **Quantidade e lotes.** Quantidade, faixas de desconto e uma tabela de lote com custo unitário, preço unitário, total do pedido, lucro do pedido e margem por faixa. Quando uma rodada rende mais peças do que o pedido pede, as peças a mais entram no custo do pedido. Cada linha de custo é arredondada uma vez sobre o pedido inteiro, não por peça (versão de cálculo 2), e o markup é medido sobre o custo depois das taxas e do imposto (versão de cálculo 3). Orçamentos salvos antes mantêm os números com que foram salvos; "Reprecificar com o cálculo atual", nas notas do próprio orçamento, aplica o cálculo atual de propósito.
 - **Orçamentos salvos.** O orçamento guarda os próprios dados, placas, preços e moeda. Ao abrir depois, os números aparecem como foram salvos, mesmo que você tenha mudado ajustes ou moeda. O que o fatiamento não informou (tempo de impressão, peso ou uso de filamento, preço do filamento) é salvo como desconhecido, nunca como zero: dá para salvar esse rascunho, mas ele não pode ser exportado, impresso nem enviado enquanto estiver incompleto.
 - **Saída do orçamento.** "Imprimir orçamento" abre a folha de orçamento (detalhada ou resumida) e a janela de impressão, onde dá para salvar em PDF. A exportação em CSV e em HTML grava um arquivo na pasta de dados do plugin, e a aba mostra o caminho. A folha leva seu logo, dados da empresa, condições de pagamento e cor de destaque, definidos em Ajustes › Folha de orçamento, com uma prévia ao lado do formulário. Na aba Orçamentos, "Exportar lista" grava uma linha de CSV por orçamento listado (com a busca aplicada): número, data, cliente, título, moeda, canal, quantidade, preço unitário, total, margem e se o orçamento está completo, tudo com os números salvos em cada orçamento.
-- **Ajustes.** Um grupo por aba: Spoolman, custos, preço, canais de venda, impressoras, folha de orçamento, idioma e moeda, sobre. As alterações são salvas sozinhas.
+- **Ajustes.** Uma página com todos os grupos (Spoolman, custos, preço, canais de venda, impressoras, folha de orçamento, idioma e moeda, sobre) e um índice ao lado que leva a cada um. As alterações são salvas sozinhas.
 - **Idiomas e moeda.** Português do Brasil e inglês. Qualquer moeda, vinda do Spoolman ou definida nos Ajustes.
-- **Tema.** A interface foi feita para seguir os temas escuro e claro do OrcaSlicer. Isso ainda não foi verificado dentro do Orca.
+- **Tema.** A interface foi feita para seguir os temas escuro e claro do OrcaSlicer, na cor lima do plugin com uma barra verde-escura. Isso ainda não foi verificado dentro do Orca.
 
 ## Requisitos
 
@@ -177,7 +177,7 @@ A importação de `.gcode.3mf` fatiado tem limite de 100 MB.
 
 ## Desenvolvimento
 
-A interface usa Vue 3 e PrimeVue 5 (tema compartilhado Orca em `ui/shared`) com TypeScript e Vite, compilada em um único arquivo HTML offline. O host é Python 3.12, sem dependências.
+A interface usa Vue 3 e PrimeVue 5 (fundação de UI Orca 4.0.1 compartilhada em `ui/shared`: tema, componentes, ícones e a fonte Manrope) com TypeScript e Vite, compilada em um único arquivo HTML offline. O host é Python 3.12, sem dependências.
 
 ```bash
 pnpm -C ui install

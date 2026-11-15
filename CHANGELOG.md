@@ -5,6 +5,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-15
+
+### Changed
+- New interface, shared with the other plugins of the family (Orca UI foundation 4.0.1). The plugin's colour is now lime, with a deep green bar across the top that carries the plugin name, the project and its printer, the four tabs (Calculator, Quotes, Extras and stock, Settings), Import sliced file and Refresh. Every tab, control, confirmation and message from 0.4.0 is still there.
+- Calculator: Plates and Costs are panels with coloured headers and icons, one row per plate (filament colour dots, copies, cost) and one row per cost section with its amount; a section still opens to its fields. The Price panel leads with the suggested price, large, in a lime block, with profit, margin and break-even under it, then the channel, pieces ordered, markup, title and customer, and "Where the price goes": one bar split by cost line, channel fees, tax and profit, with each share and amount. Save, Print and CSV sit at the bottom of the panel.
+- A price that is missing information leaves the lime block for an amber one marked Incomplete, says how many items are missing, and lists them right under the price; a banner at the top of the page says it once. Print and CSV stay visible but are disabled and point at that list (before, they were hidden). A loss shows the price block in red.
+- Notices (an open saved quote, Spoolman not answering, plates that may be out of date, plates from an imported file, settings that were reset, files that could not be read) are one banner each at the top of the calculator.
+- Settings is one page with all its groups and an index beside it that jumps to each, instead of one group per tab.
+- The empty calculator shows the calculator illustration with Import sliced file. Toasts, banners and empty states use the shared look; icons come from one shared set.
+- The printed and exported quote keeps white paper, your logo and your colour, with clearer type: bolder shop name and quote number, small capital column headings, aligned figures, and the total on a light band under a rule in your colour. The total is in black ink instead of amber, so it stays readable with any colour you pick and when printed.
+- The interface uses the Manrope font, embedded in the page; the page policy now allows that embedded font (`font-src data:`) and nothing else new.
+- The page is about 50 kB larger (988 kB, 282 kB gzipped); the size gate is now 1,010,000 bytes.
+- Brand: the logo, icon, hero, social and listing images move from teal and an amber price to deep green and lime, with the price in lime. Amber is kept for warnings.
+
+### Fixed
+- At 1280x720 the list of missing items could be cut off at the bottom of the price panel. The panel now fits the window from where it starts and scrolls inside, so the list and the quote actions stay reachable.
+
 ## [0.4.0] - 2026-11-14
 
 ### Added
