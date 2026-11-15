@@ -36,7 +36,8 @@ function isEngineInput(i: Rec): boolean {
 
 export function isSavedQuote(q: unknown): q is SavedQuote {
   if (!isRec(q) || !str(q.id) || !Number.isInteger(q.no) || !str(q.createdAt) || !str(q.updatedAt)) return false;
-  if (!str(q.title) || !str(q.customer) || !str(q.note) || !str(q.currency) || !str(q.channelId)) return false;
+  if (!str(q.title) || !str(q.customer) || !str(q.note) || !str(q.channelId)) return false;
+  if (typeof q.currency !== "string" || !/^[A-Za-z]{3}$/.test(q.currency)) return false; // anything else makes Intl throw on every money cell
   if (!arr(q.plates) || !q.plates.every(isPlate)) return false;
   const i = q.input;
   if (!isRec(i) || !arr(i.plates) || !i.plates.every(isPlate) || !num(i.quantity) || !isEngineInput(i)) return false;
