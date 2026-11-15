@@ -7,7 +7,10 @@ vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src
 import { call } from "../src/bridge";
 import ExtrasEditor from "../src/components/costs/ExtrasEditor.vue";
 import { setLocale } from "../src/i18n";
-import { catalogItemOf, demandByItem, needOf, planOf } from "../src/state/extrasDemand";
+import { buildFlags } from "../src/components/price/flagList";
+import PriceFlags from "../src/components/price/PriceFlags.vue";
+import { catalogItemOf, demandByItem, filamentShortages, needOf, planOf } from "../src/state/extrasDemand";
+import type { Derived } from "../src/state/derive";
 import { patchDraft, store } from "../src/state/store";
 import type { CatalogExtra, QuoteExtra } from "../src/state/types";
 import { load, mount, txt } from "./priceKit";
@@ -89,5 +92,53 @@ describe("F06: ExtrasEditor warning", () => {
     const m2 = mount(ExtrasEditor); mounted.push(m2); await flush();
     expect(store.settings.extrasCatalog[0]!.stockE3).toBe(1000);
     expect(vi.mocked(call).mock.calls.filter(([cmd]) => cmd !== "get_state")).toEqual([]);
+  });
+});
+
+describe("filament stock: what the quote prints against what Spoolman says is left", () => {
+  const view = (_plate: number, n: number, filamentId: number | null) => ({ slot: { n }, filamentId });
+  const plate = (index: number, include: boolean, copies: number, grams: number[]) => ({ index, include, copies, slots: grams.map((g, k) => ({ gramsMg: g * 1000, n: k + 1 })) });
+  const data = {
+    filaments: [{ id: 1, name: "Galaxy PLA" }, { id: 2, name: "PETG" }, { id: 3, name: "TPU" }],
+    spools: [
+      { id: 10, filamentId: 1, archived: false, remainingWeight: 100 },
+      { id: 11, filamentId: 1, archived: false, remainingWeight: 50.5 },
+      { id: 12, filamentId: 1, archived: true, remainingWeight: 900 }, // archived: not on hand
+      { id: 20, filamentId: 2, archived: false, remainingWeight: 1000 },
+      { id: 30, filamentId: 3, archived: false, remainingWeight: null }, // unknown: no claim either way
+    ],
+  };
+  test("sums every included plate copy and run per filament, archived spools do not count", () => {
+    const input = { plates: [plate(0, true, 2, [30, 40]), plate(1, false, 1, [500]), plate(2, true, 1, [10])], quantity: 3, unitsPerSet: 2 }; // 2 runs
+    const matches = { 0: [view(0, 1, 1), view(0, 2, 2)], 1: [view(1, 1, 1)], 2: [view(2, 1, 1)] };
+    // filament 1: (30 g x 2 copies + 10 g) x 2 runs = 140 g > 150.5 g? no. filament 2: 40 x 2 x 2 = 160 g of 1000 g
+    expect(filamentShortages(input, matches, data)).toEqual([]);
+    const more = { ...input, quantity: 5 }; // 3 runs: filament 1 needs 210 g of 150.5 g
+    expect(filamentShortages(more, matches, data)).toEqual([{ filamentId: 1, name: "Galaxy PLA", needG: 210, haveG: 150.5 }]);
+  });
+  test("slots with no Spoolman filament or no known remaining weight are not judged", () => {
+    const input = { plates: [plate(0, true, 1, [5000, 5000])], quantity: 1, unitsPerSet: 1 };
+    expect(filamentShortages(input, { 0: [view(0, 1, null), view(0, 2, 3)] }, data)).toEqual([]);
+  });
+  test("the price panel names the filament, the weight needed and the weight left", () => {
+    const f = buildFlags({ selected: null, notCounted: [], skippedChannels: [], slotMatches: {}, fieldErrors: {}, quoteInput: { plates: [] } } as unknown as Derived,
+      { m: String, pct: String }, { stale: false, short: [{ filamentId: 1, name: "Galaxy PLA", needG: 210, haveG: 150.5 }] });
+    expect(f).toEqual([{ id: "filamentShort-1", tone: "info", text: "Spoolman shows 151 g of Galaxy PLA left; this quote prints 210 g." }]);
+    setLocale("pt-BR");
+    expect(buildFlags({ selected: null, notCounted: [], skippedChannels: [], slotMatches: {}, fieldErrors: {}, quoteInput: { plates: [] } } as unknown as Derived,
+      { m: String, pct: String }, { stale: false, short: [{ filamentId: 1, name: "Galaxy PLA", needG: 1210, haveG: 150.5 }] })[0]!.text)
+      .toBe("O Spoolman mostra 151 g de Galaxy PLA; este orçamento imprime 1,21 kg.");
+  });
+  test("live: a quote that prints more than the spools hold gets the note, a smaller one does not", async () => {
+    load("ok");
+    const m = mount(PriceFlags); mounted.push(m); await flush();
+    const el = m.root;
+    expect(el.querySelector("[data-flag^=filamentShort]")).toBeNull();
+    patchDraft({ quantity: 60 });
+    await flush();
+    expect(el.querySelector("[data-flag^=filamentShort]")).not.toBeNull();
+    store.spoolman = { ...store.spoolman, state: "offline" }; // stock from a Spoolman that is not answering is not trusted
+    await flush();
+    expect(el.querySelector("[data-flag^=filamentShort]")).toBeNull();
   });
 });

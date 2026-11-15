@@ -10,6 +10,7 @@ import Icon from "../base/Icon.vue";
 import Section from "../base/Section.vue";
 import type { ChannelOk, ChannelQuote } from "../../engine/quote";
 import DiscountTierEditor from "./DiscountTierEditor.vue";
+import { belowTargetText } from "./flagList";
 import { channelProblemSentence, m, pct, signed, useCompact, useOpen } from "./priceState";
 
 const open = useOpen("batch", () => store.draft.quantity > 1 || store.draft.discountTiers.length > 0);
@@ -23,7 +24,6 @@ const rows = computed(() => {
   if (!r.ok) return [];
   return r.batchTable.map((row) => ({ q: row.quantity, cost: row.unitCostAtQuantity, ch: row.channels.find((c: ChannelQuote) => c.id === selectedId.value) }));
 });
-const target = computed(() => derived.value.quoteInput.targetMarginBp);
 
 const loss = (c: ChannelOk): boolean => c.flags.belowBreakEven || c.flags.orderBelowBreakEven;
 const underTarget = (c: ChannelOk): boolean => c.flags.belowTarget && !loss(c);
@@ -64,7 +64,7 @@ const saveDefaults = (): void => {
               <td v-if="!compact" class="r num">{{ m(row.ch.grandTotal) }}</td>
               <td class="r num" :class="{ bad: loss(row.ch) }" data-cell="orderProfit">{{ signed(row.ch.orderProfit) }}<span v-if="loss(row.ch)" class="sr-only">{{ ` ${t("batch.loss")}` }}</span></td>
               <td class="r num" :class="{ bad: loss(row.ch) }" data-cell="margin">
-                <span v-if="underTarget(row.ch)" class="tgt" :title="t('flag.belowTarget', { margin: pct(row.ch.marginBp), target: pct(target) })" data-icon="belowTarget"><Icon name="info" /></span>{{ pct(row.ch.marginBp) }}<span v-if="loss(row.ch)" class="sr-only">{{ ` ${t("batch.loss")}` }}</span>
+                <span v-if="underTarget(row.ch)" class="tgt" :title="belowTargetText(row.ch, derived.quoteInput, pct)" data-icon="belowTarget"><Icon name="info" /></span>{{ pct(row.ch.marginBp) }}<span v-if="loss(row.ch)" class="sr-only">{{ ` ${t("batch.loss")}` }}</span>
               </td>
             </template>
             <td v-else :colspan="compact ? 4 : 6" class="muted sm">{{ row.ch && !row.ch.ok ? channelProblemSentence(row.ch) : "" }}</td>

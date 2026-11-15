@@ -2,6 +2,8 @@
 // This is the owner's breakdown, never the customer sheet.
 import { mulDivRound } from "./engine/costs";
 import type { ChannelOk, QuoteOk, QuoteInput } from "./engine/quote";
+import { safeDigits } from "./state/derive";
+import type { SavedQuote } from "./state/types";
 import { decimalString } from "./format";
 import { t } from "./i18n";
 
@@ -44,4 +46,16 @@ export function buildCsv(s: CsvSource): string {
     row("margin", t("quotes.col.margin"), (sel.marginBp / 100).toFixed(1), ""),
   ];
   return CSV_BOM + [CSV_HEADER.join(","), ...rows].join("\r\n") + "\r\n";
+}
+
+export const QUOTE_LIST_HEADER = ["quote_no", "date", "customer", "title", "currency", "channel", "quantity", "unit_price", "total", "margin_pct", "complete"] as const;
+
+/** One row per saved quote from its frozen summary (never recomputed), money in each quote's own currency. `complete` is the export rule. */
+export function buildQuoteListCsv(quotes: readonly SavedQuote[], complete: (q: SavedQuote) => boolean): string {
+  const rows = quotes.map((q) => {
+    const m = (n: number) => csvMoney(n, safeDigits(q.currency));
+    return [String(q.no).padStart(4, "0"), csvText(q.updatedAt), csvText(q.customer), csvText(q.title), csvText(q.currency), csvText(q.summary.channelName),
+      String(q.summary.quantity), m(q.summary.price), m(q.summary.grandTotal), (q.summary.marginBp / 100).toFixed(1), complete(q) ? "yes" : "no"].join(",");
+  });
+  return CSV_BOM + [QUOTE_LIST_HEADER.join(","), ...rows].join("\r\n") + "\r\n";
 }

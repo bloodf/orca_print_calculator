@@ -50,6 +50,12 @@ describe("parseQuotes", () => {
     expect(quotes.map((q) => q.id)).toEqual(["q-a", "q-b"]);
     expect(bad).toHaveLength(6);
   });
+  test("a currency code Intl cannot format is a bad row, not a broken Quotes view", () => {
+    const good = savedQuotes()[0]!;
+    const { quotes, bad } = parseQuotes([{ ...good, currency: "EURO" }, { ...good, id: "q-z", currency: "" }, { ...good, id: "q-y", currency: "usd" }]);
+    expect(quotes.map((q) => q.id)).toEqual(["q-y"]);
+    expect(bad).toHaveLength(2);
+  });
   test("a non-array is an empty list", () => { expect(parseQuotes(undefined)).toEqual({ quotes: [], bad: [] }); expect(parseQuotes({} as never)).toEqual({ quotes: [], bad: [] }); });
   test("sheetFor never throws on a quote that no longer prices", () => {
     const q = { ...savedQuotes()[0]!, input: { ...savedQuotes()[0]!.input, quantity: -5 } };

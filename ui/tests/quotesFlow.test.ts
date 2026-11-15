@@ -1,8 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { nextTick } from "vue";
+import QuotesView from "../src/views/QuotesView.vue";
+import { mount, txt } from "./priceKit";
 import { BridgeError } from "../src/bridge";
 import { t } from "../src/i18n";
 import { HOST, plates, settings, spoolman } from "../src/mock/fixtures";
-import { exportQuote, exportText, sheetFor } from "../src/quoteFlow";
+import { exportQuote, exportQuoteList, exportText, sheetFor } from "../src/quoteFlow";
 import { deleteQuote, openQuote, saveQuote } from "../src/state/quotes";
 import { defaultSettings, mergeSettings, newDraft } from "../src/state/defaults";
 import { derived, patchDefaults, store } from "../src/state/store";
@@ -108,5 +111,48 @@ describe("export", () => {
     expect(err).toHaveBeenCalledWith("export_file", code);
     err.mockRestore();
     expect(new BridgeError(code).code).toBe(code);
+  });
+});
+
+describe("export the quote list", () => {
+  test("writes the shown quotes as one CSV through export_file and offers the path", async () => {
+    await saveQuote(true);
+    store.draft = { ...store.draft, customer: "Bruno" };
+    await saveQuote(true);
+    calls.length = 0;
+    await exportQuoteList(store.quotes.filter((q) => q.customer === "Bruno"), new Date(2026, 10, 14, 9));
+    const sent = calls.find((c) => c.cmd === "export_file")!.args as { name: string; text: string };
+    expect(sent.name).toBe("quotes-2026-11-14.csv");
+    expect(sent.text.split("\r\n").filter(Boolean)).toHaveLength(2); // header + Bruno's quote only
+    expect(sent.text).toContain(",Bruno,");
+    expect(toasts.list[toasts.list.length - 1]?.text).toBe(t("export.saved", { path: "/out/quotes-2026-11-14.csv" }));
+  });
+  test("a host failure says so", async () => {
+    await saveQuote(true);
+    failExport = "denied";
+    await exportQuoteList(store.quotes);
+    expect(toasts.list[toasts.list.length - 1]?.tone).toBe("bad");
+  });
+});
+
+describe("Quotes view: Export list", () => {
+  test("exports what the search shows", async () => {
+    await saveQuote(true);
+    store.draft = { ...store.draft, customer: "Bruno" };
+    await saveQuote(true);
+    const m = mount(QuotesView);
+    await nextTick();
+    const search = m.root.querySelector<HTMLInputElement>("input[type=search]")!;
+    search.value = "bruno";
+    search.dispatchEvent(new Event("input"));
+    await nextTick();
+    calls.length = 0;
+    const btn = [...m.root.querySelectorAll("button")].find((b) => txt(b) === t("quotes.exportList"))!;
+    btn.click();
+    await new Promise((r) => setTimeout(r, 0));
+    const sent = calls.find((c) => c.cmd === "export_file")!.args as { text: string };
+    expect(sent.text.split("\r\n").filter(Boolean)).toHaveLength(2);
+    expect(sent.text).toContain(",Bruno,");
+    m.app.unmount(); m.root.remove();
   });
 });

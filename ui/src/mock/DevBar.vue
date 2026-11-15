@@ -4,7 +4,7 @@
 // state has loaded, because loading replaces the settings (and with them the language).
 import Button from "primevue/button";
 import { ref, watch } from "vue";
-import { patchDraft, setLanguage, setView, store } from "../state/store";
+import { derived, patchDraft, setLanguage, setView, store } from "../state/store";
 import { closeQuote, openQuote } from "../state/quotes";
 import type { View } from "../state/types";
 
@@ -19,6 +19,8 @@ watch(() => store.status, (s) => {
   if (s !== "ready") return;
   if (lang) setLanguage(lang);
   if ((scenario === "savedQuote" || scenario === "legacyQuote") && store.quotes[0]) openQuote(store.quotes[0].id);
+  // "No price works" only happens to a quote priced before calc 3 (markup on cost always has a price): show it as one
+  if (scenario === "impossible") patchDraft({ frozenInput: { ...derived.value.quoteInput, calc: 2 }, frozenPlates: derived.value.snapshots });
   // screenshots only: `?view=quotes|stock|settings` opens that tab; `?act=closeDirty` edits the open quote and closes it (the Undo toast)
   const view = q.get("view");
   if (view === "quotes" || view === "stock" || view === "settings") setView(view as View);

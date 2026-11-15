@@ -185,7 +185,8 @@ def _slots(tail, head):
     for i in range(count):
         row = {u: (series[u][i] if series[u] and i < len(series[u]) else None) for u in series}
         if any(v and v > 0 for v in row.values()):
-            slots.append({"n": i + 1, "grams": row["g"], "mm": row["mm"], "cm3": row["cm3"]})
+            grams = row["g"] if row["g"] is None or row["g"] >= 0 else None  # negative: unreadable, never a credit
+            slots.append({"n": i + 1, "grams": grams, "mm": row["mm"], "cm3": row["cm3"]})
     return slots, series["g"]
 
 
@@ -253,6 +254,12 @@ def _num(text):
     return value if math.isfinite(value) else None
 
 
+def _nonneg(text):
+    """A weight or length: a negative one is unreadable (the engine refuses negatives), not a credit."""
+    value = _num(text)
+    return value if value is not None and value >= 0 else None
+
+
 def _int(text):
     value = _num(text)
     return int(value) if value is not None else None
@@ -261,7 +268,7 @@ def _int(text):
 def _plate(node, position):
     meta = {m.get("key"): m.get("value") for m in node.findall("metadata")}
     original = _int(meta.get("index"))
-    if original is None:
+    if original is None or original < 1:  # plates are numbered from 1; 0 or less would become plate -1
         original = position
     prediction = _num(meta.get("prediction"))
     filaments = []
@@ -269,8 +276,8 @@ def _plate(node, position):
         color = item.get("color") or ""
         filaments.append({
             "id": _int(item.get("id")),
-            "used_g": _num(item.get("used_g")),
-            "used_m": _num(item.get("used_m")),
+            "used_g": _nonneg(item.get("used_g")),
+            "used_m": _nonneg(item.get("used_m")),
             "type": (item.get("type") or "")[:50] or None,
             "color": color if re.fullmatch(r"#[0-9A-Fa-f]{6}(?:[0-9A-Fa-f]{2})?", color) else None,
         })
@@ -294,7 +301,12 @@ def parse_slice_info(xml_text):
         root = ET.fromstring(xml_text)
     except ET.ParseError as exc:
         raise CoreError("bad_xml", str(exc)) from exc
-    return [_plate(node, pos) for pos, node in enumerate(root.iter("plate"), start=1)]
+    plates = [_plate(node, pos) for pos, node in enumerate(root.iter("plate"), start=1)]
+    if len({p["index"] for p in plates}) < len(plates):
+        # A repeated plate number: the UI keys plate controls by index, so use file order instead. `index` is 0-based like
+        # every HostPlate (the UI shows index + 1); each plate's time and filament were already read from its own node.
+        plates = [{**p, "index": pos} for pos, p in enumerate(plates)]
+    return plates
 
 
 # What zipfile raises on encrypted entries, unknown compression, bad deflate/bz2/lzma data and lying headers.

@@ -45,6 +45,11 @@ const plateLabel = (p: QuotePlate): string => {
 /** A hand-edited quotes.json can hold any JSON type: every text field goes through this before use. */
 const str = (v: unknown): string => (typeof v === "string" ? v : "");
 const days = (n: unknown): number => (typeof n === "number" && Number.isFinite(n) ? n : 0);
+/** `fromMs` + validity days as ISO text, or "" when either is out of range (a hand-edited date or day count must not throw). */
+const validUntil = (fromMs: number, validityDays: unknown): string => {
+  const end = new Date(fromMs + days(validityDays) * 86_400_000);
+  return Number.isNaN(end.getTime()) ? "" : end.toISOString();
+};
 
 /** Logo, company lines, accent and payment block. Validated here: the last stop before markup and style. */
 export function brandOf(b: Partial<SheetBrand>): Pick<SheetModel, "logo" | "contact" | "accent" | "payment"> {
@@ -61,7 +66,7 @@ export function brandOf(b: Partial<SheetBrand>): Pick<SheetModel, "logo" | "cont
 export function sampleSheetModel(sheet: SheetSource["sheet"], currency: string): SheetModel {
   const loc = intlLocale();
   const now = new Date();
-  const end = new Date(now.getTime() + days(sheet.validityDays) * 86_400_000).toISOString();
+  const end = validUntil(now.getTime(), sheet.validityDays);
   const unit = 4500, qty = 2;
   return {
     lang: currentLocale(), shop: str(sheet.shopName), heading: t("sheet.quote", { no: quoteNo(1, loc) }),
@@ -85,7 +90,7 @@ export function buildSheetModel(s: SheetSource): SheetModel {
     ? splitLargestRemainder(sel.orderTotal, included.map((p) => s.result.plates.find((r) => r.index === p.index)?.totalMinor ?? 0))
       .map((amount, i) => ({ label: plateLabel(included[i]!), qty: "", unit: "", amount: m(amount) }))
     : [{ label: s.title, qty: count(quantity, loc), unit: m(sel.price), amount: m(sel.orderTotal) }];
-  const end = new Date(new Date(s.dateIso).getTime() + days(s.sheet.validityDays) * 86_400_000).toISOString();
+  const end = validUntil(new Date(s.dateIso).getTime(), s.sheet.validityDays);
   return {
     lang: currentLocale(), shop: str(s.sheet.shopName),
     heading: s.no === null ? t("sheet.draft") : t("sheet.quote", { no: quoteNo(s.no, loc) }),

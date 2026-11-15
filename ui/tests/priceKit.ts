@@ -6,7 +6,7 @@ import { setLocale } from "../src/i18n";
 import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
 import { spoolman } from "../src/mock/fixtures";
 import { openQuote } from "../src/state/quotes";
-import { store } from "../src/state/store";
+import { derived, store } from "../src/state/store";
 import type { Draft, Settings } from "../src/state/types";
 
 export function load(name: ScenarioName, edit: { settings?: (s: Settings) => Settings; draft?: (d: Draft) => Draft } = {}): void {
@@ -22,6 +22,8 @@ export function load(name: ScenarioName, edit: { settings?: (s: Settings) => Set
   store.settings = { ...store.settings, currency: "BRL" };
   store.draft = newDraft(store.settings);
   if (name === "savedQuote" && store.quotes[0]) openQuote(store.quotes[0].id);
+  // "No price works" only happens to a quote priced before calc 3 (markup on cost always has a price): freeze it as one
+  if (name === "impossible") store.draft = { ...store.draft, frozenInput: { ...derived.value.quoteInput, calc: 2 }, frozenPlates: derived.value.snapshots };
   if (edit.draft) store.draft = edit.draft(store.draft);
   store.view = "calc";
 }

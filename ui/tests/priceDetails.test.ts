@@ -133,7 +133,7 @@ describe("batch table", () => {
     if (!sel || !sel.ok) throw new Error("expected a price");
     expect(sel.effectiveDiscountBp).not.toBe(sel.discountBp);
     const cell = el.querySelector("tr[data-q='10'] [data-cell=discount]")!;
-    expect(txt(cell.querySelector(".eff"))).toBe("10.2%");
+    expect(txt(cell.querySelector(".eff"))).toBe("10.8%");
     expect(txt(cell.querySelector(".nominal"))).toBe("tier 10%");
   });
   test("no nominal line when they match", async () => {

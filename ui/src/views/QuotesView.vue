@@ -11,7 +11,7 @@ import Icon from "../components/base/Icon.vue";
 import InlineAlert from "../components/base/InlineAlert.vue";
 import { count, date, money, percent, quoteNo } from "../format";
 import { intlLocale, t } from "../i18n";
-import { exportQuote, printQuote } from "../quoteFlow";
+import { exportQuote, exportQuoteList, printQuote } from "../quoteFlow";
 import { deleteQuote, duplicateQuote, openQuote } from "../state/quotes";
 import { setView, store } from "../state/store";
 import type { IconName } from "../components/base/icons";
@@ -49,6 +49,7 @@ const goCalc = (): void => setView("calc");
         <InputIcon><Icon name="search" /></InputIcon>
         <InputText v-model="q" type="search" :aria-label="t('quotes.search')" :placeholder="t('quotes.search')" fluid />
       </IconField>
+      <Button v-if="shown.length" severity="secondary" outlined size="small" type="button" :title="t('quotes.exportListHelp')" @click="exportQuoteList(shown)"><Icon name="download" /><span>{{ t("quotes.exportList") }}</span></Button>
     </div>
     <InlineAlert v-if="store.skippedQuotes" tone="warn" class="skipped"><p>{{ t("quotes.skipped", { n: store.skippedQuotes }) }}</p></InlineAlert>
     <EmptyState v-if="!store.quotes.length" art="quote" :title="t('empty.quote.title')" :body="t('empty.quote.body')">

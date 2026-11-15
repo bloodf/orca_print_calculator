@@ -184,7 +184,7 @@ describe("flags", () => {
     const el = await show(PriceFlags);
     const f = flagsOf(el);
     expect(f[0]).toMatchObject({ id: "belowBreakEven", tone: "bad" });
-    expect(f[0]!.text).toBe("Warning: Below break-even on Online store: each piece loses R$48.96.");
+    expect(f[0]!.text).toBe("Warning: Below break-even on Online store: each piece loses R$49.45.");
     expect(f.map((x) => x.id)).toEqual(["belowBreakEven", "discount"]);
     expect(f[1]).toMatchObject({ tone: "info" });
     expect(f[1]!.text).toBe("Note: 90% volume discount from 2 pieces.");
@@ -192,9 +192,9 @@ describe("flags", () => {
   test("a discount that only misses the target is info (belowTarget)", async () => {
     load("ok", { draft: (d) => ({ ...d, quantity: 10, discountTiers: [{ minQty: 10, discountBp: 1000 }] }) });
     const el = await show(PriceFlags);
-    const f = flagsOf(el);
+    const f = flagsOf(el).filter((x) => !x.id.startsWith("filamentShort-")); // 10 sets also outrun the fixture's spools: its own note
     expect(f.map((x) => x.id)).toEqual(["belowTarget", "discount"]);
-    expect(f[0]!.text).toMatch(/^Note: Margin \d+\.\d% is under the 30% your markup aims for, after discount or minimum\.$/);
+    expect(f[0]!.text).toMatch(/^Note: Markup \d+\.\d% is under the 42\.9% you set, after discount or minimum\.$/);
     expect(f.every((x) => x.tone === "info")).toBe(true);
   });
   test("minimum order", async () => {
