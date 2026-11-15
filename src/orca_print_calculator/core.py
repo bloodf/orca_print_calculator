@@ -301,7 +301,10 @@ def parse_slice_info(xml_text):
         root = ET.fromstring(xml_text)
     except ET.ParseError as exc:
         raise CoreError("bad_xml", str(exc)) from exc
-    return [_plate(node, pos) for pos, node in enumerate(root.iter("plate"), start=1)]
+    plates = [_plate(node, pos) for pos, node in enumerate(root.iter("plate"), start=1)]
+    if len({p["index"] for p in plates}) < len(plates):  # a repeated plate number: the UI keys plate controls by index
+        plates = [{**p, "index": pos} for pos, p in enumerate(plates)]
+    return plates
 
 
 # What zipfile raises on encrypted entries, unknown compression, bad deflate/bz2/lzma data and lying headers.

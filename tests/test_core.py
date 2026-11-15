@@ -217,6 +217,12 @@ class SliceInfo(unittest.TestCase):
         self.assertEqual([p["index"] for p in plates], [0, 1])  # positions, not plate 0 / -5
         self.assertIsNone(plates[0]["filaments"][0]["used_g"])
 
+    def test_duplicate_plate_numbers_fall_back_to_positions(self):
+        plates = core.parse_slice_info(
+            '<config><plate><metadata key="index" value="2"/></plate><plate><metadata key="index" value="2"/></plate>'
+            '<plate><metadata key="index" value="1"/></plate></config>')
+        self.assertEqual([p["index"] for p in plates], [0, 1, 2])  # one plate per index: each gets its own controls
+
     def zip_with(self, files):
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
