@@ -42,6 +42,10 @@ describe("Spoolman test connection", () => {
     byText(root, "button", t("spoolman.test"))!.click();
     await flush();
     expect(root.textContent).toContain("Start the address with http:// or https://.");
+    // A PrimeVue Message, not an unknown <message> element (it was used without being imported).
+    const err = root.querySelector("#settings-spoolman-err")!;
+    expect(err.tagName).not.toBe("MESSAGE");
+    expect(err.classList.contains("p-message")).toBe(true);
     expect(calls.filter((c) => c.cmd === "spoolman_fetch")).toHaveLength(0);
     expect(urlProblem("ftp://x")).toBe("scheme");
     expect(urlProblem("")).toBeNull();
