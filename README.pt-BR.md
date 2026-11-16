@@ -16,7 +16,7 @@
 </p>
 
 <p align="center">
-  <a href="#-instalação">Instalação</a> · <a href="#-recursos">Recursos</a> · <a href="#%EF%B8%8F-como-usar">Como usar</a> · <a href="#-perguntas-frequentes">Perguntas</a> · <a href="README.md">English</a>
+  <a href="#-instalação">Instalação</a> · <a href="#-recursos">Recursos</a> · <a href="#-como-usar">Como usar</a> · <a href="#-perguntas-frequentes">Perguntas</a> · <a href="README.md">English</a>
 </p>
 
 ## ✨ O que faz
@@ -97,6 +97,8 @@ No Linux e no Windows a pasta é `orca_plugins/orca_print_calculator/`, dentro d
 | | Valores iniciais | Em BRL, USD e EUR todo custo começa com um valor típico (preço do kWh, mão de obra, preço e vida útil da impressora, 5% de falha, 100% de markup). Outras moedas começam vazias. |
 | | Ajustes | Uma página com todos os grupos (Spoolman, custos, preço, canais de venda, impressoras, folha de orçamento, idioma e moeda, sobre) e um índice que leva a cada um. As alterações são salvas sozinhas. |
 | | Moeda e tema | Qualquer moeda, vinda do Spoolman ou definida nos Ajustes. A página foi feita para seguir os temas escuro e claro do OrcaSlicer, em lima com uma barra verde-escura; isso ainda não foi verificado dentro do OrcaSlicer. |
+
+<a id="-como-usar"></a>
 
 ## 🛠️ Como usar
 
