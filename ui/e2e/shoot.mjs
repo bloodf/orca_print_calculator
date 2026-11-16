@@ -17,7 +17,7 @@ const RUNS = [
   { n: "calc-firstrun", q: "state=firstRun", ready: "document.querySelector('.fr')" },
   { n: "calc-empty", q: "state=empty", ready: "document.querySelector('.p-button')" },
   { n: "calc-saved", q: "state=savedQuote", ready: "document.querySelector('[data-quote-banner]')" },
-  { n: "calc-undo", q: "state=savedQuote&act=closeDirty", ready: "document.querySelector('.toast-host .p-message')" },
+  { n: "calc-undo", q: "state=savedQuote&act=closeDirty", ready: "document.querySelector('.toast-host .toast')" },
   { n: "calc-offline", q: "state=offline", ready: "document.querySelector('[data-spoolman-offline]')" },
   { n: "calc-loading", q: "state=loading", ready: "document.querySelector('header')" },
   { n: "error", q: "state=hostError", ready: "document.querySelector('.host-error')" },
@@ -25,7 +25,7 @@ const RUNS = [
   { n: "stock", q: "state=ok&view=stock", ready: "document.querySelector('[data-testid=filament-table]')" },
   { n: "stock-offline", q: "state=offline&view=stock", ready: "document.querySelector('[data-stock-offline]')" },
   { n: "settings", q: "state=ok&view=settings", ready: "document.querySelector('[role=tabpanel]')" },
-  { n: "settings-sheet", q: "state=ok&view=settings", ready: "document.querySelector('[role=tabpanel]')", steps: [click("#settings-tab-sheet")] },
+  { n: "settings-sheet", q: "state=ok&view=settings", ready: "document.querySelector('#settings-sheet')", steps: [`document.getElementById('settings-sheet').scrollIntoView({ block: 'start' }); await new Promise(r => setTimeout(r, 450)); return true;`] }, // Settings is one page since 0.5.0
   { n: "dialog-help", q: "state=ok", ready: "document.querySelector('[data-testid=help-open]')", steps: [click("[data-testid=help-open]")] },
   { n: "popover-printer", q: "state=ok", ready: "document.querySelector('header .chip')", steps: [click("header [aria-haspopup=dialog].chip")] },
   { n: "menu-extras", q: "state=ok", ready: "document.querySelector('[data-section=extras]')", steps: [`const b = document.querySelector('[data-section=extras] .sec-btn'); if (b.getAttribute('aria-expanded') !== 'true') b.click(); await new Promise(r => setTimeout(r, 400)); return true;`, click("[aria-controls=extras-menu]")] },

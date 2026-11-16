@@ -224,13 +224,17 @@ See: the tab follows without a reload. Check both themes on the quote view.
 
 ### 19. Language switch
 
-Do: switch the plugin language en and pt-BR.
+Do: in Settings > Language, switch through all five languages: English, Português (Brasil), Español, Deutsch, 简体中文.
 
-See: all visible text changes without a reload.
+See: all visible text changes without a reload, in each one; numbers, money, dates and print times follow that language (for example 1.234,56 € and 2 h 14 min in German, 2小时14分钟 in Chinese). Nothing is left in English outside your own data.
 
-Do: select Automatic while Orca uses Portuguese and the browser/system uses English; reopen the plugin. Then select English explicitly.
+Do: open a saved quote in German.
 
-See: Automatic follows Orca's language when `app_language()` is available. The explicit English preference wins. Hosts without that API fall back to the browser language. Currency and saved quotes stay unchanged.
+See: the banner title reads "Angebot Nr. … · gespeichert am …" in one piece (not cut at "Nr.").
+
+Do: select Automatic while Orca uses Portuguese and the browser/system uses English; reopen the plugin. Repeat with Orca in Spanish, German and Chinese (Simplified, then Traditional). Then select English explicitly.
+
+See: Automatic follows Orca's language when `app_language()` is available (Traditional Chinese shows Simplified Chinese; any other language shows English). The explicit English preference wins. Hosts without that API fall back to the browser language. Currency and saved quotes stay unchanged.
 
 ### 20. Narrow window
 
