@@ -5,6 +5,7 @@ import { h, nextTick, type App as VueApp } from "vue";
 import AppRoot from "../src/App.vue";
 import { lead } from "../src/components/base/lead";
 import { filesText } from "../src/files";
+import { date, quoteNo } from "../src/format";
 import { currentLocale, setLocale, t, type Locale } from "../src/i18n";
 import { de } from "../src/i18n/de";
 import { es } from "../src/i18n/es";
@@ -167,8 +168,8 @@ describe("sentences built from parts", () => {
     expect(names("pt-BR")).toBe("ajustes e orçamentos");
     expect(names("es")).toBe("ajustes y presupuestos");
     expect(names("de")).toBe("Einstellungen und Angebote"); // German nouns keep their capital
-    expect(names("zh-CN")).toBe("设置和报价单");
-    expect(filesText(["quotes"])).toBe("报价单");
+    expect(names("zh-CN")).toBe("设置和报价列表");
+    expect(filesText(["quotes"])).toBe("报价列表");
     expect(filesText([])).toBe("");
   });
   test("a banner takes its title from the first sentence, also with a Chinese full stop", () => {
@@ -179,5 +180,10 @@ describe("sentences built from parts", () => {
     setLocale("de");
     expect(lead(t("plates.staleAlert"))[0]).toBe("Die Platten sind möglicherweise veraltet.");
     expect(lead("v1.2 is out. Update")).toEqual(["v1.2 is out.", "Update"]);
+    // "Nr. 0042" is an abbreviation before a number, not the end of the title.
+    expect(lead(t("quote.openBanner", { no: quoteNo(42, "de-DE"), date: date("2026-11-16T10:00:00Z", "de-DE") })))
+      .toEqual(["Angebot Nr. 0042 · gespeichert am 16.11.2026.", "Platten und Preise sind wie gespeichert."]);
+    setLocale("es");
+    expect(lead(t("quote.openBanner", { no: quoteNo(42, "es"), date: "16 nov 2026" }))[0]).toBe("Presupuesto n.º 0042 · guardado el 16 nov 2026.");
   });
 });

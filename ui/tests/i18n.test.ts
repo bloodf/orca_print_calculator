@@ -105,7 +105,7 @@ describe("Spanish, German and Chinese leave nothing in English", () => {
     expect([es["nav.settings"], de["nav.settings"], zhCN["nav.settings"]]).toEqual(["Ajustes", "Einstellungen", "设置"]);
     expect([es["plates.refresh"], de["plates.refresh"], zhCN["plates.refresh"]]).toEqual(["Actualizar", "Aktualisieren", "刷新"]);
     expect([es["plates.importCancel"], de["plates.importCancel"], zhCN["plates.importCancel"]]).toEqual(["Cancelar", "Abbrechen", "取消"]);
-    expect([es["quotes.delete"], de["quotes.delete"], zhCN["quotes.delete"]]).toEqual(["Borrar", "Löschen", "删除"]);
+    expect([es["quotes.delete"], de["quotes.delete"], zhCN["quotes.delete"]]).toEqual(["Eliminar", "Löschen", "删除"]);
     expect([es["stock.col.spools"], de["stock.col.spools"], zhCN["stock.col.spools"]]).toEqual(["Carretes", "Spulen", "料盘"]);
     // the menu path is the one OrcaSlicer shows in that language
     expect(es["import.error.notSliced"]).toContain("Archivo › Exportar › Exportar todos los objetos laminados a un archivo");
@@ -164,7 +164,8 @@ describe("locale selection and t()", () => {
     expect([t("qty.pieces", { n: 1 }), t("qty.pieces", { n: 5 })]).toEqual(["1 Stück", "5 Stück"]);
     setLocale("zh-CN");
     expect([t("plates.count", { n: 1 }), t("plates.count", { n: 3 })]).toEqual(["1 个盘", "3 个盘"]);
-    expect(t("nav.quotes")).toBe("报价单");
+    expect(t("nav.quotes")).toBe("报价列表");
+    expect(t("sheet.quote", { no: "#0001" })).toBe("报价单 #0001"); // the sheet keeps its name; the list is 报价列表
   });
   test("Orca language overrides the browser only for automatic language", () => {
     expect(setLocale("auto", "pt_BR")).toBe("pt-BR");

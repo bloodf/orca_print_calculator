@@ -40,10 +40,12 @@ export const percent = (bp: number, locale: string): string => nf(locale, { styl
 /** Unit marks per Intl tag: day, hour, minute, second, and what sits between two units. */
 type DurationMarks = readonly [d: string, h: string, min: string, s: string, gap: string];
 const MIN: DurationMarks = ["d", "h", "min", "s", " "];
-const DURATION: Record<string, DurationMarks> = { "pt-BR": MIN, es: MIN, "de-DE": MIN, "zh-CN": ["天", "小时", "分钟", "秒", ""] };
+/** German sets a space between number and unit (DIN 5008): "2 h 14 min". */
+const SPACED: DurationMarks = [" d", " h", " min", " s", " "];
+const DURATION: Record<string, DurationMarks> = { "pt-BR": MIN, es: MIN, "de-DE": SPACED, "zh-CN": ["天", "小时", "分钟", "秒", ""] };
 const DURATION_EN: DurationMarks = ["d", "h", "m", "s", " "];
 
-/** Largest two units: "2h 14m", "1d 3h", "45m", "30s". Portuguese, Spanish and German minutes read "min"; Chinese writes "2小时14分钟". */
+/** Largest two units: "2h 14m", "1d 3h", "45m", "30s". Portuguese and Spanish minutes read "min"; German spaces them, "2 h 14 min"; Chinese writes "2小时14分钟". */
 export function duration(seconds: number, locale: string): string {
   const s = Math.max(0, Math.round(seconds));
   const [D, H, M, S, gap] = DURATION[locale] ?? DURATION_EN;

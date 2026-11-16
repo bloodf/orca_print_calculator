@@ -1,12 +1,13 @@
 // Shared state shapes (docs/ux.md §5.1). Bridge payloads the UI assumes; see the T4.2 report for assumptions.
 import type { ChannelDef } from "../engine/channels";
+import type { Lang } from "../i18n";
 import type { MatchSource, SlotOverride, SpoolmanFilament, SpoolmanSpool } from "../engine/match";
 import type { ChannelQuote, DiscountTier, PrettyMode, QuoteExtra, QuoteInput, QuoteResult, QuoteSlot } from "../engine/quote";
 
 export type { ChannelDef, DiscountTier, PrettyMode, QuoteExtra, QuoteInput, QuoteResult, QuoteSlot, SlotOverride };
 
 export type View = "calc" | "quotes" | "stock" | "settings";
-export type Lang = "auto" | "en" | "pt-BR" | "es" | "de" | "zh-CN";
+export type { Lang };
 export type ShippingMode = "none" | "customer" | "absorbed"; // "none" maps to engine {mode:"customer", minor:0}
 
 export type HostInfo = { projectName: string | null; printerModel: string | null; printerVendor: string | null; pluginVersion: string; appLanguage?: string | null };

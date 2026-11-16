@@ -51,6 +51,25 @@ describe("boot", () => {
     expect(S.currency.value).toBe("BRL");
     expect(S.selected.value?.ok).toBe(true);
   });
+  test("first-run currency follows the language: EUR for German, CNY for Chinese, BRL for Portuguese, USD otherwise", () => {
+    const pick = (l: Parameters<typeof setLocale>[0]): string => { setLocale(l); return S.guessCurrency(); };
+    expect([pick("de"), pick("zh-CN"), pick("pt-BR"), pick("es"), pick("en")]).toEqual(["EUR", "CNY", "BRL", "USD", "USD"]);
+  });
+  test("a saved currency is kept whatever the language", async () => {
+    const state = buildScenario("noSpoolman").state;
+    const host = createMockHost("noSpoolman");
+    const post = host.postMessage.bind(host);
+    host.postMessage = (message) => {
+      if (typeof message === "object" && message !== null && "cmd" in message && message.cmd === "get_state" && "id" in message) {
+        dispatchToPage({ type: "res", id: message.id, ok: true, data: { ...state, settings: { ...state.settings, language: "de", currency: "JPY" } } });
+      } else post(message);
+    };
+    window.orca = host;
+    stop = S.init();
+    await vi.advanceTimersByTimeAsync(700);
+    expect(currentLocale()).toBe("de");
+    expect(S.store.settings.currency).toBe("JPY");
+  });
   test("hostError rejects get_state into the error status with a code", async () => {
     await boot("hostError");
     expect(S.store.status).toBe("error");

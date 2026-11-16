@@ -96,10 +96,11 @@ describe("format in Spanish, German and Chinese", () => {
     expect(percent(2970, "zh-CN")).toBe("29.7%");
     expect(sp(percent(-500, "de-DE"))).toBe("\u22125 %");
   });
-  test("duration: min in Spanish and German, words without spaces in Chinese", () => {
-    for (const l of ["es", "de-DE"]) {
-      expect([duration(8040, l), duration(97200, l), duration(2700, l), duration(30, l), duration(7200, l), duration(86400, l)]).toEqual(["2h 14min", "1d 3h", "45min", "30s", "2h", "1d"]);
-    }
+  test("duration: min in Spanish, spaced units in German, words without spaces in Chinese", () => {
+    const l = "es";
+    expect([duration(8040, l), duration(97200, l), duration(2700, l), duration(30, l), duration(7200, l), duration(86400, l)]).toEqual(["2h 14min", "1d 3h", "45min", "30s", "2h", "1d"]);
+    const g = "de-DE";
+    expect([duration(8040, g), duration(97200, g), duration(2700, g), duration(30, g), duration(7200, g), duration(86400, g)]).toEqual(["2 h 14 min", "1 d 3 h", "45 min", "30 s", "2 h", "1 d"]);
     expect([duration(8040, "zh-CN"), duration(97200, "zh-CN"), duration(2700, "zh-CN"), duration(30, "zh-CN"), duration(7200, "zh-CN"), duration(86400, "zh-CN")])
       .toEqual(["2小时14分钟", "1天3小时", "45分钟", "30秒", "2小时", "1天"]);
   });
