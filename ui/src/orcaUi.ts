@@ -1,18 +1,20 @@
 // Vue + PrimeVue bootstrap shared by main.ts, the dev harness and the tests: one place installs the shared Orca preset,
 // keeps the PrimeVue locale in step with the plugin language, and mirrors the host theme onto the shared palette tokens.
 import { createApp as createVueApp, type App, type Component } from "vue";
-import { applyOrcaTheme, installOrcaUI, primeVueOptions, type OrcaLocale } from "../shared/src";
-import { currentLocale } from "./i18n";
+import { applyOrcaTheme, installOrcaUI, primeVueOptions } from "../shared/src";
+import { currentLocale, type Locale } from "./i18n";
+import { PRIME_LOCALES } from "./i18n/prime";
 
 export function createOrcaApp(root: Component, props?: Record<string, unknown> | null): App {
   const app = createVueApp(root, props);
-  installOrcaUI(app, currentLocale(), "lime");
+  installOrcaUI(app, currentLocale() === "pt-BR" ? "pt-BR" : "en", "lime"); // App.vue sets PrimeVue's strings for every language
   if (typeof document !== "undefined") document.body.classList.add("orca-ui");
   return app;
 }
 
-/** PrimeVue's own strings (dialog close, table labels, ...) for the plugin's current language. `undefined` keeps the built-in English. */
-export const primeLocale = (locale: OrcaLocale) => primeVueOptions(locale).locale;
+/** PrimeVue's own strings (dialog close, table labels, ...) for a plugin language: pt-BR from the shared snapshot, Spanish,
+ * German and Chinese from this plugin. `undefined` keeps the built-in English. */
+export const primeLocale = (locale: Locale) => (locale === "en" || locale === "pt-BR" ? primeVueOptions(locale).locale : PRIME_LOCALES[locale]);
 
 const hostTheme = (): "light" | "dark" => (document.documentElement.getAttribute("data-orca-theme") === "dark" ? "dark" : "light");
 

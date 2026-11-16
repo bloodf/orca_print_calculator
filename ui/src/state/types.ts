@@ -6,7 +6,7 @@ import type { ChannelQuote, DiscountTier, PrettyMode, QuoteExtra, QuoteInput, Qu
 export type { ChannelDef, DiscountTier, PrettyMode, QuoteExtra, QuoteInput, QuoteResult, QuoteSlot, SlotOverride };
 
 export type View = "calc" | "quotes" | "stock" | "settings";
-export type Lang = "auto" | "en" | "pt-BR";
+export type Lang = "auto" | "en" | "pt-BR" | "es" | "de" | "zh-CN";
 export type ShippingMode = "none" | "customer" | "absorbed"; // "none" maps to engine {mode:"customer", minor:0}
 
 export type HostInfo = { projectName: string | null; printerModel: string | null; printerVendor: string | null; pluginVersion: string; appLanguage?: string | null };

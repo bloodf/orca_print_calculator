@@ -26,7 +26,7 @@ export default defineConfig({
   test: { environment: "jsdom", include: ["tests/**/*.test.ts"], setupFiles: ["tests/setup.ts"], coverage: {
       // The whole app layer, not just the engine. Excluded: the dev harness, pure data (strings, types), the entry file.
       include: ["src/**/*.ts", "src/**/*.vue"],
-      exclude: ["src/mock/**", "src/i18n/messages.ts", "src/state/types.ts", "src/main.ts", "src/env.d.ts"],
+      exclude: ["src/mock/**", "src/i18n/**", "src/state/types.ts", "src/main.ts", "src/env.d.ts"],
       reporter: ["text-summary", "text"],
       thresholds: { branches: 80, lines: 85 },
     } },

@@ -30,6 +30,7 @@ function setCode(v: string): void {
 }
 const langs = (): { value: string; label: string }[] => [
   { value: "auto", label: t("lang.auto") }, { value: "en", label: t("lang.en") }, { value: "pt-BR", label: t("lang.pt") },
+  { value: "es", label: t("lang.es") }, { value: "de", label: t("lang.de") }, { value: "zh-CN", label: t("lang.zh") },
 ];
 const mismatch = computed(() => !!store.settings.defaultsCurrency && store.settings.defaultsCurrency !== currency.value);
 </script>

@@ -62,7 +62,7 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
     <template #title><span id="price-title">{{ t("price.title") }}</span></template>
     <template v-if="sel && incomplete" #meta><OuiStatus state="warn">{{ t("price.incompleteStatus") }}</OuiStatus></template>
     <template #actions>
-      <Button severity="secondary" text size="small" type="button" class="cur num" :title="source" :aria-label="`${t('currency.label')}: ${currency}. ${source}`" @click="gotoSettings('settings-language')">{{ currency }}</Button>
+      <Button severity="secondary" text size="small" type="button" class="cur num" :title="source" :aria-label="t('a11y.currency', { currency, source })" @click="gotoSettings('settings-language')">{{ currency }}</Button>
     </template>
 
     <div class="summary">

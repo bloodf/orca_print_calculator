@@ -108,7 +108,7 @@ export function migrateDefaults(saved: unknown, base: Defaults): { value: Defaul
 }
 
 const SCALARS: Record<string, (v: unknown) => boolean> = {
-  onboarded: bool, language: (v) => v === "auto" || v === "en" || v === "pt-BR",
+  onboarded: bool, language: (v) => v === "auto" || v === "en" || v === "pt-BR" || v === "es" || v === "de" || v === "zh-CN",
   currency: (v) => v === null || (typeof v === "string" && /^[A-Z]{3}$/.test(v)), defaultsCurrency: (v) => v === null || (typeof v === "string" && /^[A-Z]{3}$/.test(v)),
   comparedChannelIds: (v) => Array.isArray(v) && v.every((x) => typeof x === "string"), defaultChannelId: (v) => typeof v === "string",
 };

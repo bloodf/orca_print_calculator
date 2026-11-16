@@ -37,17 +37,23 @@ export function perKwh(e4: number, currency: string, locale: string): string {
 /** Typographic minus for losses, like `signed` money. */
 export const percent = (bp: number, locale: string): string => nf(locale, { style: "percent", maximumFractionDigits: 1 }).format(bp / 10000).replace("-", "\u2212");
 
-/** Largest two units: "2h 14m", "1d 3h", "45m", "30s". pt-BR minutes read "min". */
+/** Unit marks per Intl tag: day, hour, minute, second, and what sits between two units. */
+type DurationMarks = readonly [d: string, h: string, min: string, s: string, gap: string];
+const MIN: DurationMarks = ["d", "h", "min", "s", " "];
+const DURATION: Record<string, DurationMarks> = { "pt-BR": MIN, es: MIN, "de-DE": MIN, "zh-CN": ["天", "小时", "分钟", "秒", ""] };
+const DURATION_EN: DurationMarks = ["d", "h", "m", "s", " "];
+
+/** Largest two units: "2h 14m", "1d 3h", "45m", "30s". Portuguese, Spanish and German minutes read "min"; Chinese writes "2小时14分钟". */
 export function duration(seconds: number, locale: string): string {
   const s = Math.max(0, Math.round(seconds));
-  const min = locale === "pt-BR" ? "min" : "m";
-  if (s < 60) return `${s}s`;
+  const [D, H, M, S, gap] = DURATION[locale] ?? DURATION_EN;
+  if (s < 60) return `${s}${S}`;
   const d = Math.floor(s / 86400);
   const h = Math.floor((s % 86400) / 3600);
   const m = Math.floor((s % 3600) / 60);
-  if (d > 0) return h > 0 ? `${d}d ${h}h` : `${d}d`;
-  if (h > 0) return m > 0 ? `${h}h ${m}${min}` : `${h}h`;
-  return `${m}${min}`;
+  if (d > 0) return h > 0 ? `${d}${D}${gap}${h}${H}` : `${d}${D}`;
+  if (h > 0) return m > 0 ? `${h}${H}${gap}${m}${M}` : `${h}${H}`;
+  return `${m}${M}`;
 }
 
 /** Grams: "41 g", "4.6 g" (< 10 g), "1.24 kg" (>= 1000 g). */
@@ -62,8 +68,9 @@ export const count = (n: number, locale: string): string => nf(locale, { maximum
 export const bytes = (n: number, locale: string): string =>
   n >= 1_048_576 ? `${nf(locale, { maximumFractionDigits: 1 }).format(n / 1_048_576)} MB` : `${nf(locale, { maximumFractionDigits: 0 }).format(Math.max(1, n / 1024))} KB`;
 
-/** "#0042" (en) / "nº 0042" (pt-BR). */
-export const quoteNo = (no: number, locale: string): string => `${locale === "pt-BR" ? "nº " : "#"}${String(no).padStart(4, "0")}`;
+const QUOTE_NO: Record<string, string> = { "pt-BR": "nº ", es: "n.º ", "de-DE": "Nr. " };
+/** "#0042" (en, zh-CN) / "nº 0042" (pt-BR) / "n.º 0042" (es) / "Nr. 0042" (de). */
+export const quoteNo = (no: number, locale: string): string => `${QUOTE_NO[locale] ?? "#"}${String(no).padStart(4, "0")}`;
 
 export function date(iso: string, locale: string): string {
   const d = new Date(iso);

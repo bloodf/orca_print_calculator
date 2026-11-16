@@ -16,7 +16,7 @@ const ratio = (a: string, b: string): number => { const [x, y] = [lum(a), lum(b)
 
 describe("the page's colours meet 4.5:1 for text, from the shared palette with the lime accent", () => {
   test("the accent the page installs is lime", () => {
-    expect(orcaUi).toMatch(/installOrcaUI\(app, currentLocale\(\), "lime"\)/);
+    expect(orcaUi).toMatch(/installOrcaUI\(app, [^;]+, "lime"\);/);
   });
   for (const theme of ["light", "dark"] as const) {
     const c = (k: string): string => { const v = palette[theme][k]; if (!v) throw new Error(`no ${k} in the ${theme} palette`); return v; };

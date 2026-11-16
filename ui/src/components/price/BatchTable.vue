@@ -61,7 +61,7 @@ const saveDefaults = (): void => {
                 <span v-if="tierDiffers(row.ch)" class="sm oui-muted nominal">{{ t("batch.nominal", { pct: pct(row.ch.discountBp) }) }}</span>
               </td>
               <td v-if="!compact" class="r num">{{ m(row.cost) }}</td>
-              <td class="r num" :title="compact ? `${t('batch.unitCost')}: ${m(row.cost)} · ${t('batch.orderTotal')}: ${m(row.ch.grandTotal)}` : undefined">{{ m(row.ch.price) }}</td>
+              <td class="r num" :title="compact ? `${t('common.labelValue', { label: t('batch.unitCost'), value: m(row.cost) })} · ${t('common.labelValue', { label: t('batch.orderTotal'), value: m(row.ch.grandTotal) })}` : undefined">{{ m(row.ch.price) }}</td>
               <td v-if="!compact" class="r num">{{ m(row.ch.grandTotal) }}</td>
               <td class="r num" :class="{ bad: loss(row.ch) }" data-cell="orderProfit">{{ signed(row.ch.orderProfit) }}<span v-if="loss(row.ch)" class="oui-sr">{{ ` ${t("batch.loss")}` }}</span></td>
               <td class="r num" :class="{ bad: loss(row.ch) }" data-cell="margin">

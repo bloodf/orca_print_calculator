@@ -16,7 +16,7 @@ const field = (props: Record<string, unknown>, c: Parameters<typeof mount>[0] = 
 beforeEach(() => setLocale("en"));
 afterEach(() => { for (const m of mounted.splice(0)) { m.app.unmount(); m.root.remove(); } setLocale("en"); });
 
-const swap = async (to: "en" | "pt-BR") => { setLocale(to); await nextTick(); await nextTick(); };
+const swap = async (to: "en" | "pt-BR" | "es" | "de" | "zh-CN") => { setLocale(to); await nextTick(); await nextTick(); };
 const typeInto = (el: HTMLInputElement, text: string) => { el.focus(); el.value = text; el.dispatchEvent(new Event("input", { bubbles: true })); };
 const base = { digits: 2, currency: "BRL", label: "price", step: 100 };
 
@@ -71,6 +71,26 @@ describe("F07: language change under a mounted field", () => {
     expect(input.value).toBe(en);
     await swap("pt-BR");
     expect(input.value).toBe(pt);
+  });
+  test("the same value reads 12.345,67 in German and Spanish and 12,345.67 in Chinese, and is never changed", async () => {
+    const seen: unknown[] = [];
+    const { input } = field({ ...base, modelValue: 1234567, "onUpdate:modelValue": (v: unknown) => seen.push(v) });
+    expect(input.value).toBe("12,345.67");
+    await swap("de");
+    expect(input.value).toBe("12.345,67");
+    await swap("es");
+    expect(input.value).toBe("12.345,67");
+    await swap("zh-CN");
+    expect(input.value).toBe("12,345.67");
+    expect(seen).toEqual([]);
+  });
+  test.each([["de", "2.000,50"], ["es", "2000,50"], ["zh-CN", "2,000.50"]] as const)("typing in %s is read with that language's rules", async (lang, typed) => {
+    const seen: unknown[] = [];
+    const { input } = field({ ...base, modelValue: 123456, "onUpdate:modelValue": (v: unknown) => seen.push(v) });
+    await swap(lang);
+    typeInto(input, typed);
+    await nextTick();
+    expect(seen).toEqual([200050]);
   });
   test("a plain number field (percent scale) follows the language as well", async () => {
     const { input } = field({ modelValue: 1250, label: "pct", scale: 100, step: 25, unit: "%" }, NumberField);
