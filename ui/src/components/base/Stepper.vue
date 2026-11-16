@@ -12,7 +12,11 @@ const props = defineProps<{ modelValue: number; min: number; max: number; label:
 const emit = defineEmits<{ "update:modelValue": [value: number] }>();
 
 const text = ref(count(props.modelValue, intlLocale()));
-const parse = (s: string): number | null => (/^\d+$/.test(s.replace(/[.,\s ]/g, "")) ? Number(s.replace(/[.,\s ]/g, "")) : null);
+// Whole counts: plain digits, or thousands groups of exactly three ("1.000", "1,000", "1 000"). "2.5" is refused, never 25.
+const parse = (s: string): number | null => {
+  const v = s.trim();
+  return /^\d+$/.test(v) || /^\d{1,3}(?:[.,\s]\d{3})+$/.test(v) ? Number(v.replace(/\D/g, "")) : null;
+};
 watch(() => props.modelValue, (v) => { if (parse(text.value) !== v) text.value = count(v, intlLocale()); });
 
 function set(v: number): void {

@@ -18,6 +18,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Fixed
 - Settings > Spoolman: an invalid address now shows its error in the styled error line; it rendered as plain unstyled text.
+- Copies, pieces ordered, pieces per run and discount quantities read "2.5" as 25. A count with a decimal is now refused and the field goes back to the last count; "1.000" and "1,000" still read as a thousand. Decimal fields (prices, energy, rates, percentages, weights) already took "2.5" and "2,5" as two and a half in every language.
 
 ## [0.5.0] - 2026-11-15
 
