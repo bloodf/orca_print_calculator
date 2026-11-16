@@ -60,5 +60,7 @@ const canReload = computed(() => ready.value && props.view === "calc" && !store.
 /* what gives way as the bar narrows: the Spoolman text, then the action labels (their names stay as title and accessible name) */
 @container oui-appbar (max-width: 1499px) { .app-header .sm-text { display: none; } .app-header .sp-chip .oui-status { gap: 0; padding-inline: 7px; } }
 @container oui-appbar (max-width: 1099px) { .app-header .ah-label { display: none; } .app-header .ah-act { padding-inline: 8px; } }
+/* German and Spanish tab names are longer: their action labels give way sooner, so the project and printer keep their room */
+@container oui-appbar (max-width: 1379px) { :lang(de) .app-header .ah-label, :lang(es) .app-header .ah-label { display: none; } :lang(de) .app-header .ah-act, :lang(es) .app-header .ah-act { padding-inline: 8px; } }
 @container oui-appbar (max-width: 520px) { .app-header .oui-appbar-status { order: 4; flex: 1 0 100%; min-height: 28px; padding-bottom: 4px; } }
 </style>

@@ -8,7 +8,7 @@ import HelpGuide from "./components/HelpGuide.vue";
 import { OuiEmpty, OuiIcon, OuiPanel } from "../shared/src/components";
 import * as I from "../shared/src/icons";
 import ToastHost from "./components/base/ToastHost.vue";
-import { t } from "./i18n";
+import { currentLocale, t } from "./i18n";
 import { primeLocale } from "./orcaUi";
 import { priceAnnouncement } from "./state/announce";
 import { currency, derived, init, loadState, locale, setView, store } from "./state/store";
@@ -22,7 +22,7 @@ const DevBar = import.meta.env.DEV ? defineAsyncComponent(() => import("./mock/D
 // PrimeVue's own strings (dialog close, empty table, ...) follow the plugin language, which Settings can change at runtime.
 const pv = usePrimeVue();
 const enLocale = { ...pv.config.locale } as NonNullable<typeof pv.config.locale>;
-watch(locale, (l) => { pv.config.locale = l === "pt-BR" ? ({ ...enLocale, ...primeLocale("pt-BR") } as typeof enLocale) : enLocale; }, { immediate: true });
+watch(currentLocale, (l) => { pv.config.locale = { ...enLocale, ...primeLocale(l) } as typeof enLocale; }, { immediate: true });
 
 const live = ref("");
 const tech = ref(false); // the raw host code stays behind a disclosure

@@ -3,7 +3,7 @@
 import { computed, reactive } from "vue";
 import { call, errorCode, on, ready, type HostEvent, type PlatesEvent } from "../bridge";
 import { failText } from "../hostError";
-import { hostLocale, intlLocale, setLocale, t, type Lang } from "../i18n";
+import { currentLocale, intlLocale, setLocale, t, type Lang, type Locale } from "../i18n";
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft, resetNames, shiftPlateControls } from "./defaults";
 import { deriveQuote, failedDerive, safeDigits } from "./derive";
 import { changeDraft } from "./draftUndo";
@@ -13,7 +13,9 @@ import type { Draft, HostInfo, HostPlate, HostState, OverridableKey, Defaults, S
 
 export type Status = "loading" | "ready" | "error";
 const EMPTY_HOST: HostInfo = { projectName: null, printerModel: null, printerVendor: null, pluginVersion: "" };
-const guessCurrency = (): string => (hostLocale().toLowerCase().startsWith("pt") ? "BRL" : "USD");
+/** First-run currency from the resolved language (OrcaSlicer's, else the browser's); a saved currency always wins. Spanish spans many currencies: USD. */
+const FIRST_CURRENCY: Partial<Record<Locale, string>> = { "pt-BR": "BRL", de: "EUR", "zh-CN": "CNY" };
+export const guessCurrency = (): string => FIRST_CURRENCY[currentLocale()] ?? "USD";
 
 export const store = reactive({
   status: "loading" as Status,

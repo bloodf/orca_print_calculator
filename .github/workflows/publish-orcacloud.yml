@@ -69,8 +69,8 @@ jobs:
       - name: Bundle size gate
         run: |
           size="$(wc -c < ui/dist/index.html)"
-          echo "ui/dist/index.html: $size bytes (limit 1010000)"
-          [ "$size" -le 1010000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 1010000"; exit 1; }
+          echo "ui/dist/index.html: $size bytes (limit 1115000)"
+          [ "$size" -le 1115000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 1115000"; exit 1; }
       - name: Unit tests
         run: python -m unittest discover tests
       - name: Built wheel matches SHA256SUMS and carries the version

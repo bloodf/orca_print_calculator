@@ -1,4 +1,4 @@
-// Dev harness entry: installs the fake host when the real window.orca is absent. `?state=`, `?theme=dark|light`, `?lang=en|pt|pt-BR`.
+// Dev harness entry: installs the fake host when the real window.orca is absent. `?state=`, `?theme=dark|light`, `?lang=en|pt-BR|es|de|zh-CN`.
 import { createMockHost } from "./host";
 import { isScenario } from "./scenarios";
 

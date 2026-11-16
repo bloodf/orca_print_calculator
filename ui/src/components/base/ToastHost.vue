@@ -39,7 +39,7 @@ watch(() => toasts.list.map((x) => x.id), (ids) => {
          @focusin="focusIn(x.id, $event)" @focusout="resumeOutside(x.id, $event)" @mouseenter="pause(x.id)" @mouseleave="resumeOutside(x.id, $event)">
       <OuiIcon :icon="x.tone === 'bad' ? I.error : x.tone === 'ok' ? I.check : I.info" :size="14" tile :tone="TONE[x.tone]" />
       <span class="toast-text">{{ x.text }}</span>
-      <Button v-if="x.action" type="button" text size="small" @click="x.action.run(); dismiss(x.id)">{{ x.action.label }}</Button>
+      <Button v-if="x.action" type="button" text size="small" class="toast-act" @click="x.action.run(); dismiss(x.id)">{{ x.action.label }}</Button>
       <Button type="button" text severity="secondary" size="small" class="icon-btn-sm toast-close" :aria-label="t('common.close')" @click="dismiss(x.id)"><OuiIcon :icon="I.x" :size="14" /></Button>
     </div>
   </div>
@@ -53,5 +53,6 @@ watch(() => toasts.list.map((x) => x.id), (ids) => {
 .toast { pointer-events: auto; display: flex; align-items: center; gap: var(--oui-s2); min-height: 44px; padding: 6px 6px 6px 8px; border-radius: var(--oui-radius-lg);
   background: var(--oui-surface); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--oui-tone) 45%, transparent), var(--oui-shadow-overlay); }
 .toast-text { flex: 1 1 auto; min-width: 0; color: var(--oui-text); }
+.toast-act { flex: none; } /* "Deshacer", "Rückgängig" keep their whole word; the message wraps instead */
 .toast-close { flex: none; color: var(--oui-muted); }
 </style>

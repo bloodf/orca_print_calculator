@@ -51,7 +51,7 @@ function remove(id: string): void {
       <li v-for="c in channels" :key="c.id" class="ce-item">
         <div class="ce-row">
           <Checkbox v-if="multi" binary :model-value="store.settings.comparedChannelIds.includes(c.id)" :aria-label="t('channel.compare', { name: c.name })" @update:model-value="(v: boolean) => setCompared(c.id, v)" />
-          <RadioButton v-if="multi" name="default-channel" :value="c.id" :model-value="store.settings.defaultChannelId" :aria-label="`${t('channel.default')}: ${c.name}`" @update:model-value="setDefaultChannel(c.id)" />
+          <RadioButton v-if="multi" name="default-channel" :value="c.id" :model-value="store.settings.defaultChannelId" :aria-label="t('common.labelValue', { label: t('channel.default'), value: c.name })" @update:model-value="setDefaultChannel(c.id)" />
           <span class="ce-name oui-truncate">{{ c.name }}</span>
           <span v-if="invalid(c)" class="oui-chip badge" data-tone="danger">{{ t("channel.fixFees") }}</span>
           <span class="oui-muted num sm ce-fee">{{ summary(c) }}</span>

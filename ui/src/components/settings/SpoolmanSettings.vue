@@ -2,6 +2,7 @@
 // Settings › Spoolman: address, Test connection (spoolman_fetch), Spooler hint (docs/ux.md §5.3 Settings 1).
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
+import Message from "primevue/message";
 import { computed, ref } from "vue";
 import { call, errorCode } from "../../bridge";
 import { t } from "../../i18n";

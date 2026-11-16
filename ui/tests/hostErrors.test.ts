@@ -10,7 +10,7 @@ import MaterialRow from "../src/components/plates/MaterialRow.vue";
 import { chipLabel, presetName } from "../src/components/plates/slots";
 import { errorText } from "../src/components/plates/importFlow";
 import { spoolmanErrorMessage } from "../src/components/settings/spoolmanError";
-import { setLocale, t } from "../src/i18n";
+import { setLocale, t, LOCALES } from "../src/i18n";
 import { exportQuote } from "../src/quoteFlow";
 import { saveQuote } from "../src/state/quotes";
 import { flushSettings, store } from "../src/state/store";
@@ -37,13 +37,13 @@ beforeEach(() => { setLocale("en"); clearToasts(); calls().mockReset(); });
 afterEach(() => { document.body.innerHTML = ""; });
 
 describe("B. Spoolman codes", () => {
-  for (const lang of ["en", "pt-BR"] as const) {
+  for (const lang of LOCALES) {
     test(`${lang}: redirected and too_large have their own sentence`, () => {
       setLocale(lang);
       for (const c of ["redirected", "too_large"]) {
         const text = spoolmanErrorMessage(c);
         expect(text, c).not.toBe(t("spoolman.error.unknown", { detail: c }));
-        expect(text, c).not.toMatch(/^Spoolman failed|^Falha/);
+        expect(text, c).not.toMatch(/^Spoolman failed|^Falha|^Spoolman falló|^Spoolman-Fehler|^Spoolman 出错/);
       }
       if (lang === "en") expect(spoolmanErrorMessage("redirected")).toMatch(/redirected.*address/i);
     });
@@ -138,9 +138,9 @@ describe("T5.3 LOW: copy fits the action", () => {
     expect(exp).not.toMatch(/delete old quotes/i);
     expect(exp).toMatch(/too big/i);
   });
-  test("denied and timeout have specific sentences in both languages", async () => {
+  test("denied and timeout have specific sentences in every language", async () => {
     const { failText } = await import("../src/hostError");
-    for (const lang of ["en", "pt-BR"] as const) {
+    for (const lang of LOCALES) {
       setLocale(lang);
       for (const code of ["denied", "timeout"]) expect(failText("x", code), `${lang} ${code}`).not.toBe("x");
     }
@@ -157,9 +157,9 @@ describe("T5.3 LOW: copy fits the action", () => {
 });
 
 describe("host code `unreadable` (a saved file that can be neither read nor set aside)", () => {
-  test("saving settings and quotes says why nothing is saved and what to check, in both languages", async () => {
+  test("saving settings and quotes says why nothing is saved and what to check, in every language", async () => {
     const { failText } = await import("../src/hostError");
-    for (const lang of ["en", "pt-BR"] as const) {
+    for (const lang of LOCALES) {
       setLocale(lang);
       expect(failText("x", "unreadable"), lang).not.toBe("x");
     }

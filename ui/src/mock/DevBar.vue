@@ -1,9 +1,11 @@
 <script setup lang="ts">
 // Dev harness only (mounted from App.vue under import.meta.env.DEV): theme and language toggles, savedQuote auto-open.
-// `?lang=` accepts en*, pt* (en, en-US, pt, pt-BR, case-insensitive); anything else is ignored. It is applied once the
+// `?lang=` accepts a language the plugin has, by its code or a regional form of it (en, en-US, pt, pt-BR, es, de, zh, zh-CN,
+// case-insensitive); anything else is ignored. It is applied once the
 // state has loaded, because loading replaces the settings (and with them the language).
 import Button from "primevue/button";
 import { ref, watch } from "vue";
+import { isLocale, LOCALES, resolveLocale } from "../i18n";
 import { derived, patchDraft, setLanguage, setView, store } from "../state/store";
 import { closeQuote, openQuote } from "../state/quotes";
 import type { View } from "../state/types";
@@ -13,8 +15,9 @@ const theme = ref(document.documentElement.getAttribute("data-orca-theme") === "
 const scenario = q.get("state") ?? "ok";
 
 watch(theme, (v) => document.documentElement.setAttribute("data-orca-theme", v));
-const wanted = (q.get("lang") ?? "").toLowerCase();
-const lang = wanted.startsWith("pt") ? "pt-BR" : wanted.startsWith("en") ? "en" : null;
+const wanted = q.get("lang") ?? "";
+const lang = /^en/i.test(wanted) ? "en" : resolveLocale("auto", wanted) === "en" ? null : resolveLocale("auto", wanted);
+const shown = (): string => (isLocale(store.settings.language) ? store.settings.language : "en");
 watch(() => store.status, (s) => {
   if (s !== "ready") return;
   if (lang) setLanguage(lang);
@@ -33,7 +36,7 @@ const bar = q.get("bar") !== "0"; // `?bar=0` hides this bar in screenshots
   <div v-if="bar" class="devbar app-chrome" role="group" aria-label="Dev harness">
     <span class="sm">dev · {{ scenario }}</span>
     <Button type="button" size="small" severity="secondary" @click="theme = theme === 'dark' ? 'light' : 'dark'">{{ theme }}</Button>
-    <Button type="button" size="small" severity="secondary" @click="setLanguage(store.settings.language === 'pt-BR' ? 'en' : 'pt-BR')">{{ store.settings.language === "pt-BR" ? "pt-BR" : "en" }}</Button>
+    <Button type="button" size="small" severity="secondary" @click="setLanguage(LOCALES[(LOCALES.indexOf(shown() as (typeof LOCALES)[number]) + 1) % LOCALES.length]!)">{{ shown() }}</Button>
   </div>
 </template>
 

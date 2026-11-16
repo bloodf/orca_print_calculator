@@ -2,6 +2,7 @@
 import { DEFAULT_CHANNELS } from "../engine/channels";
 import type { ChannelDef } from "../engine/channels";
 import { PRETTY_MODES } from "../engine/quotePricing";
+import { isLocale } from "../i18n";
 import type { CatalogExtra, Defaults, Draft, HostPlate, PrinterProfile, Settings } from "./types";
 import { MAX_MARGIN_BP, presetFor } from "./markup";
 import { BRAND_SHAPES, EMPTY_BRAND } from "./sheet";
@@ -108,7 +109,7 @@ export function migrateDefaults(saved: unknown, base: Defaults): { value: Defaul
 }
 
 const SCALARS: Record<string, (v: unknown) => boolean> = {
-  onboarded: bool, language: (v) => v === "auto" || v === "en" || v === "pt-BR",
+  onboarded: bool, language: (v) => v === "auto" || isLocale(v),
   currency: (v) => v === null || (typeof v === "string" && /^[A-Z]{3}$/.test(v)), defaultsCurrency: (v) => v === null || (typeof v === "string" && /^[A-Z]{3}$/.test(v)),
   comparedChannelIds: (v) => Array.isArray(v) && v.every((x) => typeof x === "string"), defaultChannelId: (v) => typeof v === "string",
 };
