@@ -24,7 +24,7 @@ The other plugins of this family publish the same way.
 ## Prerequisites (outside the repository)
 
 1. On Orca Cloud: the plugin is connected to this repository under Edit plugin > GitHub publishing (one repository
-   publishes to exactly one plugin; the plugin page is listed in `brand/hub-listing.md`). A 401 from the publish
+   publishes to exactly one plugin; the plugin page is listed in [orca-cloud-description.md](orca-cloud-description.md)). A 401 from the publish
    step means this is missing.
 2. The version is higher than the one the hub lists.
 3. GitHub Actions is enabled for the repository and the release is not a draft.
@@ -49,6 +49,27 @@ The other plugins of this family publish the same way.
   something to explain, not as a failed release.
 - The hub page lists the new version and changelog. Subscribing and enabling the plugin inside OrcaSlicer is
   the live check in [live-run.md](live-run.md).
+
+## Orca Cloud listing
+
+The page is <https://cloud.orcaslicer.com/p/521c07cf6de2>. Its text is in [orca-cloud-description.md](orca-cloud-description.md), in English and Portuguese. The images are uploaded by hand on the plugin's edit page; publishing a release does not change them. All are PNG and under 2 MB. Bytes are English / Portuguese.
+
+| Slot | File | Size | Bytes |
+|---|---|---|---|
+| Plugin icon (store tile) | `assets/orca-cloud/orca_print_calculator-tile.png` | 512×512 | 187,848 |
+| Main image | `assets/orca-cloud/orca_print_calculator-main-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-pt-BR.png` | 1600×900 | 1,257,067 / 1,221,579 |
+| Main image, square | `assets/orca-cloud/orca_print_calculator-main-square-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-square-pt-BR.png` | 900×900 | 853,290 / 840,460 |
+| Gallery 1: filament cost | `assets/orca-cloud/orca_print_calculator-feature-01-filament-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png` | 1600×900 | 1,252,379 / 1,275,025 |
+| Gallery 2: machine, energy and labour | `assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png` | 1600×900 | 1,324,754 / 1,326,860 |
+| Gallery 3: price with margin | `assets/orca-cloud/orca_print_calculator-feature-03-price-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-03-price-pt-BR.png` | 1600×900 | 1,270,211 / 1,239,578 |
+| Gallery 4: saved quotes | `assets/orca-cloud/orca_print_calculator-feature-04-quotes-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-04-quotes-pt-BR.png` | 1600×900 | 1,235,968 / 1,228,029 |
+| GitHub social preview | `assets/social/orca_print_calculator-social-preview-en.png`<br>`assets/social/orca_print_calculator-social-preview-pt-BR.png` | 1280×640 | 780,973 / 791,651 |
+| README hero, dark | `assets/readme/orca_print_calculator-hero-dark-en.png`<br>`assets/readme/orca_print_calculator-hero-dark-pt-BR.png` | 1600×900 | 1,222,686 / 1,242,722 |
+| README hero, light | `assets/readme/orca_print_calculator-hero-light-en.png`<br>`assets/readme/orca_print_calculator-hero-light-pt-BR.png` | 1600×900 | 1,279,922 / 1,241,248 |
+
+The GitHub social preview is set in the repository settings, not on Orca Cloud. The README heroes are listed for completeness.
+
+Each image is a generated photograph whose empty square holds a real screenshot of the plugin's page (sample data, mock host, not captured inside OrcaSlicer). The native images are in `assets/marketing/source/`, and `assets/marketing/asset-manifest.json` records the source, screenshot, operation, size, bytes and date of every export. To redo them after an interface change, see [development.md](development.md#store-and-readme-images). The store tile is for listings only: the tab icon inside OrcaSlicer is the vector mark in `ui/src/icon.svg`.
 
 ## Local gates
 

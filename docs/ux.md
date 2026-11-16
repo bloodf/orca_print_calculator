@@ -1927,7 +1927,8 @@ pt-BR, keyboard only for one full pass.
    with sources and "unverified" notes; T2.5 should delete them (and the `structuredClone` call, Safari 15.4) so
    nothing marketplace-named reaches the bundle. `rates_missing` / `asOf: "needs-rates"` then become dead code.
    Brand listing image 3 (`brand/listing-3.png`, captions "Etsy", "Mercado Livre", "Shopee") and README/hub copy
-   must be regenerated with user-named channels (T6.3, T0.3).
+   must be regenerated with user-named channels (T6.3, T0.3). Done since: that image is gone, and the listing images are
+   now the files in `assets/orca-cloud/`.
 12. **Spare pieces**: the UI reads `QuoteOk.sparePieces` (owner decision #4). The committed `quote.ts` exposes
     `piecesPrinted` and `runs` but not `sparePieces` yet; until it lands, derive.ts uses
     `piecesPrinted − quantity`. Remove the fallback when the field exists.
@@ -1942,7 +1943,7 @@ pt-BR, keyboard only for one full pass.
     Energy price uses `digits + 2` (it goes through `kwhE4`).
 9. **Safari floor**: the plan says target `safari14`; flex `gap` needs 14.1. If Orca 2.5's macOS minimum is 11.3+
    (Safari 14.1), keep as is; otherwise layouts already avoid flex gap where it matters.
-10. **Amber in the comparison mock** (`brand/listing-3.png`) shows the selected channel price in amber. On the
+10. **Amber in the comparison mock** (`brand/listing-3.png`, since replaced by the images in `assets/orca-cloud/`) shows the selected channel price in amber. On the
     calculator that would be a second amber number beside the hero, so the table uses fg; the listing image is a
     marketing crop where the table is the whole screen.
 11. Draft is memory-only (lost on tab reload). Acceptable for V1; persist later if users lose work.

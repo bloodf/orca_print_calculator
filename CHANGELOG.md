@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+- Brand: new store, social and README images (workshop photographs with a real screenshot of the plugin's page in each), a new README in English and Portuguese, and one file with the Orca Cloud description. The old vector hero, social, listing and tile images are removed. The plugin itself is unchanged.
+
 ## [0.5.0] - 2026-11-15
 
 ### Changed
