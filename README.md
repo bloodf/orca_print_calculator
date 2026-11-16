@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/orca_print_calculator-hero-dark-en.png">
-    <img alt="Print Calculator: price every plate, with filament, energy, labour, fees and margin" src="assets/readme/orca_print_calculator-hero-light-en.png" width="100%">
+    <img alt="Print Calculator: price every plate: filament, energy, labour, fees and margin" src="assets/readme/orca_print_calculator-hero-light-en.png" width="100%">
   </picture>
 </p>
 
@@ -30,26 +30,20 @@ Print Calculator adds a tab to OrcaSlicer that prices every build plate of the o
   </picture>
 </p>
 
-<sub>Every screenshot on this page is the plugin's page in a browser with sample data and a mock host. None was captured inside OrcaSlicer.</sub>
-
 ## 📦 Install
 
-The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Subscribe there, then in OrcaSlicer open **Plugins**, refresh and enable it. Orca Cloud lists a version only after its release is published, so it can be behind this repository.
-
-From a file, on macOS:
+The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Subscribe there, then in OrcaSlicer open **Plugins**, refresh and enable it. To install from a file instead:
 
 1. Download `orca_print_calculator_any.whl` from the [latest release](https://github.com/bloodf/orca_print_calculator/releases/latest). `SHA256SUMS` beside it has the checksum.
 2. Copy it into `~/Library/Application Support/OrcaSlicer/orca_plugins/orca_print_calculator/` (create the folder, and remove any older `.whl` in it).
 3. Restart OrcaSlicer, open **Plugins** and enable **orca_print_calculator**. OrcaSlicer shows a permission prompt. Leave full access off.
 
-On Linux and Windows the folder is `orca_plugins/orca_print_calculator/` inside OrcaSlicer's data folder. Those paths are not verified.
-
-| Requirement | |
+| Requirement | Detail |
 |---|---|
 | OrcaSlicer | 2.5 or newer |
 | Spoolman | Optional. Without it the plugin uses the cost stored in each filament preset, or a price you type |
 | Printer | Any. Only G-code from a Snapmaker U1 has been checked against real files (see the [FAQ](#-faq)) |
-| Status | In development. Tested with a mock host, not yet verified inside OrcaSlicer ([live-run procedure](docs/live-run.md)) |
+| Status | In development. Tested with a mock host, not yet verified inside OrcaSlicer ([live-run procedure](docs/live-run.md)). Every screenshot here is the plugin's page in a browser with sample data and a mock host |
 
 ## 🧰 Features
 
@@ -141,6 +135,14 @@ Its data folder is `orca_plugins/plugin_data/<plugin name>/` inside OrcaSlicer's
 Prices from the calculator are suggestions. Review them before you quote a customer, and check channel fees against each platform's current fee table.
 
 ## ❓ FAQ
+
+<details>
+<summary>Where does the file go on Linux and Windows, and why is Orca Cloud behind GitHub?</summary>
+
+On macOS the steps above use `~/Library/Application Support/OrcaSlicer/orca_plugins/orca_print_calculator/`. On Linux and Windows the folder is `orca_plugins/orca_print_calculator/` inside OrcaSlicer's data folder. Those paths are not verified.
+
+Orca Cloud lists a version only after its release is published, so it can be behind this repository.
+</details>
 
 <details>
 <summary>How do I link a filament slot to a Spoolman spool?</summary>
@@ -249,13 +251,13 @@ English and Brazilian Portuguese, switched in Settings.
 ## 🧩 More plugins by bloodf
 
 | | Plugin | What it does | |
-|---|---|---|---|
-| <img src="https://raw.githubusercontent.com/bloodf/orca_organizer/main/assets/orca-cloud/orca_organizer-tile.png" width="40" alt="Organizer icon"> | 🧩 [Organizer](https://github.com/bloodf/orca_organizer) | Arrange parts by their real outline and fill a plate with more copies. | [Install](https://cloud.orcaslicer.com/p/5bf381fd42d4) |
-| <img src="https://raw.githubusercontent.com/bloodf/embedder/main/assets/orca-cloud/embedder-tile.png" width="40" alt="Embedder icon"> | 🧲 [Embedder](https://github.com/bloodf/embedder) | Magnet and NFC pockets, with the pause at the right layer. | [Install](https://cloud.orcaslicer.com/p/58222d4f9e52) |
-| <img src="assets/orca-cloud/orca_print_calculator-tile.png" width="40" alt="Print Calculator icon"> | 💰 Print Calculator · you are here | Price every plate: filament, energy, labour, fees and margin. | [Install](https://cloud.orcaslicer.com/p/521c07cf6de2) |
-| <img src="https://raw.githubusercontent.com/bloodf/spooler/main/assets/orca-cloud/spooler-tile.png" width="40" alt="Spooler icon"> | 🧵 [Spooler](https://github.com/bloodf/spooler) | Your Spoolman stock inside OrcaSlicer, with what is left on each spool. | [Install](https://cloud.orcaslicer.com/p/50c35dcbd6f3) |
-| <img src="https://raw.githubusercontent.com/bloodf/kobracontrol/main/assets/orca-cloud/kobracontrol-tile.png" width="40" alt="Kobra Control icon"> | 🟣 [Kobra Control](https://github.com/bloodf/kobracontrol) | Run the Anycubic Kobra X from OrcaSlicer over your LAN. | [Install](https://cloud.orcaslicer.com/p/59c786285255) |
-| <img src="https://raw.githubusercontent.com/bloodf/u1control/main/assets/orca-cloud/u1control-tile.png" width="40" alt="U1 Control icon"> | 🔵 [U1 Control](https://github.com/bloodf/u1control) | Run the Snapmaker U1 from OrcaSlicer: toolheads, camera, files. | [Install](https://cloud.orcaslicer.com/p/55b8c347d443) |
+|:-:|---|---|---|
+| <img src="https://raw.githubusercontent.com/bloodf/orca_organizer/main/assets/orca-cloud/orca_organizer-tile.png" alt="Organizer icon" width="40"> | 🧩 [Organizer](https://github.com/bloodf/orca_organizer) | Arrange parts by their real outline and fill a plate with more copies. | [Install](https://cloud.orcaslicer.com/p/5bf381fd42d4) |
+| <img src="https://raw.githubusercontent.com/bloodf/embedder/main/assets/orca-cloud/embedder-tile.png" alt="Embedder icon" width="40"> | 🧲 [Embedder](https://github.com/bloodf/embedder) | Magnet and NFC pockets, with the pause at the right layer. | [Install](https://cloud.orcaslicer.com/p/58222d4f9e52) |
+| <img src="assets/orca-cloud/orca_print_calculator-tile.png" alt="Print Calculator icon" width="40"> | 💰 **Print Calculator** · you are here | Price every plate: filament, energy, labour, fees and margin. | |
+| <img src="https://raw.githubusercontent.com/bloodf/spooler/main/assets/orca-cloud/spooler-tile.png" alt="Spooler icon" width="40"> | 🧵 [Spooler](https://github.com/bloodf/spooler) | Your Spoolman stock inside OrcaSlicer, with what is left on each spool. | [Install](https://cloud.orcaslicer.com/p/50c35dcbd6f3) |
+| <img src="https://raw.githubusercontent.com/bloodf/kobracontrol/main/assets/orca-cloud/kobracontrol-tile.png" alt="Kobra Control icon" width="40"> | 🟣 [Kobra Control](https://github.com/bloodf/kobracontrol) | Run the Anycubic Kobra X from OrcaSlicer over your LAN. | [Install](https://cloud.orcaslicer.com/p/59c786285255) |
+| <img src="https://raw.githubusercontent.com/bloodf/u1control/main/assets/orca-cloud/u1control-tile.png" alt="U1 Control icon" width="40"> | 🔵 [U1 Control](https://github.com/bloodf/u1control) | Run the Snapmaker U1 from OrcaSlicer: toolheads, camera, files. | [Install](https://cloud.orcaslicer.com/p/55b8c347d443) |
 
 Each plugin works on its own; installed together they share data where it helps.
 

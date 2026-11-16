@@ -6,14 +6,6 @@ Each language stays under 4000 characters. The feature images are linked from th
 
 ## English
 
-Short description (114 characters, limit 140):
-
-```text
-Prices every build plate in OrcaSlicer: Spoolman filament cost, energy, labor, fees and a suggested selling price.
-```
-
-Description:
-
 ```markdown
 Price every plate: filament, energy, labour, fees and margin.
 
@@ -66,14 +58,6 @@ https://github.com/bloodf/orca_print_calculator (MIT)
 ```
 
 ## Português (Brasil)
-
-Descrição curta (113 caracteres, limite 140):
-
-```text
-Precifica cada mesa no OrcaSlicer: filamento do Spoolman, energia, mão de obra, taxas e preço de venda sugerido.
-```
-
-Descrição:
 
 ```markdown
 Preço de cada mesa: filamento, energia, mão de obra, taxas e margem.

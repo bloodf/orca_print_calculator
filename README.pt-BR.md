@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/orca_print_calculator-hero-dark-pt-BR.png">
-    <img alt="Print Calculator: preço de cada mesa, com filamento, energia, mão de obra, taxas e margem" src="assets/readme/orca_print_calculator-hero-light-pt-BR.png" width="100%">
+    <img alt="Print Calculator: preço de cada mesa: filamento, energia, mão de obra, taxas e margem" src="assets/readme/orca_print_calculator-hero-light-pt-BR.png" width="100%">
   </picture>
 </p>
 
@@ -30,26 +30,20 @@ O Print Calculator cria uma aba no OrcaSlicer que precifica cada mesa do projeto
   </picture>
 </p>
 
-<sub>Todas as capturas desta página são da página do plugin num navegador, com dados de exemplo e um host simulado. Nenhuma foi feita dentro do OrcaSlicer.</sub>
-
 ## 📦 Instalação
 
-O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Assine por lá e depois, no OrcaSlicer, abra **Plugins**, atualize e ative o plugin. O Orca Cloud só lista uma versão depois que ela é publicada, então ele pode estar atrás deste repositório.
-
-A partir de um arquivo, no macOS:
+O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Assine por lá e depois, no OrcaSlicer, abra **Plugins**, atualize e ative o plugin. Para instalar a partir de um arquivo:
 
 1. Baixe `orca_print_calculator_any.whl` da [última versão](https://github.com/bloodf/orca_print_calculator/releases/latest). O `SHA256SUMS` ao lado traz o checksum.
 2. Copie o arquivo para `~/Library/Application Support/OrcaSlicer/orca_plugins/orca_print_calculator/` (crie a pasta e apague qualquer `.whl` antigo que esteja nela).
 3. Reinicie o OrcaSlicer, abra **Plugins** e ative **orca_print_calculator**. O OrcaSlicer mostra um pedido de permissões. Deixe o acesso total desligado.
 
-No Linux e no Windows a pasta é `orca_plugins/orca_print_calculator/`, dentro da pasta de dados do OrcaSlicer. Esses caminhos não foram verificados.
-
-| Requisito | |
+| Requisito | Detalhe |
 |---|---|
 | OrcaSlicer | 2.5 ou mais novo |
 | Spoolman | Opcional. Sem ele, o plugin usa o custo guardado em cada perfil de filamento ou um preço que você digitar |
 | Impressora | Qualquer uma. Só o G-code de uma Snapmaker U1 foi conferido com arquivos reais (veja as [perguntas frequentes](#-perguntas-frequentes)) |
-| Status | Em desenvolvimento. Testado com um host simulado, ainda não verificado dentro do OrcaSlicer ([roteiro do teste ao vivo](docs/live-run.md), em inglês) |
+| Status | Em desenvolvimento. Testado com um host simulado, ainda não verificado dentro do OrcaSlicer ([roteiro do teste ao vivo](docs/live-run.md), em inglês). Todas as capturas daqui são da página do plugin num navegador, com dados de exemplo e um host simulado |
 
 ## 🧰 Recursos
 
@@ -141,6 +135,14 @@ A pasta de dados dele é `orca_plugins/plugin_data/<nome do plugin>/`, dentro da
 Os preços da calculadora são sugestões. Revise antes de passar um orçamento ao cliente e confira as taxas dos canais com a tabela atual de cada plataforma.
 
 ## ❓ Perguntas frequentes
+
+<details>
+<summary>Onde fica o arquivo no Linux e no Windows, e por que o Orca Cloud está atrás do GitHub?</summary>
+
+No macOS os passos acima usam `~/Library/Application Support/OrcaSlicer/orca_plugins/orca_print_calculator/`. No Linux e no Windows a pasta é `orca_plugins/orca_print_calculator/`, dentro da pasta de dados do OrcaSlicer. Esses caminhos não foram verificados.
+
+O Orca Cloud só lista uma versão depois que ela é publicada, então ele pode estar atrás deste repositório.
+</details>
 
 <details>
 <summary>Como ligo um slot de filamento a um carretel do Spoolman?</summary>
@@ -249,17 +251,17 @@ Português do Brasil e inglês, trocados nos Ajustes.
 ## 🧩 Mais plugins do bloodf
 
 | | Plugin | O que faz | |
-|---|---|---|---|
-| <img src="https://raw.githubusercontent.com/bloodf/orca_organizer/main/assets/orca-cloud/orca_organizer-tile.png" width="40" alt="Ícone do Organizer"> | 🧩 [Organizer](https://github.com/bloodf/orca_organizer) | Organize as peças pelo contorno real e encha a mesa com mais cópias. | [Instalar](https://cloud.orcaslicer.com/p/5bf381fd42d4) |
-| <img src="https://raw.githubusercontent.com/bloodf/embedder/main/assets/orca-cloud/embedder-tile.png" width="40" alt="Ícone do Embedder"> | 🧲 [Embedder](https://github.com/bloodf/embedder) | Bolsos para ímãs e NFC, com a pausa na camada certa. | [Instalar](https://cloud.orcaslicer.com/p/58222d4f9e52) |
-| <img src="assets/orca-cloud/orca_print_calculator-tile.png" width="40" alt="Ícone do Print Calculator"> | 💰 Print Calculator · você está aqui | Preço de cada mesa: filamento, energia, mão de obra, taxas e margem. | [Instalar](https://cloud.orcaslicer.com/p/521c07cf6de2) |
-| <img src="https://raw.githubusercontent.com/bloodf/spooler/main/assets/orca-cloud/spooler-tile.png" width="40" alt="Ícone do Spooler"> | 🧵 [Spooler](https://github.com/bloodf/spooler) | Seu estoque do Spoolman dentro do OrcaSlicer, com o que resta em cada bobina. | [Instalar](https://cloud.orcaslicer.com/p/50c35dcbd6f3) |
-| <img src="https://raw.githubusercontent.com/bloodf/kobracontrol/main/assets/orca-cloud/kobracontrol-tile.png" width="40" alt="Ícone do Kobra Control"> | 🟣 [Kobra Control](https://github.com/bloodf/kobracontrol) | Controle a Anycubic Kobra X pelo OrcaSlicer na sua rede. | [Instalar](https://cloud.orcaslicer.com/p/59c786285255) |
-| <img src="https://raw.githubusercontent.com/bloodf/u1control/main/assets/orca-cloud/u1control-tile.png" width="40" alt="Ícone do U1 Control"> | 🔵 [U1 Control](https://github.com/bloodf/u1control) | Controle a Snapmaker U1 pelo OrcaSlicer: cabeças, câmera, arquivos. | [Instalar](https://cloud.orcaslicer.com/p/55b8c347d443) |
+|:-:|---|---|---|
+| <img src="https://raw.githubusercontent.com/bloodf/orca_organizer/main/assets/orca-cloud/orca_organizer-tile.png" alt="Ícone do Organizer" width="40"> | 🧩 [Organizer](https://github.com/bloodf/orca_organizer) | Organize as peças pelo contorno real e encha a mesa com mais cópias. | [Instalar](https://cloud.orcaslicer.com/p/5bf381fd42d4) |
+| <img src="https://raw.githubusercontent.com/bloodf/embedder/main/assets/orca-cloud/embedder-tile.png" alt="Ícone do Embedder" width="40"> | 🧲 [Embedder](https://github.com/bloodf/embedder) | Bolsos para ímãs e NFC, com a pausa na camada certa. | [Instalar](https://cloud.orcaslicer.com/p/58222d4f9e52) |
+| <img src="assets/orca-cloud/orca_print_calculator-tile.png" alt="Ícone do Print Calculator" width="40"> | 💰 **Print Calculator** · você está aqui | Preço de cada mesa: filamento, energia, mão de obra, taxas e margem. | |
+| <img src="https://raw.githubusercontent.com/bloodf/spooler/main/assets/orca-cloud/spooler-tile.png" alt="Ícone do Spooler" width="40"> | 🧵 [Spooler](https://github.com/bloodf/spooler) | Seu estoque do Spoolman dentro do OrcaSlicer, com o que resta em cada bobina. | [Instalar](https://cloud.orcaslicer.com/p/50c35dcbd6f3) |
+| <img src="https://raw.githubusercontent.com/bloodf/kobracontrol/main/assets/orca-cloud/kobracontrol-tile.png" alt="Ícone do Kobra Control" width="40"> | 🟣 [Kobra Control](https://github.com/bloodf/kobracontrol) | Controle a Anycubic Kobra X pelo OrcaSlicer na sua rede. | [Instalar](https://cloud.orcaslicer.com/p/59c786285255) |
+| <img src="https://raw.githubusercontent.com/bloodf/u1control/main/assets/orca-cloud/u1control-tile.png" alt="Ícone do U1 Control" width="40"> | 🔵 [U1 Control](https://github.com/bloodf/u1control) | Controle a Snapmaker U1 pelo OrcaSlicer: cabeças, câmera, arquivos. | [Instalar](https://cloud.orcaslicer.com/p/55b8c347d443) |
 
 Cada plugin funciona sozinho; instalados juntos, compartilham dados onde ajuda.
 
-## 🤝 Como contribuir
+## 🤝 Contribuir
 
 Comece pelo [CONTRIBUTING.md](CONTRIBUTING.md). Build, testes e o contrato com o host estão em [docs/development.md](docs/development.md), a publicação de versões em [docs/release.md](docs/release.md), a especificação da interface em [docs/ux.md](docs/ux.md) e as regras da marca em [brand/BRAND.md](brand/BRAND.md). Esses documentos estão em inglês. As mudanças de cada versão estão no [CHANGELOG.md](CHANGELOG.md).
 

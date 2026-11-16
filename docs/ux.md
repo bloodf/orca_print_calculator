@@ -1926,9 +1926,9 @@ pt-BR, keyboard only for one full pass.
    `channelsForCurrency` / `DEFAULT_CHANNELS`. `channels.ts` still ships Mercado Livre, Shopee and Etsy presets
    with sources and "unverified" notes; T2.5 should delete them (and the `structuredClone` call, Safari 15.4) so
    nothing marketplace-named reaches the bundle. `rates_missing` / `asOf: "needs-rates"` then become dead code.
-   Brand listing image 3 (`brand/listing-3.png`, captions "Etsy", "Mercado Livre", "Shopee") and README/hub copy
-   must be regenerated with user-named channels (T6.3, T0.3). Done since: that image is gone, and the listing images are
-   now the files in `assets/orca-cloud/`.
+   The old brand listing image 3 (`brand/listing-3.png`, captions "Etsy", "Mercado Livre", "Shopee") and the README/hub
+   copy were regenerated with user-named channels (T6.3, T0.3). That image is gone; the listing images are now the
+   files in `assets/orca-cloud/`.
 12. **Spare pieces**: the UI reads `QuoteOk.sparePieces` (owner decision #4). The committed `quote.ts` exposes
     `piecesPrinted` and `runs` but not `sparePieces` yet; until it lands, derive.ts uses
     `piecesPrinted − quantity`. Remove the fallback when the field exists.
