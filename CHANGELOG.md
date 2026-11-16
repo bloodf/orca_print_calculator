@@ -14,6 +14,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - On first run the currency follows the language: euro for German, yuan for Chinese, real for Brazilian Portuguese, US dollar otherwise. A currency already saved is never changed.
 
 ### Changed
+- Brand: new store, social and README images (workshop photographs with a real screenshot of the plugin's page in each), a new README in English and Portuguese, and one file with the Orca Cloud description. The old vector hero, social, listing and tile images are removed. The plugin itself is unchanged.
 - The page is about 100 kB larger (1,092 kB, 313 kB gzipped) because it carries the three new languages; the size gate is now 1,115,000 bytes.
 
 ### Fixed
