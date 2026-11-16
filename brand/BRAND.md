@@ -1,13 +1,14 @@
-# Orca Print Calculator — brand
+# Print Calculator — brand
 
 ## Name and tagline
-- Name: **Orca Print Calculator** (never "OrcaCalc", never "Orca Calculator"). Always written in full; "Orca" alone refers to OrcaSlicer.
-- Tagline en: **Price every plate.**
-- Tagline pt-BR: **Precifique cada placa.**
-- Descriptor en: Calculator for OrcaSlicer. pt-BR: Calculadora para OrcaSlicer.
+- Name: **Print Calculator** in the tab, the app bar, the Orca Cloud listing, the README and the images. The repository, the package and release titles keep the full "Orca Print Calculator". Never "OrcaCalc" or "Orca Calculator"; "Orca" alone refers to OrcaSlicer.
+- One line en: **Price every plate: filament, energy, labour, fees and margin.**
+- One line pt-BR: **Preço de cada placa: filamento, energia, mão de obra, taxas e margem.**
+- Image headline en: Price every print. pt-BR: Calcule o preço de cada impressão.
+- Signature: "by bloodf". No umbrella name for the six plugins.
 
 ## Voice
-Workshop-precise, plain, numerate. Says what the number is and where it came from. Short sentences, active verbs, units always shown. pt-BR uses the imperative ("Precifique", "Envie"), not the formal "o usuário". No hype ("revolutionary", "powerful"), no exclamation marks, no AI talk, no emoji. Money and grams are the heroes; the copy stays out of their way.
+Workshop-precise, plain, numerate. Says what the number is and where it came from. Short sentences, active verbs, units always shown. pt-BR uses the imperative ("Precifique", "Envie"), not the formal "o usuário". No hype ("revolutionary", "powerful"), no exclamation marks, no AI talk. No emoji in the UI or inside sentences; the README has one per section heading and one per plugin in its title and in the six-plugin table. Money and grams are the heroes; the copy stays out of their way.
 
 ## Palette
 Since 0.5.0 the plugin is lime, the accent it has in the Orca UI foundation 4 family (each sibling plugin has its own). The suggested price is the hero, in the accent. Amber is for warnings only: a partial price, a missing value, a stand-in price.
@@ -48,9 +49,8 @@ Brand values above are for assets and docs. The plugin UI takes every colour fro
 Rule of thumb: on light, green text is `#446600`; on dark, it is `#B9DC6C`.
 
 ## Typography
-- Assets (build on macOS: text uses the system Avenir Next, other OSes fall back to different metrics): geometric sans, bold (700) for wordmark and headlines, semibold (600) for labels. Rendered assets use Avenir Next with Helvetica Neue fallback (system fonts, no licensing).
+- Listing, social and README images: the name and headline are part of the generated image (a Manrope-style semibold). They are never retyped over it; a new headline means a new image.
 - Plugin UI: Manrope, embedded by the shared foundation (`ui/shared/src/fonts`, a `data:` font allowed by the page policy `font-src data:`). Tabular numerals for money and weights.
-- Scale (assets): wordmark 34-56, headline 52, label 12-18. Letter-spacing -0.01em on display sizes only.
 
 ## Logo
 The mark: a price tag pointing left (the "price"), a punched hole at its point, two layer-line bars on the face (the "print"). 24x24 grid, 1.5 stroke, round caps and joins, single color. Spool meaning lives in the empty states and copy, not in the mark. Do not put a centered hub circle in a ring: that is the Spooler tab glyph.
@@ -58,21 +58,28 @@ The mark: a price tag pointing left (the "price"), a punched hole at its point, 
 - Files: `brand/logo.svg` (deep green `#446600`, for light), `brand/logo-dark.svg` (lime `#B9DC6C`, for graphite), `ui/src/icon.svg` (`currentColor`, 20px tab glyph, same geometry and 1.5 stroke as the Spooler and Orca tab icons).
 - Clear space: 1/4 of mark width on all sides. Minimum size: 16px. Wordmark lockup minimum 120px wide.
 - Lockup: mark left, wordmark right, gap = 1/3 mark width, vertically centered.
-- Tile (`icon-512.png`): graphite rounded square, mark in lime at 60% width, 1px inner border.
+- Store tile (`assets/orca-cloud/orca_print_calculator-tile.png`, 512x512): a deep green rounded square with the tag in white. It is a generated raster for listings and the README only. It differs from the mark: the hole is a ring, not a solid dot, the corners are rounder and the stroke is heavier. The construction above stays the source of truth, and the tab icon in OrcaSlicer is `ui/src/icon.svg`.
 - Checked at 16px and 20px on `#2B2B2B` and `#FFFFFF`, beside the Spooler glyph (nearest-neighbour zoom): tag outline, hole and both bars stay separate at 20px; at 16px the bars are slightly soft but distinct.
 
 ## Do
-- Use graphite surfaces for marketing images; lime as a thin rule, bars and the mark.
+- Use the workshop photographs in `assets/` for listings, social and the README: olive printed parts on a graphite or light bench, the name and headline at the left, a real screenshot of the plugin's page in the square, the six plugin colours and "by bloodf" at the bottom.
+- Fill the square with a real capture of the built page (sample data, mock host), dark page on dark images and light on light, in the language of the headline. Never draw a mock interface.
 - Show the price in the accent (lime on dark, the deep green band in the UI) on exactly one number per screen: the suggested price, or the selected channel's price.
 - Keep strokes 1.5-2px, corners 2px (6px for cards), generous negative space.
 - Show real-looking data: plates, grams, spool names, currency symbols.
 
 ## Don't
-- No gradients, glows, glossy 3D, mascots or orcas, sparkles, robots, coins or dollar-sign clipart.
+- No mascots or orcas, sparkles, robots, coins or dollar-sign clipart anywhere. No gradients, glows or 3D on the mark or in the UI.
+- Do not edit a generated image outside its square, and do not crop its text.
 - No `#B9DC6C` on light; no `#446600` on dark; no amber except for a warning.
 - Do not recolor, outline, rotate, stretch or add effects to the mark; do not place it on busy imagery.
 - Do not fill the ring or merge the dot into the bars.
-- No emoji in UI or marketing copy.
+- No emoji in the UI, in sentences or in the listing images.
 
 ## Asset index
-`brand/logo.svg`, `logo-dark.svg`, `logo-512.png`, `logo-1024.png` (transparent), `icon-512.png`, `icon-256.png`, `hero.png`, `social.png`, `listing-1..4.png` + `-pt`, `ui/src/icon.svg`, `ui/src/assets/calculator-quote.webp` (the empty-state illustration, from the foundation's illustration set). SVG sources and the regeneration script live in `brand/src/` (`npm i --no-save sharp && node brand/src/build.mjs`).
+- Mark: `brand/logo.svg`, `logo-dark.svg`, `logo-512.png`, `logo-1024.png` (transparent), `ui/src/icon.svg`. The SVG source and the script are in `brand/src/` (`npm i --no-save sharp && node brand/src/build.mjs`).
+- Orca Cloud: `assets/orca-cloud/orca_print_calculator-tile.png` (512x512), `-main-<lang>.png` and `-feature-01..04-*-<lang>.png` (1600x900), `-main-square-<lang>.png` (900x900).
+- README: `assets/readme/orca_print_calculator-hero-<dark|light>-<lang>.png` (1600x900) and the plain screenshots in `docs/screenshots/`.
+- GitHub social preview: `assets/social/orca_print_calculator-social-preview-<lang>.png` (1280x640).
+- Sources: the native generated images in `assets/marketing/source/`, with prompts, hashes and every export in `assets/marketing/asset-manifest.json`. `<lang>` is `en` or `pt-BR`. How to redo the exports: `docs/development.md`.
+- In the plugin: `ui/src/assets/calculator-quote.webp` (the empty-state illustration, from the foundation's illustration set).

@@ -1,0 +1,640 @@
+{
+  "plugin": "Print Calculator",
+  "note": "Sources are the native generated images, kept unchanged. Exports are written by scripts/brand_assets.py.",
+  "sources": [
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-cover-en.png",
+      "plugin": "Print Calculator",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation, image_gen.imagegen",
+      "exact_prompt": "Use case: ads-marketing. Create the Print Calculator counterpart of this realistic Spooler software launch image. Same photographic studio campaign, same composition, same16:9 aspect, identical square placeholder position and dimensions, same believable workbench surface, same photographic depth and materials, same footer signature and6color tiles. This must look like the second image from one coordinated professional product campaign, not flat vector artwork. Change magenta accent atmosphere to deep olive/lime family #446600 with restrained realistic #b9dc6c material highlights; deep studio background is olive-tinted graphite #141a11. Top-left compact rounded-square app tile deep olive #446600 contains white 2px ROUND-STROKE price tag pointing left, small punched hole and two short horizontal lines, rounded stroke caps. Beside tile exact name 'Print Calculator' in Manrope semibold #eef1f6. Use calibrated smaller size than Spooler so full name fits comfortably only in left half, with no overlapping right square. Below product name exact headline 'Price every print.' in Manrope semibold, restrained clear hierarchy. Below exact scope sentence 'Filament, energy, labour and margin.' in Manrope regular #b4bcc9, naturally wrap to two short lines if necessary. Lower-left photographic subject: a small expertly arranged group of believable generic3D-printed workshop parts in muted olive material, one ribbed small organizer bin and two simple functional brackets with realistic fine FDM layer lines, lying on graphite workbench, plus a partial generic charcoal filament spool behind them. Generic geometries only, no product brands or logos, no tools with fake markings, no calculator device, no coins, no money icons, no readable numbers anywhere in the photographic subject. Show excellent tactile realism, professionally controlled softbox illumination and subtle olive reflected light. Leave upper-left negative space clean for typography, no overlapping objects and text. RIGHT-half square must remain totally EMPTY and straight-on, uniform dark #1f271b interior, thin neutral-gray border, no UI, no numbers, no words, no shapes, no screen, no device bezel, no generated screenshot. Its empty plane is reserved for adding a real application screenshot later. Keep same six small footer tiles as reference in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5 and exact lower-right 'by bloodf'. No pack name. Credible premium software marketing photography, disciplined professional composition, realistic shadows, fine material detail, not neon, no glowing floating geometry, no flat illustrated parts.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1681615,
+      "sha256": "9b83f2986ecd28c940b261065056ce56b3b7dd9a07f33d32943777506a628436"
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-main-square-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-main-square-en",
+      "category": "square",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: square, Square1:1 store cover. Adapt the reference without crowding: compact brand and short headline along top, realistic photographed objects at lower-left, one EMPTY SQUARE placeholder at right-center, modest footer. Reserve clear whitespace. The screenshot square occupies about40%canvas width and is itself square. Intended production size 900x900. Exact headline: 'Price every print.'. Exact secondary line: 'Filament, energy, labour and margin.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1793105,
+      "sha256": "c680ccf9a5d4fde152d2e91ea517240b99525c41330163716e0c0b246299f05f",
+      "target_size": [
+        900,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-01-filament-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-01-filament-en",
+      "category": "feature",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Account for filament costs'. Exact secondary line: 'Use stock prices or preset costs.'. No other copy. Feature-specific physical photograph should emphasize olive filament on a graphite spool, several simple olive printed brackets of different sizes. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1669923,
+      "sha256": "5d9bc41a1e6b7324c5a881900ff6f29e73dfc578d68808ddeacd171f67e6382e",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-02-costs-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-02-costs-en",
+      "category": "feature",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Include the work behind each print'. Exact secondary line: 'Account for energy, labour and extras.'. No other copy. Feature-specific physical photograph should emphasize olive printed workshop parts on a graphite workbench with generic unmarked metal measuring calipers, no text or digits on tool. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1694645,
+      "sha256": "1ae44b8cc857cb46dfcd9b3e0a6fe66cc3095804cc9c9f7ea026ba0f44511775",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-03-price-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-03-price-en",
+      "category": "feature",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Set a price with margin'. Exact secondary line: 'Include channel fees in the calculation.'. No other copy. Feature-specific physical photograph should emphasize a carefully staged small batch of identical olive printed brackets, premium tactile material detail, no money or coins. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1688362,
+      "sha256": "e78a5a0c54fac4e5b042f5661b7706223899d9ca466fd7fc5ff327e9512b1a86",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-04-quotes-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-04-quotes-en",
+      "category": "feature",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Keep quotes for the next order'. Exact secondary line: 'Save quotes and export the details.'. No other copy. Feature-specific physical photograph should emphasize two neatly grouped batches of olive printed functional parts on graphite workbench, an unmarked closed graphite notebook behind, no readable writing. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1702385,
+      "sha256": "93dc7d808dd84899a99c696383394ffedf54dad16f6717e8c8527cb7728f99e3",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-social-preview-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-social-preview-en",
+      "category": "social",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: social, Landscape2:1 GitHub social preview. Adapt approved cover to wider format while preserving large type, compact physical photographic foreground lower-left and EMPTY SQUARE on right, all comfortably within safe margins. Product name dominates, tagline secondary. Avoid excessive copy or oversized logo. Intended production size 1280x640. Exact headline: 'Price every print.'. Exact secondary line: 'Filament, energy, labour and margin.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1774,
+      "height": 887,
+      "bytes": 1674137,
+      "sha256": "4d084d6a68847657c89689bced13c263c35e0f29b6fdefd20573951d2c288288",
+      "target_size": [
+        1280,
+        640
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-hero-dark-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-hero-dark-en",
+      "category": "hero-dark",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: hero-dark, Landscape16:9 DARK README hero. Same realistic graphite-workshop family, restrained typography, photographic objects lower-left, upper-left brand and tagline, one completely EMPTY SQUARE on right; dark graphite surfaces with restrained accent light. Intended production size 1600x900. Exact headline: 'Price every print.'. Exact secondary line: 'Filament, energy, labour and margin.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1652800,
+      "sha256": "8c41e2fa204988de60a35ff1226b304723ae9de2fe516951980b53d377ae6620",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-hero-light-en.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-hero-light-en",
+      "category": "hero-light",
+      "language": "en",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be English as quoted. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: hero-light, Landscape16:9 LIGHT README hero. Re-stage the SAME realistic workshop as a bright premium product-photo studio with light neutral workbench and light accent-tinted backdrop #dde2dc, physically realistic soft daylight, crisp material texture and gentle shadows. Do NOT just invert the dark photograph. Dark graphite #171c26 name/headline, muted #4b5767 secondary copy, approved accent tile with white mark. Same grid, subject lower-left, EMPTY WHITE screenshot SQUARE on right with thin neutral border, identical footer. Absolutely no fake screens. Intended production size 1600x900. Exact headline: 'Price every print.'. Exact secondary line: 'Filament, energy, labour and margin.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1666602,
+      "sha256": "4b8294bd6df74672800a104335b51f8cf84272462b36547ccf5ab50c5dc64c65",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-main-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-main-pt-BR",
+      "category": "main",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: main, Landscape16:9 store cover. Preserve the reference main-cover layout exactly: brand top-left, headline below, photographic objects lower-left, large empty square on right. Intended production size 1600x900. Exact headline: 'Calcule o preço de cada impressão.'. Exact secondary line: 'Filamento, energia, mão de obra e margem.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1654184,
+      "sha256": "9d807467afbbb32d969642d1ef5d72ed226d99ef809c40242ef9897c9cc29c65",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-main-square-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-main-square-pt-BR",
+      "category": "square",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: square, Square1:1 store cover. Adapt the reference without crowding: compact brand and short headline along top, realistic photographed objects at lower-left, one EMPTY SQUARE placeholder at right-center, modest footer. Reserve clear whitespace. The screenshot square occupies about40%canvas width and is itself square. Intended production size 900x900. Exact headline: 'Calcule o preço de cada impressão.'. Exact secondary line: 'Filamento, energia, mão de obra e margem.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1768577,
+      "sha256": "2da0422bcf39dd2443e03709d27ee6ff2d238c5ffa1b2a5eedcd0d40e4375171",
+      "target_size": [
+        900,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-01-filament-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-01-filament-pt-BR",
+      "category": "feature",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Calcule o custo do filamento'. Exact secondary line: 'Use preços do estoque ou dos presets.'. No other copy. Feature-specific physical photograph should emphasize olive filament on a graphite spool, several simple olive printed brackets of different sizes. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1694325,
+      "sha256": "021a1ab53db39dbfec7f5904eeb12facddb2e68a7ad5b9546813c986590c3b72",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-02-costs-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-02-costs-pt-BR",
+      "category": "feature",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Inclua o trabalho de cada impressão'. Exact secondary line: 'Considere energia, mão de obra e extras.'. No other copy. Feature-specific physical photograph should emphasize olive printed workshop parts on a graphite workbench with generic unmarked metal measuring calipers, no text or digits on tool. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1701979,
+      "sha256": "e6c70cd9ea69ba17d5b19abb748d796086078217239e9a7fc8e06879f0fcbd4d",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-03-price-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-03-price-pt-BR",
+      "category": "feature",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Defina um preço com margem'. Exact secondary line: 'Inclua as taxas do canal no cálculo.'. No other copy. Feature-specific physical photograph should emphasize a carefully staged small batch of identical olive printed brackets, premium tactile material detail, no money or coins. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1629586,
+      "sha256": "d0aced480fc792157f66071b53fb0adfc0a2d6168cf4ab861551a76e049ee0d8",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-feature-04-quotes-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-feature-04-quotes-pt-BR",
+      "category": "feature",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: feature, Landscape16:9 store feature. Same approved main-cover grid: product brand top-left, short feature headline and one supporting line below, feature-specific photo lower-left, large EMPTY SQUARE on right, identical footer. Intended production size 1600x900. Exact headline: 'Salve orçamentos para o próximo pedido'. Exact secondary line: 'Guarde orçamentos e exporte os detalhes.'. No other copy. Feature-specific physical photograph should emphasize two neatly grouped batches of olive printed functional parts on graphite workbench, an unmarked closed graphite notebook behind, no readable writing. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1666884,
+      "sha256": "fc5f2bc3babab1acb919acbfe1567dab6c0b37d9375d6051296d70854c4c1b1e",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-social-preview-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-social-preview-pt-BR",
+      "category": "social",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: social, Landscape2:1 GitHub social preview. Adapt approved cover to wider format while preserving large type, compact physical photographic foreground lower-left and EMPTY SQUARE on right, all comfortably within safe margins. Product name dominates, tagline secondary. Avoid excessive copy or oversized logo. Intended production size 1280x640. Exact headline: 'Calcule o preço de cada impressão.'. Exact secondary line: 'Filamento, energia, mão de obra e margem.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1774,
+      "height": 887,
+      "bytes": 1683250,
+      "sha256": "926cfb8130b93bc3d15e888885358f95542d0b68e35346d8520d4b9fc4917343",
+      "target_size": [
+        1280,
+        640
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-hero-dark-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-hero-dark-pt-BR",
+      "category": "hero-dark",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: hero-dark, Landscape16:9 DARK README hero. Same realistic graphite-workshop family, restrained typography, photographic objects lower-left, upper-left brand and tagline, one completely EMPTY SQUARE on right; dark graphite surfaces with restrained accent light. Intended production size 1600x900. Exact headline: 'Calcule o preço de cada impressão.'. Exact secondary line: 'Filamento, energia, mão de obra e margem.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1671184,
+      "sha256": "7736233ed457f1485397dfbabfa0f4f50e1be9405304a4d951a4c0ac3888dcea",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-hero-light-pt-BR.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-hero-light-pt-BR",
+      "category": "hero-light",
+      "language": "pt-BR",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: ads-marketing. Generate ONE individual professional marketing asset for 'Print Calculator' using ChatGPT image generation. Strictly match the APPROVED reference as a coordinated six-plugin campaign: believable photographic graphite workshop, real tactile FDM layer detail, professionally controlled softbox lighting and deep olive green material reflections, no flat vector illustration, no neon, no trademark logos or recognizable proprietary products. Accent #446600, dark backdrop #141a11, dark screenshot placeholder #1f271b. Photograph muted olive 3D-printed organizer bin and functional brackets with fine FDM layers, graphite filament spool behind. Preserve the exact approved rounded-square app tile and its identity mark: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. Product name stays EXACTLY 'Print Calculator'. Manrope-style semibold for names/headlines, regular for secondary copy. All marketing copy must be Brazilian Portuguese as quoted, with correct accents. Keep the product name and author signature unchanged. No invented interface or screenshot under any circumstances. Whenever a screenshot placeholder is present, it is a straight-on geometrically SQUARE empty region with thin neutral border, completely blank inside: no words, numbers, icons, photos, diagrams or controls, no laptop or monitor bezel. Keep square separate from text and photograph. No pack name. Small footer signature exact 'by bloodf', six tiny plain family-color squares in order #00628c #00675b #446600 #a3247a #6240c8 #2b55c5. Clean legible typography, safe margins, no objects crossing text, expert art direction. Asset: hero-light, Landscape16:9 LIGHT README hero. Re-stage the SAME realistic workshop as a bright premium product-photo studio with light neutral workbench and light accent-tinted backdrop #dde2dc, physically realistic soft daylight, crisp material texture and gentle shadows. Do NOT just invert the dark photograph. Dark graphite #171c26 name/headline, muted #4b5767 secondary copy, approved accent tile with white mark. Same grid, subject lower-left, EMPTY WHITE screenshot SQUARE on right with thin neutral border, identical footer. Absolutely no fake screens. Intended production size 1600x900. Exact headline: 'Calcule o preço de cada impressão.'. Exact secondary line: 'Filamento, energia, mão de obra e margem.'. No other copy. This is a single usable image, not a collage or proof sheet. Keep screenshot squares totally empty.",
+      "date": "2026-11-16",
+      "width": 1672,
+      "height": 941,
+      "bytes": 1617668,
+      "sha256": "ae9068b1217bb35cbc78656a67fb73bafc9f2614ad3e2c4b948fbd3d88ab7541",
+      "target_size": [
+        1600,
+        900
+      ]
+    },
+    {
+      "filename": "assets/marketing/source/orca_print_calculator-workshop-tile.png",
+      "plugin": "Print Calculator",
+      "id": "orca_print_calculator-tile",
+      "category": "tile",
+      "language": "none",
+      "tool": "ChatGPT built-in image generation / image_gen.imagegen",
+      "prompt": "Use case: logo-brand. Create ONE clean finished STORE APP ICON for 'Print Calculator', square1:1. Reference image is for identity ONLY. This is a flat graphic icon, not a realistic scene. An opaque pure white background, no transparency or cutout processing. A large perfectly smooth rounded square almost fills the canvas with only tiny white corners at its outer radius, consistent radius18% of side. Fill the rounded square with ONE UNIFORM SOLID color #446600. Inside, centered and optically balanced, draw ONLY this approved identity mark in pure white: a left-pointing price tag with one punched hole and two short horizontal lines, white 2px round-cap strokes. All strokes the same2px round-cap round-join weight on a24grid,2px safe area. The icon mark and tile must be crisp and evenly proportioned. No text, no letters, no numbers, no footer, no additional symbol, no photograph, no texture, no grain, no mottling, NO GRADIENT, no shading or lighting, no shadow, no bevel, no glow. Every pixel inside the colored tile away from the white mark must have the same solid color. Especially the upper and lower areas must be perfectly uniform with no bands, dirty patches, cutouts or holes. Deliver clean opaque artwork on white, no alpha channel processing. A single icon, not a board or mockup. Intended final use512x512 store tile.",
+      "date": "2026-11-16",
+      "width": 1254,
+      "height": 1254,
+      "bytes": 1161510,
+      "sha256": "4adde3ee9ae194c0af06a318c8cc2002f3f35aff4b8aeb4bccf22330ca599120",
+      "target_size": [
+        512,
+        512
+      ]
+    }
+  ],
+  "exports": [
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-tile.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-tile.png",
+      "operation": "Lanczos resize from 1254x1254",
+      "width": 512,
+      "height": 512,
+      "bytes": 187848,
+      "sha256": "36e16af811f9728022b23a6d57cc4791c2542bda08664a91a4a1292d2fd29908",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-main-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-cover-en.png",
+      "screenshot": "slot-overview-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 885,102 712x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1257067,
+      "sha256": "555919d276486050ae30e405636404ce0ebe9b39004ee40905a1ef3403f60e8c",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-main-square-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-main-square-en.png",
+      "screenshot": "slot-price-square-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 708,451 494x490 of the source and clipped to its rounded corners; Lanczos resize from 1254x1254",
+      "width": 900,
+      "height": 900,
+      "bytes": 853290,
+      "sha256": "a02ad7585daef919729317401b5d5e0910a6bad77df988101fb5c1429aa65912",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-01-filament-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-01-filament-en.png",
+      "screenshot": "slot-filament-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 884,101 713x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1252379,
+      "sha256": "9acadeffd330816b809dcb81d6950e05af8ac4164eed688257f959a64998e6f7",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-02-costs-en.png",
+      "screenshot": "slot-costs-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 885,102 712x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1324754,
+      "sha256": "f99dfd9d24449839317c1f92ccb801c76e2575e388c02240e3b3a6da2a960b16",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-03-price-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-03-price-en.png",
+      "screenshot": "slot-price-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 884,100 713x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1270211,
+      "sha256": "4c68dd3b2db2acbe7e75f34180328a48c222531cbee38158b23baf01578c9185",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-04-quotes-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-04-quotes-en.png",
+      "screenshot": "slot-quotes-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 885,102 712x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1235968,
+      "sha256": "8041a86dc711f72a0a7980fe2f15cc41028d2c150903f55f01d6c12ba1899496",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/readme/orca_print_calculator-hero-dark-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-hero-dark-en.png",
+      "screenshot": "slot-overview-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 884,102 713x684 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1222686,
+      "sha256": "e23265b59e55eeadccd2936c7b2e55152ca9da9e416f8295a50b97420df46b16",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/readme/orca_print_calculator-hero-light-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-hero-light-en.png",
+      "screenshot": "slot-overview-light-en.png",
+      "operation": "screenshot scaled to cover the empty square at 883,99 716x689 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1279922,
+      "sha256": "65c3ea09da4c9fd48da6eec021380ed91cb1a286768c49fa14c299e1fcf295c8",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/social/orca_print_calculator-social-preview-en.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-social-preview-en.png",
+      "screenshot": "slot-overview-social-dark-en.png",
+      "operation": "screenshot scaled to cover the empty square at 1029,90 666x661 of the source and clipped to its rounded corners; Lanczos resize from 1774x887",
+      "width": 1280,
+      "height": 640,
+      "bytes": 780973,
+      "sha256": "452367db7e9250e4f694c4dbd2ffde7252f352ff9a7e7f22d50742d7f6c39985",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-main-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-main-pt-BR.png",
+      "screenshot": "slot-overview-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 884,102 712x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1221579,
+      "sha256": "da95b22eb8753a1d2a88629c4226d3f4874090370680d0cecb4354c8a2bb4b04",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-main-square-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-main-square-pt-BR.png",
+      "screenshot": "slot-price-square-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 684,455 497x492 of the source and clipped to its rounded corners; Lanczos resize from 1254x1254",
+      "width": 900,
+      "height": 900,
+      "bytes": 840460,
+      "sha256": "8c953e6bd0b7cfb33d4d923c47a8df64aa2a9cab0a9abe6ef1b64d020bed2057",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-01-filament-pt-BR.png",
+      "screenshot": "slot-filament-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 886,102 710x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1275025,
+      "sha256": "c079e7079592fde12020ff1537e597cc9a5c5ce876f8fe81e0679154dfdce3c5",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-02-costs-pt-BR.png",
+      "screenshot": "slot-costs-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 884,100 713x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1326860,
+      "sha256": "01dde72032b41ba345f33e2e0cb94e941147d97789b424a427c287c9da527300",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-03-price-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-03-price-pt-BR.png",
+      "screenshot": "slot-price-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 884,102 712x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1239578,
+      "sha256": "b0f8dab75728ed4e77f25fea7d57f1b11c06b7204d26f21b8d64f4824653a768",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/orca-cloud/orca_print_calculator-feature-04-quotes-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-04-quotes-pt-BR.png",
+      "screenshot": "slot-quotes-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 885,100 712x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1228029,
+      "sha256": "cddbf5613eb2e9dcaf8d1ac3d146c5ca5eae6da95299b027d7525e17df0e2df9",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/readme/orca_print_calculator-hero-dark-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-hero-dark-pt-BR.png",
+      "screenshot": "slot-overview-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 884,101 713x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1242722,
+      "sha256": "b18b7f6272030aea5f2766ed6f840fd950ee3c8f558d0c03cfc42431d6e86146",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/readme/orca_print_calculator-hero-light-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-hero-light-pt-BR.png",
+      "screenshot": "slot-overview-light-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 885,101 711x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
+      "width": 1600,
+      "height": 900,
+      "bytes": 1241248,
+      "sha256": "a3d7da810511002b45126a6c6edc3c528766bc046228bfdeb5a35025055ec534",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "assets/social/orca_print_calculator-social-preview-pt-BR.png",
+      "source": "assets/marketing/source/orca_print_calculator-workshop-social-preview-pt-BR.png",
+      "screenshot": "slot-overview-social-dark-pt-BR.png",
+      "operation": "screenshot scaled to cover the empty square at 1021,98 674x656 of the source and clipped to its rounded corners; Lanczos resize from 1774x887",
+      "width": 1280,
+      "height": 640,
+      "bytes": 791651,
+      "sha256": "0bc02bba3cfc375576373f967d084ef0741cb375be9edc7cebb9580e23526673",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/calculator-dark-en.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "calculator-dark-en.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 1800,
+      "bytes": 410202,
+      "sha256": "96f8d6c82a7797738a3f5455e9bbef6bc6ff065ce06308b3cf90e0162a6aa66d",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/calculator-dark-pt-BR.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "calculator-dark-pt-BR.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 1800,
+      "bytes": 436589,
+      "sha256": "fd271261570e7ecd8ba15480894ec077ed783580c5d54bbf8b443717e71b9503",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/calculator-light-en.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "calculator-light-en.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 1800,
+      "bytes": 418555,
+      "sha256": "564815cd1d932ec8159bc2efdc87b0d20b1a284934a8d8335cf4a1186f64da71",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/calculator-light-pt-BR.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "calculator-light-pt-BR.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 1800,
+      "bytes": 444117,
+      "sha256": "efb896c44bd462b604dd72e17168fcc1761770cdef19b3a854e7dd54fac04f1c",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/quotes-dark-en.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "quotes-dark-en.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 880,
+      "bytes": 120535,
+      "sha256": "bd2cd61e953955fb00cdd9be503ed1f7a2c6ea2b863b402678e75897125f4e19",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/quotes-dark-pt-BR.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "quotes-dark-pt-BR.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 880,
+      "bytes": 126866,
+      "sha256": "3954d1cc3f3bdd3f2194b30db0e176565285daaae6977504f02380f187321db7",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/quotes-light-en.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "quotes-light-en.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 880,
+      "bytes": 123344,
+      "sha256": "c9789f20d2ac46e9a812b70065bfc026c577343099704d33a2b56bf78a5a9ef6",
+      "date": "2026-11-16"
+    },
+    {
+      "file": "docs/screenshots/quotes-light-pt-BR.png",
+      "source": "ui/e2e/brand-shots.mjs",
+      "screenshot": "quotes-light-pt-BR.png",
+      "operation": "mock-host capture at device scale 2, saved as is",
+      "width": 2880,
+      "height": 880,
+      "bytes": 129368,
+      "sha256": "850c35cc123c426bf19f5f2bd85d9f8e987251dc092d452bc4a1a2a33b726734",
+      "date": "2026-11-16"
+    }
+  ]
+}
