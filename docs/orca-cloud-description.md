@@ -70,13 +70,13 @@ https://github.com/bloodf/orca_print_calculator (MIT)
 Descrição curta (113 caracteres, limite 140):
 
 ```text
-Precifica cada placa no OrcaSlicer: filamento do Spoolman, energia, mão de obra, taxas e preço de venda sugerido.
+Precifica cada mesa no OrcaSlicer: filamento do Spoolman, energia, mão de obra, taxas e preço de venda sugerido.
 ```
 
 Descrição:
 
 ```markdown
-Preço de cada placa: filamento, energia, mão de obra, taxas e margem.
+Preço de cada mesa: filamento, energia, mão de obra, taxas e margem.
 
 ## O que você precisa
 
@@ -86,7 +86,7 @@ Preço de cada placa: filamento, energia, mão de obra, taxas e margem.
 
 ## O que faz
 
-- Cada placa fatiada aparece com o tempo de impressão, os gramas de cada filamento e o custo. O "Fatiar tudo" preenche o projeto inteiro, ou você importa um .gcode.3mf fatiado.
+- Cada mesa fatiada aparece com o tempo de impressão, os gramas de cada filamento e o custo. O "Fatiar tudo" preenche o projeto inteiro, ou você importa um .gcode.3mf fatiado.
 - O filamento recebe o preço por kg dos seus carretéis no Spoolman, de um preço digitado por você ou do custo do perfil, e a aba diz qual.
 - Energia, desgaste da impressora, taxa de falha, mão de obra, extras, frete e imposto entram no custo de cada peça.
 - Um markup dá um preço sugerido que mantém o lucro depois da taxa e do imposto do seu canal de venda. Você define os canais e compara todos lado a lado.
@@ -101,7 +101,7 @@ Preço de cada placa: filamento, energia, mão de obra, taxas e margem.
 
 1. Assine nesta página. No OrcaSlicer, abra Plugins, atualize e ative o plugin. Deixe o acesso total desligado.
 2. Abra a aba Print Calculator e responda ao "Configure uma vez": preço do filamento, preço da energia e o valor da sua hora.
-3. Fatie uma placa. Ela aparece em Placas, e o painel Preço mostra o preço sugerido por peça.
+3. Fatie uma mesa. Ela aparece em Placas, e o painel Preço mostra o preço sugerido por peça.
 
 ## Privacidade
 

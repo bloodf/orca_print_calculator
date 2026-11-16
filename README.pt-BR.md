@@ -1,12 +1,12 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/orca_print_calculator-hero-dark-pt-BR.png">
-    <img alt="Print Calculator: preço de cada placa, com filamento, energia, mão de obra, taxas e margem" src="assets/readme/orca_print_calculator-hero-light-pt-BR.png" width="100%">
+    <img alt="Print Calculator: preço de cada mesa, com filamento, energia, mão de obra, taxas e margem" src="assets/readme/orca_print_calculator-hero-light-pt-BR.png" width="100%">
   </picture>
 </p>
 
 <h1 align="center">💰 Print Calculator</h1>
-<p align="center"><b>Preço de cada placa: filamento, energia, mão de obra, taxas e margem.</b><br><sub>Um plugin para o OrcaSlicer · by bloodf</sub></p>
+<p align="center"><b>Preço de cada mesa: filamento, energia, mão de obra, taxas e margem.</b><br><sub>Um plugin para o OrcaSlicer · by bloodf</sub></p>
 
 <p align="center">
   <a href="https://cloud.orcaslicer.com/p/521c07cf6de2"><img alt="Instalar pelo Orca Cloud" src="https://img.shields.io/badge/Orca_Cloud-Instalar-446600?style=for-the-badge"></a>
@@ -21,12 +21,12 @@
 
 ## ✨ O que faz
 
-O Print Calculator cria uma aba no OrcaSlicer que precifica cada placa do projeto aberto. Fatie uma placa e ela aparece com o tempo de impressão, os gramas de cada filamento e quanto eles custam. O preço do filamento vem dos seus carretéis no Spoolman ou do perfil de filamento, a energia vem da potência da impressora, e você soma mão de obra, extras, frete, imposto e as taxas de onde você vende. O resultado é um preço sugerido por peça, com lucro, margem e ponto de empate, que você salva como orçamento, imprime ou exporta.
+O Print Calculator cria uma aba no OrcaSlicer que precifica cada mesa do projeto aberto. Fatie uma mesa e ela aparece com o tempo de impressão, os gramas de cada filamento e quanto eles custam. O preço do filamento vem dos seus carretéis no Spoolman ou do perfil de filamento, a energia vem da potência da impressora, e você soma mão de obra, extras, frete, imposto e as taxas de onde você vende. O resultado é um preço sugerido por peça, com lucro, margem e ponto de empate, que você salva como orçamento, imprime ou exporta.
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/calculator-dark-pt-BR.png">
-    <img alt="A aba Calculadora: três placas fatiadas com seus custos à esquerda, o preço sugerido de R$ 92,10 com lucro, margem e empate à direita" src="docs/screenshots/calculator-light-pt-BR.png" width="100%">
+    <img alt="A aba Calculadora: três mesas fatiadas com seus custos à esquerda, o preço sugerido de R$ 92,10 com lucro, margem e empate à direita" src="docs/screenshots/calculator-light-pt-BR.png" width="100%">
   </picture>
 </p>
 
@@ -56,7 +56,7 @@ No Linux e no Windows a pasta é `orca_plugins/orca_print_calculator/`, dentro d
 <table>
   <tr>
     <td width="50%" valign="top">
-      <img src="assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png" alt="Calcule o custo do filamento: a placa 1 aberta, com os gramas, o preço por kg e o carretel do Spoolman de cada slot de filamento" width="100%"><br>
+      <img src="assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png" alt="Calcule o custo do filamento: a mesa 1 aberta, com os gramas, o preço por kg e o carretel do Spoolman de cada slot de filamento" width="100%"><br>
       <b>Custo do filamento</b><br>
       Cada slot de filamento recebe o preço por kg do carretel do Spoolman correspondente. Sem correspondência, vale um preço digitado por você ou o custo do perfil, e a aba diz qual.
     </td>
@@ -75,17 +75,17 @@ No Linux e no Windows a pasta é `orca_plugins/orca_print_calculator/`, dentro d
     <td width="50%" valign="top">
       <img src="assets/orca-cloud/orca_print_calculator-feature-04-quotes-pt-BR.png" alt="Salve orçamentos para o próximo pedido: a aba Orçamentos com dois orçamentos salvos e o menu da linha aberto em Duplicar, Imprimir orçamento, CSV e Apagar" width="100%"><br>
       <b>Orçamentos salvos</b><br>
-      O orçamento guarda as próprias placas, preços e moeda. Abra depois, duplique, imprima ou exporte.
+      O orçamento guarda as próprias mesas, preços e moeda. Abra depois, duplique, imprima ou exporte.
     </td>
   </tr>
 </table>
 
 | | Recurso | O que você tem |
 |---|---|---|
-| | Placas | Uma linha por placa fatiada, com tempo, gramas por slot de filamento e custo, uma caixa para incluir e um contador de cópias. "Uma rodada destas placas rende N peças" define quantas peças um conjunto completo de placas produz. |
-| | Fatiamento | O plugin lê o G-code que o OrcaSlicer gera quando você fatia. O "Fatiar tudo" preenche todas as placas, uma depois da outra. |
+| | Placas | Uma linha por mesa fatiada, com tempo, gramas por slot de filamento e custo, uma caixa para incluir e um contador de cópias. "Uma rodada destas mesas rende N peças" define quantas peças um conjunto completo de mesas produz. |
+| | Fatiamento | O plugin lê o G-code que o OrcaSlicer gera quando você fatia. O "Fatiar tudo" preenche todas as mesas, uma depois da outra. |
 | | Aviso de desatualizado | Quando algo muda depois de um fatiamento, a aba marca o projeto como "pode estar desatualizado". |
-| | Importar arquivo fatiado | **Importar arquivo fatiado** lê as placas de um `.gcode.3mf` exportado em Arquivo, Exportar, Exportar todos os arquivos fatiados (até 100 MB). As placas importadas continuam na tela quando você fatia; um aviso de "Novo fatiamento" oferece "Usar". |
+| | Importar arquivo fatiado | **Importar arquivo fatiado** lê as mesas de um `.gcode.3mf` exportado em Arquivo, Exportar, Exportar todos os arquivos fatiados (até 100 MB). As mesas importadas continuam na tela quando você fatia; um aviso de "Novo fatiamento" oferece "Usar". |
 | | Potência da impressora | Os watts médios são sugeridos pelo modelo da impressora, com o selo "Estimado". Modelos sem entrada recebem 120 W genéricos. O seu valor prevalece. |
 | | Seções de custo | **Máquina e energia** (potência, preço e vida útil da impressora, preço do kWh, manutenção, custo fixo por hora de impressão, taxa de falha), **Mão de obra**, **Extras e acessórios**, **Frete** e **Taxa de venda**. |
 | | Extras e estoque | Um catálogo de extras com a quantidade em estoque opcional e um resumo somente leitura do filamento no Spoolman. A calculadora avisa quando um orçamento precisa de mais do que você tem. Nada é descontado. |
@@ -104,8 +104,8 @@ No Linux e no Windows a pasta é `orca_plugins/orca_print_calculator/`, dentro d
 
 1. Abra a aba **Print Calculator**. No primeiro uso, **Configure uma vez** pede três coisas: o preço do filamento (conecte o Spoolman, ou pule e use o preço dos perfis), o preço da energia e o valor da sua hora. Se o Spooler estiver instalado, ele oferece o endereço do Spoolman que o Spooler já usa.
 2. Para conectar o Spoolman depois, abra **Ajustes**, digite o **Endereço do Spoolman** (por exemplo `http://localhost:7912`) e use **Testar conexão**. O OrcaSlicer pergunta uma vez se o plugin pode acessar esse endereço.
-3. Fatie uma placa, ou use "Fatiar tudo". Cada placa aparece em **Placas**. Use **Atualizar** se faltar alguma, ou **Importar arquivo fatiado** para um `.gcode.3mf`.
-4. Clique nos filamentos de uma placa para ver o preço por kg de cada slot. **Trocar** escolhe outro carretel ou deixa você digitar um preço por kg.
+3. Fatie uma mesa, ou use "Fatiar tudo". Cada mesa aparece em **Placas**. Use **Atualizar** se faltar alguma, ou **Importar arquivo fatiado** para um `.gcode.3mf`.
+4. Clique nos filamentos de uma mesa para ver o preço por kg de cada slot. **Trocar** escolhe outro carretel ou deixa você digitar um preço por kg.
 5. Abra as seções em **Custos** e preencha o que se aplica: **Máquina e energia**, **Mão de obra**, **Extras e acessórios**, **Frete**, **Taxa de venda**.
 6. Em **Preço**, escolha o **Canal de venda**, as **Peças pedidas** e o **Markup**. **Para onde vai o preço** divide o preço por linha de custo, taxas, imposto e lucro.
 7. Use **Salvar orçamento**. Depois, **Imprimir orçamento** para uma folha ou um PDF, ou **CSV** para um arquivo. Os orçamentos salvos ficam na aba **Orçamentos**.
@@ -124,7 +124,7 @@ Sem telemetria. Nada sai da sua máquina, a não ser as requisições ao endere�
 | Acesso | Para quê |
 |---|---|
 | `threading` | Buscar no Spoolman sem travar a janela. |
-| Leitura na pasta temporária de fatiamento do OrcaSlicer | Ler o G-code que o OrcaSlicer gera para cada placa. |
+| Leitura na pasta temporária de fatiamento do OrcaSlicer | Ler o G-code que o OrcaSlicer gera para cada mesa. |
 | Rede, só para o endereço do Spoolman que você informar | Ler carretéis, filamentos e moeda. Só redirecionamentos dentro do mesmo endereço são seguidos. |
 | Arquivos na pasta de dados do próprio plugin | Guardar ajustes e orçamentos, gravar exportações e o log. |
 
@@ -136,7 +136,7 @@ A pasta de dados dele é `orca_plugins/plugin_data/<nome do plugin>/`, dentro da
 |---|---|
 | `settings.json`, `quotes.json` | Seus ajustes e orçamentos salvos. Cada arquivo tem limite de 16 MiB ao salvar; se os orçamentos passarem disso, apague os antigos. |
 | `exports/` | Os arquivos CSV e HTML que você exporta. |
-| `plugin.log` | Um log rotativo de 512 kB com um backup. Registra capturas de placas e erros, e nunca o endereço do seu Spoolman. |
+| `plugin.log` | Um log rotativo de 512 kB com um backup. Registra capturas de mesas e erros, e nunca o endereço do seu Spoolman. |
 
 Os preços da calculadora são sugestões. Revise antes de passar um orçamento ao cliente e confira as taxas dos canais com a tabela atual de cada plataforma.
 
@@ -145,7 +145,7 @@ Os preços da calculadora são sugestões. Revise antes de passar um orçamento 
 <details>
 <summary>Como ligo um slot de filamento a um carretel do Spoolman?</summary>
 
-Clique nos filamentos de uma placa, depois em **Trocar** no slot, e escolha um carretel ou digite um preço por kg. Sem essa escolha, cada slot é ligado nesta ordem, e a primeira correspondência vale:
+Clique nos filamentos de uma mesa, depois em **Trocar** no slot, e escolha um carretel ou digite um preço por kg. Sem essa escolha, cada slot é ligado nesta ordem, e a primeira correspondência vale:
 
 1. Um carretel que você escolheu à mão para aquele perfil ("Escolhido").
 2. O mapeamento do plugin Spooler, se você usa o Spooler.
@@ -185,7 +185,7 @@ O que o fatiamento não informou (tempo de impressão, peso ou uso de filamento,
 <details>
 <summary>Um orçamento salvo muda quando eu mudo os ajustes?</summary>
 
-Não. O orçamento guarda os próprios dados, placas, preços e moeda. Ao abrir depois, os números aparecem como foram salvos, mesmo que você tenha mudado ajustes ou moeda.
+Não. O orçamento guarda os próprios dados, mesas, preços e moeda. Ao abrir depois, os números aparecem como foram salvos, mesmo que você tenha mudado ajustes ou moeda.
 </details>
 
 <details>
@@ -197,13 +197,13 @@ Meça uma impressão com uma tomada inteligente: kWh dividido pelas horas de imp
 <details>
 <summary>O que o aviso de estoque conta?</summary>
 
-Nos extras, todas as linhas do mesmo item somadas: por peça (inclusive as sobras), por cópia de placa e rodada, e por pedido. No filamento, a aba avisa quando um orçamento imprime mais de um filamento do Spoolman do que os carretéis não arquivados ainda têm, contando cada cópia de placa e rodada. Filamento sem peso restante no Spoolman não é verificado. Nada é descontado sozinho.
+Nos extras, todas as linhas do mesmo item somadas: por peça (inclusive as sobras), por cópia de mesa e rodada, e por pedido. No filamento, a aba avisa quando um orçamento imprime mais de um filamento do Spoolman do que os carretéis não arquivados ainda têm, contando cada cópia de mesa e rodada. Filamento sem peso restante no Spoolman não é verificado. Nada é descontado sozinho.
 </details>
 
 <details>
 <summary>O que o aviso "pode estar desatualizado" não percebe?</summary>
 
-O OrcaSlicer não diz qual placa mudou, então a aba marca o projeto inteiro. Ela não percebe espelhar, centralizar, mudanças de ajuste sem salvar e placas reordenadas por arrastar. Fatie de novo depois dessas ações.
+O OrcaSlicer não diz qual mesa mudou, então a aba marca o projeto inteiro. Ela não percebe espelhar, centralizar, mudanças de ajuste sem salvar e mesas reordenadas por arrastar. Fatie de novo depois dessas ações.
 </details>
 
 <details>
@@ -215,15 +215,15 @@ Limites conhecidos até lá:
 
 - A leitura de G-code de impressoras Bambu Lab se baseia em arquivos sintéticos, e a saída real da Bambu pode ser diferente. Os únicos arquivos reais vêm de uma Snapmaker U1.
 - Os caminhos temporários no Linux e no Windows, a impressão e o seletor de arquivos não foram verificados.
-- As miniaturas das placas não são exibidas.
-- O primeiro fatiamento de uma placa depende da placa selecionada quando o fatiamento termina. Trocar de placa durante esse primeiro fatiamento pode colocar os números na placa errada. Os fatiamentos seguintes da mesma placa são associados corretamente.
+- As miniaturas das mesas não são exibidas.
+- O primeiro fatiamento de uma mesa depende da mesa selecionada quando o fatiamento termina. Trocar de mesa durante esse primeiro fatiamento pode colocar os números na mesa errada. Os fatiamentos seguintes da mesma mesa são associados corretamente.
 - A API de plugins do OrcaSlicer não permite juntar nem esconder abas, então esta aba fica ao lado das de outros plugins (Spooler, U1 Control).
 </details>
 
 <details>
-<summary>Nenhuma placa aparece. E agora?</summary>
+<summary>Nenhuma mesa aparece. E agora?</summary>
 
-Fatie uma placa no OrcaSlicer, use **Atualizar** ou importe um `.gcode.3mf` fatiado. Procure `G-code read failed` no `plugin.log`.
+Fatie uma mesa no OrcaSlicer, use **Atualizar** ou importe um `.gcode.3mf` fatiado. Procure `G-code read failed` no `plugin.log`.
 </details>
 
 <details>
@@ -252,7 +252,7 @@ Português do Brasil e inglês, trocados nos Ajustes.
 |---|---|---|---|
 | <img src="https://raw.githubusercontent.com/bloodf/orca_organizer/main/assets/orca-cloud/orca_organizer-tile.png" width="40" alt="Ícone do Organizer"> | 🧩 [Organizer](https://github.com/bloodf/orca_organizer) | Organize as peças pelo contorno real e encha a mesa com mais cópias. | [Instalar](https://cloud.orcaslicer.com/p/5bf381fd42d4) |
 | <img src="https://raw.githubusercontent.com/bloodf/embedder/main/assets/orca-cloud/embedder-tile.png" width="40" alt="Ícone do Embedder"> | 🧲 [Embedder](https://github.com/bloodf/embedder) | Bolsos para ímãs e NFC, com a pausa na camada certa. | [Instalar](https://cloud.orcaslicer.com/p/58222d4f9e52) |
-| <img src="assets/orca-cloud/orca_print_calculator-tile.png" width="40" alt="Ícone do Print Calculator"> | 💰 Print Calculator · você está aqui | Preço de cada placa: filamento, energia, mão de obra, taxas e margem. | [Instalar](https://cloud.orcaslicer.com/p/521c07cf6de2) |
+| <img src="assets/orca-cloud/orca_print_calculator-tile.png" width="40" alt="Ícone do Print Calculator"> | 💰 Print Calculator · você está aqui | Preço de cada mesa: filamento, energia, mão de obra, taxas e margem. | [Instalar](https://cloud.orcaslicer.com/p/521c07cf6de2) |
 | <img src="https://raw.githubusercontent.com/bloodf/spooler/main/assets/orca-cloud/spooler-tile.png" width="40" alt="Ícone do Spooler"> | 🧵 [Spooler](https://github.com/bloodf/spooler) | Seu estoque do Spoolman dentro do OrcaSlicer, com o que resta em cada bobina. | [Instalar](https://cloud.orcaslicer.com/p/50c35dcbd6f3) |
 | <img src="https://raw.githubusercontent.com/bloodf/kobracontrol/main/assets/orca-cloud/kobracontrol-tile.png" width="40" alt="Ícone do Kobra Control"> | 🟣 [Kobra Control](https://github.com/bloodf/kobracontrol) | Controle a Anycubic Kobra X pelo OrcaSlicer na sua rede. | [Instalar](https://cloud.orcaslicer.com/p/59c786285255) |
 | <img src="https://raw.githubusercontent.com/bloodf/u1control/main/assets/orca-cloud/u1control-tile.png" width="40" alt="Ícone do U1 Control"> | 🔵 [U1 Control](https://github.com/bloodf/u1control) | Controle a Snapmaker U1 pelo OrcaSlicer: cabeças, câmera, arquivos. | [Instalar](https://cloud.orcaslicer.com/p/55b8c347d443) |
