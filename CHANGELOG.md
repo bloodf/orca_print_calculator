@@ -5,6 +5,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-16
+
+### Added
+- Spanish, German and Simplified Chinese. The whole plugin speaks them: every tab, button, field, tooltip, message, confirmation, empty state, screen-reader label, the printed or PDF quote and the CSV exports. Your own data (customer names, titles, notes, channel and extra names) is never translated. Wording follows the terms OrcaSlicer already uses in each language.
+- With Language set to Auto, the plugin follows OrcaSlicer's own language: Spanish, German, Simplified Chinese (Traditional Chinese also shows Simplified Chinese), Brazilian Portuguese, or English for any other. Settings > Language still lets you pick one by hand: English, Português (Brasil), Español, Deutsch, 简体中文.
+- Prices, numbers, percentages, dates and print times are written the way each language writes them (for example 1.234,56 € in German, 2小时14分钟 in Chinese). The currency stays the one you chose, and saved values and calculations do not change.
+
+### Changed
+- The page is about 100 kB larger (1,092 kB, 313 kB gzipped) because it carries the three new languages; the size gate is now 1,115,000 bytes.
+
 ## [0.5.0] - 2026-11-15
 
 ### Changed
