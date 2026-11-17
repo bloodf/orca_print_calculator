@@ -133,7 +133,7 @@ describe("chips, rows and picker", () => {
     expect(opts.length).toBeGreaterThan(3);
     const spool = Array.from(opts).find((o) => o.querySelector(".opt[data-spool='9']"))!;
     spool.click(); await settle();
-    expect(store.settings.slotSpools).toEqual({ "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 1, spoolId: 9 } });
+    expect(store.settings.slotSpools).toEqual({ "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 1, spoolId: 9, preset: "Generic PLA @U1" } });
     expect(store.settings.slotOverrides).toEqual({});
     expect(root.querySelector(".mrow [data-priced-by]")?.textContent).toBe("Spoolman spool #9");
     expect(root.querySelector(".mrow")?.textContent).toContain("Picked spool");
@@ -142,15 +142,43 @@ describe("chips, rows and picker", () => {
     reset.click(); await flush();
     expect(store.settings.slotSpools).toEqual({});
   });
-  test("the Auto option clears this slot's spool", async () => {
+  test("the Auto option clears this slot's spool and the older pick for its preset", async () => {
     seed("ok");
-    store.settings = { ...store.settings, slotSpools: { "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 1, spoolId: 9 }, "Other printer#1": { filamentId: 1, spoolId: 1 } } };
+    store.settings = { ...store.settings, slotOverrides: { "Generic PLA @U1": { filamentId: 4 }, "Generic PETG (#12)": { filamentId: 13 } }, slotSpools: { "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 1, spoolId: 9 }, "Other printer#1": { filamentId: 1, spoolId: 1 } } };
     await mount(PlateList);
     root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
     root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
     expect(document.querySelector(".p-listbox-option[aria-selected='true'] [data-spool='9']")).not.toBeNull();
     document.querySelector<HTMLElement>(".p-listbox-option .opt")!.click(); await settle();
     expect(store.settings.slotSpools).toEqual({ "Other printer#1": { filamentId: 1, spoolId: 1 } });
+    expect(store.settings.slotOverrides).toEqual({ "Generic PETG (#12)": { filamentId: 13 } });
+  });
+  test("a filament with no spool in use can be picked; a deleted picked spool is noted, then pruned on the next save", async () => {
+    seed("ok");
+    store.spoolman = { ...store.spoolman, data: { ...store.spoolman.data, filaments: [...store.spoolman.data.filaments, { id: 30, vendor: "Acme", name: "Bare PLA", material: "PLA", price: 50, weight: 1000, colorHex: "#E8E8E8" }] } };
+    store.settings = { ...store.settings, slotSpools: { "Snapmaker U1 (0.4 nozzle)#2": { filamentId: 12, spoolId: 999 } } };
+    await mount(PlateList);
+    root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
+    expect(root.querySelectorAll(".mrow")[1]?.textContent).toContain("Spool #999 is no longer in Spoolman");
+    root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
+    const bare = [...document.querySelectorAll<HTMLElement>(".p-listbox-option")].find((o) => o.textContent?.includes("Bare PLA"))!;
+    bare.click(); await settle();
+    expect(store.settings.slotSpools).toEqual({ "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 30, preset: "Generic PLA @U1" } }); // #2's dead pick pruned
+    expect(root.querySelector(".mrow")?.textContent).toContain("R$50.00/kg");
+  });
+  test("the preset-price hint shows only while Spoolman is connected", async () => {
+    seed("ok", false);
+    await mount(PlateList);
+    root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
+    expect(root.querySelector(".mrow [data-priced-by]")?.textContent).toBe("Orca preset");
+    expect(root.querySelector(".mrow .hint")).toBeNull();
+    app?.unmount(); root.innerHTML = "";
+    seed("ok");
+    store.spooler = null;
+    store.spoolman = { ...store.spoolman, data: { ...store.spoolman.data, filaments: [], spools: [] } };
+    await mount(PlateList);
+    root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
+    expect(root.querySelector(".mrow .hint")?.textContent).toContain("Pick a spool");
   });
   test("picker search filters and keyboard Enter picks the best spool", async () => {
     seed("ok");
@@ -161,7 +189,7 @@ describe("chips, rows and picker", () => {
     input.value = "polyterra"; input.dispatchEvent(new Event("input")); await settle();
     expect([...document.querySelectorAll<HTMLElement>(".p-listbox-option .opt")].map((o) => o.dataset.spool)).toEqual(["2", "10"]);
     input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); await settle();
-    expect(Object.values(store.settings.slotSpools)[0]).toEqual({ filamentId: 2, spoolId: 2 });
+    expect(Object.values(store.settings.slotSpools)[0]).toEqual({ filamentId: 2, spoolId: 2, preset: "Generic PLA @U1" });
   });
   test("spoolman unset: note replaces the list, typed price is stored per preset", async () => {
     seed("ok", false);

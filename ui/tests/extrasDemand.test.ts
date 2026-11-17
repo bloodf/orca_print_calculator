@@ -125,6 +125,13 @@ describe("filament stock: what the quote prints against what Spoolman says is le
       { m: String, pct: String }, { stale: false, short: filamentShortages(input, pinned, data) });
     expect(f).toEqual([{ id: "spoolShort-11", tone: "info", text: "Spoolman shows 51 g of Galaxy PLA, spool #11 left; this quote prints 80 g." }]);
   });
+  test("the preset-price flag offers Pick spool only while Spoolman is connected", () => {
+    const d = { selected: null, notCounted: [], skippedChannels: [], fieldErrors: {}, quoteInput: { plates: [{ index: 0, include: true }] },
+      slotMatches: { 0: [{ plateIndex: 0, slot: { n: 2 }, priceSource: "preset", pricePerKg: 20 }] } } as unknown as Derived;
+    const flag = (spoolman: boolean) => buildFlags(d, { m: String, pct: String }, { stale: false, spoolman }).find((f) => f.id === "presetPrices");
+    expect(flag(true)?.action).toMatchObject({ kind: "spool", plate: 0, slot: 2 });
+    expect(flag(false)?.action).toBeUndefined();
+  });
   test("slots with no Spoolman filament or no known remaining weight are not judged", () => {
     const input = { plates: [plate(0, true, 1, [5000, 5000])], quantity: 1, unitsPerSet: 1 };
     expect(filamentShortages(input, { 0: [view(0, 1, null), view(0, 2, 3)] }, data)).toEqual([]);

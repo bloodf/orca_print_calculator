@@ -48,8 +48,8 @@ export type Settings = {
   channels: ChannelDef[]; comparedChannelIds: string[]; defaultChannelId: string;
   printers: Record<string, PrinterProfile>; // key = printer_model
   slotOverrides: Record<string, SlotOverride>; // key = filament preset name (picks made before slotSpools; still honoured)
-  /** The spool picked for a filament slot, key = slotSpoolKey(printer preset, slot number). Absent in older files. */
-  slotSpools: Record<string, Required<SlotOverride>>;
+  /** The spool (or a filament with no spool) picked for a filament slot, key = slotSpoolKey(printer preset, slot number). Absent in older files. */
+  slotSpools: Record<string, SlotSpool>;
   manualPrices: Record<string, number>; // key = preset; minor units per kg
   extrasCatalog: CatalogExtra[];
   sheet: { shopName: string; footer: string; validityDays: number; nextNo: number } & SheetBrand;
@@ -57,6 +57,8 @@ export type Settings = {
   /** Rows from an older or hand-edited file that this version could not read. Written back untouched, never deleted. */
   invalid?: Record<string, unknown>;
 };
+/** `preset`: the slot's filament preset when it was picked; a slot that now loads another preset ignores the pick. */
+export type SlotSpool = { filamentId: number; spoolId?: number; preset?: string };
 export type SlotSource = MatchSource | "manual";
 /** `filamentId` is optional so quotes saved before it existed still load (they show a generic "filament match" badge). */
 /**
@@ -102,6 +104,8 @@ export type SlotMatchView = {
   priceSource: "spool" | "filament" | "preset" | "manual" | null;
   /** `spoolId` is a choice (picked or linked), so its remaining weight is the stock that counts. */
   spoolPinned?: boolean;
+  /** The spool picked for this slot is gone from Spoolman (deleted or archived): Auto prices it until it is pruned. */
+  pickGone?: number;
 };
 
 export type NotCounted =

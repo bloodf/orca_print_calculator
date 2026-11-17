@@ -104,6 +104,7 @@ export const es: Record<MessageKey, string> = {
   "match.source.color": "Material y color",
   "match.pricedBy.spool": "Carrete #{id} de Spoolman",
   "match.fallbackHint": "Precio del perfil de Orca. Elija un carrete para usar el precio y el stock de Spoolman.",
+  "match.pickGone": "El carrete #{id} ya no está en Spoolman; se usa el automático.",
   "picker.auto": "Automático",
   "picker.autoHint": "Spooler, perfil en Spoolman, luego material y color",
   "import.error.tooBig": "El archivo ocupa {size} y supera el límite de 100 MB.",

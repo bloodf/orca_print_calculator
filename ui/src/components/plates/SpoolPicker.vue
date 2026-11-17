@@ -5,7 +5,7 @@ import InputText from "primevue/inputtext";
 import Listbox from "primevue/listbox";
 import { computed, ref, useId, watch } from "vue";
 import { grams, safeColor } from "../../format";
-import { fitScore, pinnedPrice } from "../../engine/match";
+import { fitScore, pinnedPrice, pricePerKg } from "../../engine/match";
 import { t } from "../../i18n";
 import { currency, digits, locale, store } from "../../state/store";
 import type { SlotMatchView } from "../../state/types";
@@ -30,6 +30,14 @@ const flat = computed(() => {
   const needle = q.value.trim().toLowerCase();
   const { filaments, spools } = store.spoolman.data;
   const opts: Opt[] = [];
+  // A filament with no spool in use is still pickable: it prices by its own price.
+  for (const f of filaments) {
+    if (spools.some((s) => s.filamentId === f.id && !s.archived)) continue;
+    if (needle && ![`#${f.id}`, f.vendor, f.name, f.material].join(" ").toLowerCase().includes(needle)) continue;
+    const fp = pricePerKg(f, []);
+    opts.push({ id: `fil-${f.id}`, filamentId: f.id, color: safeColor(f.colorHex), score: fitScore(props.match.slot, f) + 0.5,
+      title: [f.vendor, f.name].filter(Boolean).join(" ") || `#${f.id}`, sub: [f.material, `#${f.id}`, fp ? `${kgMoney(fp.pricePerKg)}/kg` : UNKNOWN].filter(Boolean).join(" · ") });
+  }
   for (const s of spools) {
     const f = s.archived ? undefined : filaments.find((x) => x.id === s.filamentId);
     if (!f) continue;
@@ -44,16 +52,16 @@ const flat = computed(() => {
       sub: [f.material, t("picker.spoolLine", { id: s.id, left, price })].filter(Boolean).join(" · "),
     });
   }
-  opts.sort((a, b) => a.score - b.score || a.spoolId! - b.spoolId!);
+  opts.sort((a, b) => a.score - b.score || (a.spoolId ?? 0) - (b.spoolId ?? 0));
   return needle ? opts : [{ id: AUTO, title: t("picker.auto"), sub: t("picker.autoHint"), color: null, score: -1 }, ...opts];
 });
 watch(() => props.open, (o) => { if (o) q.value = ""; });
 
 const chosen = computed(() => slotSpoolOf(props.match));
-const selectedId = computed(() => (chosen.value === null ? AUTO : `sp-${chosen.value}`));
+const selectedId = computed(() => (!chosen.value ? AUTO : chosen.value.spoolId === undefined ? `fil-${chosen.value.filamentId}` : `sp-${chosen.value.spoolId}`));
 function pick(o: Opt | undefined): void {
   if (!o) return;
-  setSlotSpool(props.match, o.spoolId === undefined || o.filamentId === undefined ? null : { filamentId: o.filamentId, spoolId: o.spoolId });
+  setSlotSpool(props.match, o.filamentId === undefined ? null : { filamentId: o.filamentId, ...(o.spoolId === undefined ? {} : { spoolId: o.spoolId }) });
   emit("close");
 }
 const byId = (id: string | null): Opt | undefined => flat.value.find((o) => o.id === id);
@@ -80,7 +88,7 @@ const typed = computed(() => store.settings.manualPrices[preset.value] ?? null);
         >
           <template #option="{ option }">
             <span class="opt" :data-spool="option.spoolId" @click.stop="pick(option)">
-              <OuiSwatch v-if="option.spoolId !== undefined" :color="option.color" :size="12" />
+              <OuiSwatch v-if="option.filamentId !== undefined" :color="option.color" :size="12" />
               <OuiIcon v-else :icon="I.refresh" :size="12" />
               <span class="text">
                 <span class="title oui-truncate">{{ option.title }}</span>

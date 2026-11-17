@@ -103,6 +103,7 @@ export const messages = {
   "match.source.color": ["Material and color", "Material e cor"],
   "match.pricedBy.spool": ["Spoolman spool #{id}", "Carretel #{id} do Spoolman"],
   "match.fallbackHint": ["Orca preset price. Pick a spool to use Spoolman's price and stock.", "Preço do perfil do Orca. Escolha um carretel para usar o preço e o estoque do Spoolman."],
+  "match.pickGone": ["Spool #{id} is no longer in Spoolman; Auto is used.", "O carretel #{id} não está mais no Spoolman; o automático é usado."],
   "picker.auto": ["Auto", "Automático"],
   "picker.autoHint": ["Spooler, Spoolman preset, then material and color", "Spooler, perfil no Spoolman, depois material e cor"],
   "import.error.tooBig": ["That file is {size}, over the 100 MB limit.", "O arquivo tem {size} e passa do limite de 100 MB."],

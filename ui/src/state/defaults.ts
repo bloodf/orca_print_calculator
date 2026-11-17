@@ -145,7 +145,8 @@ export function migrateSettings(saved: unknown): Partial<Settings> | null {
   const ch = listRows(saved.channels, migrateChannel);
   const pr = mapRows(saved.printers, migratePrinter);
   const so = mapRows(saved.slotOverrides, (o) => (isRec(o) && natural(o.filamentId) ? o : null));
-  const ss = mapRows(saved.slotSpools, (o) => (isRec(o) && natural(o.filamentId) && natural(o.spoolId) ? { filamentId: o.filamentId, spoolId: o.spoolId } : null));
+  const ss = mapRows(saved.slotSpools, (o) => (isRec(o) && natural(o.filamentId) && (o.spoolId === undefined || natural(o.spoolId)) && (o.preset === undefined || typeof o.preset === "string")
+    ? { filamentId: o.filamentId, ...(o.spoolId === undefined ? {} : { spoolId: o.spoolId }), ...(o.preset === undefined ? {} : { preset: o.preset }) } : null));
   const mp = mapRows(saved.manualPrices, (n) => (natural(n) ? n : null));
   const ex = listRows(saved.extrasCatalog, migrateExtra);
   const out: Record<string, unknown> = { ...saved, version: 1 };

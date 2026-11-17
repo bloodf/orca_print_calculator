@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { deriveQuote, effectiveDefaults, slotKey, slotSpoolKey, type DeriveInput } from "../src/state/derive";
+import { deriveQuote, effectiveDefaults, pruneSlotSpools, slotKey, slotSpoolKey, type DeriveInput } from "../src/state/derive";
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft } from "../src/state/defaults";
 import { HOST, plates, settings, spooler, spoolman } from "../src/mock/fixtures";
 import { buildScenario } from "../src/mock/scenarios";
@@ -43,6 +43,17 @@ describe("deriveQuote: host plates to engine input", () => {
     expect(d.quoteInput.plates[0]!.slots[0]!.pricePerKgMinor).toBe(10400);
     // another printer preset: the pick does not follow
     expect(deriveQuote(input({ settings: s, host: { ...HOST, printerPreset: "Bambu X1C" } })).slotMatches[0]![0]!.source).toBe("spooler");
+  });
+  test("a pick made for another filament preset is ignored once the slot loads something else", () => {
+    const s = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)]: { filamentId: 2, spoolId: 2, preset: "Generic PETG (#12)" } } };
+    expect(deriveQuote(input({ settings: s })).slotMatches[0]![0]!.source).toBe("spooler");
+    const same = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)]: { filamentId: 2, spoolId: 2, preset: "Generic PLA @U1" } } };
+    expect(deriveQuote(input({ settings: same })).slotMatches[0]![0]!.source).toBe("assigned");
+  });
+  test("pruneSlotSpools drops picks whose spool is archived or gone, or whose filament is gone", () => {
+    const data = { filaments: [{ id: 1 }], spools: [{ id: 5, archived: false }, { id: 6, archived: true }] };
+    expect(pruneSlotSpools({ a: { filamentId: 1, spoolId: 5 }, b: { filamentId: 1, spoolId: 6 }, c: { filamentId: 1, spoolId: 7 }, d: { filamentId: 1 }, e: { filamentId: 2 } }, data))
+      .toEqual({ a: { filamentId: 1, spoolId: 5 }, d: { filamentId: 1 } });
   });
   test("Spooler's spool links reach the match", () => {
     const d = deriveQuote(input({ spooler: { url: null, presetToFilament: {}, presetToSpool: { "Generic PLA @U1": 4 } } }));

@@ -33,7 +33,7 @@ const itemText = (c: Derived["notCounted"][number]): string =>
       : c.kind === "grams" ? t("notCounted.grams", { slot: c.slot, n: c.plate })
         : t(`notCounted.${c.kind}`);
 
-export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; invalid?: boolean; currencyFrom?: string | null; short?: readonly FilamentShort[] }): Flag[] {
+export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; invalid?: boolean; currencyFrom?: string | null; short?: readonly FilamentShort[]; spoolman?: boolean }): Flag[] {
   const bad: Flag[] = [];
   const info: Flag[] = [];
   const sel = d.selected && d.selected.ok ? d.selected : null;
@@ -82,6 +82,6 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
   if (opts.stale) info.push({ id: "stale", tone: "info", text: t("flag.stale") });
   // The Orca preset fallback: point at the first slot on it, so a spool can be picked from here.
   const fallback = [...includedIdx].sort((a, b) => a - b).flatMap((i) => (d.slotMatches[i] ?? []).filter((v) => v.priceSource === "preset"))[0];
-  if (fallback) info.push({ id: "presetPrices", tone: "info", text: t("flag.presetPrices"), action: { label: t("flag.pickSpool"), kind: "spool", plate: fallback.plateIndex, slot: fallback.slot.n } });
+  if (fallback) info.push({ id: "presetPrices", tone: "info", text: t("flag.presetPrices"), ...(opts.spoolman ? { action: { label: t("flag.pickSpool"), kind: "spool" as const, plate: fallback.plateIndex, slot: fallback.slot.n } } : {}) });
   return [...bad, ...info];
 }

@@ -1,9 +1,9 @@
 // Shared helpers for plate chips, material rows and the spool picker (docs/ux.md §5.3 T4.3).
 import { money } from "../../format";
 import { t } from "../../i18n";
-import { slotSpoolKey } from "../../state/derive";
+import { slotSpoolFor, slotSpoolKey } from "../../state/derive";
 import { digits, currency, locale, patchSettings, store } from "../../state/store";
-import type { SlotMatchView } from "../../state/types";
+import type { SlotMatchView, SlotSpool } from "../../state/types";
 
 export const UNKNOWN = "—";
 
@@ -36,20 +36,20 @@ export function pricedByText(m: SlotMatchView): string {
 /** How the Spoolman row was found ("Spooler link", "Picked spool"), when Spoolman priced the slot. */
 export const viaText = (m: SlotMatchView): string => (m.priceSource === "spool" || m.priceSource === "filament" ? sourceText(m) : "");
 /** The slot runs on the Orca preset price because no Spoolman spool was found for it. */
-export const onFallback = (m: SlotMatchView): boolean => m.priceSource === "preset";
+export const onFallback = (m: SlotMatchView): boolean => m.priceSource === "preset" && store.spoolman.state === "ok";
 
 const slotKeyOf = (m: SlotMatchView): string => slotSpoolKey(store.host.printerPreset, m.slot.n);
 /** The spool picked for this slot on the current printer preset, if any. */
-export const slotSpoolOf = (m: SlotMatchView): number | null => {
+export const slotSpoolOf = (m: SlotMatchView): SlotSpool | undefined => slotSpoolFor(store.settings.slotSpools, slotKeyOf(m), m.slot.preset);
+/** Pick a spool (or a filament with no spool) for this slot on this printer preset; null is Auto, which also drops an older pick for the preset. */
+export function setSlotSpool(m: SlotMatchView, pick: { filamentId: number; spoolId?: number } | null): void {
   const k = slotKeyOf(m);
-  return Object.prototype.hasOwnProperty.call(store.settings.slotSpools, k) ? store.settings.slotSpools[k]!.spoolId : null;
-};
-/** Pick a spool for this slot on this printer preset; null goes back to Auto. */
-export function setSlotSpool(m: SlotMatchView, spool: { filamentId: number; spoolId: number } | null): void {
-  const k = slotKeyOf(m);
+  const preset = m.slot.preset;
   patchSettings((s) => {
     const { [k]: _drop, ...rest } = s.slotSpools;
-    return { slotSpools: spool ? { ...rest, [k]: { filamentId: spool.filamentId, spoolId: spool.spoolId } } : rest };
+    if (pick) return { slotSpools: { ...rest, [k]: { filamentId: pick.filamentId, ...(pick.spoolId === undefined ? {} : { spoolId: pick.spoolId }), preset } } };
+    const { [preset]: _o, ...overrides } = s.slotOverrides;
+    return { slotSpools: rest, slotOverrides: overrides };
   });
 }
 
@@ -77,4 +77,4 @@ export function clearSlot(m: SlotMatchView): void {
   });
 }
 export const hasSlotChoice = (m: SlotMatchView): boolean =>
-  m.slot.preset in store.settings.slotOverrides || m.slot.preset in store.settings.manualPrices || slotSpoolOf(m) !== null;
+  m.slot.preset in store.settings.slotOverrides || m.slot.preset in store.settings.manualPrices || slotSpoolOf(m) !== undefined;

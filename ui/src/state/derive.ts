@@ -7,7 +7,7 @@ import { resolveWatts, type ResolvedWatts } from "../engine/printerMatch";
 import { CALC_VERSION, computeQuote, type ChannelQuote, type QuoteChannel, type QuoteInput, type QuotePlate, type QuoteResult, type QuoteSlot } from "../engine/quote";
 import { snapshotGaps } from "./completeness";
 import { presetFor } from "./markup";
-import type { Defaults, Draft, HostInfo, HostPlate, HostSlot, NotCounted, PlateSnapshot, Settings, SlotMatchView, SpoolerInfo } from "./types";
+import type { Defaults, Draft, HostInfo, HostPlate, HostSlot, NotCounted, PlateSnapshot, Settings, SlotMatchView, SlotSpool, SpoolerInfo } from "./types";
 
 export type DeriveInput = {
   settings: Settings; draft: Draft; plates: readonly HostPlate[]; host: HostInfo;
@@ -59,15 +59,28 @@ export function slotKey(source: SlotMatchView["source"], filamentId: number | nu
 /** Where a slot's spool pick is kept: per printer preset and slot number (several slots often share one filament preset). */
 export const slotSpoolKey = (printerPreset: string | null | undefined, n: number): string => `${printerPreset ?? ""}#${n}`;
 
+/** The slot's pick, unless it was made for another filament preset (the slot was reloaded with something else). */
+export function slotSpoolFor(slotSpools: Readonly<Record<string, SlotSpool>> | undefined, key: string, preset: string): SlotSpool | undefined {
+  const p = slotSpools && Object.prototype.hasOwnProperty.call(slotSpools, key) ? slotSpools[key] : undefined;
+  return p && (p.preset === undefined || p.preset === preset) ? p : undefined;
+}
+/** Picks whose spool (or filament) Spoolman no longer has in use. Only call with loaded Spoolman data. */
+export function pruneSlotSpools(
+  slotSpools: Readonly<Record<string, SlotSpool>>,
+  data: { filaments: readonly { id: number }[]; spools: readonly { id: number; archived: boolean }[] },
+): Record<string, SlotSpool> {
+  const ok = (p: SlotSpool) => (p.spoolId === undefined ? data.filaments.some((f) => f.id === p.filamentId) : data.spools.some((s) => s.id === p.spoolId && !s.archived));
+  return Object.fromEntries(Object.entries(slotSpools).filter(([, p]) => ok(p)));
+}
+
 function viewOf(plateIndex: number, slot: HostSlot, i: DeriveInput): SlotMatchView {
-  const slotSpools = i.settings.slotSpools ?? {};
-  const key = slotSpoolKey(i.host.printerPreset, slot.n);
+  const assigned = slotSpoolFor(i.settings.slotSpools, slotSpoolKey(i.host.printerPreset, slot.n), slot.preset);
   const m = matchSlot(
     { n: slot.n, preset: slot.preset, costPerKg: slot.costPerKg, notes: slot.notes, material: slot.material, color: slot.color },
     {
       filaments: i.spoolman.filaments, spools: i.spoolman.spools, overrides: i.settings.slotOverrides,
       spoolerPresetToFilament: i.spooler?.presetToFilament ?? {}, spoolerPresetToSpool: i.spooler?.presetToSpool ?? {},
-      assigned: Object.prototype.hasOwnProperty.call(slotSpools, key) ? slotSpools[key] : undefined,
+      assigned,
     },
   );
   const manual = i.settings.manualPrices[slot.preset];
@@ -79,7 +92,8 @@ function viewOf(plateIndex: number, slot: HostSlot, i: DeriveInput): SlotMatchVi
   }
   // The engine merges slots by key and needs one price per key: a preset-priced match is keyed by its preset, not the filament.
   const keySource = fromSpoolman ? m.source : m.priceSource === "preset" ? "preset" : "none";
-  return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource, spoolPinned: m.spoolPinned };
+  return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource, spoolPinned: m.spoolPinned,
+    ...(assigned?.spoolId !== undefined && m.source !== "assigned" && i.spoolman.filaments.length ? { pickGone: assigned.spoolId } : {}) };
 }
 
 const toQuoteSlot = (v: SlotMatchView, digits: number): QuoteSlot => ({
