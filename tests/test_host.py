@@ -259,10 +259,19 @@ class Rpc(HostCase):
         reqs = {r["id"]: r for r in self.cmd("get_state")["data"]["requirements"]}
         self.assertEqual(reqs["spoolman"]["details"], {"url": "http://s:7912", "source": "settings"})
 
-    def test_spooler_read_is_cached_and_check_again_rereads(self):
+    def test_spooler_changes_reach_the_next_get_state(self):  # Spooler's Sync Presets rewrites profiles.json
+        root = Path(self.orca.storage_dir).parents[2] / "spooler"
+        root.mkdir()
+        profiles = root / "profiles.json"
+        profiles.write_text(json.dumps({"filaments": {"3": {"U1": "Generic PLA @U1"}}}))
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["presetToFilament"], {"Generic PLA @U1": 3})
+        profiles.write_text(json.dumps({"filaments": {"7": {"U1": "Generic PLA @U1"}}}))
+        os.utime(profiles, (time.time() + 5, time.time() + 5))
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["presetToFilament"], {"Generic PLA @U1": 7})
+
+    def test_check_again_rereads(self):
         self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
         self.spooler_files()
-        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])  # cached
         res = self.cmd("check_requirements")["data"]
         self.assertEqual(res["spooler"]["url"], "http://10.0.0.2:7912")
         self.assertEqual([r["status"] for r in res["requirements"]], ["ok", "ok"])
@@ -278,7 +287,6 @@ class Rpc(HostCase):
             pkg.host.core.read_spooler_files = boom
             pkg.PrintCalculator().register_capabilities()
             pkg.CalculatorPage().on_load()
-            self.assertIsNone(pkg.HOST.spooler_info)
         finally:
             self.host_mod.core.read_spooler_files = real
 

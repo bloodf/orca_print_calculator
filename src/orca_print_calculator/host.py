@@ -196,7 +196,6 @@ class Host:
         self.plates = {}         # plate index -> HostPlate; UI thread only
         self.path_index = {}     # temp G-code path -> plate index (Orca keeps one path per plate); UI thread only
         self.unreadable = set()  # store files that could neither be read nor set aside: never overwritten
-        self.spooler_info = None  # cached read_spooler_files result: first get_state reads it, check_requirements clears it
 
     # -- UI thread
     def storage(self):
@@ -257,11 +256,8 @@ class Host:
         self.event("plates", {"plates": self.plate_list(), **extra})
 
     def spooler(self):
-        """Lazy (first page request, never at import/register) and cached; check_requirements clears the cache."""
-        if self.spooler_info is None:
-            datadir = next((p.parent for p in Path(self.storage()).parents if p.name == "orca_plugins"), None)
-            self.spooler_info = core.read_spooler_files(datadir) if datadir else {"detected": False}
-        info = self.spooler_info
+        datadir = next((p.parent for p in Path(self.storage()).parents if p.name == "orca_plugins"), None)
+        info = core.read_spooler_files(datadir) if datadir else {"detected": False}
         return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"]} if info["detected"] else None
 
     def requirements(self, settings):
@@ -462,8 +458,7 @@ def cmd_get_state(host, args, rid):
 
 
 def cmd_check_requirements(host, args, rid):
-    """Settings › Requirements › Check again: re-read Spooler's files (clears the cache)."""
-    host.spooler_info = None
+    """Settings › Requirements › Check again: re-read Spooler's files."""
     return {"spooler": host.spooler(), "requirements": host.requirements(host.load(core.SETTINGS_FILE, dict))}
 
 
