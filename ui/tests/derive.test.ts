@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { deriveQuote, effectiveDefaults, slotKey, type DeriveInput } from "../src/state/derive";
+import { deriveQuote, effectiveDefaults, slotKey, slotSpoolKey, type DeriveInput } from "../src/state/derive";
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft } from "../src/state/defaults";
 import { HOST, plates, settings, spooler, spoolman } from "../src/mock/fixtures";
 import { buildScenario } from "../src/mock/scenarios";
@@ -30,6 +30,23 @@ describe("deriveQuote: host plates to engine input", () => {
     expect(q.slots[0]!.gramsMg).toBe(88000);
     expect(q.slots[0]!.pricePerKgMinor).toBe(Math.round((pla?.pricePerKg ?? 0) * 100));
     expect(q.slots[0]!.label).toBe("Generic PLA @U1");
+  });
+  test("a spool picked for a slot is kept per printer preset and slot, and prices only that slot", () => {
+    expect(slotSpoolKey("Elegoo Centauri 2 (0.4)", 2)).toBe("Elegoo Centauri 2 (0.4)#2");
+    expect(slotSpoolKey(undefined, 1)).toBe("#1");
+    const s = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)]: { filamentId: 2, spoolId: 2 }, [slotSpoolKey("Other printer", 2)]: { filamentId: 1, spoolId: 1 } } };
+    const d = deriveQuote(input({ settings: s }));
+    const [pla, petg] = d.slotMatches[0]!;
+    // spool 2 is PolyTerra, price 99 + 5 for 1000 g
+    expect(pla).toMatchObject({ source: "assigned", filamentId: 2, spoolId: 2, pricePerKg: 104, priceSource: "spool", spoolPinned: true });
+    expect(petg?.source).toBe("name"); // slot 2 was picked on another printer: not here
+    expect(d.quoteInput.plates[0]!.slots[0]!.pricePerKgMinor).toBe(10400);
+    // another printer preset: the pick does not follow
+    expect(deriveQuote(input({ settings: s, host: { ...HOST, printerPreset: "Bambu X1C" } })).slotMatches[0]![0]!.source).toBe("spooler");
+  });
+  test("Spooler's spool links reach the match", () => {
+    const d = deriveQuote(input({ spooler: { url: null, presetToFilament: {}, presetToSpool: { "Generic PLA @U1": 4 } } }));
+    expect(d.slotMatches[0]![0]).toMatchObject({ source: "spooler", spoolId: 4, spoolPinned: true });
   });
   test("costs: energy kWh to E4, watts to W10, printer profile, labor", () => {
     const c = deriveQuote(input()).quoteInput.costs;

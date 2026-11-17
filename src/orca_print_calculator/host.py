@@ -163,10 +163,11 @@ def spoolman_data(raw):
         "currency": raw["currency"],
         "filaments": [{"id": f["id"], "name": f["name"] or "", "vendor": f["vendor"], "material": f["material"],
                        "price": f["price"], "weight": f["weight"],
-                       "colorHex": "#" + f["color_hex"].upper() if f["color_hex"] else None} for f in raw["filaments"]],
+                       "colorHex": "#" + f["color_hex"].upper() if f["color_hex"] else None,
+                       "orcaPreset": f.get("orca_preset")} for f in raw["filaments"]],
         "spools": [{"id": s["id"], "filamentId": s["filament_id"], "price": s["price"],
                     "initialWeight": s["initial_weight"], "remainingWeight": s["remaining_weight"],
-                    "archived": s["archived"], "lastUsed": s["last_used"]}
+                    "archived": s["archived"], "lastUsed": s["last_used"], "orcaPreset": s.get("orca_preset")}
                    for s in raw["spools"]],
     }
 
@@ -259,7 +260,8 @@ class Host:
         model = cfg("printer_model") or (_text(_try(lambda: bundle.full_config_value("printer_model"))) if bundle else None)
         path = _text(_try(lambda: orca.host.plater().project_path()))
         name = re.sub(r"\.3mf$", "", os.path.basename(path), flags=re.I) if path else None
-        return {"projectName": name or None, "printerModel": model, "printerVendor": cfg("printer_vendor"),
+        preset = _text(getattr(printer, "name", None)) if printer else None  # slot spool picks are kept per printer preset
+        return {"projectName": name or None, "printerModel": model, "printerVendor": cfg("printer_vendor"), "printerPreset": preset,
                 "pluginVersion": self.version, "appLanguage": _text(_try(lambda: orca.host.app_language()))}
 
     def preset_slots(self):
@@ -285,7 +287,8 @@ class Host:
         folder = self.storage()
         datadir = next((p.parent for p in Path(folder).parents if p.name == "orca_plugins"), None) if folder else None
         info = core.read_spooler_files(datadir) if datadir else {"detected": False}
-        return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"]} if info["detected"] else None
+        return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"],
+                "presetToSpool": info["preset_to_spool"]} if info["detected"] else None
 
     def load(self, name, kind):
         """Parsed file or None. Wrong JSON type is set aside like a corrupt file. A file that can be neither

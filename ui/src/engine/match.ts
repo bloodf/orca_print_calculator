@@ -6,6 +6,9 @@ export interface Slot {
   /** Major currency units per kg, from the Orca preset `filament_cost`. */
   costPerKg: number | null;
   notes: string;
+  /** Orca's filament type ("PLA") and colour ("#RRGGBB"): the material+colour match and the picker's order. */
+  material?: string | null;
+  color?: string | null;
 }
 export interface SpoolmanFilament {
   id: number;
@@ -15,6 +18,8 @@ export interface SpoolmanFilament {
   price: number | null;
   weight: number | null;
   colorHex: string | null;
+  /** Spoolman extra field `orca_filament_preset`: the Orca preset this filament fits. */
+  orcaPreset?: string | null;
 }
 export interface SpoolmanSpool {
   id: number;
@@ -23,12 +28,19 @@ export interface SpoolmanSpool {
   initialWeight: number | null;
   archived: boolean;
   lastUsed: string | null;
+  orcaPreset?: string | null;
 }
 export interface SlotOverride {
   filamentId?: number;
   spoolId?: number;
 }
-export type MatchSource = "override" | "spooler" | "name" | "notes" | "preset" | "none";
+/**
+ * Where a slot's filament came from, in the order tried: `assigned` (the spool picked for this printer preset and slot),
+ * `override` (a filament or spool picked for the preset, older versions), `spooler` (Spooler's preset links),
+ * `name` / `notes` ("(#id)" in the preset name, "spoolman filament N" in its notes), `extra` (Spoolman's
+ * `orca_filament_preset`), `color` (the only filament with the slot's material and colour), else the Orca preset.
+ */
+export type MatchSource = "assigned" | "override" | "spooler" | "name" | "notes" | "extra" | "color" | "preset" | "none";
 export interface SlotMatch {
   slot: number;
   source: MatchSource;
@@ -36,12 +48,17 @@ export interface SlotMatch {
   spoolId: number | null;
   pricePerKg: number | null;
   priceSource: "spool" | "filament" | "preset" | null;
+  /** The spool is a choice (picked, or linked by Spooler or `orca_filament_preset`), not the latest-used guess: its stock counts alone. */
+  spoolPinned: boolean;
 }
 export interface MatchContext {
   filaments: readonly SpoolmanFilament[];
   spools: readonly SpoolmanSpool[];
   overrides: Readonly<Record<string, SlotOverride>>;
   spoolerPresetToFilament: Readonly<Record<string, number>>;
+  spoolerPresetToSpool?: Readonly<Record<string, number>>;
+  /** The spool picked for this slot on this printer preset (settings.slotSpools). */
+  assigned?: SlotOverride;
 }
 export interface PriceResult {
   pricePerKg: number;
@@ -97,6 +114,46 @@ export function pricePerKg(
   return p === null ? null : { pricePerKg: p, source: "filament", spoolId: null };
 }
 
+/** "#RRGGBB" -> [r, g, b], else null. */
+function rgb(hex: string | null | undefined): [number, number, number] | null {
+  const m = typeof hex === "string" ? /^#?([0-9a-f]{6})/i.exec(hex.trim()) : null;
+  if (!m) return null;
+  const n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+/** RGB distance between two colours, 0..441; null when either is unknown. */
+export function colorDistance(a: string | null | undefined, b: string | null | undefined): number | null {
+  const x = rgb(a), y = rgb(b);
+  return x && y ? Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]) : null;
+}
+// ponytail: plain RGB distance; Orca and Spoolman rarely store the exact same hex for one filament. Swap for a
+// perceptual distance (CIEDE2000) if near-miss colours pick the wrong filament.
+const SAME_COLOR = 40;
+const sameMaterial = (a: string | null | undefined, b: string | null | undefined): boolean =>
+  !!a?.trim() && a.trim().toLowerCase() === b?.trim().toLowerCase();
+
+/** How well a filament fits a slot, lower is better: same material first, then the nearest colour. For the spool picker. */
+export function fitScore(slot: Pick<Slot, "material" | "color">, f: Pick<SpoolmanFilament, "material" | "colorHex">): number {
+  const d = colorDistance(slot.color, f.colorHex);
+  return (sameMaterial(slot.material, f.material) ? 0 : 1000) + (d ?? 500);
+}
+
+/** A preset name as written in Spoolman's `orca_filament_preset`: the full name or its last path segment, any case. */
+const presetIs = (wanted: string | null | undefined, preset: string): boolean => {
+  const w = wanted?.trim().toLowerCase();
+  if (!w) return false;
+  const p = preset.trim().toLowerCase();
+  return w === p || w === p.split("/").pop() || w.split("/").pop() === p.split("/").pop();
+};
+
+/** What a chosen spool costs: its own price, else its filament's (never another spool's). */
+export function pinnedPrice(filament: SpoolmanFilament, spool: SpoolmanSpool): PriceResult | null {
+  const p = spoolPrice(filament, spool);
+  if (p !== null) return { pricePerKg: p, source: "spool", spoolId: spool.id };
+  const f = perKg(filament.price, filament.weight);
+  return f === null ? null : { pricePerKg: f, source: "filament", spoolId: spool.id };
+}
+
 function ids(text: string, re: RegExp): number[] {
   return Array.from(text.matchAll(re), (m) => Number(m[1]));
 }
@@ -105,7 +162,14 @@ export function matchSlot(slot: Slot, ctx: MatchContext): SlotMatch {
   const exists = (id: number | undefined): id is number =>
     id !== undefined && ctx.filaments.some((f) => f.id === id);
 
+  const live = (id: number | undefined) => (id === undefined ? undefined : ctx.spools.find((s) => s.id === id && !s.archived && exists(s.filamentId)));
+
   const find = (): { source: MatchSource; filamentId: number; spoolId?: number } | null => {
+    // 0. the spool picked for this printer preset and slot
+    const as = ctx.assigned;
+    const picked = live(as?.spoolId);
+    if (picked) return { source: "assigned", filamentId: picked.filamentId, spoolId: picked.id };
+    if (as && as.spoolId === undefined && exists(as.filamentId)) return { source: "assigned", filamentId: as.filamentId };
     // 1. override
     const ov = own(ctx.overrides, slot.preset);
     if (ov) {
@@ -115,11 +179,14 @@ export function matchSlot(slot: Slot, ctx: MatchContext): SlotMatch {
         if (sp && exists(sp.filamentId)) return { source: "override", filamentId: sp.filamentId, spoolId: sp.id };
       }
     }
-    // 2. spooler mapping: full key or last path segment
-    const key = Object.keys(ctx.spoolerPresetToFilament).find(
-      (k) => k === slot.preset || k.split("/").pop() === slot.preset,
-    );
-    const sid = key === undefined ? undefined : own(ctx.spoolerPresetToFilament, key);
+    // 2. spooler mapping: full key or last path segment; a preset made for one spool wins over the filament's
+    const linked = (map: Readonly<Record<string, number>>): number | undefined => {
+      const key = Object.keys(map).find((k) => k === slot.preset || k.split("/").pop() === slot.preset);
+      return key === undefined ? undefined : own(map, key);
+    };
+    const spoolLink = live(linked(ctx.spoolerPresetToSpool ?? {}));
+    if (spoolLink) return { source: "spooler", filamentId: spoolLink.filamentId, spoolId: spoolLink.id };
+    const sid = linked(ctx.spoolerPresetToFilament);
     if (exists(sid)) return { source: "spooler", filamentId: sid };
     // 3. "(#ID)" anywhere in the preset name, digits only: "(#2)" and "(#000001)" mean filament 2 and 1;
     //    "#FF0000" (no parentheses) and "(#1 choice)" (not closed right after the digits) are ignored.
@@ -128,6 +195,16 @@ export function matchSlot(slot: Slot, ctx: MatchContext): SlotMatch {
     // 4. notes
     const byNotes = ids(slot.notes, /spoolman\s+filament\s+(\d+)/gi).find(exists);
     if (byNotes !== undefined) return { source: "notes", filamentId: byNotes };
+    // 5. Spoolman's orca_filament_preset on spools or filaments: used when it names one filament
+    const tagged = ctx.spools.filter((s) => !s.archived && exists(s.filamentId) && presetIs(s.orcaPreset, slot.preset));
+    const fids = new Set([...tagged.map((s) => s.filamentId), ...ctx.filaments.filter((f) => presetIs(f.orcaPreset, slot.preset)).map((f) => f.id)]);
+    if (fids.size === 1) {
+      const [fid] = fids;
+      return { source: "extra", filamentId: fid, ...(tagged.length === 1 ? { spoolId: tagged[0].id } : {}) };
+    }
+    // 6. the only filament of the slot's material in (about) the slot's colour
+    const near = ctx.filaments.filter((f) => sameMaterial(slot.material, f.material) && (colorDistance(slot.color, f.colorHex) ?? Infinity) <= SAME_COLOR);
+    if (near.length === 1) return { source: "color", filamentId: near[0].id };
     return null;
   };
 
@@ -141,17 +218,22 @@ export function matchSlot(slot: Slot, ctx: MatchContext): SlotMatch {
       spoolId: null,
       pricePerKg: preset,
       priceSource: preset === null ? null : "preset",
+      spoolPinned: false,
     };
   }
   const filament = ctx.filaments.find((f) => f.id === hit.filamentId)!;
-  const price = pricePerKg(filament, ctx.spools, hit.spoolId);
+  // A chosen spool prices itself (its price, else its filament's), never another spool of the filament.
+  const pinned = hit.source !== "override" ? live(hit.spoolId) : undefined;
+  const mine = pinned && pinned.filamentId === filament.id ? pinned : undefined;
+  const price = mine ? pinnedPrice(filament, mine) : pricePerKg(filament, ctx.spools, hit.spoolId);
   return {
     slot: slot.n,
     source: hit.source,
     filamentId: hit.filamentId,
-    spoolId: price?.spoolId ?? null,
+    spoolId: mine ? mine.id : price?.spoolId ?? null,
     pricePerKg: price ? price.pricePerKg : preset,
     priceSource: price ? price.source : preset === null ? null : "preset",
+    spoolPinned: !!mine,
   };
 }
 

@@ -99,7 +99,7 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
 1. Open the **Print Calculator** tab. On the first run, **Set up once** asks for three things: filament prices (connect Spoolman, or skip and use preset prices), the energy price and your hourly rate. If Spooler is installed, it offers the Spoolman address Spooler already uses.
 2. To connect Spoolman later, open **Settings**, type the **Spoolman address** (for example `http://localhost:7912`) and press **Test connection**. OrcaSlicer asks once whether the plugin may reach that address.
 3. Slice a plate, or use "Slice all". Each plate appears under **Plates**. Press **Refresh** if one is missing, or use **Import sliced file** for a `.gcode.3mf`.
-4. Click the filament chips of a plate to see the price per kg of each slot. **Change** picks another spool or lets you type a price per kg.
+4. Click the filament chips of a plate to see the price per kg of each slot and what priced it. **Change** picks the Spoolman spool loaded in that slot (best matches first), goes back to **Auto**, or lets you type a price per kg.
 5. Open the sections under **Costs** and fill in what applies: **Machine and energy**, **Labor**, **Extras and accessories**, **Shipping**, **Sales fee**.
 6. In **Price**, choose the **Sales channel**, the **Pieces ordered** and the **Markup**. **Where the price goes** splits the price by cost line, fees, tax and profit.
 7. Press **Save quote**. Then **Print quote** for a sheet or a PDF, or **CSV** for a file. Saved quotes are in the **Quotes** tab.
@@ -147,17 +147,25 @@ Orca Cloud lists a version only after its release is published, so it can be beh
 <details>
 <summary>How do I link a filament slot to a Spoolman spool?</summary>
 
-Click the filament chips of a plate, then **Change** on the slot, and pick a spool or type a price per kg. Without a pick, each slot is matched in this order and the first match wins:
+Click the filament chips of a plate, then **Change** on the slot. The list shows your Spoolman spools, the ones with the slot's material and the nearest colour first. Pick the spool that is loaded in that slot, or **Auto**. The pick is remembered for that printer preset and slot number, so four slots that share one filament preset can each have their own spool, and it is still there after a restart. You can also type a price per kg.
 
-1. A spool you picked by hand for that preset ("Picked").
-2. The Spooler plugin mapping, if you use Spooler.
+A picked spool prices the slot with its own price (spool price divided by its initial weight, else the filament price), and the stock note compares the slot's grams with what is left on that spool.
+
+With **Auto**, each slot is matched in this order and the first match wins:
+
+1. A filament or spool picked for that preset in an older version ("Picked").
+2. Spooler's links, if you use Spooler: the preset Spooler made for a spool, then the one it made for a filament ("Spooler link").
 3. `(#ID)` in the filament preset name.
 4. `Spoolman filament N` in the preset's `filament_notes`.
-5. No match: a price per kg you typed for that preset ("Typed"), else the preset `filament_cost` per kg, labelled "Preset price".
+5. The Spoolman extra field `orca_filament_preset` on a spool or a filament, when it names the slot's preset ("Preset in Spoolman").
+6. The only Spoolman filament with the slot's material and about the same colour ("Material and color").
+7. No match: a price per kg you typed for that preset ("Typed"), else the preset `filament_cost` per kg, labelled "Orca preset" with a hint to pick a spool.
+
+Each slot says what priced it: "Spoolman spool #14", "Spoolman filament #3", "Orca preset" or "typed".
 
 A slot with no price counts as 0 and the price panel says so. A slot matched to a Spoolman filament that has no price (no priced spool, no filament price) is priced the same way: typed price, then preset price.
 
-The price per kg comes from the most recently used spool that is not archived (spool price divided by initial weight). Without one it comes from the filament price divided by the filament weight.
+Without a picked or linked spool, the price per kg comes from the most recently used spool of the filament that is not archived (spool price divided by initial weight). Without one it comes from the filament price divided by the filament weight.
 </details>
 
 <details>

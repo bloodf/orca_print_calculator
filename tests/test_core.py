@@ -354,7 +354,7 @@ class SpoolmanFetch(unittest.TestCase):
         self.assertEqual(r["version"], "0.27.1")
         self.assertEqual(r["filaments"][0], {"id": 1, "name": "PLA Branco", "vendor": "3D Procer",
                                              "material": "PLA", "price": 83.1, "weight": 1000.0,
-                                             "color_hex": "FFFFFF"})
+                                             "color_hex": "FFFFFF", "orca_preset": None})
         f2 = r["filaments"][1]
         self.assertEqual(len(f2["name"]), 200)
         self.assertIsNone(f2["price"])
@@ -410,6 +410,23 @@ class SpoolmanFetch(unittest.TestCase):
         self.assertEqual(self.fetch({"/api/v1/info": same})["version"], "1")
 
 
+class OrcaPresetExtra(unittest.TestCase):
+    """Spoolman `extra.orca_filament_preset` (JSON-encoded text) on filaments and spools."""
+
+    def test_rows(self):
+        extra = {"orca_filament_preset": json.dumps("Elegoo PLA @Elegoo Centauri 2")}
+        f = core._filament_row({"id": 3, "name": "Red", "extra": extra})
+        s = core._spool_row({"id": 9, "filament_id": 3, "extra": {"orca_filament_preset": "  Raw text  "}})
+        self.assertEqual(f["orca_preset"], "Elegoo PLA @Elegoo Centauri 2")
+        self.assertEqual(s["orca_preset"], "Raw text")
+
+    def test_missing_or_bad(self):
+        for extra in (None, [], {}, {"orca_filament_preset": 5}, {"orca_filament_preset": '"broken'},
+                      {"orca_filament_preset": '""'}, {"orca_filament_preset": "   "}):
+            self.assertIsNone(core._filament_row({"id": 1, "extra": extra})["orca_preset"], extra)
+        self.assertEqual(len(core._filament_row({"id": 1, "extra": {"orca_filament_preset": "x" * 900}})["orca_preset"]), 200)
+
+
 class SpoolerFiles(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -435,7 +452,7 @@ class SpoolerFiles(unittest.TestCase):
         self.assertNotIn("skip", m)
 
     def test_failures_not_detected(self):
-        empty = {"detected": False, "spoolman_url": None, "preset_to_filament": {}}
+        empty = {"detected": False, "spoolman_url": None, "preset_to_filament": {}, "preset_to_spool": {}}
         self.assertEqual(core.read_spooler_files(str(self.dir)), empty)
         self.assertEqual(core.read_spooler_files(str(self.dir / "nope")), empty)
         self.assertEqual(core.read_spooler_files(None), empty)
@@ -445,6 +462,16 @@ class SpoolerFiles(unittest.TestCase):
         self.put("profiles.json", json.dumps({"filaments": []}))
         self.put("spooler_settings.json", json.dumps({"spoolman_url": "ftp://x"}))
         self.assertEqual(core.read_spooler_files(str(self.dir)), empty)
+
+    def test_spool_presets(self):  # Spooler's presets per spool: profiles.json "spools", read like "filaments"
+        self.put("profiles.json", json.dumps({"filaments": {}, "spools": {
+            "41": {"Elegoo Centauri 2": "_local/spooler/Elegoo PLA Red #41 @Elegoo Centauri 2"}, "y": {"P": "z"}},
+            "ids": {"_local/spooler/Elegoo PLA Red #41 @Elegoo Centauri 2": "P1234"}}))
+        r = core.read_spooler_files(str(self.dir))
+        self.assertTrue(r["detected"])
+        self.assertEqual(r["preset_to_spool"], {"_local/spooler/Elegoo PLA Red #41 @Elegoo Centauri 2": 41,
+                                                "Elegoo PLA Red #41 @Elegoo Centauri 2": 41})
+        self.assertEqual(r["preset_to_filament"], {})
 
     def test_url_only(self):
         self.put("spooler_settings.json", json.dumps({"spoolman_url": "http://h"}))

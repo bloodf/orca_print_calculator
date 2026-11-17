@@ -60,7 +60,7 @@ describe("dictionaries", () => {
 });
 
 // Text that is rightly the same as English: names, symbols-only rows and words the language shares with English.
-const NAMES = ["app.name", "app.short", "lang.en", "lang.pt", "lang.es", "lang.de", "lang.zh", "plates.meta", "match.source.spooler", "quote.csv", "settings.group.spoolman", "channel.feeSummary"];
+const NAMES = ["app.name", "app.short", "lang.en", "lang.pt", "lang.es", "lang.de", "lang.zh", "plates.meta", "quote.csv", "settings.group.spoolman", "channel.feeSummary"];
 const SAME_AS_ENGLISH: Record<(typeof ADDED)[number], string[]> = {
   es: [...NAMES, "summary.labor", "field.margin", "extras.add", "line.extras", "quotes.col.total", "sheet.subtotal", "sheet.total", "setup.timeDone", "common.labelValue"],
   de: [...NAMES, "spoolman.offline", "match.source.name", "summary.labor", "field.extraName", "extras.add", "line.filament", "line.extras", "bar.details", "field.name",

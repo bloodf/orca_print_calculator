@@ -124,31 +124,44 @@ describe("chips, rows and picker", () => {
     expect(root.querySelector(".rows")).not.toBeNull();
     expect(root.querySelectorAll(".mrow").length).toBeGreaterThan(0);
   });
-  test("picking a spool stores an override; reset removes it and the typed price", async () => {
+  test("picking a spool keeps it for this printer preset and slot; reset goes back to Auto", async () => {
     seed("ok");
     await mount(PlateList);
     root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
     root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
     const opts = document.querySelectorAll<HTMLElement>(".p-listbox-option");
     expect(opts.length).toBeGreaterThan(3);
-    const spool = Array.from(opts).find((o) => o.querySelector(".opt.spool"))!;
+    const spool = Array.from(opts).find((o) => o.querySelector(".opt[data-spool='9']"))!;
     spool.click(); await settle();
-    expect(Object.keys(store.settings.slotOverrides)).toHaveLength(1);
+    expect(store.settings.slotSpools).toEqual({ "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 1, spoolId: 9 } });
+    expect(store.settings.slotOverrides).toEqual({});
+    expect(root.querySelector(".mrow [data-priced-by]")?.textContent).toBe("Spoolman spool #9");
+    expect(root.querySelector(".mrow")?.textContent).toContain("Picked spool");
     const reset = root.querySelector<HTMLButtonElement>(".mrow .actions .icon-btn-sm")!;
     expect(reset).not.toBeNull();
     reset.click(); await flush();
-    expect(store.settings.slotOverrides).toEqual({});
+    expect(store.settings.slotSpools).toEqual({});
   });
-  test("picker search filters and keyboard Enter picks a filament", async () => {
+  test("the Auto option clears this slot's spool", async () => {
+    seed("ok");
+    store.settings = { ...store.settings, slotSpools: { "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 1, spoolId: 9 }, "Other printer#1": { filamentId: 1, spoolId: 1 } } };
+    await mount(PlateList);
+    root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
+    root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
+    expect(document.querySelector(".p-listbox-option[aria-selected='true'] [data-spool='9']")).not.toBeNull();
+    document.querySelector<HTMLElement>(".p-listbox-option .opt")!.click(); await settle();
+    expect(store.settings.slotSpools).toEqual({ "Other printer#1": { filamentId: 1, spoolId: 1 } });
+  });
+  test("picker search filters and keyboard Enter picks the best spool", async () => {
     seed("ok");
     await mount(PlateList);
     root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
     root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
     const input = document.querySelector<HTMLInputElement>("[role=dialog] input[type=text]")!;
     input.value = "polyterra"; input.dispatchEvent(new Event("input")); await settle();
-    expect(document.querySelectorAll(".p-listbox-option:not(:has(.spool))")).toHaveLength(1);
+    expect([...document.querySelectorAll<HTMLElement>(".p-listbox-option .opt")].map((o) => o.dataset.spool)).toEqual(["2", "10"]);
     input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })); await settle();
-    expect(Object.values(store.settings.slotOverrides)[0]).toEqual({ filamentId: 2 });
+    expect(Object.values(store.settings.slotSpools)[0]).toEqual({ filamentId: 2, spoolId: 2 });
   });
   test("spoolman unset: note replaces the list, typed price is stored per preset", async () => {
     seed("ok", false);

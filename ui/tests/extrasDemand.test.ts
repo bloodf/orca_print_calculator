@@ -116,6 +116,15 @@ describe("filament stock: what the quote prints against what Spoolman says is le
     const more = { ...input, quantity: 5 }; // 3 runs: filament 1 needs 210 g of 150.5 g
     expect(filamentShortages(more, matches, data)).toEqual([{ filamentId: 1, name: "Galaxy PLA", needG: 210, haveG: 150.5 }]);
   });
+  test("a slot tied to one spool is judged against that spool alone", () => {
+    const input = { plates: [plate(0, true, 1, [80, 30])], quantity: 1, unitsPerSet: 1 };
+    const pinned = { 0: [{ slot: { n: 1 }, filamentId: 1, spoolId: 11, spoolPinned: true }, { slot: { n: 2 }, filamentId: 1, spoolId: 10, spoolPinned: false }] };
+    // spool 11 holds 50.5 g and its slot prints 80 g; the other 30 g of filament 1 count against all of its spools (150.5 g)
+    expect(filamentShortages(input, pinned, data)).toEqual([{ filamentId: 1, name: "Galaxy PLA", needG: 80, haveG: 50.5, spoolId: 11 }]);
+    const f = buildFlags({ selected: null, notCounted: [], skippedChannels: [], slotMatches: {}, fieldErrors: {}, quoteInput: { plates: [] } } as unknown as Derived,
+      { m: String, pct: String }, { stale: false, short: filamentShortages(input, pinned, data) });
+    expect(f).toEqual([{ id: "spoolShort-11", tone: "info", text: "Spoolman shows 51 g of Galaxy PLA, spool #11 left; this quote prints 80 g." }]);
+  });
   test("slots with no Spoolman filament or no known remaining weight are not judged", () => {
     const input = { plates: [plate(0, true, 1, [5000, 5000])], quantity: 1, unitsPerSet: 1 };
     expect(filamentShortages(input, { 0: [view(0, 1, null), view(0, 2, 3)] }, data)).toEqual([]);

@@ -73,10 +73,15 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
       info.push({ id: "discount", tone: "info", text: t("flag.discount", { pct: f.pct(sel.effectiveDiscountBp), q: tier }) });
     }
   }
-  for (const s of opts.short ?? []) info.push({ id: `filamentShort-${s.filamentId}`, tone: "info", text: t("flag.filamentShort", { filament: s.name, have: grams(s.haveG, intlLocale()), need: grams(s.needG, intlLocale()) }) });
+  for (const s of opts.short ?? []) {
+    const filament = s.spoolId === undefined ? s.name : `${s.name}, ${t("match.price.spool", { id: s.spoolId })}`;
+    const text = t("flag.filamentShort", { filament, have: grams(s.haveG, intlLocale()), need: grams(s.needG, intlLocale()) });
+    info.push({ id: s.spoolId === undefined ? `filamentShort-${s.filamentId}` : `spoolShort-${s.spoolId}`, tone: "info", text });
+  }
   if (opts.currencyFrom) info.push({ id: "currencyMismatch", tone: "info", text: t("currency.mismatch", { old: opts.currencyFrom }), action: { label: t("nav.settings"), kind: "fees" } });
   if (opts.stale) info.push({ id: "stale", tone: "info", text: t("flag.stale") });
-  const preset = [...includedIdx].some((i) => (d.slotMatches[i] ?? []).some((v) => v.priceSource === "preset"));
-  if (preset) info.push({ id: "presetPrices", tone: "info", text: t("flag.presetPrices") });
+  // The Orca preset fallback: point at the first slot on it, so a spool can be picked from here.
+  const fallback = [...includedIdx].sort((a, b) => a - b).flatMap((i) => (d.slotMatches[i] ?? []).filter((v) => v.priceSource === "preset"))[0];
+  if (fallback) info.push({ id: "presetPrices", tone: "info", text: t("flag.presetPrices"), action: { label: t("flag.pickSpool"), kind: "spool", plate: fallback.plateIndex, slot: fallback.slot.n } });
   return [...bad, ...info];
 }

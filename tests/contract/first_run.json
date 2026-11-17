@@ -19,6 +19,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Snapmaker U1",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "Snapmaker",
       "projectName": "Desk organizer"
      },

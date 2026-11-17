@@ -56,10 +56,19 @@ export function slotKey(source: SlotMatchView["source"], filamentId: number | nu
   return `sm:${filamentId}:${spoolId ?? 0}`;
 }
 
+/** Where a slot's spool pick is kept: per printer preset and slot number (several slots often share one filament preset). */
+export const slotSpoolKey = (printerPreset: string | null | undefined, n: number): string => `${printerPreset ?? ""}#${n}`;
+
 function viewOf(plateIndex: number, slot: HostSlot, i: DeriveInput): SlotMatchView {
+  const slotSpools = i.settings.slotSpools ?? {};
+  const key = slotSpoolKey(i.host.printerPreset, slot.n);
   const m = matchSlot(
-    { n: slot.n, preset: slot.preset, costPerKg: slot.costPerKg, notes: slot.notes },
-    { filaments: i.spoolman.filaments, spools: i.spoolman.spools, overrides: i.settings.slotOverrides, spoolerPresetToFilament: i.spooler?.presetToFilament ?? {} },
+    { n: slot.n, preset: slot.preset, costPerKg: slot.costPerKg, notes: slot.notes, material: slot.material, color: slot.color },
+    {
+      filaments: i.spoolman.filaments, spools: i.spoolman.spools, overrides: i.settings.slotOverrides,
+      spoolerPresetToFilament: i.spooler?.presetToFilament ?? {}, spoolerPresetToSpool: i.spooler?.presetToSpool ?? {},
+      assigned: Object.prototype.hasOwnProperty.call(slotSpools, key) ? slotSpools[key] : undefined,
+    },
   );
   const manual = i.settings.manualPrices[slot.preset];
   // Spoolman's own price wins; a match that found no Spoolman price is priced like an unmatched slot (typed, then preset).
@@ -70,7 +79,7 @@ function viewOf(plateIndex: number, slot: HostSlot, i: DeriveInput): SlotMatchVi
   }
   // The engine merges slots by key and needs one price per key: a preset-priced match is keyed by its preset, not the filament.
   const keySource = fromSpoolman ? m.source : m.priceSource === "preset" ? "preset" : "none";
-  return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource };
+  return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource, spoolPinned: m.spoolPinned };
 }
 
 const toQuoteSlot = (v: SlotMatchView, digits: number): QuoteSlot => ({

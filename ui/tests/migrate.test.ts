@@ -41,6 +41,13 @@ describe("migrateSettings / mergeSettings", () => {
     expect(Object.keys(s.slotOverrides)).toEqual(["p"]);
     expect(s.extrasCatalog).toHaveLength(1);
   });
+  test("slot spools: older files have none; a damaged row is kept aside, never dropped", () => {
+    expect(mergeSettings({ language: "en" } as never, base()).slotSpools).toEqual({});
+    const raw = { slotSpools: { "Centauri 2#1": { filamentId: 3, spoolId: 12, extra: 1 }, "Centauri 2#2": { filamentId: 3 }, "Centauri 2#3": "x" } };
+    const s = mergeSettings(raw as never, base());
+    expect(s.slotSpools).toEqual({ "Centauri 2#1": { filamentId: 3, spoolId: 12 } });
+    expect(s.invalid?.slotSpools).toEqual({ "Centauri 2#2": { filamentId: 3 }, "Centauri 2#3": "x" });
+  });
   test("migrateSettings: missing or unknown version is treated as version 1 and stamped", () => {
     expect(migrateSettings({ language: "en" })?.version).toBe(1);
     expect(migrateSettings({ version: 99, language: "en" })?.version).toBe(1);

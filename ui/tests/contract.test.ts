@@ -52,17 +52,17 @@ const obj = (shape: Record<string, Check>): Check => (v, at, e) => {
 };
 const record = (c: Check): Check => (v, at, e) => { if (!isObj(v)) e.push(`${at}: object expected`); else for (const [k, x] of Object.entries(v)) c(x, `${at}.${k}`, e); };
 
-const HostInfo = obj({ projectName: nul(str), printerModel: nul(str), printerVendor: nul(str), pluginVersion: str, appLanguage: opt(nul(str)) });
+const HostInfo = obj({ projectName: nul(str), printerModel: nul(str), printerVendor: nul(str), printerPreset: opt(nul(str)), pluginVersion: str, appLanguage: opt(nul(str)) });
 const HostSlot = obj({ n: num, preset: str, grams: nul(num), color: nul(hex), costPerKg: nul(num), notes: str, material: nul(str) });
 const HostPlate = obj({
   index: num, name: nul(str), seconds: nul(num), stale: bool, thumb: nul(str), slicedAt: nul(iso), consumption: oneOf("known", "zero", "missing"),
   source: oneOf("slice", "file"), fileName: nul(str), slots: list(HostSlot),
 });
-const SpoolerInfo = nul(obj({ url: nul(str), presetToFilament: record(num) }));
+const SpoolerInfo = nul(obj({ url: nul(str), presetToFilament: record(num), presetToSpool: opt(record(num)) }));
 const SpoolmanData = obj({
   currency: nul(str),
-  filaments: list(obj({ id: num, name: str, vendor: nul(str), material: nul(str), price: nul(num), weight: nul(num), colorHex: nul(hex) })),
-  spools: list(obj({ id: num, filamentId: num, price: nul(num), initialWeight: nul(num), remainingWeight: opt(nul(num)), archived: bool, lastUsed: nul(iso) })),
+  filaments: list(obj({ id: num, name: str, vendor: nul(str), material: nul(str), price: nul(num), weight: nul(num), colorHex: nul(hex), orcaPreset: opt(nul(str)) })),
+  spools: list(obj({ id: num, filamentId: num, price: nul(num), initialWeight: nul(num), remainingWeight: opt(nul(num)), archived: bool, lastUsed: nul(iso), orcaPreset: opt(nul(str)) })),
 });
 // settings/quotes are written by the UI and handed back unchanged: object / array, contents owned by the UI.
 const HostState = obj({ host: HostInfo, plates: list(HostPlate), settings: nul(record(any)), quotes: nul(list(any)), spooler: SpoolerInfo, unreadable: opt(list(str)), unloaded: opt(list(str)) });
@@ -173,7 +173,7 @@ describe("boot through get_state", () => {
     expect(S.store.settings.onboarded).toBe(false);
     expect(S.store.quotes).toEqual([]);
     expect(S.store.spooler).toBeNull();
-    expect(S.store.host).toEqual({ projectName: "Desk organizer", printerModel: "Snapmaker U1", printerVendor: "Snapmaker", pluginVersion: "0.0.0-dev", appLanguage: null });
+    expect(S.store.host).toEqual({ projectName: "Desk organizer", printerModel: "Snapmaker U1", printerVendor: "Snapmaker", printerPreset: "Snapmaker U1 (0.4 nozzle)", pluginVersion: "0.0.0-dev", appLanguage: null });
     expect(r.unanswered).toEqual([]); // no Spoolman URL yet: no fetch
   });
   test("saved settings + quotes + Spooler round-trip; Spoolman data loads", async () => {
@@ -182,7 +182,7 @@ describe("boot through get_state", () => {
     expect(S.store.settings).toEqual({ ...inputSettings(), ...S.store.settings, channels: inputSettings().channels, defaults: inputSettings().defaults });
     expect(S.store.settings.sheet).toEqual({ ...EMPTY_BRAND, ...inputSettings().sheet }); // an older file without brand fields gets the empty brand
     expect(S.store.quotes).toEqual(inputQuotes());
-    expect(S.store.spooler).toEqual({ url: "http://192.168.1.10:7912", presetToFilament: { "Generic PLA @U1": 3, "Generic PETG (#12)": 12 } });
+    expect(S.store.spooler).toEqual({ url: "http://192.168.1.10:7912", presetToFilament: { "Generic PLA @U1": 3, "Generic PETG (#12)": 12 }, presetToSpool: {} });
     expect(r.sent.filter((m) => m.type === "cmd").map((m) => m.cmd)).toEqual(["get_state", "spoolman_fetch"]);
     expect(S.store.spoolman.state).toBe("ok");
     expect(S.currency.value).toBe("BRL");

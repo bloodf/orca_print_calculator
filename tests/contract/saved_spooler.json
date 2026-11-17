@@ -19,6 +19,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Snapmaker U1",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "Snapmaker",
       "projectName": "Desk organizer"
      },
@@ -336,6 +337,7 @@
        "Generic PETG (#12)": 12,
        "Generic PLA @U1": 3
       },
+      "presetToSpool": {},
       "url": "http://192.168.1.10:7912"
      },
      "unloaded": [],
@@ -463,6 +465,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Snapmaker U1",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "Snapmaker",
       "projectName": "Desk organizer"
      },
@@ -780,6 +783,7 @@
        "Generic PETG (#12)": 12,
        "Generic PLA @U1": 3
       },
+      "presetToSpool": {},
       "url": "http://192.168.1.10:7912"
      },
      "unloaded": [],

@@ -515,6 +515,21 @@ def _row_id(row):
     return value if isinstance(value, int) and not isinstance(value, bool) else None
 
 
+ORCA_PRESET_FIELD = "orca_filament_preset"  # Spoolman extra field Spooler and U1 Control write: the Orca preset it fits
+
+
+def _extra_text(row, key):
+    """A Spoolman extra field as text. Extra values are JSON-encoded (`"\\"Generic PLA\\""`); blank or bad -> None."""
+    extra = row.get("extra")
+    value = extra.get(key) if isinstance(extra, dict) else None
+    if isinstance(value, str) and value.startswith('"'):
+        try:
+            value = json.loads(value)
+        except ValueError:
+            return None
+    return (value.strip()[:200] or None) if isinstance(value, str) else None
+
+
 def _filament_row(row):
     if not isinstance(row, dict) or _row_id(row) is None:
         return None
@@ -528,6 +543,7 @@ def _filament_row(row):
         "price": _money(row.get("price")),
         "weight": _money(row.get("weight")),
         "color_hex": color if isinstance(color, str) and re.fullmatch(r"[0-9A-Fa-f]{6}", color) else None,
+        "orca_preset": _extra_text(row, ORCA_PRESET_FIELD),
     }
 
 
@@ -548,6 +564,7 @@ def _spool_row(row):
         "remaining_weight": _money(row.get("remaining_weight")),
         "archived": row.get("archived") is True,
         "last_used": _text(row.get("last_used"), 64),
+        "orca_preset": _extra_text(row, ORCA_PRESET_FIELD),
     }
 
 
@@ -622,9 +639,11 @@ def _read_small_json(path):
     return data if isinstance(data, dict) else None
 
 
-def _invert_profiles(profiles):
+def _invert_profiles(profiles, section="filaments"):
+    """profiles.json `filaments` or `spools` ({"<id>": {"<printer>": "<preset>"}}) -> {preset: id}, by full
+    preset name and by its last path segment."""
     out = {}
-    filaments = profiles.get("filaments") if profiles else None
+    filaments = profiles.get(section) if profiles else None
     if not isinstance(filaments, dict):
         return out
     for key, printers in filaments.items():
@@ -638,11 +657,14 @@ def _invert_profiles(profiles):
 
 
 def read_spooler_files(datadir):
-    """Spooler plugin data -> {detected, spoolman_url, preset_to_filament}. Never raises."""
-    result = {"detected": False, "spoolman_url": None, "preset_to_filament": {}}
+    """Spooler plugin data -> {detected, spoolman_url, preset_to_filament, preset_to_spool}. Never raises.
+    `preset_to_spool` comes from profiles.json `spools` (Spooler's presets per spool), which win over the filament's."""
+    result = {"detected": False, "spoolman_url": None, "preset_to_filament": {}, "preset_to_spool": {}}
     try:
         root = Path(datadir) / "spooler"
-        mapping = _invert_profiles(_read_small_json(root / "profiles.json"))
+        profiles = _read_small_json(root / "profiles.json")
+        mapping = _invert_profiles(profiles)
+        spools = _invert_profiles(profiles, "spools")
         settings = _read_small_json(root / "spooler_settings.json") or {}
         try:
             url = normalize_base_url(settings.get("spoolman_url"))
@@ -650,7 +672,8 @@ def read_spooler_files(datadir):
             url = None
     except (OSError, TypeError, ValueError):
         return result
-    return {"detected": bool(mapping or url), "spoolman_url": url, "preset_to_filament": mapping}
+    return {"detected": bool(mapping or spools or url), "spoolman_url": url, "preset_to_filament": mapping,
+            "preset_to_spool": spools}
 
 
 # -------------------------------------------------------------- storage (T3.3)
