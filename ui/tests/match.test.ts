@@ -282,7 +282,7 @@ describe("spool per slot and Auto order", () => {
   });
   test("an archived or deleted picked spool falls back to Auto", () => {
     expect(matchSlot(pla(), base({ assigned: { filamentId: 5, spoolId: 999 } })).source).toBe("color");
-    const archived = base({ assigned: { filamentId: 5, spoolId: 50 }, spools: [spool(50, 5, { archived: true })] });
+    const archived = base({ assigned: { filamentId: 5, spoolId: 50 }, spools: [spool(50, 5, { archived: true }), spool(51, 5)] });
     expect(matchSlot(pla(), archived).source).toBe("color");
   });
   test("1. Spooler's spool link comes before its filament link and before the Spoolman preset field", () => {
@@ -309,7 +309,7 @@ describe("spool per slot and Auto order", () => {
   });
   test("3. two filaments in the same material and colour, a far colour or no colour: the Orca preset price", () => {
     const twin = fil(8, { material: "PLA", colorHex: "#D02020" });
-    expect(matchSlot(pla(), base({ filaments: [red, twin, blue, petg] }))).toMatchObject({ source: "preset", pricePerKg: 20, priceSource: "preset" });
+    expect(matchSlot(pla(), base({ filaments: [red, twin, blue, petg], spools: [spool(50, 5), spool(80, 8)] }))).toMatchObject({ source: "preset", pricePerKg: 20, priceSource: "preset" });
     expect(matchSlot(pla({ color: "#00FF00" }), base()).source).toBe("preset");
     expect(matchSlot(pla({ color: null }), base()).source).toBe("preset");
     expect(matchSlot(pla({ material: null }), base()).source).toBe("preset");
@@ -319,6 +319,11 @@ describe("spool per slot and Auto order", () => {
     expect(matchSlot(pla({ preset: "P (#7)" }), tagged).source).toBe("name");
     expect(matchSlot(pla({ notes: "Spoolman filament 7" }), base()).source).toBe("notes");
     expect(matchSlot(pla(), base({ overrides: { "Elegoo PLA @Centauri": { filamentId: 6 } } })).source).toBe("override");
+  });
+  test("3. a used-up filament (no spool in use) neither matches nor blocks the colour match", () => {
+    const usedUp = fil(8, { material: "PLA", colorHex: "#D02020" });
+    expect(matchSlot(pla(), base({ filaments: [red, usedUp, blue, petg], spools: [spool(50, 5), spool(80, 8, { archived: true })] }))).toMatchObject({ source: "color", filamentId: 5 });
+    expect(matchSlot(pla(), base({ spools: [spool(70, 7)] })).source).toBe("preset");
   });
   test("colour distance and fit score order the picker: same material first, then the nearest colour", () => {
     expect(colorDistance("#000000", "#000000")).toBe(0);

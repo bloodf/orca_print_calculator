@@ -3,7 +3,7 @@ import { LEGACY_CALC, MARKUP_CALC, type ChannelOk, type QuoteInput } from "../..
 import { grams } from "../../format";
 import { intlLocale, t } from "../../i18n";
 import type { FilamentShort } from "../../state/extrasDemand";
-import type { Derived } from "../../state/derive";
+import { isFallback, type Derived } from "../../state/derive";
 import { markupOf } from "../../state/markup";
 
 export type FlagTone = "bad" | "info";
@@ -81,7 +81,7 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
   if (opts.currencyFrom) info.push({ id: "currencyMismatch", tone: "info", text: t("currency.mismatch", { old: opts.currencyFrom }), action: { label: t("nav.settings"), kind: "fees" } });
   if (opts.stale) info.push({ id: "stale", tone: "info", text: t("flag.stale") });
   // The Orca preset fallback: point at the first slot on it, so a spool can be picked from here.
-  const fallback = [...includedIdx].sort((a, b) => a - b).flatMap((i) => (d.slotMatches[i] ?? []).filter((v) => v.priceSource === "preset"))[0];
+  const fallback = [...includedIdx].sort((a, b) => a - b).flatMap((i) => (d.slotMatches[i] ?? []).filter(isFallback))[0];
   if (fallback) info.push({ id: "presetPrices", tone: "info", text: t("flag.presetPrices"), ...(opts.spoolman ? { action: { label: t("flag.pickSpool"), kind: "spool" as const, plate: fallback.plateIndex, slot: fallback.slot.n } } : {}) });
   return [...bad, ...info];
 }

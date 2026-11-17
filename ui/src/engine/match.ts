@@ -203,7 +203,9 @@ export function matchSlot(slot: Slot, ctx: MatchContext): SlotMatch {
       return { source: "extra", filamentId: fid, ...(tagged.length === 1 ? { spoolId: tagged[0].id } : {}) };
     }
     // 6. the only filament of the slot's material in (about) the slot's colour
-    const near = ctx.filaments.filter((f) => sameMaterial(slot.material, f.material) && (colorDistance(slot.color, f.colorHex) ?? Infinity) <= SAME_COLOR);
+    // only filaments with a spool in use: a used-up filament must neither be the match nor block it
+    const near = ctx.filaments.filter((f) => ctx.spools.some((s) => s.filamentId === f.id && !s.archived)
+      && sameMaterial(slot.material, f.material) && (colorDistance(slot.color, f.colorHex) ?? Infinity) <= SAME_COLOR);
     if (near.length === 1) return { source: "color", filamentId: near[0].id };
     return null;
   };

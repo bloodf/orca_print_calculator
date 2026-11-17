@@ -260,7 +260,7 @@ class Host:
         model = cfg("printer_model") or (_text(_try(lambda: bundle.full_config_value("printer_model"))) if bundle else None)
         path = _text(_try(lambda: orca.host.plater().project_path()))
         name = re.sub(r"\.3mf$", "", os.path.basename(path), flags=re.I) if path else None
-        preset = _text(getattr(printer, "name", None)) if printer else None  # slot spool picks are kept per printer preset
+        preset = _text(_try(lambda: printer.name)) if printer else None  # slot spool picks are kept per printer preset
         return {"projectName": name or None, "printerModel": model, "printerVendor": cfg("printer_vendor"), "printerPreset": preset,
                 "pluginVersion": self.version, "appLanguage": _text(_try(lambda: orca.host.app_language()))}
 

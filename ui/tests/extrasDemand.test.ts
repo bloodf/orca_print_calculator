@@ -125,6 +125,12 @@ describe("filament stock: what the quote prints against what Spoolman says is le
       { m: String, pct: String }, { stale: false, short: filamentShortages(input, pinned, data) });
     expect(f).toEqual([{ id: "spoolShort-11", tone: "info", text: "Spoolman shows 51 g of Galaxy PLA, spool #11 left; this quote prints 80 g." }]);
   });
+  test("a pinned spool's grams are not counted again for the filament's other slots", () => {
+    const input = { plates: [plate(0, true, 1, [40, 120])], quantity: 1, unitsPerSet: 1 };
+    const m = { 0: [{ slot: { n: 1 }, filamentId: 1, spoolId: 11, spoolPinned: true }, { slot: { n: 2 }, filamentId: 1, spoolId: 10, spoolPinned: false }] };
+    // spool 11: 40 of 50.5 g; the other 120 g can use spool 10 (100 g) and the 10.5 g spare on spool 11
+    expect(filamentShortages(input, m, data)).toEqual([{ filamentId: 1, name: "Galaxy PLA", needG: 120, haveG: 110.5 }]);
+  });
   test("the preset-price flag offers Pick spool only while Spoolman is connected", () => {
     const d = { selected: null, notCounted: [], skippedChannels: [], fieldErrors: {}, quoteInput: { plates: [{ index: 0, include: true }] },
       slotMatches: { 0: [{ plateIndex: 0, slot: { n: 2 }, priceSource: "preset", pricePerKg: 20 }] } } as unknown as Derived;

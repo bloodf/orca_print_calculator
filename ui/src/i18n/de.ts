@@ -105,6 +105,8 @@ export const de: Record<MessageKey, string> = {
   "match.pricedBy.spool": "Spoolman-Spule #{id}",
   "match.fallbackHint": "Preis aus dem Orca-Profil. Wählen Sie eine Spule für Preis und Bestand aus Spoolman.",
   "match.pickGone": "Spule #{id} ist nicht mehr in Spoolman; die automatische Zuordnung gilt.",
+  "match.pricedBy.filament": "Spoolman-Filament #{id}",
+  "picker.noPrinter": "Wählen Sie ein Druckerprofil, um pro Slot eine Spule zu wählen.",
   "picker.auto": "Automatisch",
   "picker.autoHint": "Spooler, Profil in Spoolman, dann Material und Farbe",
   "import.error.tooBig": "Die Datei ist {size} groß und überschreitet das Limit von 100 MB.",

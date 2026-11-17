@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { deriveQuote, effectiveDefaults, pruneSlotSpools, slotKey, slotSpoolKey, type DeriveInput } from "../src/state/derive";
+import { deriveQuote, effectiveDefaults, isFallback, pruneSlotSpools, slotKey, slotSpoolKey, type DeriveInput } from "../src/state/derive";
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft } from "../src/state/defaults";
 import { HOST, plates, settings, spooler, spoolman } from "../src/mock/fixtures";
 import { buildScenario } from "../src/mock/scenarios";
@@ -33,8 +33,10 @@ describe("deriveQuote: host plates to engine input", () => {
   });
   test("a spool picked for a slot is kept per printer preset and slot, and prices only that slot", () => {
     expect(slotSpoolKey("Elegoo Centauri 2 (0.4)", 2)).toBe("Elegoo Centauri 2 (0.4)#2");
-    expect(slotSpoolKey(undefined, 1)).toBe("#1");
-    const s = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)]: { filamentId: 2, spoolId: 2 }, [slotSpoolKey("Other printer", 2)]: { filamentId: 1, spoolId: 1 } } };
+    expect(slotSpoolKey(undefined, 1)).toBeNull(); // no printer preset: no picks, so they never leak across printers
+    const noPrinter = { ...settings(), slotSpools: { "#1": { filamentId: 2, spoolId: 2 } } };
+    expect(deriveQuote(input({ settings: noPrinter, host: { ...HOST, printerPreset: null } })).slotMatches[0]![0]!.source).toBe("spooler");
+    const s = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)!]: { filamentId: 2, spoolId: 2 }, [slotSpoolKey("Other printer", 2)!]: { filamentId: 1, spoolId: 1 } } };
     const d = deriveQuote(input({ settings: s }));
     const [pla, petg] = d.slotMatches[0]!;
     // spool 2 is PolyTerra, price 99 + 5 for 1000 g
@@ -45,10 +47,17 @@ describe("deriveQuote: host plates to engine input", () => {
     expect(deriveQuote(input({ settings: s, host: { ...HOST, printerPreset: "Bambu X1C" } })).slotMatches[0]![0]!.source).toBe("spooler");
   });
   test("a pick made for another filament preset is ignored once the slot loads something else", () => {
-    const s = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)]: { filamentId: 2, spoolId: 2, preset: "Generic PETG (#12)" } } };
+    const s = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)!]: { filamentId: 2, spoolId: 2, preset: "Generic PETG (#12)" } } };
     expect(deriveQuote(input({ settings: s })).slotMatches[0]![0]!.source).toBe("spooler");
-    const same = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)]: { filamentId: 2, spoolId: 2, preset: "Generic PLA @U1" } } };
+    const same = { ...settings(), slotSpools: { [slotSpoolKey(HOST.printerPreset, 1)!]: { filamentId: 2, spoolId: 2, preset: "Generic PLA @U1" } } };
     expect(deriveQuote(input({ settings: same })).slotMatches[0]![0]!.source).toBe("assigned");
+  });
+  test("a picked spool with no Spoolman price is not the preset fallback (no 'pick a spool' hint on it)", () => {
+    expect(isFallback({ priceSource: "preset", source: "preset" })).toBe(true);
+    expect(isFallback({ priceSource: "preset", source: "name" })).toBe(true);
+    expect(isFallback({ priceSource: "preset", source: "assigned" })).toBe(false);
+    expect(isFallback({ priceSource: "preset", source: "override" })).toBe(false);
+    expect(isFallback({ priceSource: "spool", source: "color" })).toBe(false);
   });
   test("pruneSlotSpools drops picks whose spool is archived or gone, or whose filament is gone", () => {
     const data = { filaments: [{ id: 1 }], spools: [{ id: 5, archived: false }, { id: 6, archived: true }] };

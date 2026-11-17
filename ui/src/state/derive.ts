@@ -57,11 +57,14 @@ export function slotKey(source: SlotMatchView["source"], filamentId: number | nu
 }
 
 /** Where a slot's spool pick is kept: per printer preset and slot number (several slots often share one filament preset). */
-export const slotSpoolKey = (printerPreset: string | null | undefined, n: number): string => `${printerPreset ?? ""}#${n}`;
+export const slotSpoolKey = (printerPreset: string | null | undefined, n: number): string | null => (printerPreset ? `${printerPreset}#${n}` : null);
 
-/** The slot's pick, unless it was made for another filament preset (the slot was reloaded with something else). */
-export function slotSpoolFor(slotSpools: Readonly<Record<string, SlotSpool>> | undefined, key: string, preset: string): SlotSpool | undefined {
-  const p = slotSpools && Object.prototype.hasOwnProperty.call(slotSpools, key) ? slotSpools[key] : undefined;
+/** On the Orca preset price with no pick behind it: what the hint and the Pick spool shortcut are for. */
+export const isFallback = (m: Pick<SlotMatchView, "priceSource" | "source">): boolean => m.priceSource === "preset" && m.source !== "assigned" && m.source !== "override";
+
+/** The slot's pick, unless it was made for another filament preset (the slot was reloaded with something else). No printer preset, no picks. */
+export function slotSpoolFor(slotSpools: Readonly<Record<string, SlotSpool>> | undefined, key: string | null, preset: string): SlotSpool | undefined {
+  const p = key !== null && slotSpools && Object.prototype.hasOwnProperty.call(slotSpools, key) ? slotSpools[key] : undefined;
   return p && (p.preset === undefined || p.preset === preset) ? p : undefined;
 }
 /** Picks whose spool (or filament) Spoolman no longer has in use. Only call with loaded Spoolman data. */

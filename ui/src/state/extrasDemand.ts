@@ -64,9 +64,15 @@ export function filamentShortages(
     }
   }
   const known = (w: number | null | undefined): w is number => typeof w === "number" && Number.isFinite(w);
+  // A pinned spool's own slots are served first; only what is left on it after them counts for the filament's other slots.
+  const spare = (s: { id?: number; remainingWeight?: number | null }): number | null | undefined => {
+    const used = s.id === undefined ? undefined : need.get(`s${s.id}`);
+    return used && known(s.remainingWeight) ? Math.max(0, s.remainingWeight - used.mg / 1000) : s.remainingWeight;
+  };
   const out: FilamentShort[] = [];
   for (const { filamentId: id, spoolId, mg } of need.values()) {
-    const left = data.spools.filter((s) => (spoolId === undefined ? s.filamentId === id : s.id === spoolId) && !s.archived).map((s) => s.remainingWeight).filter(known);
+    const left = data.spools.filter((s) => (spoolId === undefined ? s.filamentId === id : s.id === spoolId) && !s.archived)
+      .map((s) => (spoolId === undefined ? spare(s) : s.remainingWeight)).filter(known);
     const haveG = left.reduce((a, b) => a + b, 0);
     const name = data.filaments.find((f) => f.id === id)?.name ?? `#${id}`;
     if (left.length && mg > Math.round(haveG * 1000)) out.push({ filamentId: id, name, needG: mg / 1000, haveG, ...(spoolId === undefined ? {} : { spoolId }) });

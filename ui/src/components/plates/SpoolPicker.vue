@@ -13,7 +13,7 @@ import { OuiIcon, OuiSwatch } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import Popover from "../base/Popover.vue";
-import { kgMoney, setManualPrice, setSlotSpool, slotSpoolOf, UNKNOWN } from "./slots";
+import { canPickSpool, kgMoney, setManualPrice, setSlotSpool, slotSpoolOf, UNKNOWN } from "./slots";
 
 const props = defineProps<{ match: SlotMatchView; open: boolean; anchor: HTMLElement | null }>();
 const emit = defineEmits<{ close: [] }>();
@@ -22,7 +22,7 @@ type Opt = { id: string; filamentId?: number; spoolId?: number; title: string; s
 const AUTO = "auto";
 const q = ref("");
 const list = ref<{ $el?: HTMLElement } | null>(null);
-const ready = computed(() => store.spoolman.state === "ok");
+const ready = computed(() => store.spoolman.state === "ok" && canPickSpool());
 const preset = computed(() => props.match.slot.preset);
 
 /** Auto, then every spool Spoolman has in use, best fit for this slot first: same material, then the nearest colour. */
@@ -99,7 +99,7 @@ const typed = computed(() => store.settings.manualPrices[preset.value] ?? null);
           <template #empty><span class="sm oui-muted empty">{{ t("picker.empty", { q }) }}</span></template>
         </Listbox>
       </template>
-      <p v-else class="sm oui-muted">{{ t("picker.connect") }}</p>
+      <p v-else class="sm oui-muted">{{ store.spoolman.state === "ok" ? t("picker.noPrinter") : t("picker.connect") }}</p>
       <div class="hairline typed">
         <MoneyField :model-value="typed" :label="t('picker.typePrice')" :digits="digits" :currency="currency" :step="10 ** Math.max(0, digits - 1)" unit="/kg" nullable @update:model-value="(v) => setManualPrice(preset, v)" />
         <p v-if="match.source === 'none' || match.source === 'preset'" class="sm oui-muted">{{ t("picker.noPresetCost") }}</p>

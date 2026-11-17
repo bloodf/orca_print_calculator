@@ -1,7 +1,7 @@
 // Shared helpers for plate chips, material rows and the spool picker (docs/ux.md §5.3 T4.3).
 import { money } from "../../format";
 import { t } from "../../i18n";
-import { slotSpoolFor, slotSpoolKey } from "../../state/derive";
+import { isFallback, slotSpoolFor, slotSpoolKey } from "../../state/derive";
 import { digits, currency, locale, patchSettings, store } from "../../state/store";
 import type { SlotMatchView, SlotSpool } from "../../state/types";
 
@@ -29,16 +29,20 @@ export const priceSourceText = (m: SlotMatchView): string =>
 
 /** What priced the slot, said plainly: "Spoolman spool #14", "Spoolman filament #3", "Orca preset", "typed". */
 export function pricedByText(m: SlotMatchView): string {
-  if (m.priceSource === "spool" || (m.priceSource === "filament" && m.spoolPinned && m.spoolId !== null)) return t("match.pricedBy.spool", { id: m.spoolId ?? "" });
-  if (m.priceSource === "filament") return `${t("match.price.filament")} #${m.filamentId ?? ""}`;
+  if (m.priceSource === "spool") return t("match.pricedBy.spool", { id: m.spoolId ?? "" });
+  const fil = t("match.pricedBy.filament", { id: m.filamentId ?? "" });
+  if (m.priceSource === "filament") return m.spoolPinned && m.spoolId !== null ? `${fil} (${t("match.price.spool", { id: m.spoolId })})` : fil;
   return priceSourceText(m);
 }
 /** How the Spoolman row was found ("Spooler link", "Picked spool"), when Spoolman priced the slot. */
 export const viaText = (m: SlotMatchView): string => (m.priceSource === "spool" || m.priceSource === "filament" ? sourceText(m) : "");
-/** The slot runs on the Orca preset price because no Spoolman spool was found for it. */
-export const onFallback = (m: SlotMatchView): boolean => m.priceSource === "preset" && store.spoolman.state === "ok";
+/** The slot runs on the Orca preset price because no Spoolman spool was found for it (not because a picked one has no price). */
+export const onFallback = (m: SlotMatchView): boolean => isFallback(m) && store.spoolman.state === "ok";
 
-const slotKeyOf = (m: SlotMatchView): string => slotSpoolKey(store.host.printerPreset, m.slot.n);
+const slotKeyOf = (m: SlotMatchView): string | null => slotSpoolKey(store.host.printerPreset, m.slot.n);
+const withoutKey = <T>(rec: Record<string, T>, k: string | null): Record<string, T> => Object.fromEntries(Object.entries(rec).filter(([key]) => key !== k));
+/** Picking a spool per slot needs the printer preset's name (an older host or an unreadable preset has none). */
+export const canPickSpool = (): boolean => !!store.host.printerPreset;
 /** The spool picked for this slot on the current printer preset, if any. */
 export const slotSpoolOf = (m: SlotMatchView): SlotSpool | undefined => slotSpoolFor(store.settings.slotSpools, slotKeyOf(m), m.slot.preset);
 /** Pick a spool (or a filament with no spool) for this slot on this printer preset; null is Auto, which also drops an older pick for the preset. */
@@ -46,8 +50,8 @@ export function setSlotSpool(m: SlotMatchView, pick: { filamentId: number; spool
   const k = slotKeyOf(m);
   const preset = m.slot.preset;
   patchSettings((s) => {
-    const { [k]: _drop, ...rest } = s.slotSpools;
-    if (pick) return { slotSpools: { ...rest, [k]: { filamentId: pick.filamentId, ...(pick.spoolId === undefined ? {} : { spoolId: pick.spoolId }), preset } } };
+    const rest = withoutKey(s.slotSpools, k);
+    if (pick && k !== null) return { slotSpools: { ...rest, [k]: { filamentId: pick.filamentId, ...(pick.spoolId === undefined ? {} : { spoolId: pick.spoolId }), preset } } };
     const { [preset]: _o, ...overrides } = s.slotOverrides;
     return { slotSpools: rest, slotOverrides: overrides };
   });
@@ -72,8 +76,7 @@ export function clearSlot(m: SlotMatchView): void {
   patchSettings((s) => {
     const { [preset]: _o, ...overrides } = s.slotOverrides;
     const { [preset]: _m, ...manual } = s.manualPrices;
-    const { [k]: _s, ...spools } = s.slotSpools;
-    return { slotOverrides: overrides, manualPrices: manual, slotSpools: spools };
+    return { slotOverrides: overrides, manualPrices: manual, slotSpools: withoutKey(s.slotSpools, k) };
   });
 }
 export const hasSlotChoice = (m: SlotMatchView): boolean =>
