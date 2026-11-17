@@ -64,7 +64,7 @@ const NAMES = ["app.name", "app.short", "lang.en", "lang.pt", "lang.es", "lang.d
 const SAME_AS_ENGLISH: Record<(typeof ADDED)[number], string[]> = {
   es: [...NAMES, "summary.labor", "field.margin", "extras.add", "line.extras", "quotes.col.total", "sheet.subtotal", "sheet.total", "setup.timeDone", "common.labelValue"],
   de: [...NAMES, "spoolman.offline", "match.source.name", "summary.labor", "field.extraName", "extras.add", "line.filament", "line.extras", "bar.details", "field.name",
-    "sheet.logo", "sheet.website", "stock.col.name", "about.version", "common.labelValue", "help.filament.title"],
+    "sheet.logo", "sheet.website", "stock.col.name", "about.version", "common.labelValue", "help.filament.title", "req.optional"],
   "zh-CN": NAMES,
 };
 

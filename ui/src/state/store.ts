@@ -193,6 +193,16 @@ export async function fetchSpoolman(silent = false): Promise<void> {
   }
 }
 
+/** Settings › Requirements › Check again: the host re-reads Spooler's files; a set Spoolman address is probed again. */
+export async function checkRequirements(): Promise<void> {
+  try {
+    store.spooler = (await call("check_requirements", {})).spooler ?? null;
+  } catch (e) {
+    console.error("check_requirements", e);
+  }
+  await fetchSpoolman(true);
+}
+
 // ---- boot ----
 function applyState(s: HostState): void {
   store.host = s.host ?? EMPTY_HOST;

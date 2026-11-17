@@ -24,7 +24,9 @@ export type SpoolerInfo = { url: string | null; presetToFilament: Record<string,
 export type SpoolmanSpoolRow = SpoolmanSpool & { remainingWeight?: number | null };
 export type SpoolmanData = { currency: string | null; filaments: SpoolmanFilament[]; spools: SpoolmanSpoolRow[] };
 /** `unreadable`: names of saved files ("settings", "quotes") that exist but could not be read; the host refuses to overwrite them. */
-export type HostState = { host: HostInfo; plates: HostPlate[]; settings: Settings | null; quotes: SavedQuote[] | null; spooler: SpoolerInfo; unreadable?: string[] };
+/** Optional things the plugin can use (Settings › Requirements). Absent only from an older host. */
+export type Requirement = { id: "spoolman" | "spooler"; status: "ok" | "missing" | "unknown"; details: { url?: string | null; source?: "settings" | "spooler" } };
+export type HostState = { host: HostInfo; plates: HostPlate[]; settings: Settings | null; quotes: SavedQuote[] | null; spooler: SpoolerInfo; requirements?: Requirement[]; unreadable?: string[] };
 
 export type PrinterProfile = { watts: number | null; acquisitionMinor: number | null; lifetimeHours: number | null };
 export type CatalogExtra = { key: string; label: string; unitMinor: number; qtyE3: number; per: "piece" | "plate" | "order"; /** Units on hand at qty scale (E3); absent or null = stock not tracked. */ stockE3?: number | null };

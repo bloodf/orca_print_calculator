@@ -246,6 +246,23 @@
        "updatedAt": "2026-11-03T12:00:00Z"
       }
      ],
+     "requirements": [
+      {
+       "details": {
+        "source": "settings",
+        "url": "http://192.168.1.10:7912"
+       },
+       "id": "spoolman",
+       "status": "ok"
+      },
+      {
+       "details": {
+        "url": "http://192.168.1.10:7912"
+       },
+       "id": "spooler",
+       "status": "ok"
+      }
+     ],
      "settings": {
       "channels": [
        {
@@ -687,6 +704,23 @@
        },
        "title": "Desk organizer",
        "updatedAt": "2026-11-03T12:00:00Z"
+      }
+     ],
+     "requirements": [
+      {
+       "details": {
+        "source": "settings",
+        "url": "http://192.168.1.10:7912"
+       },
+       "id": "spoolman",
+       "status": "ok"
+      },
+      {
+       "details": {
+        "url": "http://192.168.1.10:7912"
+       },
+       "id": "spooler",
+       "status": "ok"
       }
      ],
      "settings": {

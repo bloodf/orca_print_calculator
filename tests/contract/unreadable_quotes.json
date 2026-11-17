@@ -18,6 +18,21 @@
      },
      "plates": [],
      "quotes": null,
+     "requirements": [
+      {
+       "details": {
+        "source": "settings",
+        "url": "http://192.168.1.10:7912"
+       },
+       "id": "spoolman",
+       "status": "ok"
+      },
+      {
+       "details": {},
+       "id": "spooler",
+       "status": "missing"
+      }
+     ],
      "settings": {
       "channels": [
        {

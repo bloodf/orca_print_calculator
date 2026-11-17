@@ -611,6 +611,19 @@ export const messages = {
   "help.quote.title": ["Quote", "Orçamento"],
   "help.quote.body": ["\"Save quote\" keeps this calculation with its own values. From a saved quote you can print it or save it as PDF, and export CSV.", "\"Salvar orçamento\" guarda este cálculo com os próprios valores. A partir de um orçamento salvo você imprime ou salva em PDF e exporta CSV."],
   "spoolman.saveHint": ["Saving the address asks OrcaSlicer for permission to reach it.", "Ao salvar o endereço, o OrcaSlicer pede permissão para acessá-lo."],
+  "settings.group.requirements": ["Requirements", "Requisitos"],
+  "spoolman.testOff": ["Enter a Spoolman address first: none is set or detected.", "Informe primeiro um endereço do Spoolman: nenhum foi definido nem detectado."],
+  "req.optional": ["Optional", "Opcional"],
+  "req.checkAgain": ["Check again", "Verificar de novo"],
+  "req.spoolman.configured": ["Configured: {url}", "Configurado: {url}"],
+  "req.spoolman.detected": ["Detected from Spooler: {url}", "Detectado pelo Spooler: {url}"],
+  "req.spoolman.unset": ["Not set", "Não definido"],
+  "req.spoolman.why": ["Spoolman filament prices and stock in the calculator.", "Preços e estoque de filamento do Spoolman na calculadora."],
+  "req.spoolman.how": ["Install Spoolman on any computer on your network (Docker on macOS, Windows or Linux), then enter its address under Spoolman.", "Instale o Spoolman em qualquer computador da sua rede (Docker no macOS, Windows ou Linux) e informe o endereço em Spoolman."],
+  "req.spooler.found": ["Detected", "Detectado"],
+  "req.spooler.missing": ["Not installed", "Não instalado"],
+  "req.spooler.why": ["Fills in the Spoolman address and the filament mapping for you.", "Preenche o endereço do Spoolman e o mapeamento de filamentos para você."],
+  "req.spooler.how": ["Install Spooler from Orca Cloud in OrcaSlicer (the same on macOS, Windows and Linux).", "Instale o Spooler pelo Orca Cloud no OrcaSlicer (igual no macOS, Windows e Linux)."],
 } satisfies Record<string, readonly [string, string?]>;
 
 export type MessageKey = keyof typeof messages;

@@ -14,22 +14,23 @@ import CostDefaults from "../components/settings/CostDefaults.vue";
 import LanguageCurrency from "../components/settings/LanguageCurrency.vue";
 import PricingDefaults from "../components/settings/PricingDefaults.vue";
 import PrinterProfiles from "../components/settings/PrinterProfiles.vue";
+import RequirementsSettings from "../components/settings/RequirementsSettings.vue";
 import SheetSettings from "../components/settings/SheetSettings.vue";
 import SpoolmanSettings from "../components/settings/SpoolmanSettings.vue";
 
 const COMPS = {
   spoolman: SpoolmanSettings, costs: CostDefaults, pricing: PricingDefaults, channels: ChannelEditor,
-  printers: PrinterProfiles, sheet: SheetSettings, language: LanguageCurrency, about: AboutSettings,
+  printers: PrinterProfiles, sheet: SheetSettings, language: LanguageCurrency, requirements: RequirementsSettings, about: AboutSettings,
 } as const;
 // each group in the hue of its subject (DESIGN.md, hue by domain)
 const LOOK: Record<SettingsTab, { icon: OuiIconData; tone: OuiTone }> = {
   spoolman: { icon: I.spoolman, tone: "magenta" }, costs: { icon: I.coins, tone: "orange" }, pricing: { icon: I.tag, tone: "accent" }, channels: { icon: I.store, tone: "teal" },
-  printers: { icon: I.printer, tone: "cobalt" }, sheet: { icon: I.receipt, tone: "accent" }, language: { icon: I.languages, tone: "neutral" }, about: { icon: I.info, tone: "neutral" },
+  printers: { icon: I.printer, tone: "cobalt" }, sheet: { icon: I.receipt, tone: "accent" }, language: { icon: I.languages, tone: "neutral" }, requirements: { icon: I.wrench, tone: "neutral" }, about: { icon: I.info, tone: "neutral" },
 };
 const HELP: Partial<Record<SettingsTab, string>> = { costs: "settings.costsHelp" };
 const sections = computed(() => SETTINGS_TABS.map((id) => ({ id: `settings-${id}`, label: t(`settings.group.${id}`), icon: LOOK[id].icon })));
 // the two reading columns; the quote sheet has its live sample beside the form, so it takes the full width under them
-const COLUMNS: SettingsTab[][] = [["spoolman", "costs", "pricing"], ["channels", "printers", "language", "about"]];
+const COLUMNS: SettingsTab[][] = [["spoolman", "costs", "pricing"], ["channels", "printers", "language", "requirements", "about"]];
 
 // A shortcut from elsewhere ("Printer price and lifetime", the currency chip) asked for a group: go to it.
 const reveal = (id: SettingsTab): void => void nextTick(() => document.getElementById(`settings-${id}`)?.scrollIntoView?.({ block: "start" }));

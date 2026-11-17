@@ -21,7 +21,7 @@ SRC = ROOT / "src"
 
 # Field lists copied from ui/src/state/types.ts (HostState, HostInfo, HostPlate, HostSlot, SpoolerInfo)
 # and ui/src/engine/match.ts (SpoolmanFilament, SpoolmanSpool).
-STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable"}
+STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "requirements", "unreadable"}
 HOST_KEYS = {"projectName", "printerModel", "printerVendor", "pluginVersion", "appLanguage"}
 PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots", "consumption"}
 SLOT_KEYS = {"n", "preset", "grams", "color", "costPerKg", "notes", "material"}
@@ -235,6 +235,52 @@ class Rpc(HostCase):
         self.assertEqual(set(spooler), SPOOLER_KEYS)
         self.assertEqual(spooler["url"], "http://10.0.0.2:7912")
         self.assertEqual(spooler["presetToFilament"]["Generic PLA @U1"], 3)
+
+    def spooler_files(self, url="http://10.0.0.2:7912"):
+        root = Path(self.orca.storage_dir).parents[2] / "spooler"
+        root.mkdir(exist_ok=True)
+        (root / "spooler_settings.json").write_text(json.dumps({"spoolman_url": url}))
+
+    def test_requirements_missing(self):
+        reqs = self.cmd("get_state")["data"]["requirements"]
+        self.assertEqual(reqs, [{"id": "spoolman", "status": "missing", "details": {}},
+                                {"id": "spooler", "status": "missing", "details": {}}])
+
+    def test_requirements_spoolman_detected_from_spooler(self):
+        self.spooler_files()
+        reqs = {r["id"]: r for r in self.cmd("get_state")["data"]["requirements"]}
+        self.assertEqual(reqs["spooler"]["status"], "ok")
+        self.assertEqual(reqs["spoolman"], {"id": "spoolman", "status": "ok",
+                                            "details": {"url": "http://10.0.0.2:7912", "source": "spooler"}})
+
+    def test_requirements_spoolman_from_settings_wins(self):
+        self.spooler_files()
+        self.cmd("save_settings", {"settings": {"spoolman": {"url": " http://s:7912 "}}})
+        reqs = {r["id"]: r for r in self.cmd("get_state")["data"]["requirements"]}
+        self.assertEqual(reqs["spoolman"]["details"], {"url": "http://s:7912", "source": "settings"})
+
+    def test_spooler_read_is_cached_and_check_again_rereads(self):
+        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
+        self.spooler_files()
+        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])  # cached
+        res = self.cmd("check_requirements")["data"]
+        self.assertEqual(res["spooler"]["url"], "http://10.0.0.2:7912")
+        self.assertEqual([r["status"] for r in res["requirements"]], ["ok", "ok"])
+
+    def test_no_requirement_check_at_import_or_register(self):
+        def boom(*a, **k):
+            raise AssertionError("read_spooler_files ran before the page asked")
+        install_orca()
+        real = self.host_mod.core.read_spooler_files
+        self.host_mod.core.read_spooler_files = boom
+        try:
+            pkg = load_plugin(SRC)  # fresh import: same core module object is replaced, so patch it again
+            pkg.host.core.read_spooler_files = boom
+            pkg.PrintCalculator().register_capabilities()
+            pkg.CalculatorPage().on_load()
+            self.assertIsNone(pkg.HOST.spooler_info)
+        finally:
+            self.host_mod.core.read_spooler_files = real
 
 
 class Capture(HostCase):

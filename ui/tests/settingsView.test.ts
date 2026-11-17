@@ -96,8 +96,8 @@ describe("section index", () => {
   const links = () => [...root!.querySelectorAll<HTMLAnchorElement>("nav a")];
   const groups = () => [...root!.querySelectorAll(".grp")].map((g) => g.id);
   test("every group on one page in reading order, one index entry per group, the first marked current", () => {
-    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "sheet", "spoolman"].map((id) => `settings-${id}`));
-    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "About"]);
+    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "requirements", "sheet", "spoolman"].map((id) => `settings-${id}`));
+    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "Requirements", "About"]);
     expect(links().filter((l) => l.getAttribute("aria-current") === "true").map((l) => l.getAttribute("href"))).toEqual(["#settings-spoolman"]);
     expect(root!.querySelector("#settings-extras")).toBeNull();
   });

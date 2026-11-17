@@ -5,6 +5,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+- Settings > Requirements lists what the plugin can use but does not need: a Spoolman server (configured, detected from Spooler, or not set) and the Spooler plugin (detected or not installed). Each row says what it is for and how to install it, and Check again looks for them again without restarting.
+- Test connection in Settings > Spoolman says why it is off when no Spoolman address is set or detected.
+
+### Changed
+- The Spooler plugin's files are read once, when the page first asks for its state, and again only on Check again.
+
 ## [0.6.0] - 2026-11-16
 
 ### Added
