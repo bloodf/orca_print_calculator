@@ -6,7 +6,7 @@ import ChannelComparison from "../src/components/price/ChannelComparison.vue";
 import DiscountTierEditor from "../src/components/price/DiscountTierEditor.vue";
 import OrderControls from "../src/components/price/OrderControls.vue";
 import { derived, result, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import type { DiscountTier } from "../src/state/types";
 import { en, load, mount, txt } from "./priceKit";
 import { optionLabels } from "./pv";
@@ -189,7 +189,7 @@ describe("discount tier editor", () => {
     el.querySelectorAll<HTMLButtonElement>(".rm")[0]!.click();
     expect(seen[0]).toEqual([tiers[1]]);
     const t = toasts.list[toasts.list.length - 1]!;
-    expect(t.text).toBe("Discount tier removed");
+    expect(t.title).toBe("Discount tier removed");
     t.action!.run();
     expect(seen[1]).toEqual(tiers);
   });

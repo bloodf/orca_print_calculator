@@ -2,7 +2,7 @@
 import { t } from "../../i18n";
 import { MAX_TIERS, newCustomChannel, validateChannelDef, validateChannelList, type ChannelDef, type Problem, type TierDef } from "../../engine/channels";
 import { patchSettings, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 
 export const channelById = (id: string): ChannelDef | undefined => store.settings.channels.find((c) => c.id === id);
 
@@ -46,8 +46,8 @@ export function removeChannel(id: string): boolean {
     const rest = s.channels.filter((c) => c.id !== id);
     return { channels: rest, comparedChannelIds: s.comparedChannelIds.filter((x) => x !== id), defaultChannelId: wasDefault ? rest[0]!.id : s.defaultChannelId };
   });
-  toast({
-    text: t("channel.deleted", { name: gone.name }),
+  showToast({
+    title: t("channel.deleted", { name: gone.name }),
     action: {
       label: t("common.undo"),
       run: () => patchSettings((s) => {

@@ -8,7 +8,7 @@ import { money, percent, perKwh } from "../format";
 import { t } from "../i18n";
 import { currency, digits, finishOnboarding, locale, patchDefaults, store } from "../state/store";
 import { markupOf } from "../state/markup";
-import { toast } from "../state/toast";
+import { showToast } from "../../shared/src/components";
 import { OuiIcon, OuiPanel } from "../../shared/src/components";
 import * as I from "../../shared/src/icons";
 import MoneyField from "./base/MoneyField.vue";
@@ -50,7 +50,7 @@ const summary = (row: Row): string => {
 };
 // Connecting Spoolman can switch the currency (a guessed USD becomes the spools'). Typed amounts keep their digits, so say so.
 watch(currency, (now, was) => {
-  if (now !== was && (d.value.energyPerKwh !== null || d.value.laborPerHourMinor !== null)) toast({ text: t("setup.currencyChanged", { currency: now }), ms: 12000 });
+  if (now !== was && (d.value.energyPerKwh !== null || d.value.laborPerHourMinor !== null)) showToast({ title: t("setup.currencyChanged", { currency: now }), timeout: 12000 });
 });
 const title = (row: Row): string => t(row === "filament" ? "setup.filament" : row === "energy" ? "setup.energy" : "setup.time");
 </script>
@@ -58,6 +58,8 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
 <template>
   <OuiPanel class="fr" :icon="I.wrench" tone="accent" aria-labelledby="setup-title">
     <template #title><span id="setup-title">{{ t("setup.title") }}</span></template>
+    <!-- the checklist is a notice too: closing it is the same as Done (onboarding is saved) -->
+    <template #actions><Button text severity="secondary" size="small" type="button" class="icon-btn-sm" :aria-label="t('common.close')" :title="t('common.close')" data-setup-close @click="finishOnboarding()"><OuiIcon :icon="I.x" :size="14" /></Button></template>
     <ol class="fr-rows">
       <li v-for="row in rows" :key="row" class="fr-row" :data-row="row" @focusout="leave(row, $event)">
         <span class="fr-mark" :class="{ on: done[row] }" aria-hidden="true"><OuiIcon v-if="done[row]" :icon="I.check" :size="12" /></span>

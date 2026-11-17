@@ -28,6 +28,8 @@ export async function openBrowser() {
   const call = (method, params = {}) => new Promise((resolve, reject) => { const i = ++id; pending.set(i, { resolve, reject }); socket.send(JSON.stringify({ id: i, method, params })); });
   const on = (fn) => listeners.push(fn);
   const close = async () => { socket.close(); proc.kill("SIGTERM"); await new Promise((r) => (proc.exitCode !== null ? r() : proc.once("exit", r))); await rm(profile, { recursive: true, force: true }); };
+  // Headless Chrome reports no focus, and toasts only count down while the page has it (foundation 4.2.1).
+  await call("Emulation.setFocusEmulationEnabled", { enabled: true });
   return { call, on, close, stderr: () => stderr };
 }
 

@@ -6,11 +6,10 @@ import { h, nextTick, type App } from "vue";
 import PlateNotices from "../src/components/plates/PlateNotices.vue";
 import { createOrcaApp as createApp } from "../src/orcaUi";
 import { savedQuotes } from "../src/mock/fixtures";
-import { toasts } from "../src/state/toast";
 import { setLocale } from "../src/i18n";
 import { HOST, plates, settings as fxSettings } from "../src/mock/fixtures";
 import * as S from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 
 type Sent = { cmd: string; args: Record<string, unknown> };
 const flush = async () => { for (let i = 0; i < 8; i++) { await vi.advanceTimersByTimeAsync(50); await nextTick(); } };
@@ -82,7 +81,7 @@ describe("after the files arrive", () => {
     await flush();
     clearToasts();
     await recover();
-    expect(toasts.list.map((x) => x.text)).toEqual(["Your saved settings have loaded and replace the ones shown until now."]);
+    expect(toasts.list.map((x) => x.title)).toEqual(["Your saved settings have loaded and replace the ones shown until now."]);
     stop?.(); stop = null; delete window.orca; S.store.status = "loading"; clearToasts();
     boot([OFFLINE, { ...online, settings: null }]);   // first run: the file holds nothing beyond the built-ins
     await flush();

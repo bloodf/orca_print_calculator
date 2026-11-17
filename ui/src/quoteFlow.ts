@@ -11,7 +11,7 @@ import { isDirty, savedOf } from "./state/dirty";
 import { openQuote, saveQuote } from "./state/quotes";
 import { safeDigits } from "./state/derive";
 import { derived, store } from "./state/store";
-import { toast } from "./state/toast";
+import { showToast } from "../shared/src/components";
 import type { SavedQuote } from "./state/types";
 
 export type ExportKind = "html" | "csv";
@@ -67,7 +67,7 @@ export function exportBlock(): "quote.blockedNoPrice" | ExportBlock {
 function refuse(q: SavedQuote): boolean {
   const why = savedExportBlock(q);
   if (!why) return false;
-  toast({ text: t(why), tone: "bad", action: { label: t("quotes.open"), run: () => openQuote(q.id) } });
+  showToast({ title: t(why), tone: "error", action: { label: t("quotes.open"), run: () => openQuote(q.id) } });
   return true;
 }
 
@@ -76,7 +76,7 @@ export async function exportQuote(kind: ExportKind, q: SavedQuote | null = null)
   const rec = q ?? (isDirty() ? await saveQuote() : savedOf());
   if (rec && refuse(rec)) return;
   const file = rec ? exportText(rec, kind) : null;
-  if (!file) { toast({ text: t("export.failed"), tone: "bad" }); return; }
+  if (!file) { showToast({ title: t("export.failed"), tone: "error" }); return; }
   await sendFile(file);
 }
 
@@ -89,10 +89,10 @@ export async function exportQuoteList(quotes: readonly SavedQuote[], now: Date =
 async function sendFile(file: { name: string; text: string }): Promise<void> {
   try {
     const { path } = await call("export_file", file);
-    toast({ text: t("export.saved", { path }), action: { label: t("export.copyPath"), run: () => void copyText(path).then((ok) => { if (ok) toast({ text: t("export.copied") }); }) }, ms: 12000 });
+    showToast({ title: t("export.saved", { path }), action: { label: t("export.copyPath"), run: () => void copyText(path).then((ok) => { if (ok) showToast({ title: t("export.copied") }); }) }, timeout: 12000 });
   } catch (e) {
     console.error("export_file", errorCode(e));
-    toast({ text: failText(t("export.failed"), errorCode(e), "export"), tone: "bad" });
+    showToast({ title: failText(t("export.failed"), errorCode(e), "export"), tone: "error" });
   }
 }
 

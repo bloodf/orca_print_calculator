@@ -5,6 +5,16 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+- Settings lists what Spoolman pricing needs on this computer, whether Spoolman was found, and how to install it, with a Check again button.
+
+### Changed
+- Notifications appear bottom-left and each one can be closed; warnings and notices on the page can be dismissed. A closed notice comes back only when what it is about changes (another Spoolman address, other plates, another file), or when the problem clears and later happens again.
+- Notifications wait while OrcaSlicer is in another tab or app; errors stay until closed, and one with Undo stays 8 seconds.
+- The Spoolman Test connection result is a notification instead of a line that stayed on the page.
+- The page fills the whole tab at every height, also after the window is resized: no more grey under a short page.
+- Settings are tabs: one section at a time, and the save bar stays on screen at any window height.
+
 ### Fixed
 - When an Orca Cloud install was started offline, Print Calculator logged an error while loading ("Cloud plugin storage is unavailable before networking is initialized"). It no longer asks for its storage folder while loading. Until OrcaSlicer can give it one, it shows its built-in defaults and its own icon, and it never saves those defaults over your saved settings and quotes. Before saving, and when you open the tab again, it reads your files again, so a change you make once networking is up keeps your saved settings and quotes. While they haven't loaded yet, a notice says so (instead of the file-permissions error), and when your saved settings replace the ones on screen, a message says so too. New quote numbers continue after the saved quotes that arrive.
 

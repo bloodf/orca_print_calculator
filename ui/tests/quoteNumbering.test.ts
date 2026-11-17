@@ -7,7 +7,7 @@ import { call } from "../src/bridge";
 import { exportText } from "../src/quoteFlow";
 import { duplicateQuote, saveQuote } from "../src/state/quotes";
 import { store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import { load } from "./priceKit";
 
 type Gate = { release: () => void; fail: (e: unknown) => void; promise: Promise<unknown> };
@@ -63,7 +63,7 @@ describe("F05: unique quote numbers under concurrency", () => {
     await Promise.all([a, b]);
     expect(store.quotes).toHaveLength(2); // the failed one left no row behind
     expect(unique(numbers())).toBe(true);
-    expect(toasts.list.some((x) => x.tone === "bad")).toBe(true);
+    expect(toasts.list.some((x) => x.tone === "error")).toBe(true);
   });
 
   test("retry after a failure takes a fresh number from the list as it is then", async () => {

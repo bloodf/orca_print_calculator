@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { call, errorCode } from "../../bridge";
 import { t } from "../../i18n";
 import { fetchSpoolman, setPlates, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 
 export const refreshing = ref(false);
 
@@ -16,7 +16,7 @@ export async function refresh(): Promise<void> {
     setPlates(s.plates ?? []);
     void fetchSpoolman(true);
   } catch (e) {
-    toast({ text: t("host.cmdFailed", { action: t("plates.refresh") }), tone: "bad" });
+    showToast({ title: t("host.cmdFailed", { action: t("plates.refresh") }), tone: "error" });
     console.error("get_state", errorCode(e));
   } finally {
     refreshing.value = false;

@@ -4,7 +4,7 @@ import { createOrcaApp as createApp } from "../src/orcaUi";
 import { HOST, plates, settings, spoolman } from "../src/mock/fixtures";
 import { newDraft } from "../src/state/defaults";
 import { store } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import { setLocale } from "../src/i18n";
 import type { HostInfo, Settings } from "../src/state/types";
 

@@ -4,13 +4,13 @@ import { h, nextTick, type App as VueApp } from "vue";
 import { createOrcaApp as createApp } from "../src/orcaUi";
 import AppRoot from "../src/App.vue";
 import PriceBar from "../src/components/price/PriceBar.vue";
-import ToastHost from "../src/components/base/ToastHost.vue";
+import { OuiToastHost } from "../shared/src/components";
 import { setLocale } from "../src/i18n";
 import { createMockHost } from "../src/mock/host";
 import type { ScenarioName } from "../src/mock/scenarios";
 import { priceAnnouncement } from "../src/state/announce";
 import { derived, store } from "../src/state/store";
-import { clearToasts, toast } from "../src/state/toast";
+import { clearToasts, showToast, toastList } from "../shared/src/components/toast";
 import { load } from "./priceKit";
 
 let app: VueApp | null = null;
@@ -176,7 +176,7 @@ describe("Quotes view", () => {
     item("Delete").click();
     await tick(300);
     expect(store.quotes).toHaveLength(2);
-    const undo = [...document.querySelectorAll(".toast button")].find((b) => b.textContent === "Undo") as HTMLButtonElement;
+    const undo = [...document.querySelectorAll(".oui-toast button")].find((b) => b.textContent === "Undo") as HTMLButtonElement;
     undo.click();
     await tick(300);
     expect(store.quotes).toHaveLength(3);
@@ -187,7 +187,7 @@ describe("Quotes view", () => {
     await tick(200);
     item("CSV").click();
     await tick(300);
-    expect(document.querySelector(".toast")!.textContent).toContain("Saved to");
+    expect(document.querySelector(".oui-toast")!.textContent).toContain("Saved to");
   });
   test("Print from the list opens the preview", async () => {
     const el = await quotes();
@@ -213,7 +213,7 @@ describe("Importing a file", () => {
       await tick(700);
     };
     await pick("plain.3mf");
-    expect(document.querySelector(".toast")!.textContent).toMatch(/no slice data/i);
+    expect(document.querySelector(".oui-toast")!.textContent).toMatch(/no slice data/i);
     await pick("desk.gcode.3mf");
     expect(el.textContent).toContain("from desk.gcode.3mf");
   });
@@ -223,28 +223,32 @@ describe("Importing a file", () => {
     Object.defineProperty(input, "files", { configurable: true, value: [new File(["x"], "notes.txt")] });
     input.dispatchEvent(new Event("change", { bubbles: true }));
     await tick();
-    expect(document.querySelector(".toast")!.textContent).toMatch(/sliced \.gcode\.3mf/i);
+    expect(document.querySelector(".oui-toast")!.textContent).toMatch(/sliced \.gcode\.3mf/i);
   });
 });
 
 describe("Pieces", () => {
-  test("ToastHost renders, runs an action and dismisses", async () => {
+  test("OuiToastHost renders bottom-left, runs an action and closes", async () => {
     root = document.createElement("div");
     document.body.appendChild(root);
-    app = createApp({ render: () => h(ToastHost) });
+    app = createApp({ render: () => h(OuiToastHost, { closeLabel: "Close", label: "Notifications" }) });
     app.mount(root);
     const run = vi.fn();
-    toast({ text: "Hello", action: { label: "Go", run } });
-    toast({ text: "Broken", tone: "bad" });
+    showToast({ title: "Hello", action: { label: "Go", run } });
+    showToast({ title: "Broken", tone: "error" });
     await nextTick();
-    expect(root.querySelectorAll(".toast")).toHaveLength(2);
-    expect(root.querySelector(".toast.bad")!.getAttribute("role")).toBe("alert");
+    const host = root.querySelector<HTMLElement>(".oui-toasts")!;
+    expect(host.getAttribute("aria-label")).toBe("Notifications");
+    expect(root.querySelectorAll(".oui-toast")).toHaveLength(2);
+    const bad = root.querySelector<HTMLElement>('.oui-toast[data-toast-tone="error"]')!;
+    expect(bad.getAttribute("role")).toBe("alert");
     btn(root, "Go").click();
     await nextTick();
     expect(run).toHaveBeenCalled();
-    (root.querySelector('.toast.bad [aria-label="Close"]') as HTMLElement).click();
+    expect(toastList.list.map((x) => x.title)).toEqual(["Broken"]);
+    bad.querySelector<HTMLElement>('[aria-label="Close"]')!.click();
     await nextTick();
-    expect(root.querySelectorAll(".toast")).toHaveLength(0);
+    expect(toastList.list).toHaveLength(0);
   });
   test("PriceBar shows the price and margin, jumps to the details, and renders nothing while hidden", async () => {
     load("ok");

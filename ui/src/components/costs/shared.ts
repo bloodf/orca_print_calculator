@@ -5,7 +5,7 @@ import { t } from "../../i18n";
 import { kwhE4 } from "../../engine/money";
 import { clearOverride, derived, patchDefaults, patchDraft, patchSettings, result, setOverride, setSectionOpen, setView, store } from "../../state/store";
 import { openSettingsTab } from "../../state/settingsTab";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import type { Defaults, OverridableKey, PrinterProfile } from "../../state/types";
 import { money } from "../../format";
 import { currency, locale } from "../../state/store";
@@ -22,7 +22,7 @@ export function useDefault<K extends OverridableKey>(key: K): {
     reset: () => {
       const prev = store.draft.overrides[key];
       clearOverride(key);
-      toast({ text: t("common.resetDone"), action: { label: t("common.undo"), run: () => { if (prev !== undefined) setOverride(key, prev as Defaults[K]); } } });
+      showToast({ title: t("common.resetDone"), action: { label: t("common.undo"), run: () => { if (prev !== undefined) setOverride(key, prev as Defaults[K]); } } });
     },
   };
 }
@@ -38,8 +38,8 @@ export function saveSectionDefaults(keys: readonly OverridableKey[]): void {
   if (!store.draft.frozenDefaults) keys.forEach((k) => delete rest[k]); // an open saved quote keeps its own value; only today's defaults change
   patchDefaults(moved);
   patchDraft({ overrides: rest });
-  toast({
-    text: t("section.savedDefaults"),
+  showToast({
+    title: t("section.savedDefaults"),
     action: { label: t("common.undo"), run: () => { patchSettings({ defaults: before.defaults }); patchDraft({ overrides: before.overrides }); } },
   });
 }
