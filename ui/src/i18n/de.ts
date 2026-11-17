@@ -545,6 +545,8 @@ export const de: Record<MessageKey, string> = {
   "host.error.denied": "OrcaSlicer hat das nicht erlaubt. Prüfen Sie die Ordnerberechtigungen.",
   "host.error.unreadable": "Ihre gespeicherte Datei kann nicht gelesen werden, daher werden Änderungen nicht gespeichert. Prüfen Sie die Dateiberechtigungen im Datenverzeichnis von OrcaSlicer.",
   "host.unreadable": "Gespeicherte Daten ({files}) konnten nicht gelesen werden, daher werden Änderungen nicht gespeichert. Prüfen Sie die Dateiberechtigungen im Datenverzeichnis von OrcaSlicer.",
+  "host.notLoaded": "Gespeicherte Daten ({files}) sind noch nicht geladen: OrcaSlicer hat den Datenordner des Plugins noch nicht geöffnet (es wartet auf das Netzwerk). Änderungen werden erst gespeichert, wenn sie geladen sind; das geschieht von selbst.",
+  "host.settingsLoaded": "Ihre gespeicherten Einstellungen wurden geladen und ersetzen die bisher angezeigten.",
   "host.error.timeout": "OrcaSlicer hat nicht rechtzeitig geantwortet. Versuchen Sie es erneut.",
   "common.undo": "Rückgängig",
   "draft.undoClose": "Angebot geschlossen. Ihre nicht gespeicherten Änderungen wurden nicht gespeichert.",

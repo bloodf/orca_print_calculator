@@ -223,8 +223,13 @@ export async function recoverState(all = false): Promise<boolean> {
   const still = unreadableOf(s);
   if (wanted.includes("settings") && !still.includes("settings")) {
     const { settings, reset } = settingsFrom(s);
-    if (settings) { store.settings = settings; store.settingsReset = reset; setLocale(store.settings.language, store.host.appLanguage); }
-    else still.push("settings");
+    if (settings) {
+      // the file wins over what the page showed meanwhile (built-ins, maybe edited): say so when that changes anything
+      if (JSON.stringify(settings) !== JSON.stringify(store.settings)) showToast({ title: t("host.settingsLoaded") });
+      store.settings = settings;
+      store.settingsReset = reset;
+      setLocale(store.settings.language, store.host.appLanguage);
+    } else still.push("settings");
   }
   if (wanted.includes("quotes") && !still.includes("quotes")) {
     const parsed = quotesFrom(s);
@@ -233,8 +238,12 @@ export async function recoverState(all = false): Promise<boolean> {
   }
   store.unreadable = still;
   store.unloaded = namesOf(s.unloaded);
+  // As at boot: a number is never reused, whichever of the two files arrived now.
+  store.settings = { ...store.settings, sheet: { ...store.settings.sheet, nextNo: freshNextNo(store.settings.sheet.nextNo, store.quotes) } };
   return !wanted.some((n) => still.includes(n));
 }
+
+const freshNextNo = (nextNo: number, quotes: readonly SavedQuote[]): number => Math.max(nextNo, ...quotes.map((q) => q.no + 1));
 
 /** Settings from the host's state merged over built-ins, or settings null when they make no sense (unreadable). */
 function settingsFrom(s: HostState): { settings: Settings | null; reset: string[] } {
@@ -271,7 +280,7 @@ function applyState(s: HostState): void {
   if (!parsed && !store.unreadable.includes("quotes")) store.unreadable = [...store.unreadable, "quotes"];
   const { quotes, bad } = parsed ?? { quotes: [], bad: [] };
   // A number is never reused: nextNo is at least one above every saved quote, even if the settings save was lost.
-  const nextNo = Math.max(merged.sheet.nextNo, ...quotes.map((q) => q.no + 1));
+  const nextNo = freshNextNo(merged.sheet.nextNo, quotes);
   store.settings = { ...merged, sheet: { ...merged.sheet, nextNo } };
   setLocale(store.settings.language, store.host.appLanguage);
   store.quotes = quotes;

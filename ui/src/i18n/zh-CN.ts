@@ -545,6 +545,8 @@ export const zhCN: Record<MessageKey, string> = {
   "host.error.denied": "OrcaSlicer 未允许此操作。请检查文件夹权限。",
   "host.error.unreadable": "无法读取已保存的文件，因此更改不会被保存。请检查 OrcaSlicer 数据目录中该文件的权限。",
   "host.unreadable": "无法读取已保存的数据（{files}），因此更改不会被保存。请检查 OrcaSlicer 数据目录中该文件的权限。",
+  "host.notLoaded": "已保存的数据（{files}）尚未加载：OrcaSlicer 还没有打开插件的数据目录（它在等待网络）。数据加载前更改不会被保存，加载会自动完成。",
+  "host.settingsLoaded": "已加载您保存的设置，替换了此前显示的设置。",
   "host.error.timeout": "OrcaSlicer 未及时响应。请重试。",
   "common.undo": "撤销",
   "draft.undoClose": "报价已关闭。未保存的更改没有保存。",

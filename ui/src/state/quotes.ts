@@ -27,7 +27,7 @@ function persist(update: (cur: SavedQuote[]) => SavedQuote[]): Promise<boolean> 
   const run = async (retried = false): Promise<boolean> => {
     if (store.status !== "ready") return false; // before get_state succeeded the list is not the user's file
     if (store.unloaded.includes("quotes")) await recoverState(); // not read yet (no storage folder): read it first
-    if (store.unreadable.includes("quotes")) { showToast({ title: t("host.unreadable", { files: filesText(["quotes"]) }), tone: "error" }); return false; } // never written over
+    if (store.unreadable.includes("quotes")) { showToast({ title: t(store.unloaded.includes("quotes") ? "host.notLoaded" : "host.unreadable", { files: filesText(["quotes"]) }), tone: "error" }); return false; } // never written over
     const before = store.quotes;
     const quotes = update(before);
     store.quotes = quotes;

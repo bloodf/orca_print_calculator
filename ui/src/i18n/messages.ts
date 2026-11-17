@@ -544,6 +544,8 @@ export const messages = {
   "host.error.denied": ["OrcaSlicer didn't allow that. Check the folder permissions.", "O OrcaSlicer não permitiu. Confira as permissões da pasta."],
   "host.error.unreadable": ["Your saved file can't be read, so changes aren't being saved. Check the file permissions in OrcaSlicer's data folder.", "O arquivo salvo não pode ser lido, então as alterações não estão sendo salvas. Confira as permissões do arquivo na pasta de dados do OrcaSlicer."],
   "host.unreadable": ["Saved {files} could not be read, so changes are not being saved. Check the file permissions in OrcaSlicer's data folder.", "Os dados salvos ({files}) não puderam ser lidos, então as alterações não estão sendo salvas. Confira as permissões do arquivo na pasta de dados do OrcaSlicer."],
+  "host.notLoaded": ["Saved {files} haven't loaded yet: OrcaSlicer hasn't opened the plugin's data folder (it waits for the network). Changes aren't saved until they load, which happens by itself.", "Os dados salvos ({files}) ainda não foram carregados: o OrcaSlicer ainda não abriu a pasta de dados do plugin (ele espera a rede). As alterações só são salvas depois que carregarem, o que acontece sozinho."],
+  "host.settingsLoaded": ["Your saved settings have loaded and replace the ones shown until now.", "Suas configurações salvas foram carregadas e substituem as mostradas até agora."],
   "host.error.timeout": ["OrcaSlicer didn't answer in time. Try again.", "O OrcaSlicer não respondeu a tempo. Tente de novo."],
   "common.undo": ["Undo", "Desfazer"],
   "draft.undoClose": ["Quote closed. Your unsaved changes were not saved.", "Orçamento fechado. Suas alterações não salvas não foram gravadas."],
