@@ -196,6 +196,8 @@ class Host:
         self.plates = {}         # plate index -> HostPlate; UI thread only
         self.path_index = {}     # temp G-code path -> plate index (Orca keeps one path per plate); UI thread only
         self.unreadable = set()  # store files that could neither be read nor set aside: never overwritten
+        self.unloaded = set()    # store files not read because storage was unavailable: never overwritten until read
+        self.storage_warned = False
 
     # -- UI thread
     def storage(self):
@@ -206,7 +208,9 @@ class Host:
             try:
                 folder = orca.host.plugin.storage()
             except Exception as exc:
-                log.warning("storage not available yet: %s", exc)
+                if not self.storage_warned:   # once: it is asked again on every use
+                    self.storage_warned = True
+                    log.warning("storage not available yet: %s", exc)
                 return ""
             if not folder:
                 return ""
@@ -233,8 +237,9 @@ class Host:
         self.post({"type": "event", "name": name, "data": data})
 
     def icon_path(self, svg):
-        if not self.storage():
-            return ""
+        if not self.storage():   # the copy shipped in the package (OrcaSlicer may ask for the icon only at load)
+            shipped = os.path.join(os.path.dirname(os.path.abspath(__file__)), ICON_FILE)
+            return shipped if os.path.isfile(shipped) else ""
         path = os.path.join(self.storage(), ICON_FILE)
         try:
             if not os.path.isfile(path) or Path(path).read_text("utf-8") != svg:
@@ -282,8 +287,9 @@ class Host:
     def load(self, name, kind):
         """Parsed file or None. Wrong JSON type is set aside like a corrupt file. A file that can be neither
         read nor set aside degrades to None (the rest of the state still loads) and is locked against saves."""
-        if not self.storage():
-            return None   # built-in defaults until storage is available
+        if not self.storage():   # built-in defaults until storage is available; the file is not saved over meanwhile
+            self.unloaded.add(name)
+            return None
         path = os.path.join(self.storage(), name)
         try:
             data = core.load_json(path, None)
@@ -295,19 +301,22 @@ class Host:
             self.unreadable.add(name)
             return None
         self.unreadable.discard(name)
+        self.unloaded.discard(name)
         return data
 
     def save(self, name, obj):
-        if name in self.unreadable:
+        if name in self.unreadable or name in self.unloaded:   # unloaded: the page holds defaults, not the file
             raise core.CoreError("unreadable", name)
         core.save_json(os.path.join(self.storage_or_raise(), name), obj)
 
     def state(self):
         settings, quotes = self.load(core.SETTINGS_FILE, dict), self.load(core.QUOTES_FILE, list)
         unreadable = [key for key, name in (("settings", core.SETTINGS_FILE), ("quotes", core.QUOTES_FILE))
-                      if name in self.unreadable]  # null + listed here = "can't read", not "first run"
+                      if name in self.unreadable or name in self.unloaded]  # null + listed here = "can't read", not "first run"
+        unloaded = [key for key, name in (("settings", core.SETTINGS_FILE), ("quotes", core.QUOTES_FILE))
+                    if name in self.unloaded]  # no storage folder yet: the page reads them again before saving
         return {"host": self.host_info(), "plates": self.plate_list(), "settings": settings, "quotes": quotes,
-                "spooler": self.spooler(), "unreadable": unreadable}
+                "spooler": self.spooler(), "unreadable": unreadable, "unloaded": unloaded}
 
     def on_message(self, page, data):
         self.page = page

@@ -11,7 +11,7 @@ import { filesText } from "../files";
 import { newKey } from "../ids";
 import { CALC_VERSION, LEGACY_CALC } from "../engine/quote";
 import { defaultsDiff, defaultsFromInput, safeDigits } from "./derive";
-import { currency, derived, flushSettings, patchSettings, setPlates, store } from "./store";
+import { RECOVER_CODES, currency, derived, flushSettings, patchSettings, recoverState, setPlates, store } from "./store";
 import { toast } from "./toast";
 import type { Draft, SavedQuote, SheetDetails } from "./types";
 
@@ -24,8 +24,9 @@ const sheetNow = (): SheetDetails => {
 // failure rolls back only its own change and a retry never resends an old list.
 let chain: Promise<unknown> = Promise.resolve();
 function persist(update: (cur: SavedQuote[]) => SavedQuote[]): Promise<boolean> {
-  const run = async (): Promise<boolean> => {
+  const run = async (retried = false): Promise<boolean> => {
     if (store.status !== "ready") return false; // before get_state succeeded the list is not the user's file
+    if (store.unloaded.includes("quotes")) await recoverState(); // not read yet (no storage folder): read it first
     if (store.unreadable.includes("quotes")) { toast({ text: t("host.unreadable", { files: filesText(["quotes"]) }), tone: "bad" }); return false; } // never written over
     const before = store.quotes;
     const quotes = update(before);
@@ -35,12 +36,13 @@ function persist(update: (cur: SavedQuote[]) => SavedQuote[]): Promise<boolean> 
       return true;
     } catch (e) {
       store.quotes = before; // safe: writes are serialized, so nothing else changed the list meanwhile
+      if (!retried && RECOVER_CODES.includes(errorCode(e))) { await recoverState(true); return run(true); } // the update applies to the list as read
       toast({ text: failText(t("host.cmdFailed", { action: t("quote.save") }), errorCode(e)), tone: "bad", action: { label: t("host.tryAgain"), run: () => void persist(update) } });
       console.error("save_quotes", errorCode(e));
       return false;
     }
   };
-  const next = chain.then(run, run);
+  const next = chain.then(() => run(), () => run());
   chain = next;
   return next;
 }

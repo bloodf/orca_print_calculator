@@ -21,7 +21,7 @@ SRC = ROOT / "src"
 
 # Field lists copied from ui/src/state/types.ts (HostState, HostInfo, HostPlate, HostSlot, SpoolerInfo)
 # and ui/src/engine/match.ts (SpoolmanFilament, SpoolmanSpool).
-STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable"}
+STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable", "unloaded"}
 HOST_KEYS = {"projectName", "printerModel", "printerVendor", "pluginVersion", "appLanguage"}
 PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots", "consumption"}
 SLOT_KEYS = {"n", "preset", "grams", "color", "costPerKg", "notes", "material"}
@@ -182,14 +182,38 @@ class OfflineStorage(unittest.TestCase):
 
     def test_works_on_defaults_until_storage_is_ready(self):
         self.page.on_load()
-        self.assertEqual(self.page.get_icon(), "")
+        self.assertEqual(self.page.get_icon(), "")   # running from source: no packaged icon file
         state = self.cmd("get_state")
         self.assertTrue(state["ok"])
         self.assertIsNone(state["data"]["settings"])   # built-in defaults
-        self.assertEqual(self.cmd("save_settings", {"settings": {}})["error"], "io")   # said plainly, nothing lost on disk
-        self.ready = True   # networking came up: the next use finds the folder
+        self.assertEqual(state["data"]["unreadable"], ["settings", "quotes"])   # the page writes neither
+        self.assertEqual(self.cmd("save_settings", {"settings": {}})["error"], "unreadable")
+        self.ready = True   # networking came up: the next get_state reads the files
+        self.assertEqual(self.cmd("get_state")["data"]["unreadable"], [])
         self.assertTrue(self.cmd("save_settings", {"settings": {}})["ok"])
         self.assertTrue((Path(self.orca.storage_dir) / "settings.json").is_file())
+
+    def test_saved_files_are_not_overwritten_by_defaults(self):
+        """The real files exist but storage was unavailable when the page loaded: a save once storage is back must
+        not replace them with the defaults the page holds; only after the page reads them again (get_state)."""
+        store = Path(self.orca.storage_dir)
+        (store / "settings.json").write_text('{"currency": "EUR"}', "utf-8")
+        (store / "quotes.json").write_text('[{"id": "q1"}]', "utf-8")
+        self.cmd("get_state")
+        self.ready = True
+        self.assertEqual(self.cmd("save_settings", {"settings": {}})["error"], "unreadable")
+        self.assertEqual(self.cmd("save_quotes", {"quotes": []})["error"], "unreadable")
+        self.assertEqual((store / "settings.json").read_text("utf-8"), '{"currency": "EUR"}')
+        self.assertEqual((store / "quotes.json").read_text("utf-8"), '[{"id": "q1"}]')
+        state = self.cmd("get_state")["data"]   # the page reloads: now it holds the real files
+        self.assertEqual((state["settings"], state["unreadable"]), ({"currency": "EUR"}, []))
+        self.assertTrue(self.cmd("save_settings", {"settings": {"currency": "USD"}})["ok"])
+
+    def test_storage_warning_is_logged_once(self):
+        with self.assertLogs("orca_print_calculator", "WARNING") as logs:
+            self.cmd("get_state")
+            self.cmd("get_state")
+        self.assertEqual(len([r for r in logs.output if "storage not available" in r]), 1)
 
 
 class Rpc(HostCase):
