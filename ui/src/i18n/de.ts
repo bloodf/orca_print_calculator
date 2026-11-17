@@ -105,8 +105,10 @@ export const de: Record<MessageKey, string> = {
   "match.source.color": "Material und Farbe",
   "match.pricedBy.spool": "Spoolman-Spule #{id}",
   "match.fallbackHint": "Preis aus dem Orca-Profil. Wählen Sie eine Spule für Preis und Bestand aus Spoolman.",
-  "match.pickGone": "Spule #{id} ist nicht mehr in Spoolman; die automatische Zuordnung gilt.",
+
+  "match.pickGone": "Spule #{id} ist in Spoolman archiviert oder gelöscht; die automatische Zuordnung gilt.",
   "match.pricedBy.filament": "Spoolman-Filament #{id}",
+  "match.pickGoneFilament": "Filament #{id} ist nicht mehr in Spoolman; die automatische Zuordnung gilt.",
   "picker.noPrinter": "Wählen Sie ein Druckerprofil, um pro Slot eine Spule zu wählen.",
   "picker.auto": "Automatisch",
   "picker.autoHint": "Spooler, Profil in Spoolman, dann Material und Farbe",

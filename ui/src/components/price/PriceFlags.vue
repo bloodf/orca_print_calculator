@@ -5,6 +5,7 @@ import { computed } from "vue";
 import { t } from "../../i18n";
 import { derived, liveCurrency, store } from "../../state/store";
 import { requestPick } from "../plates/pickRequest";
+import { canPickSpool } from "../plates/slots";
 import { invalidFields } from "../../state/invalid";
 import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
@@ -17,7 +18,7 @@ const stale = computed(() => !store.draft.frozenPlates && store.plates.some((p) 
 const currencyFrom = computed(() => (!store.draft.frozenPlates && store.settings.defaultsCurrency && store.settings.defaultsCurrency !== liveCurrency.value ? store.settings.defaultsCurrency : null));
 // Stock is read only from a Spoolman that answered: an offline one keeps no filament list.
 const short = computed(() => (store.spoolman.state === "ok" ? filamentShortages(derived.value.quoteInput, derived.value.slotMatches, store.spoolman.data) : []));
-const flags = computed(() => buildFlags(derived.value, { m, pct }, { stale: stale.value, invalid: Object.keys(invalidFields).length > 0, currencyFrom: currencyFrom.value, short: short.value, spoolman: store.spoolman.state === "ok" }));
+const flags = computed(() => buildFlags(derived.value, { m, pct }, { stale: stale.value, invalid: Object.keys(invalidFields).length > 0, currencyFrom: currencyFrom.value, short: short.value, spoolman: store.spoolman.state === "ok" && canPickSpool() }));
 
 // Field and chip ids are a contract with the cost and plate sections: #field-<key>, #chip-<plateIndex>-<slotN>.
 const FIELD: Record<NonNullable<FlagAction["item"]>, { id: string; section: string }> = {

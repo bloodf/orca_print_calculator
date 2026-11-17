@@ -44,7 +44,7 @@ SPOOLMAN = {
         {"id": 20, "name": "TPU 95A", "vendor": None, "material": "TPU", "price": None, "weight": 500,
          "color_hex": None},
     ],
-    "/api/v1/spool?allow_archived=false": [
+    "/api/v1/spool?allow_archived=true": [
         {"id": 1, "filament": {"id": 3}, "price": 95.0, "initial_weight": 1000, "remaining_weight": 412.5,
          "archived": False,
          "last_used": "2026-11-01T10:00:00Z"},  # spool price overrides filament price

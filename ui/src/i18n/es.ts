@@ -105,8 +105,10 @@ export const es: Record<MessageKey, string> = {
   "match.source.color": "Material y color",
   "match.pricedBy.spool": "Carrete #{id} de Spoolman",
   "match.fallbackHint": "Precio del perfil de Orca. Elija un carrete para usar el precio y el stock de Spoolman.",
-  "match.pickGone": "El carrete #{id} ya no está en Spoolman; se usa el automático.",
+
+  "match.pickGone": "El carrete #{id} está archivado o eliminado en Spoolman; se usa el automático.",
   "match.pricedBy.filament": "Filamento #{id} de Spoolman",
+  "match.pickGoneFilament": "El filamento #{id} ya no está en Spoolman; se usa el automático.",
   "picker.noPrinter": "Seleccione un perfil de impresora para elegir un carrete por ranura.",
   "picker.auto": "Automático",
   "picker.autoHint": "Spooler, perfil en Spoolman, luego material y color",

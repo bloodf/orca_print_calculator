@@ -37,7 +37,7 @@ export function pricedByText(m: SlotMatchView): string {
 /** How the Spoolman row was found ("Spooler link", "Picked spool"), when Spoolman priced the slot. */
 export const viaText = (m: SlotMatchView): string => (m.priceSource === "spool" || m.priceSource === "filament" ? sourceText(m) : "");
 /** The slot runs on the Orca preset price because no Spoolman spool was found for it (not because a picked one has no price). */
-export const onFallback = (m: SlotMatchView): boolean => isFallback(m) && store.spoolman.state === "ok";
+export const onFallback = (m: SlotMatchView): boolean => isFallback(m) && store.spoolman.state === "ok" && canPickSpool();
 
 const slotKeyOf = (m: SlotMatchView): string | null => slotSpoolKey(store.host.printerPreset, m.slot.n);
 const withoutKey = <T>(rec: Record<string, T>, k: string | null): Record<string, T> => Object.fromEntries(Object.entries(rec).filter(([key]) => key !== k));
@@ -49,6 +49,7 @@ export const slotSpoolOf = (m: SlotMatchView): SlotSpool | undefined => slotSpoo
 export function setSlotSpool(m: SlotMatchView, pick: { filamentId: number; spoolId?: number } | null): void {
   const k = slotKeyOf(m);
   const preset = m.slot.preset;
+  if (pick && k === null) return; // no printer preset: nowhere to keep a pick (the picker does not offer one)
   patchSettings((s) => {
     const rest = withoutKey(s.slotSpools, k);
     if (pick && k !== null) return { slotSpools: { ...rest, [k]: { filamentId: pick.filamentId, ...(pick.spoolId === undefined ? {} : { spoolId: pick.spoolId }), preset } } };

@@ -59,10 +59,21 @@ describe("deriveQuote: host plates to engine input", () => {
     expect(isFallback({ priceSource: "preset", source: "override" })).toBe(false);
     expect(isFallback({ priceSource: "spool", source: "color" })).toBe(false);
   });
-  test("pruneSlotSpools drops picks whose spool is archived or gone, or whose filament is gone", () => {
+  test("pruneSlotSpools drops picks whose spool or filament was deleted, and keeps an archived spool's pick", () => {
     const data = { filaments: [{ id: 1 }], spools: [{ id: 5, archived: false }, { id: 6, archived: true }] };
     expect(pruneSlotSpools({ a: { filamentId: 1, spoolId: 5 }, b: { filamentId: 1, spoolId: 6 }, c: { filamentId: 1, spoolId: 7 }, d: { filamentId: 1 }, e: { filamentId: 2 } }, data))
-      .toEqual({ a: { filamentId: 1, spoolId: 5 }, d: { filamentId: 1 } });
+      .toEqual({ a: { filamentId: 1, spoolId: 5 }, b: { filamentId: 1, spoolId: 6 }, d: { filamentId: 1 } });
+  });
+  test("a pick whose spool is archived or whose filament is gone is noted on the slot, and Auto prices it", () => {
+    const key = slotSpoolKey(HOST.printerPreset, 1)!;
+    const sm = spoolman();
+    const archived = { ...sm, spools: sm.spools.map((s) => (s.id === 2 ? { ...s, archived: true } : s)) };
+    const a = deriveQuote(input({ spoolman: archived, settings: { ...settings(), slotSpools: { [key]: { filamentId: 2, spoolId: 2 } } } })).slotMatches[0]![0]!;
+    expect(a).toMatchObject({ source: "spooler", pickGone: { kind: "spool", id: 2 } });
+    const f = deriveQuote(input({ settings: { ...settings(), slotSpools: { [key]: { filamentId: 99 } } } })).slotMatches[0]![0]!;
+    expect(f).toMatchObject({ source: "spooler", pickGone: { kind: "filament", id: 99 } });
+    const off = deriveQuote(input({ spoolman: { filaments: [], spools: [] }, settings: { ...settings(), slotSpools: { [key]: { filamentId: 99 } } } })).slotMatches[0]![0]!;
+    expect(off.pickGone).toBeUndefined(); // Spoolman not loaded: nothing is judged gone
   });
   test("Spooler's spool links reach the match", () => {
     const d = deriveQuote(input({ spooler: { url: null, presetToFilament: {}, presetToSpool: { "Generic PLA @U1": 4 } } }));

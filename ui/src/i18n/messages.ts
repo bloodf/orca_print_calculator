@@ -104,8 +104,10 @@ export const messages = {
   "match.source.color": ["Material and color", "Material e cor"],
   "match.pricedBy.spool": ["Spoolman spool #{id}", "Carretel #{id} do Spoolman"],
   "match.fallbackHint": ["Orca preset price. Pick a spool to use Spoolman's price and stock.", "Preço do perfil do Orca. Escolha um carretel para usar o preço e o estoque do Spoolman."],
-  "match.pickGone": ["Spool #{id} is no longer in Spoolman; Auto is used.", "O carretel #{id} não está mais no Spoolman; o automático é usado."],
+
+  "match.pickGone": ["Spool #{id} is archived or deleted in Spoolman; Auto is used.", "O carretel #{id} foi arquivado ou excluído no Spoolman; o automático é usado."],
   "match.pricedBy.filament": ["Spoolman filament #{id}", "Filamento #{id} do Spoolman"],
+  "match.pickGoneFilament": ["Filament #{id} is no longer in Spoolman; Auto is used.", "O filamento #{id} não está mais no Spoolman; o automático é usado."],
   "picker.noPrinter": ["Select a printer preset to pick a spool per slot.", "Selecione um perfil de impressora para escolher um carretel por slot."],
   "picker.auto": ["Auto", "Automático"],
   "picker.autoHint": ["Spooler, Spoolman preset, then material and color", "Spooler, perfil no Spoolman, depois material e cor"],

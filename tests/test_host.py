@@ -622,7 +622,7 @@ def spoolman_opener(calls=None, error=None):
         "/api/v1/setting/currency": {"value": '"BRL"', "is_set": True},
         "/api/v1/filament": [{"id": 3, "name": "PLA+ White", "vendor": {"name": "eSun"}, "material": "PLA", "price": 89.9,
                               "weight": 1000, "color_hex": "FFFFFF"}],
-        "/api/v1/spool?allow_archived=false": [{"id": 1, "filament": {"id": 3}, "price": 95.0, "initial_weight": 1000,
+        "/api/v1/spool?allow_archived=true": [{"id": 1, "filament": {"id": 3}, "price": 95.0, "initial_weight": 1000,
                                                 "remaining_weight": 412.5, "archived": False, "last_used": "2026-11-01T10:00:00Z"}],
     }
 

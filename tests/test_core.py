@@ -334,7 +334,7 @@ GOOD = {
         {"id": 2, "name": "x" * 500, "price": "free", "weight": -5, "color_hex": "zz"},
         {"name": "no id"}, "junk", {"id": True}, {"id": "3"},
     ],
-    "/api/v1/spool?allow_archived=false": [
+    "/api/v1/spool?allow_archived=true": [
         {"id": 10, "filament": {"id": 1}, "price": 90, "initial_weight": 1000, "remaining_weight": 0, "archived": False,
          "last_used": "2026-11-01T10:00:00Z"},
         {"id": 11, "filament_id": 2, "archived": True},
@@ -394,7 +394,7 @@ class SpoolmanFetch(unittest.TestCase):
         self.assertEqual(self.code({info: b"<html>"}), "bad_json")
         self.assertEqual(self.code({info: b"\xff\xfe"}), "bad_json")
         self.assertEqual(self.code({"/api/v1/filament": {"a": 1}}), "bad_json")
-        self.assertEqual(self.code({"/api/v1/spool?allow_archived=false": "x"}), "bad_json")
+        self.assertEqual(self.code({"/api/v1/spool?allow_archived=true": "x"}), "bad_json")
         self.assertEqual(self.code(url="ftp://sm"), "bad_url")
 
     def test_too_large(self):

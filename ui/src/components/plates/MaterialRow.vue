@@ -37,7 +37,7 @@ function useAuto(): void { clearSlot(props.match); emit("useAuto"); }
     <span class="names">
       <span class="preset oui-truncate" :title="match.slot.preset">{{ presetName(match.slot.preset) }}</span>
       <span v-if="filamentName" class="oui-meta oui-truncate">{{ filamentName }}</span>
-      <span v-if="match.pickGone !== undefined && !frozen" class="sm oui-muted">{{ t("match.pickGone", { id: match.pickGone }) }}</span>
+      <span v-if="match.pickGone !== undefined && !frozen" class="sm oui-muted">{{ t(match.pickGone.kind === "spool" ? "match.pickGone" : "match.pickGoneFilament", { id: match.pickGone.id }) }}</span>
       <span v-else-if="hint" class="sm oui-muted hint">{{ t("match.fallbackHint") }}</span>
     </span>
     <span class="num g">

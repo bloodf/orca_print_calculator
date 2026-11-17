@@ -105,8 +105,10 @@ export const zhCN: Record<MessageKey, string> = {
   "match.source.color": "材料和颜色",
   "match.pricedBy.spool": "Spoolman 料盘 #{id}",
   "match.fallbackHint": "价格来自 Orca 预设。选择料盘即可使用 Spoolman 的价格和库存。",
-  "match.pickGone": "料盘 #{id} 已不在 Spoolman 中；改用自动匹配。",
+
+  "match.pickGone": "料盘 #{id} 已在 Spoolman 中归档或删除；改用自动匹配。",
   "match.pricedBy.filament": "Spoolman 耗材丝 #{id}",
+  "match.pickGoneFilament": "耗材丝 #{id} 已不在 Spoolman 中；改用自动匹配。",
   "picker.noPrinter": "请选择打印机预设，以便为每个槽位选择料盘。",
   "picker.auto": "自动",
   "picker.autoHint": "Spooler、Spoolman 预设，然后材料和颜色",

@@ -115,8 +115,10 @@ export const pl: Record<MessageKey | PluralExtraKey, string> = {
   "match.source.color": "Materiał i kolor",
   "match.pricedBy.spool": "Szpula Spoolman #{id}",
   "match.fallbackHint": "Cena z profilu Orca. Wybierz szpulę, aby użyć ceny i stanu ze Spoolman.",
-  "match.pickGone": "Szpuli #{id} nie ma już w Spoolman; używane jest dopasowanie automatyczne.",
+
+  "match.pickGone": "Szpula #{id} jest zarchiwizowana lub usunięta w Spoolman; używane jest dopasowanie automatyczne.",
   "match.pricedBy.filament": "Filament Spoolman #{id}",
+  "match.pickGoneFilament": "Filamentu #{id} nie ma już w Spoolman; używane jest dopasowanie automatyczne.",
   "picker.noPrinter": "Wybierz profil drukarki, aby wybrać szpulę dla każdego slotu.",
   "picker.auto": "Automatycznie",
   "picker.autoHint": "Spooler, profil w Spoolman, potem materiał i kolor",
