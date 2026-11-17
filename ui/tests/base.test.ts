@@ -7,7 +7,6 @@ import Popover from "../src/components/base/Popover.vue";
 import Section from "../src/components/base/Section.vue";
 import Segmented from "../src/components/base/Segmented.vue";
 import { setLocale } from "../src/i18n";
-import { useToastFocusReturn } from "../src/state/toastFocus";
 import { clearToasts, showToast, toastList as toasts } from "../shared/src/components/toast";
 
 let app: App | null = null;
@@ -90,7 +89,7 @@ describe("toasts", () => {
   test("Undo keeps focus for 20 seconds and returns it after dismissal", async () => {
     vi.useFakeTimers();
     try {
-      mount(() => h(defineComponent({ setup() { useToastFocusReturn(); return () => h("main", { tabindex: -1 }, [h("button", { id: "source" }, "Source"), h(OuiToastHost)]); } })));
+      mount(() => h(defineComponent({ setup() { return () => h("main", { tabindex: -1 }, [h("button", { id: "source" }, "Source"), h(OuiToastHost)]); } })));
       const source = root.querySelector<HTMLButtonElement>("#source")!;
       source.focus();
       const run = vi.fn();
