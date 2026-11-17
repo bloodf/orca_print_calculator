@@ -5,7 +5,7 @@ import Button from "primevue/button";
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { derived, patchDefaults, patchDraft, result, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
 import Section from "../base/Section.vue";
@@ -32,7 +32,7 @@ const tierDiffers = (c: ChannelOk): boolean => pct(c.discountBp) !== pct(c.effec
 const edited = computed(() => JSON.stringify(store.draft.discountTiers) !== JSON.stringify(store.settings.defaults.discountTiers));
 const saveDefaults = (): void => {
   patchDefaults({ discountTiers: store.draft.discountTiers.map((x) => ({ ...x })) });
-  toast({ text: t("section.savedDefaults") });
+  showToast({ title: t("section.savedDefaults") });
 };
 </script>
 

@@ -42,7 +42,7 @@ const off = computed(() => lead(t("stock.offline", { url: store.settings.spoolma
         <template #title><span id="stock-filament-h">{{ t("stock.filament") }}</span></template>
         <template v-if="connected && filaments.length" #meta>{{ filaments.length }}</template>
         <div v-if="offline" class="off" data-stock-offline>
-          <OuiBanner tone="warn" :title="off[0]">
+          <OuiBanner tone="warn" :title="off[0]" dismissible :dismiss-key="`spoolman-down:${store.settings.spoolman.url}`" :close-label="t('common.close')">
             {{ off[1] }}
             <template #actions>
               <Button severity="secondary" size="small" type="button" @click="fetchSpoolman(false)"><OuiIcon :icon="I.refresh" :size="14" /><span>{{ t("spoolman.retry") }}</span></Button>

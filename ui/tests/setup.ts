@@ -5,3 +5,6 @@ if (typeof globalThis.ResizeObserver === "undefined") globalThis.ResizeObserver 
 if (typeof window !== "undefined" && typeof window.matchMedia !== "function") {
   window.matchMedia = ((query: string) => ({ matches: false, media: query, onchange: null, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, dispatchEvent: () => false })) as unknown as typeof window.matchMedia;
 }
+// A closed banner is remembered for the session (OuiBanner dismissKey, sessionStorage): every test starts with none closed.
+import { beforeEach } from "vitest";
+beforeEach(() => { try { sessionStorage.clear(); } catch { /* no storage in this environment */ } });

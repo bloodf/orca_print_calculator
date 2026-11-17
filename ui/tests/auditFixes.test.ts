@@ -18,7 +18,7 @@ import { exportBlock, sheetFor } from "../src/quoteFlow";
 import { DEFAULT_ACCENT } from "../src/state/sheet";
 import { closeQuote, openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import { derived, flushSettings, patchSettings, setView, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import type { HostPlate } from "../src/state/types";
 import { plates as fixturePlates } from "../src/mock/fixtures";
 import { load, mount, txt } from "./priceKit";
@@ -127,6 +127,30 @@ describe("F5 offline alert", () => {
     btn(a as HTMLElement, "Settings").click();
     expect(store.view).toBe("settings");
   });
+  test("closing it keeps it closed while the same address stays offline, and a new address brings it back", async () => {
+    load("ok");
+    store.spoolman = { ...store.spoolman, state: "offline", error: "net" };
+    const el = await show(PlateNotices);
+    (el.querySelector('[data-spoolman-offline] [aria-label="Close"]') as HTMLButtonElement).click();
+    await flush();
+    expect(el.querySelector("[data-spoolman-offline]")).toBeNull();
+    store.spoolman = { ...store.spoolman, state: "connecting" }; await flush(); // a poll: reconnecting, then offline again
+    store.spoolman = { ...store.spoolman, state: "offline", error: "net" }; await flush();
+    expect(el.querySelector("[data-spoolman-offline]")).toBeNull();
+    store.settings = { ...store.settings, spoolman: { url: "http://10.9.9.9:7912" } }; await flush();
+    expect(txt(el.querySelector("[data-spoolman-offline]"))).toContain("http://10.9.9.9:7912");
+  });
+  test("every notice on the calculator can be closed", async () => {
+    load("ok");
+    store.spoolman = { ...store.spoolman, state: "offline", error: "net" };
+    store.unreadable = ["quotes"];
+    store.settingsReset = ["currency"];
+    const el = await show(PlateNotices);
+    const banners = [...el.querySelectorAll(".oui-banner")];
+    expect(banners.length).toBeGreaterThanOrEqual(3);
+    for (const b of banners) expect(b.querySelector('.oui-banner-close[aria-label="Close"]')).not.toBeNull();
+    store.unreadable = []; store.settingsReset = [];
+  });
   test("no alert while Spoolman is fine", async () => {
     load("ok");
     const el = await show(PlateNotices);
@@ -152,7 +176,7 @@ describe("F6/F7 first run", () => {
     await show(FirstRunChecklist);
     store.spoolman = { state: "ok", data: { currency: "BRL", filaments: [], spools: [] }, error: null };
     await flush();
-    expect(toasts.list.map((x) => x.text)).toEqual(["Prices are now in BRL. Check the energy and labor values."]);
+    expect(toasts.list.map((x) => x.title)).toEqual(["Prices are now in BRL. Check the energy and labor values."]);
   });
 });
 

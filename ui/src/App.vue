@@ -5,12 +5,12 @@ import { usePrimeVue } from "primevue/config";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import HelpGuide from "./components/HelpGuide.vue";
-import { OuiEmpty, OuiIcon, OuiPanel } from "../shared/src/components";
+import { OuiEmpty, OuiIcon, OuiPanel, OuiToastHost } from "../shared/src/components";
 import * as I from "../shared/src/icons";
-import ToastHost from "./components/base/ToastHost.vue";
 import { currentLocale, t } from "./i18n";
 import { primeLocale } from "./orcaUi";
 import { priceAnnouncement } from "./state/announce";
+import { useToastFocusReturn } from "./state/toastFocus";
 import { currency, derived, init, loadState, locale, setView, store } from "./state/store";
 import CalculatorView from "./views/CalculatorView.vue";
 import QuotesView from "./views/QuotesView.vue";
@@ -24,6 +24,7 @@ const pv = usePrimeVue();
 const enLocale = { ...pv.config.locale } as NonNullable<typeof pv.config.locale>;
 watch(currentLocale, (l) => { pv.config.locale = { ...enLocale, ...primeLocale(l) } as typeof enLocale; }, { immediate: true });
 
+useToastFocusReturn();
 const live = ref("");
 const tech = ref(false); // the raw host code stays behind a disclosure
 const announcement = computed(() => priceAnnouncement(derived.value, { currency: currency.value, locale: locale.value, hasPlates: store.plates.length > 0 || !!store.draft.frozenPlates }));
@@ -77,8 +78,9 @@ onBeforeUnmount(() => { stop?.(); clearTimeout(settle); });
   </div>
   <div class="oui-sr app-chrome" aria-live="polite" aria-atomic="true">{{ live }}</div>
   <HelpGuide />
-  <ToastHost />
   <component :is="DevBar" v-if="DevBar" />
+  <!-- Settings keeps its save bar along the bottom edge (and the narrow calculator its price bar, app.css): the stack sits above it -->
+  <OuiToastHost :close-label="t('common.close')" :label="t('common.notifications')" :style="store.view === 'settings' ? { '--oui-toast-bottom': '60px' } : undefined" />
 </template>
 
 <style scoped>

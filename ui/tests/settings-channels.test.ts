@@ -81,7 +81,7 @@ describe("delete and undo", () => {
     expect(removeChannel(mid)).toBe(true);
     expect(ids()).not.toContain(mid);
     expect(store.settings.defaultChannelId).toBe("direct");
-    expect(lastToast()?.text).toBe("My channel deleted");
+    expect(lastToast()?.title).toBe("My channel deleted");
     lastToast()!.action!.run();
     expect(ids()).toEqual(before);
     expect(store.settings.defaultChannelId).toBe(mid);

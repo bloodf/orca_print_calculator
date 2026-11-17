@@ -4,7 +4,7 @@ import Button from "primevue/button";
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { currency, digits, patchSettings, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import type { CatalogExtra } from "../../state/types";
 import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
@@ -24,8 +24,8 @@ function remove(key: string): void {
   const gone = items.value[index];
   if (!gone) return;
   patchItems((l) => l.filter((x) => x.key !== key));
-  toast({
-    text: t("catalog.removed", { name: gone.label || t("extras.custom") }),
+  showToast({
+    title: t("catalog.removed", { name: gone.label || t("extras.custom") }),
     action: { label: t("common.undo"), run: () => patchItems((l) => { const n = [...l]; n.splice(Math.min(index, n.length), 0, gone); return n; }) },
   });
 }

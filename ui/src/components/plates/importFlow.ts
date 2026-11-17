@@ -4,7 +4,7 @@ import { call, errorCode } from "../../bridge";
 import { bytes } from "../../format";
 import { t } from "../../i18n";
 import { applyImported, locale } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 
 export const MAX_BYTES = 100 * 1024 * 1024;
 export const importState = reactive({ phase: "idle" as "idle" | "reading" | "parsing", name: "", size: 0, loaded: 0, total: 0 });
@@ -26,7 +26,7 @@ export function errorText(code: string, size: number): string {
   return t("import.error.unreadable");
 }
 
-const fail = (text: string): void => { toast({ text, tone: "bad" }); };
+const fail = (text: string): void => { showToast({ title: text, tone: "error" }); };
 const finish = (): void => { importState.phase = "idle"; reader = null; };
 
 export function cancelImport(): void {

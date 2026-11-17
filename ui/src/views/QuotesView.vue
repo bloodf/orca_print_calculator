@@ -41,7 +41,7 @@ const skipped = computed(() => lead(t("quotes.skipped", { n: store.skippedQuotes
 
 <template>
   <main class="oui-page quotes" tabindex="-1">
-    <OuiBanner v-if="store.skippedQuotes" class="skipped" tone="warn" :title="skipped[0]">{{ skipped[1] }}</OuiBanner>
+    <OuiBanner v-if="store.skippedQuotes" class="skipped" tone="warn" dismissible :dismiss-key="`skipped-quotes:${store.skippedQuotes}`" :close-label="t('common.close')" :title="skipped[0]">{{ skipped[1] }}</OuiBanner>
     <OuiPanel class="q-panel" :icon="I.receipt" tone="accent" flush :meta="t('quotes.count', { n: store.quotes.length })" aria-labelledby="quotes-title">
       <template #title><span id="quotes-title" tabindex="-1" data-view-title>{{ t("quotes.title") }}</span></template>
       <OuiToolbar v-if="store.quotes.length" :label="t('quotes.title')" :summary="q.trim() && shown.length ? t('quotes.count', { n: shown.length }) : undefined">

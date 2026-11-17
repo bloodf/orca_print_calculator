@@ -3,6 +3,7 @@ import SpoolmanSettings from "../src/components/settings/SpoolmanSettings.vue";
 import { spoolmanErrorMessage, urlProblem } from "../src/components/settings/spoolmanError";
 import { t } from "../src/i18n";
 import { store } from "../src/state/store";
+import { toastList } from "../shared/src/components/toast";
 import { byText, flush, installHost, mountComponent, resetStore, type, unmountComponent } from "./settings-helpers";
 
 beforeEach(() => { resetStore(); });
@@ -21,7 +22,8 @@ describe("Spoolman test connection", () => {
   test("success shows spools, filaments and currency", async () => {
     const { root, calls } = await runTest("http://10.0.0.1:7912", () => ({ currency: "BRL", filaments: [{}, {}], spools: [{}, {}, {}] }));
     expect(calls.filter((c) => c.cmd === "spoolman_fetch")[0]?.args).toEqual({ url: "http://10.0.0.1:7912" });
-    expect(root.querySelector(".result")?.textContent).toContain("Connected. 3 spools, 2 filaments, currency BRL.");
+    expect(root.querySelector(".result")).toBeNull(); // the result is a toast now, not a notice that stays
+    expect(toastList.list.map((x) => [x.tone, x.title])).toEqual([["success", "Connected. 3 spools, 2 filaments, currency BRL."]]);
   });
 
   test.each([
@@ -29,8 +31,8 @@ describe("Spoolman test connection", () => {
     ["bad_json", "That address answered, but it isn't Spoolman."], ["denied", "Access was not allowed in OrcaSlicer. Save the address again to get the prompt."],
     ["http_503", "Spoolman answered with error 503."], ["weird", "Spoolman failed: weird"],
   ])("error code %s maps to copy", async (code, text) => {
-    const { root } = await runTest("http://10.0.0.1:7912", () => { throw new Error(code); });
-    expect(root.querySelector(".result")?.textContent).toContain(text);
+    await runTest("http://10.0.0.1:7912", () => { throw new Error(code); });
+    expect(toastList.list.map((x) => [x.tone, x.title])).toEqual([["error", text]]);
     expect(spoolmanErrorMessage(code)).toBe(text);
   });
 
@@ -42,10 +44,10 @@ describe("Spoolman test connection", () => {
     byText(root, "button", t("spoolman.test"))!.click();
     await flush();
     expect(root.textContent).toContain("Start the address with http:// or https://.");
-    // A PrimeVue Message, not an unknown <message> element (it was used without being imported).
+    // A plain alert line under the field, as in the first-run checklist (PrimeVue Message cost 15 kB of the page for this one line).
     const err = root.querySelector("#settings-spoolman-err")!;
-    expect(err.tagName).not.toBe("MESSAGE");
-    expect(err.classList.contains("p-message")).toBe(true);
+    expect(err.tagName).toBe("P");
+    expect(err.getAttribute("role")).toBe("alert");
     expect(calls.filter((c) => c.cmd === "spoolman_fetch")).toHaveLength(0);
     expect(urlProblem("ftp://x")).toBe("scheme");
     expect(urlProblem("")).toBeNull();
@@ -56,8 +58,36 @@ describe("Spoolman test connection", () => {
     installHost();
     const root = mountComponent(SpoolmanSettings);
     expect(root.querySelector(".cv-text")?.textContent).toBe("http://10.0.0.1:7912");
-    expect(root.querySelector("a")).toBeNull();
+    expect(root.querySelector('a[href*="10.0.0.1"]')).toBeNull();
     expect(root.querySelector("button[aria-label='Copy Spoolman address']")).not.toBeNull();
+  });
+
+  test("the Spoolman requirement row shows its status and Check again reconnects", async () => {
+    store.settings = { ...store.settings, spoolman: { url: "http://10.0.0.1:7912" } };
+    store.spoolman = { ...store.spoolman, state: "offline", error: "timeout" };
+    const calls = installHost({ spoolman_fetch: () => ({ currency: "EUR", filaments: [], spools: [{}, {}] }) });
+    const root = mountComponent(SpoolmanSettings);
+    const row = root.querySelector<HTMLElement>("[data-requirement=spoolman]")!;
+    expect(row.dataset.status).toBe("missing");
+    expect(row.textContent).toContain("Not reachable");
+    expect(row.textContent).toContain("http://10.0.0.1:7912 · Spoolman took too long to answer.");
+    expect(row.querySelector<HTMLAnchorElement>(".oui-req-link")?.href).toBe("https://github.com/Donkie/Spoolman");
+    byText(row, "button", "Check again")!.click();
+    await flush();
+    expect(calls.filter((c) => c.cmd === "spoolman_fetch").map((c) => c.args)).toEqual([{ url: "http://10.0.0.1:7912" }]);
+    expect(row.dataset.status).toBe("found");
+    expect(row.textContent).toContain("Found");
+    expect(row.textContent).toContain("http://10.0.0.1:7912 · Spoolman · 2 spools");
+    expect(row.querySelector(".oui-req-link")).toBeNull();
+  });
+
+  test("never set up: the requirement says so and links to Spoolman", () => {
+    installHost();
+    const root = mountComponent(SpoolmanSettings);
+    const row = root.querySelector<HTMLElement>("[data-requirement=spoolman]")!;
+    expect(row.dataset.status).toBe("missing");
+    expect(row.textContent).toContain("Not set up");
+    expect(row.textContent).toContain("Run Spoolman on this computer");
   });
 
   test("detected Spooler address is offered and applied", async () => {

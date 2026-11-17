@@ -11,7 +11,7 @@ import { hasUnsavedWork } from "../src/state/dirty";
 import { confirmGap, closeQuote, openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import { newDraft } from "../src/state/defaults";
 import { derived, patchDraft, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import type { PlateSnapshot, SavedQuote } from "../src/state/types";
 import { load, mount } from "./priceKit";
 
@@ -53,7 +53,7 @@ describe("closing the open quote", () => {
     const before = JSON.stringify(store.draft);
     closeQuote();
     expect(store.draft.customer).toBe("");
-    expect(undoToast()?.text).toMatch(/not saved/);
+    expect(undoToast()?.title).toMatch(/not saved/);
     undo();
     expect(JSON.stringify(store.draft)).toBe(before);
     expect(store.draft.quoteId).toBe(q.id);
@@ -83,7 +83,7 @@ describe("closing the open quote", () => {
     undo();
     expect(store.draft.customer).toBe("Carla");
     expect(store.draft.quoteId).toBeNull();
-    expect(toasts.list.some((x) => /Can't undo/.test(x.text))).toBe(true);
+    expect(toasts.list.some((x) => /Can't undo/.test(x.title))).toBe(true);
   });
 
   test("a never-saved draft with a customer is protected; an untouched blank one is not", () => {

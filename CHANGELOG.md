@@ -5,7 +5,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+- Settings lists what Spoolman pricing needs on this computer, whether Spoolman was found, and how to install it, with a Check again button.
+
 ### Changed
+- Notifications appear bottom-left and each one can be closed; warnings and notices on the page can be dismissed. A closed notice comes back only when what it is about changes (another Spoolman address, other plates, another file).
+- The Spoolman Test connection result is a notification instead of a line that stayed on the page.
 - The page fills the whole tab at every height, also after the window is resized: no more grey under a short page.
 - Settings are tabs: one section at a time, and the save bar stays on screen at any window height.
 

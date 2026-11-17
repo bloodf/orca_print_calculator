@@ -7,7 +7,7 @@ import { currentLocale, intlLocale, setLocale, t, type Lang, type Locale } from 
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft, resetNames, shiftPlateControls } from "./defaults";
 import { deriveQuote, failedDerive, safeDigits } from "./derive";
 import { changeDraft } from "./draftUndo";
-import { toast } from "./toast";
+import { showToast } from "../../shared/src/components";
 import { parseQuotes } from "./validate";
 import type { Draft, HostInfo, HostPlate, HostState, OverridableKey, Defaults, SavedQuote, Settings, SpoolerInfo, SpoolmanData, SpoolmanState, View } from "./types";
 
@@ -83,7 +83,7 @@ export async function flushSettings(quiet = false): Promise<void> {
     }
   } catch (e) {
     store.saveStatus = "error";
-    toast({ text: failText(t("host.cmdFailed", { action: t("settings.title") }), errorCode(e)), tone: "bad", action: { label: t("host.tryAgain"), run: () => void flushSettings() } });
+    showToast({ title: failText(t("host.cmdFailed", { action: t("settings.title") }), errorCode(e)), tone: "error", action: { label: t("host.tryAgain"), run: () => void flushSettings() } });
     console.error("save_settings", errorCode(e));
   }
 }
@@ -184,7 +184,7 @@ export async function fetchSpoolman(silent = false): Promise<void> {
     if (mine !== fetchSeq) return;
     store.spoolman = { state: "ok", data, error: null };
     dataUrl = url;
-    if (!silent) toast({ text: t("spoolman.refreshed") });
+    if (!silent) showToast({ title: t("spoolman.refreshed") });
   } catch (e) {
     if (mine !== fetchSeq) return;
     // Offline: chips fall back to Orca presets; saved overrides stay in settings (docs/ux.md §6.7); currency stays as last known.

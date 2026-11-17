@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, type App } from "vue";
 import { createOrcaApp as createApp } from "../src/orcaUi";
-import { OuiBanner, OuiEmpty } from "../shared/src/components";
+import { OuiBanner, OuiEmpty, OuiToastHost } from "../shared/src/components";
 import * as SHARED_ICONS from "../shared/src/icons";
 import Popover from "../src/components/base/Popover.vue";
 import Section from "../src/components/base/Section.vue";
 import Segmented from "../src/components/base/Segmented.vue";
-import ToastHost from "../src/components/base/ToastHost.vue";
 import { setLocale } from "../src/i18n";
-import { clearToasts, toast, toasts } from "../src/state/toast";
+import { useToastFocusReturn } from "../src/state/toastFocus";
+import { clearToasts, showToast, toastList as toasts } from "../shared/src/components/toast";
 
 let app: App | null = null;
 let root: HTMLElement;
@@ -90,11 +90,11 @@ describe("toasts", () => {
   test("Undo keeps focus for 20 seconds and returns it after dismissal", async () => {
     vi.useFakeTimers();
     try {
-      mount(() => h("main", { tabindex: -1 }, [h("button", { id: "source" }, "Source"), h(ToastHost)]));
+      mount(() => h(defineComponent({ setup() { useToastFocusReturn(); return () => h("main", { tabindex: -1 }, [h("button", { id: "source" }, "Source"), h(OuiToastHost)]); } })));
       const source = root.querySelector<HTMLButtonElement>("#source")!;
       source.focus();
       const run = vi.fn();
-      toast({ text: "Deleted", action: { label: "Undo", run } });
+      showToast({ title: "Deleted", action: { label: "Undo", run } });
       await nextTick();
       const undo = [...root.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Undo")!;
       undo.focus();
@@ -104,49 +104,54 @@ describe("toasts", () => {
       undo.click(); await nextTick(); await nextTick();
       expect(run).toHaveBeenCalledOnce();
       expect(toasts.list).toHaveLength(0);
+      await vi.advanceTimersByTimeAsync(1000); await nextTick();
+      expect(root.querySelectorAll(".oui-toast")).toHaveLength(0);
       expect(document.activeElement).toBe(source);
     } finally { app?.unmount(); app = null; await vi.runAllTimersAsync(); vi.useRealTimers(); }
   });
   test("hover pauses expiry, leaving resumes it, and clearing also removes paused timers", async () => {
     vi.useFakeTimers();
     try {
-      mount(() => h(ToastHost));
-      toast({ text: "Hover", ms: 100 }); await nextTick();
+      mount(() => h(OuiToastHost));
+      showToast({ title: "Hover", timeout: 100 }); await nextTick();
       const message = root.querySelector<HTMLElement>("[data-toast-id]")!;
       message.dispatchEvent(new MouseEvent("mouseenter"));
       await vi.advanceTimersByTimeAsync(500);
       expect(toasts.list).toHaveLength(1);
       message.dispatchEvent(new MouseEvent("mouseleave"));
-      await vi.advanceTimersByTimeAsync(101);
+      await vi.advanceTimersByTimeAsync(1001); // a resumed toast gets at least 1 s
       expect(toasts.list).toHaveLength(0);
-      toast({ text: "Paused", ms: 100 }); await nextTick();
+      showToast({ title: "Paused", timeout: 100 }); await nextTick();
       root.querySelector<HTMLElement>("[data-toast-id]")!.dispatchEvent(new MouseEvent("mouseenter"));
       clearToasts(); await vi.advanceTimersByTimeAsync(500);
       expect(toasts.list).toHaveLength(0);
     } finally { app?.unmount(); app = null; await vi.runAllTimersAsync(); vi.useRealTimers(); }
   });
-  test("stack is at most 3, newest last; errors stay; others auto-close", () => {
+  test("stack is at most 4, newest last; errors stay; info leaves after 5 s, warnings after 8 s", () => {
     vi.useFakeTimers();
-    const ids = [toast({ text: "1" }), toast({ text: "2" }), toast({ text: "3", tone: "bad" }), toast({ text: "4" })];
-    expect(toasts.list.map((x) => x.text)).toEqual(["2", "3", "4"]);
+    const ids = ["1", "2", "3", "4", "5"].map((n) => showToast({ title: n, tone: n === "3" ? "error" : n === "4" ? "warn" : "info" }));
+    expect(toasts.list.map((x) => x.title)).toEqual(["2", "3", "4", "5"]);
     vi.advanceTimersByTime(5001);
-    expect(toasts.list.map((x) => x.text)).toEqual(["3"]);
-    expect(ids).toHaveLength(4);
+    expect(toasts.list.map((x) => x.title)).toEqual(["3", "4"]);
+    vi.advanceTimersByTime(3000);
+    expect(toasts.list.map((x) => x.title)).toEqual(["3"]);
+    expect(ids).toHaveLength(5);
     vi.useRealTimers();
   });
-  test("action toasts last 8 s and the host renders roles and an undo button", async () => {
+  test("the host renders roles, an undo button and a close button on every toast", async () => {
     vi.useFakeTimers();
     const run = vi.fn();
-    mount(() => h(ToastHost));
-    toast({ text: "Deleted", action: { label: "Undo", run } });
-    toast({ text: "Failed", tone: "bad" });
+    mount(() => h(OuiToastHost, { closeLabel: "Close" }));
+    showToast({ title: "Deleted", action: { label: "Undo", run } });
+    showToast({ title: "Failed", tone: "error" });
     await nextTick();
     expect(root.querySelector("[role=status]")?.textContent).toContain("Deleted");
     expect(root.querySelector("[role=alert]")?.textContent).toContain("Failed");
-    vi.advanceTimersByTime(7900);
-    expect(toasts.list.map((x) => x.text)).toContain("Deleted");
+    expect(root.querySelectorAll('.oui-toast [aria-label="Close"]')).toHaveLength(2);
+    vi.advanceTimersByTime(4900);
+    expect(toasts.list.map((x) => x.title)).toContain("Deleted");
     vi.advanceTimersByTime(200);
-    expect(toasts.list.map((x) => x.text)).not.toContain("Deleted");
+    expect(toasts.list.map((x) => x.title)).toEqual(["Failed"]);
     vi.useRealTimers();
   });
 });

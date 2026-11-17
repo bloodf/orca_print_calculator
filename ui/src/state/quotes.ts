@@ -12,7 +12,7 @@ import { newKey } from "../ids";
 import { CALC_VERSION, LEGACY_CALC } from "../engine/quote";
 import { defaultsDiff, defaultsFromInput, safeDigits } from "./derive";
 import { currency, derived, flushSettings, patchSettings, setPlates, store } from "./store";
-import { toast } from "./toast";
+import { showToast } from "../../shared/src/components";
 import type { Draft, SavedQuote, SheetDetails } from "./types";
 
 const sheetNow = (): SheetDetails => {
@@ -26,7 +26,7 @@ let chain: Promise<unknown> = Promise.resolve();
 function persist(update: (cur: SavedQuote[]) => SavedQuote[]): Promise<boolean> {
   const run = async (): Promise<boolean> => {
     if (store.status !== "ready") return false; // before get_state succeeded the list is not the user's file
-    if (store.unreadable.includes("quotes")) { toast({ text: t("host.unreadable", { files: filesText(["quotes"]) }), tone: "bad" }); return false; } // never written over
+    if (store.unreadable.includes("quotes")) { showToast({ title: t("host.unreadable", { files: filesText(["quotes"]) }), tone: "error" }); return false; } // never written over
     const before = store.quotes;
     const quotes = update(before);
     store.quotes = quotes;
@@ -35,7 +35,7 @@ function persist(update: (cur: SavedQuote[]) => SavedQuote[]): Promise<boolean> 
       return true;
     } catch (e) {
       store.quotes = before; // safe: writes are serialized, so nothing else changed the list meanwhile
-      toast({ text: failText(t("host.cmdFailed", { action: t("quote.save") }), errorCode(e)), tone: "bad", action: { label: t("host.tryAgain"), run: () => void persist(update) } });
+      showToast({ title: failText(t("host.cmdFailed", { action: t("quote.save") }), errorCode(e)), tone: "error", action: { label: t("host.tryAgain"), run: () => void persist(update) } });
       console.error("save_quotes", errorCode(e));
       return false;
     }
@@ -62,7 +62,7 @@ export function openQuote(id: string): void {
     };
   } catch (e) {
     console.error("openQuote", e);
-    toast({ text: t("quote.openFailed"), tone: "bad" });
+    showToast({ title: t("quote.openFailed"), tone: "error" });
     return;
   }
   // opening replaces the working quote: unsaved edits in it are kept for Undo
@@ -143,7 +143,7 @@ async function doSave(asNew: boolean): Promise<SavedQuote | null> {
   const no = record.no;
   if (!prev) await bumpNextNo(no);
   store.draft = { ...store.draft, quoteId: record.id };
-  toast({ text: t("quote.saved", { no: quoteNo(no, intlLocale()) }) });
+  showToast({ title: t("quote.saved", { no: quoteNo(no, intlLocale()) }) });
   return record;
 }
 
@@ -152,8 +152,8 @@ export async function deleteQuote(id: string): Promise<void> {
   const q = store.quotes[i];
   if (!q) return;
   if (!(await persist((cur) => cur.filter((x) => x.id !== id)))) return;
-  toast({
-    text: t("quote.deleted", { no: quoteNo(q.no, intlLocale()) }),
+  showToast({
+    title: t("quote.deleted", { no: quoteNo(q.no, intlLocale()) }),
     // Undo puts it back at its old position unless it is already there (a double click, or a retry)
     action: { label: t("common.undo"), run: () => void persist((cur) => (cur.some((x) => x.id === q.id) ? cur : [...cur.slice(0, i), q, ...cur.slice(i)])) },
   });
@@ -167,5 +167,5 @@ export async function duplicateQuote(id: string): Promise<void> {
   let copy!: SavedQuote;
   if (!(await persist((cur) => { copy = { ...q, id: newKey("q"), no: freshNo(cur), createdAt: now, updatedAt: now, sheet }; return [...cur, copy]; }))) return;
   await bumpNextNo(copy.no);
-  toast({ text: t("quote.duplicated", { no: quoteNo(copy.no, intlLocale()) }) });
+  showToast({ title: t("quote.duplicated", { no: quoteNo(copy.no, intlLocale()) }) });
 }

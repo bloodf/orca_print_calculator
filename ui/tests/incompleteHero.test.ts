@@ -8,7 +8,7 @@ import PricePanel from "../src/components/price/PricePanel.vue";
 import OrderControls from "../src/components/price/OrderControls.vue";
 import { setLocale } from "../src/i18n";
 import { derived, patchDraft, store } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import { load, mount, txt } from "./priceKit";
 
 let app: App | null = null;

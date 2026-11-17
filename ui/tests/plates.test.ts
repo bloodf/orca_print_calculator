@@ -6,7 +6,7 @@ vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src
 import { call, BridgeError } from "../src/bridge";
 import { newDraft } from "../src/state/defaults";
 import { store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import { setLocale } from "../src/i18n";
 import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
 import { spoolman } from "../src/mock/fixtures";
@@ -174,7 +174,7 @@ describe("import", () => {
     const before = store.plates;
     await importFile(new File(["x"], "model.stl"));
     expect(call).not.toHaveBeenCalled();
-    expect(toasts.list[0]!.tone).toBe("bad");
+    expect(toasts.list[0]!.tone).toBe("error");
     expect(store.plates).toBe(before);
   });
   test.each([["not_zip", "Pick a sliced"], ["no_slice_info", "no slice data"], ["too_big", "100 MB"], ["boom", "Couldn't read"]])("host error %s maps to its message and leaves plates", async (code, text) => {
@@ -183,7 +183,7 @@ describe("import", () => {
     vi.mocked(call).mockRejectedValue(new BridgeError(code));
     await importFile(new File(["PK"], "x.3mf"));
     await flush();
-    expect(toasts.list[0]!.text).toContain(text);
+    expect(toasts.list[0]!.title).toContain(text);
     expect(store.plates).toBe(before);
     expect(importState.phase).toBe("idle");
   });
@@ -192,7 +192,7 @@ describe("import", () => {
     vi.mocked(call).mockResolvedValue({ plates: [] });
     await importFile(new File(["PK"], "x.3mf"));
     await flush();
-    expect(toasts.list[0]!.text).toContain("no slice data");
+    expect(toasts.list[0]!.title).toContain("no slice data");
     expect(store.plates).toHaveLength(3);
   });
   test("success sends name and base64 and replaces plates", async () => {

@@ -42,7 +42,7 @@ const mismatch = computed(() => !!store.settings.defaultsCurrency && store.setti
       <p v-if="fromSpoolman" class="sm oui-muted cur"><span class="sm oui-muted">{{ t("currency.label") }}</span><br /><span class="num">{{ t("currency.fromSpoolman", { currency: fromSpoolman }) }}</span></p>
       <TextField v-else :model-value="code" :label="t('currency.label')" :maxlength="3" width="sm" upper :error="codeError" @update:model-value="setCode" />
     </div>
-    <OuiBanner v-if="mismatch" tone="warn" :title="lead(t('currency.mismatch', { old: store.settings.defaultsCurrency ?? '' }))[0]">
+    <OuiBanner v-if="mismatch" tone="warn" dismissible :dismiss-key="`currency-mismatch:${store.settings.defaultsCurrency}:${currency}`" :close-label="t('common.close')" :title="lead(t('currency.mismatch', { old: store.settings.defaultsCurrency ?? '' }))[0]">
       {{ lead(t("currency.mismatch", { old: store.settings.defaultsCurrency ?? "" }))[1] }}
       <template #actions><Button severity="secondary" size="small" type="button" @click="patchSettings({ defaultsCurrency: currency })">{{ t("currency.fine") }}</Button></template>
     </OuiBanner>

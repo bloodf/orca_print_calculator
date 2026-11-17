@@ -17,7 +17,7 @@ import QuoteActions from "../src/components/quotes/QuoteActions.vue";
 import { setLocale } from "../src/i18n";
 import { exportQuote, isDirty, sheetFor } from "../src/quoteFlow";
 import { patchDraft, patchSettings, setView, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import { load, mount, txt } from "./priceKit";
 
 const mounted: { unmount: () => void; root: HTMLElement }[] = [];

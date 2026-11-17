@@ -5,7 +5,7 @@ import { onBeforeUnmount, ref } from "vue";
 import { t } from "../../i18n";
 import { defaultSettings } from "../../state/defaults";
 import { fetchSpoolman, liveCurrency, patchSettings, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import CopyValue from "./CopyValue.vue";
 
 const README_URL = "https://github.com/bloodf/orca_print_calculator#readme";
@@ -29,7 +29,7 @@ function reset(): void {
   const before = store.settings;
   patchSettings(() => defaultSettings(null, t("channel.directName"), liveCurrency.value));
   void fetchSpoolman(true);
-  toast({ text: t("about.resetDone"), action: { label: t("common.undo"), run: () => restore(before) } });
+  showToast({ title: t("about.resetDone"), action: { label: t("common.undo"), run: () => restore(before) } });
 }
 </script>
 

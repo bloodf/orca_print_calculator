@@ -8,7 +8,7 @@ import { setLocale } from "../src/i18n";
 import { createMockHost } from "../src/mock/host";
 import type { ScenarioName } from "../src/mock/scenarios";
 import { setLanguage, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 
 let app: VueApp | null = null;
 let root: HTMLElement | null = null;
@@ -158,8 +158,8 @@ describe("incomplete quote", () => {
     menuItem("CSV").click();
     await tick(100);
     expect(sent.some((s) => s.cmd === "export_file")).toBe(false);
-    const refused = toasts.list.find((x) => x.tone === "bad")!;
-    expect(refused.text).toMatch(/Slice again/);
+    const refused = toasts.list.find((x) => x.tone === "error")!;
+    expect(refused.title).toMatch(/Slice again/);
     refused.action!.run(); // "Open": the way to fix it
     await tick();
     expect(store.view).toBe("calc");
@@ -221,7 +221,12 @@ describe("Extras and stock, Spoolman states", () => {
     const off = el.querySelector("[data-stock-offline]")!;
     expect(off.textContent).toContain("isn't responding at http://192.168.1.10:7912");
     expect(el.textContent).not.toContain("Connect Spoolman to see");
-    expect(off.querySelectorAll("button")).toHaveLength(2);
+    expect(off.querySelectorAll("button")).toHaveLength(3); // Retry, Settings, Close
+    (off.querySelector('[aria-label="Close"]') as HTMLButtonElement).click();
+    await tick();
+    expect(off.querySelector(".oui-banner")).toBeNull();
+    await tick(30_000); // the retry poll keeps it offline: it stays closed
+    expect(el.querySelector("[data-stock-offline] .oui-banner")).toBeNull();
   });
   test("never configured: the first-time setup stays", async () => {
     const el = await boot("noSpoolman");

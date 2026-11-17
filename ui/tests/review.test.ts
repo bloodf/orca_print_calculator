@@ -6,7 +6,7 @@ import { createMockHost } from "../src/mock/host";
 import { savedQuotes, settings as fxSettings, spoolman as fxSpoolman } from "../src/mock/fixtures";
 import { duplicateQuote, openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import * as S from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import type { HostPlate } from "../src/state/types";
 
 type Sent = { cmd: string; args: Record<string, unknown> };

@@ -4,7 +4,7 @@ import { nextTick, type App } from "vue";
 import ExtrasEditor from "../src/components/costs/ExtrasEditor.vue";
 import { setLocale } from "../src/i18n";
 import { store } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import { load, mount } from "./priceKit";
 
 const mounted: { app: App; root: HTMLElement }[] = [];

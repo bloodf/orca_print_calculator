@@ -8,7 +8,7 @@ import SettingsView from "../src/views/SettingsView.vue";
 import { setLocale } from "../src/i18n";
 import { settingsTab, type SettingsTab } from "../src/state/settingsTab";
 import { store } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import { load } from "./priceKit";
 import { choose } from "./pv";
 

@@ -9,7 +9,7 @@ import { logoFromFile } from "../../logoFile";
 import { sampleSheetModel } from "../../quoteExport";
 import { DEFAULT_ACCENT } from "../../state/sheet";
 import { currency, patchSettings, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
 import NumberField from "../base/NumberField.vue";
@@ -34,7 +34,7 @@ async function onPick(e: Event): Promise<void> {
   const r = await logoFromFile(f);
   busy.value = false;
   if (r.ok) patchSheet({ logo: r.logo });
-  else toast({ text: t(`sheet.logoError.${r.error}`), tone: "bad" });
+  else showToast({ title: t(`sheet.logoError.${r.error}`), tone: "error" });
 }
 function onHex(e: Event): void {
   const v = (e.target as HTMLInputElement).value.trim();
@@ -43,7 +43,7 @@ function onHex(e: Event): void {
 function removeLogo(): void {
   const before = sheet.value.logo;
   patchSheet({ logo: "" });
-  toast({ text: t("sheet.logoRemoved"), action: { label: t("common.undo"), run: () => patchSheet({ logo: before }) } });
+  showToast({ title: t("sheet.logoRemoved"), action: { label: t("common.undo"), run: () => patchSheet({ logo: before }) } });
 }
 </script>
 
