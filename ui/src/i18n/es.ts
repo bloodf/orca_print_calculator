@@ -545,6 +545,8 @@ export const es: Record<MessageKey, string> = {
   "host.error.denied": "OrcaSlicer no lo permitió. Compruebe los permisos de la carpeta.",
   "host.error.unreadable": "El archivo guardado no se puede leer, así que los cambios no se están guardando. Compruebe los permisos del archivo en la carpeta de datos de OrcaSlicer.",
   "host.unreadable": "Los datos guardados ({files}) no se pudieron leer, así que los cambios no se están guardando. Compruebe los permisos del archivo en la carpeta de datos de OrcaSlicer.",
+  "host.notLoaded": "Los datos guardados ({files}) aún no se han cargado: OrcaSlicer todavía no ha abierto la carpeta de datos del plugin (espera a la red). Los cambios no se guardan hasta que se carguen, lo que ocurre solo.",
+  "host.settingsLoaded": "Su configuración guardada se ha cargado y reemplaza la que se mostraba hasta ahora.",
   "host.error.timeout": "OrcaSlicer no respondió a tiempo. Inténtelo de nuevo.",
   "common.undo": "Deshacer",
   "draft.undoClose": "Presupuesto cerrado. Los cambios sin guardar no se guardaron.",

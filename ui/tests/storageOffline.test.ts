@@ -2,7 +2,11 @@
 // quotes and names both as unloaded. The page must never save its built-in defaults over the real files: it reads
 // them again first (before a save, and when the tab is shown again), then saves what was read.
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { nextTick } from "vue";
+import { h, nextTick, type App } from "vue";
+import PlateNotices from "../src/components/plates/PlateNotices.vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
+import { savedQuotes } from "../src/mock/fixtures";
+import { toasts } from "../src/state/toast";
 import { setLocale } from "../src/i18n";
 import { HOST, plates, settings as fxSettings } from "../src/mock/fixtures";
 import * as S from "../src/state/store";
@@ -66,5 +70,63 @@ describe("storage not available when the page loaded", () => {
     expect(sent.filter((s) => s.cmd === "get_state")).toHaveLength(2);
     expect(S.store.settings.currency).toBe("EUR");
     expect(S.store.unreadable).toEqual([]);
+  });
+});
+
+const recover = async (): Promise<boolean> => { const p = S.recoverState(); await flush(); return p; };
+
+describe("after the files arrive", () => {
+  test("settings that differ from the ones shown are announced; equal ones are not", async () => {
+    const online = { ...OFFLINE, settings: saved(), quotes: [], unreadable: [], unloaded: [] };
+    boot([OFFLINE, online]);
+    await flush();
+    clearToasts();
+    await recover();
+    expect(toasts.list.map((x) => x.text)).toEqual(["Your saved settings have loaded and replace the ones shown until now."]);
+    stop?.(); stop = null; delete window.orca; S.store.status = "loading"; clearToasts();
+    boot([OFFLINE, { ...online, settings: null }]);   // first run: the file holds nothing beyond the built-ins
+    await flush();
+    await recover();
+    expect(toasts.list).toEqual([]);
+  });
+
+  test("quote numbers continue after the saved quotes that arrived", async () => {
+    const quotes = savedQuotes();
+    const top = Math.max(...quotes.map((q) => q.no));
+    const online = { ...OFFLINE, settings: { ...saved(), sheet: { ...saved().sheet, nextNo: 1 } }, quotes, unreadable: [], unloaded: [] };
+    boot([OFFLINE, online]);
+    await flush();
+    await recover();
+    expect(S.store.settings.sheet.nextNo).toBe(top + 1);
+  });
+});
+
+describe("the banner", () => {
+  let app: App | null = null;
+  let root: HTMLElement | null = null;
+  afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; });
+  const show = async (): Promise<HTMLElement> => {
+    root = document.createElement("div");
+    document.body.append(root);
+    app = createApp({ render: () => h(PlateNotices) });
+    app.mount(root);
+    await flush();
+    return root;
+  };
+
+  test("files not loaded yet get their own notice, not the permissions error", async () => {
+    boot([OFFLINE]);
+    await flush();
+    const el = await show();
+    expect(el.querySelector("[data-not-loaded]")?.textContent).toMatch(/haven't loaded yet/);
+    expect(el.querySelector("[data-unreadable]")).toBeNull();
+  });
+
+  test("a file that really can't be read keeps the permissions error", async () => {
+    boot([{ ...OFFLINE, settings: saved(), unreadable: ["quotes"], unloaded: [] }]);
+    await flush();
+    const el = await show();
+    expect(el.querySelector("[data-unreadable]")?.textContent).toMatch(/file permissions/);
+    expect(el.querySelector("[data-not-loaded]")).toBeNull();
   });
 });
