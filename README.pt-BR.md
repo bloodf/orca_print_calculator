@@ -99,7 +99,7 @@ O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://clou
 1. Abra a aba **Print Calculator**. No primeiro uso, **Configure uma vez** pede três coisas: o preço do filamento (conecte o Spoolman, ou pule e use o preço dos perfis), o preço da energia e o valor da sua hora. Se o Spooler estiver instalado, ele oferece o endereço do Spoolman que o Spooler já usa.
 2. Para conectar o Spoolman depois, abra **Ajustes**, digite o **Endereço do Spoolman** (por exemplo `http://localhost:7912`) e use **Testar conexão**. O OrcaSlicer pergunta uma vez se o plugin pode acessar esse endereço.
 3. Fatie uma mesa, ou use "Fatiar tudo". Cada mesa aparece em **Placas**. Use **Atualizar** se faltar alguma, ou **Importar arquivo fatiado** para um `.gcode.3mf`.
-4. Clique nos filamentos de uma mesa para ver o preço por kg de cada slot. **Trocar** escolhe outro carretel ou deixa você digitar um preço por kg.
+4. Clique nos filamentos de uma mesa para ver o preço por kg de cada slot e de onde ele veio. **Trocar** escolhe o carretel do Spoolman que está naquele slot (os mais parecidos primeiro), volta para **Automático** ou deixa você digitar um preço por kg.
 5. Abra as seções em **Custos** e preencha o que se aplica: **Máquina e energia**, **Mão de obra**, **Extras e acessórios**, **Frete**, **Taxa de venda**.
 6. Em **Preço**, escolha o **Canal de venda**, as **Peças pedidas** e o **Markup**. **Para onde vai o preço** divide o preço por linha de custo, taxas, imposto e lucro.
 7. Use **Salvar orçamento**. Depois, **Imprimir orçamento** para uma folha ou um PDF, ou **CSV** para um arquivo. Os orçamentos salvos ficam na aba **Orçamentos**.
@@ -147,17 +147,25 @@ O Orca Cloud só lista uma versão depois que ela é publicada, então ele pode 
 <details>
 <summary>Como ligo um slot de filamento a um carretel do Spoolman?</summary>
 
-Clique nos filamentos de uma mesa, depois em **Trocar** no slot, e escolha um carretel ou digite um preço por kg. Sem essa escolha, cada slot é ligado nesta ordem, e a primeira correspondência vale:
+Clique nos filamentos de uma mesa, depois em **Trocar** no slot. A lista mostra seus carretéis do Spoolman, primeiro os do mesmo material e da cor mais próxima. Escolha o carretel que está naquele slot, ou **Automático**. A escolha fica guardada para aquele perfil de impressora e número de slot, então quatro slots com o mesmo perfil de filamento podem ter cada um seu carretel, e ela continua lá depois de reiniciar. Você também pode digitar um preço por kg.
 
-1. Um carretel que você escolheu à mão para aquele perfil ("Escolhido").
-2. O mapeamento do plugin Spooler, se você usa o Spooler.
+Um carretel escolhido dá ao slot o próprio preço (preço do carretel dividido pelo peso inicial, senão o preço do filamento), e o aviso de estoque compara os gramas do slot com o que resta nesse carretel.
+
+Em **Automático**, cada slot é ligado nesta ordem, e a primeira correspondência vale:
+
+1. Um filamento ou carretel escolhido para aquele perfil numa versão anterior ("Escolhido").
+2. Os vínculos do Spooler, se você usa o Spooler: o perfil que o Spooler criou para um carretel, depois o criado para um filamento ("Vínculo do Spooler").
 3. `(#ID)` no nome do perfil de filamento.
 4. `Spoolman filament N` nas `filament_notes` do perfil.
-5. Sem correspondência: um preço por kg digitado por você para esse perfil ("Digitado"), senão o `filament_cost` do perfil por kg, marcado como "Preço do perfil".
+5. O campo extra `orca_filament_preset` do Spoolman num carretel ou filamento, quando ele nomeia o perfil do slot ("Perfil no Spoolman").
+6. O único filamento do Spoolman com o material do slot e mais ou menos a mesma cor ("Material e cor").
+7. Sem correspondência: um preço por kg digitado por você para esse perfil ("Digitado"), senão o `filament_cost` do perfil por kg, marcado como "perfil do Orca" com uma dica para escolher um carretel.
+
+Cada slot diz de onde veio o preço: "Carretel #14 do Spoolman", "filamento #3", "perfil do Orca" ou "digitado".
 
 Um slot sem preço conta como 0 e o painel de preço avisa. Um slot ligado a um filamento do Spoolman sem preço (nenhum carretel com preço, nenhum preço no filamento) segue a mesma regra: preço digitado, depois preço do perfil.
 
-O preço por kg vem do carretel usado mais recentemente que não esteja arquivado (preço do carretel dividido pelo peso inicial). Sem carretel, vem do preço do filamento dividido pelo peso dele.
+Sem carretel escolhido ou vinculado, o preço por kg vem do carretel do filamento usado mais recentemente que não esteja arquivado (preço do carretel dividido pelo peso inicial). Sem carretel, vem do preço do filamento dividido pelo peso dele.
 </details>
 
 <details>

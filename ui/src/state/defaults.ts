@@ -29,7 +29,7 @@ export const defaultSettings = (currency: string | null, directName: string, pre
   version: 1, onboarded: false, language: "auto", currency, defaultsCurrency: presetFor(presetCurrency) ? presetCurrency! : null,
   spoolman: { url: "" }, defaults: defaultDefaults(presetCurrency),
   channels: [directChannel(directName)], comparedChannelIds: ["direct"], defaultChannelId: "direct",
-  printers: {}, slotOverrides: {}, manualPrices: {}, extrasCatalog: [],
+  printers: {}, slotOverrides: {}, slotSpools: {}, manualPrices: {}, extrasCatalog: [],
   sheet: { shopName: "", footer: "", validityDays: 15, nextNo: 1, ...EMPTY_BRAND },
   ui: { open: {}, sheetMode: "summary" },
 });
@@ -145,11 +145,13 @@ export function migrateSettings(saved: unknown): Partial<Settings> | null {
   const ch = listRows(saved.channels, migrateChannel);
   const pr = mapRows(saved.printers, migratePrinter);
   const so = mapRows(saved.slotOverrides, (o) => (isRec(o) && natural(o.filamentId) ? o : null));
+  const ss = mapRows(saved.slotSpools, (o) => (isRec(o) && natural(o.filamentId) && (o.spoolId === undefined || natural(o.spoolId)) && (o.preset === undefined || typeof o.preset === "string")
+    ? { filamentId: o.filamentId, ...(o.spoolId === undefined ? {} : { spoolId: o.spoolId }), ...(o.preset === undefined ? {} : { preset: o.preset }) } : null));
   const mp = mapRows(saved.manualPrices, (n) => (natural(n) ? n : null));
   const ex = listRows(saved.extrasCatalog, migrateExtra);
   const out: Record<string, unknown> = { ...saved, version: 1 };
   if (ch.kept.length) out.channels = ch.kept; else delete out.channels;
-  out.printers = pr.kept; out.slotOverrides = so.kept; out.manualPrices = mp.kept; out.extrasCatalog = ex.kept;
+  out.printers = pr.kept; out.slotOverrides = so.kept; out.slotSpools = ss.kept; out.manualPrices = mp.kept; out.extrasCatalog = ex.kept;
   // Dropped rows stay in the file (settings.invalid) so a save never deletes what the user typed, even if we cannot read it.
   const old = isRec(saved.invalid) ? saved.invalid : {};
   const bag: Record<string, unknown> = {};
@@ -158,7 +160,7 @@ export function migrateSettings(saved: unknown): Partial<Settings> | null {
     const merged = Array.isArray(now) ? union(Array.isArray(before) ? before : [], now) : { ...(isRec(before) ? before : {}), ...(now as Record<string, unknown>) }; // spread defines own keys, so "__proto__" stays data
     if (Array.isArray(merged) ? merged.length : Object.keys(merged).length) bag[name] = merged;
   };
-  keep("channels", ch.dropped); keep("printers", pr.dropped); keep("extrasCatalog", ex.dropped); keep("slotOverrides", so.dropped); keep("manualPrices", mp.dropped);
+  keep("channels", ch.dropped); keep("printers", pr.dropped); keep("extrasCatalog", ex.dropped); keep("slotOverrides", so.dropped); keep("slotSpools", ss.dropped); keep("manualPrices", mp.dropped);
   if (Object.keys(bag).length) out.invalid = bag; else delete out.invalid;
   out.defaults = migrateDefaults(saved.defaults, defaultDefaults()).value;
   for (const [k, ok] of Object.entries(SCALARS)) if (own(out, k) && !ok(out[k])) delete out[k];

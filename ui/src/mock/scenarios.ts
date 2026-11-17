@@ -22,7 +22,7 @@ export function buildScenario(name: ScenarioName): Scenario {
     case "noSpoolman": return { state: base({ settings: settings({ spoolman: { url: "" } }), spooler: null }), behaviour: ok };
     case "offline": return { state: base(), behaviour: { spoolman: "offline" } };
     case "unmatched":
-      return { state: base({ plates: withPlates((p) => p.map((x) => (x.index === 2 ? { ...x, slots: [{ ...x.slots[0]!, preset: "House brand PLA", costPerKg: null }, x.slots[1]!] } : x))) }), behaviour: ok };
+      return { state: base({ plates: withPlates((p) => p.map((x) => (x.index === 2 ? { ...x, slots: [{ ...x.slots[0]!, preset: "House brand PLA", color: "#7A3EF0", costPerKg: null }, x.slots[1]!] } : x))) }), behaviour: ok };
     case "impossible": {
       const s = settings();
       const store = { id: "store", name: "Online store", taxBp: 2500, surchargeMinor: 0, tiers: [{ minMinor: 0, pctBp: 6000, fixedMinor: 100, shippingMinor: 0 }] };

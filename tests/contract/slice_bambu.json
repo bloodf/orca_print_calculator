@@ -13,6 +13,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Bambu Lab X1 Carbon",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "BBL",
       "projectName": "Desk organizer"
      },

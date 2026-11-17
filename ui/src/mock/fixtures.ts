@@ -5,7 +5,7 @@ import { deriveQuote } from "../state/derive";
 import type { Draft } from "../state/types";
 import { newDraft } from "../state/defaults";
 
-export const HOST: HostInfo = { projectName: "Desk organizer", printerModel: "Snapmaker U1", printerVendor: "Snapmaker", pluginVersion: "0.1.0" };
+export const HOST: HostInfo = { projectName: "Desk organizer", printerModel: "Snapmaker U1", printerVendor: "Snapmaker", printerPreset: "Snapmaker U1 (0.4 nozzle)", pluginVersion: "0.1.0" };
 export const BAMBU_HOST: HostInfo = { projectName: "Gridfinity bins", printerModel: "Bambu Lab X1 Carbon", printerVendor: "BBL", pluginVersion: "0.1.0" };
 
 const slot = (n: number, preset: string, grams: number | null, color: string, costPerKg: number | null, material = "PLA"): HostSlot => ({ n, preset, grams, color, costPerKg, notes: "", material });

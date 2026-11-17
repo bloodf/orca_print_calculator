@@ -5,7 +5,7 @@ import { call, errorCode, on, ready, type HostEvent, type PlatesEvent } from "..
 import { failText } from "../hostError";
 import { currentLocale, intlLocale, setLocale, t, type Lang, type Locale } from "../i18n";
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft, resetNames, shiftPlateControls } from "./defaults";
-import { deriveQuote, failedDerive, safeDigits } from "./derive";
+import { deriveQuote, failedDerive, pruneSlotSpools, safeDigits } from "./derive";
 import { changeDraft } from "./draftUndo";
 import { showToast } from "../../shared/src/components";
 import { parseQuotes } from "./validate";
@@ -99,6 +99,8 @@ export async function flushSettings(quiet = false, retried = false): Promise<voi
 
 export function patchSettings(patch: Partial<Settings> | ((s: Settings) => Partial<Settings>)): void {
   store.settings = { ...store.settings, ...(typeof patch === "function" ? patch(store.settings) : patch) };
+  // A picked spool that Spoolman deleted or archived is dropped with the next save (only judged on loaded data).
+  if (store.spoolman.state === "ok") store.settings = { ...store.settings, slotSpools: pruneSlotSpools(store.settings.slotSpools, store.spoolman.data) };
   pinCurrency();
   setLocale(store.settings.language, store.host.appLanguage);
   clearTimeout(saveTimer);

@@ -35,34 +35,47 @@ export function demandByItem(extras: readonly QuoteExtra[], catalog: readonly Ca
   return out;
 }
 
-export type FilamentShort = { filamentId: number; name: string; needG: number; haveG: number };
+export type FilamentShort = { filamentId: number; name: string; needG: number; haveG: number; /** Set when a picked or linked spool is short: only its own weight counts. */ spoolId?: number };
 type StockPlate = { index: number; include: boolean; copies: number; slots: { n: number; gramsMg: number }[] };
+type StockView = Pick<SlotMatchView, "filamentId"> & Partial<Pick<SlotMatchView, "spoolId" | "spoolPinned">> & { slot: Pick<HostSlot, "n"> };
 
 /**
  * Spoolman filaments this quote prints more of than their spools hold: every included plate copy, every run, summed per
- * filament, against the remaining weight of its spools that are not archived. A filament with no known remaining weight
- * is not judged. Read-only, like the extras check.
+ * filament, against the remaining weight of its spools that are not archived. A slot tied to one spool (picked, or linked
+ * by Spooler or `orca_filament_preset`) is judged against that spool alone. A filament or spool with no known remaining
+ * weight is not judged. Read-only, like the extras check.
  */
 export function filamentShortages(
   input: { plates: StockPlate[]; quantity: number; unitsPerSet?: number },
-  matches: Readonly<Record<number, readonly (Pick<SlotMatchView, "filamentId"> & { slot: Pick<HostSlot, "n"> })[]>>,
-  data: { filaments: readonly Pick<SpoolmanData["filaments"][number], "id" | "name">[]; spools: readonly { filamentId: number; archived: boolean; remainingWeight?: number | null }[] },
+  matches: Readonly<Record<number, readonly StockView[]>>,
+  data: { filaments: readonly Pick<SpoolmanData["filaments"][number], "id" | "name">[]; spools: readonly { id?: number; filamentId: number; archived: boolean; remainingWeight?: number | null }[] },
 ): FilamentShort[] {
   const { runs } = planOf(input);
-  const needMg = new Map<number, number>();
+  const need = new Map<string, { filamentId: number; spoolId?: number; mg: number }>();
   for (const p of input.plates) {
     if (!p.include) continue;
     for (const v of matches[p.index] ?? []) {
       const s = v.filamentId === null ? undefined : p.slots.find((x) => x.n === v.slot.n);
-      if (s && v.filamentId !== null) needMg.set(v.filamentId, (needMg.get(v.filamentId) ?? 0) + s.gramsMg * p.copies * runs);
+      if (!s || v.filamentId === null) continue;
+      const spoolId = v.spoolPinned && typeof v.spoolId === "number" ? v.spoolId : undefined;
+      const key = spoolId === undefined ? `f${v.filamentId}` : `s${spoolId}`;
+      const row = need.get(key) ?? { filamentId: v.filamentId, ...(spoolId === undefined ? {} : { spoolId }), mg: 0 };
+      need.set(key, { ...row, mg: row.mg + s.gramsMg * p.copies * runs });
     }
   }
+  const known = (w: number | null | undefined): w is number => typeof w === "number" && Number.isFinite(w);
+  // A pinned spool's own slots are served first; only what is left on it after them counts for the filament's other slots.
+  const spare = (s: { id?: number; remainingWeight?: number | null }): number | null | undefined => {
+    const used = s.id === undefined ? undefined : need.get(`s${s.id}`);
+    return used && known(s.remainingWeight) ? Math.max(0, s.remainingWeight - used.mg / 1000) : s.remainingWeight;
+  };
   const out: FilamentShort[] = [];
-  for (const [id, mg] of needMg) {
-    const left = data.spools.filter((s) => s.filamentId === id && !s.archived).map((s) => s.remainingWeight)
-      .filter((w): w is number => typeof w === "number" && Number.isFinite(w));
+  for (const { filamentId: id, spoolId, mg } of need.values()) {
+    const left = data.spools.filter((s) => (spoolId === undefined ? s.filamentId === id : s.id === spoolId) && !s.archived)
+      .map((s) => (spoolId === undefined ? spare(s) : s.remainingWeight)).filter(known);
     const haveG = left.reduce((a, b) => a + b, 0);
-    if (left.length && mg > Math.round(haveG * 1000)) out.push({ filamentId: id, name: data.filaments.find((f) => f.id === id)?.name ?? `#${id}`, needG: mg / 1000, haveG });
+    const name = data.filaments.find((f) => f.id === id)?.name ?? `#${id}`;
+    if (left.length && mg > Math.round(haveG * 1000)) out.push({ filamentId: id, name, needG: mg / 1000, haveG, ...(spoolId === undefined ? {} : { spoolId }) });
   }
   return out;
 }

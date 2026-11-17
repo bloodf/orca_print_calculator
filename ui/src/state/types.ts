@@ -10,7 +10,8 @@ export type View = "calc" | "quotes" | "stock" | "settings";
 export type { Lang };
 export type ShippingMode = "none" | "customer" | "absorbed"; // "none" maps to engine {mode:"customer", minor:0}
 
-export type HostInfo = { projectName: string | null; printerModel: string | null; printerVendor: string | null; pluginVersion: string; appLanguage?: string | null };
+/** `printerPreset`: the selected printer preset's name (absent from an older host): spool picks are kept per printer preset and slot. */
+export type HostInfo = { projectName: string | null; printerModel: string | null; printerVendor: string | null; printerPreset?: string | null; pluginVersion: string; appLanguage?: string | null };
 export type HostSlot = { n: number; preset: string; grams: number | null; color: string | null; costPerKg: number | null; notes: string; material: string | null };
 /** Filament use of a plate: `known` (a slot reported a weight), `zero` (the file states 0 g), `missing` (no usable data: never free). */
 export type Consumption = "known" | "zero" | "missing";
@@ -20,7 +21,8 @@ export type HostPlate = {
   consumption?: Consumption;
   slicedAt: string | null /* ISO time the host captured it */; source: "slice" | "file"; fileName: string | null; slots: HostSlot[];
 };
-export type SpoolerInfo = { url: string | null; presetToFilament: Record<string, number> } | null;
+/** `presetToSpool`: Spooler's presets made for one spool (profiles.json `spools`); absent from an older host. */
+export type SpoolerInfo = { url: string | null; presetToFilament: Record<string, number>; presetToSpool?: Record<string, number> } | null;
 export type SpoolmanSpoolRow = SpoolmanSpool & { remainingWeight?: number | null };
 export type SpoolmanData = { currency: string | null; filaments: SpoolmanFilament[]; spools: SpoolmanSpoolRow[] };
 /** `unreadable`: names of saved files ("settings", "quotes") that exist but could not be read; the host refuses to overwrite them. */
@@ -45,7 +47,9 @@ export type Settings = {
   spoolman: { url: string }; defaults: Defaults;
   channels: ChannelDef[]; comparedChannelIds: string[]; defaultChannelId: string;
   printers: Record<string, PrinterProfile>; // key = printer_model
-  slotOverrides: Record<string, SlotOverride>; // key = filament preset name
+  slotOverrides: Record<string, SlotOverride>; // key = filament preset name (picks made before slotSpools; still honoured)
+  /** The spool (or a filament with no spool) picked for a filament slot, key = slotSpoolKey(printer preset, slot number). Absent in older files. */
+  slotSpools: Record<string, SlotSpool>;
   manualPrices: Record<string, number>; // key = preset; minor units per kg
   extrasCatalog: CatalogExtra[];
   sheet: { shopName: string; footer: string; validityDays: number; nextNo: number } & SheetBrand;
@@ -53,6 +57,8 @@ export type Settings = {
   /** Rows from an older or hand-edited file that this version could not read. Written back untouched, never deleted. */
   invalid?: Record<string, unknown>;
 };
+/** `preset`: the slot's filament preset when it was picked; a slot that now loads another preset ignores the pick. */
+export type SlotSpool = { filamentId: number; spoolId?: number; preset?: string };
 export type SlotSource = MatchSource | "manual";
 /** `filamentId` is optional so quotes saved before it existed still load (they show a generic "filament match" badge). */
 /**
@@ -96,6 +102,10 @@ export type SlotMatchView = {
   filamentId: number | null; spoolId: number | null;
   pricePerKg: number | null; // major units, null = no price
   priceSource: "spool" | "filament" | "preset" | "manual" | null;
+  /** `spoolId` is a choice (picked or linked), so its remaining weight is the stock that counts. */
+  spoolPinned?: boolean;
+  /** The spool picked for this slot is gone from Spoolman (deleted or archived): Auto prices it until it is pruned. */
+  pickGone?: number;
 };
 
 export type NotCounted =

@@ -13,6 +13,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Snapmaker U1",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "Snapmaker",
       "projectName": "Desk organizer"
      },
@@ -382,6 +383,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Snapmaker U1",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "Snapmaker",
       "projectName": "Desk organizer"
      },
@@ -946,6 +948,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Bambu Lab X1 Carbon",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "BBL",
       "projectName": "Desk organizer"
      },
@@ -980,6 +983,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Bambu Lab X1 Carbon",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "BBL",
       "projectName": "Gridfinity bins"
      },
@@ -1001,6 +1005,7 @@
       "appLanguage": null,
       "pluginVersion": "0.0.0-dev",
       "printerModel": "Bambu Lab X1 Carbon",
+      "printerPreset": "Snapmaker U1 (0.4 nozzle)",
       "printerVendor": "BBL",
       "projectName": "Gridfinity bins"
      },

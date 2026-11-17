@@ -22,12 +22,12 @@ SRC = ROOT / "src"
 # Field lists copied from ui/src/state/types.ts (HostState, HostInfo, HostPlate, HostSlot, SpoolerInfo)
 # and ui/src/engine/match.ts (SpoolmanFilament, SpoolmanSpool).
 STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable", "unloaded"}
-HOST_KEYS = {"projectName", "printerModel", "printerVendor", "pluginVersion", "appLanguage"}
+HOST_KEYS = {"projectName", "printerModel", "printerVendor", "printerPreset", "pluginVersion", "appLanguage"}
 PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots", "consumption"}
 SLOT_KEYS = {"n", "preset", "grams", "color", "costPerKg", "notes", "material"}
-SPOOLER_KEYS = {"url", "presetToFilament"}
-FILAMENT_KEYS = {"id", "name", "vendor", "material", "price", "weight", "colorHex"}
-SPOOL_KEYS = {"id", "filamentId", "price", "initialWeight", "remainingWeight", "archived", "lastUsed"}
+SPOOLER_KEYS = {"url", "presetToFilament", "presetToSpool"}
+FILAMENT_KEYS = {"id", "name", "vendor", "material", "price", "weight", "colorHex", "orcaPreset"}
+SPOOL_KEYS = {"id", "filamentId", "price", "initialWeight", "remainingWeight", "archived", "lastUsed", "orcaPreset"}
 
 
 def gcode_file(folder, head="snapmaker_u1_temp_plate1.head.txt", tail="snapmaker_u1_temp_plate1.tail.txt", name=".1.0.gcode"):
@@ -254,7 +254,8 @@ class Rpc(HostCase):
         self.assertEqual(set(state), STATE_KEYS)
         self.assertEqual(set(state["host"]), HOST_KEYS)
         self.assertEqual(state["host"], {"projectName": "Desk organizer", "printerModel": "Snapmaker U1",
-                                         "printerVendor": "Snapmaker", "pluginVersion": "0.0.0-dev", "appLanguage": None})
+                                         "printerVendor": "Snapmaker", "printerPreset": "Snapmaker U1 (0.4 nozzle)",
+                                         "pluginVersion": "0.0.0-dev", "appLanguage": None})
         self.assertEqual(state["plates"], [])
         self.assertIsNone(state["settings"])
         self.assertIsNone(state["quotes"])
@@ -301,11 +302,13 @@ class Rpc(HostCase):
         datadir = Path(self.orca.storage_dir).parents[2]
         (datadir / "spooler").mkdir()
         (datadir / "spooler" / "spooler_settings.json").write_text(json.dumps({"spoolman_url": "http://10.0.0.2:7912"}))
-        (datadir / "spooler" / "profiles.json").write_text(json.dumps({"filaments": {"3": {"U1": "Generic PLA @U1"}}}))
+        (datadir / "spooler" / "profiles.json").write_text(json.dumps({"filaments": {"3": {"U1": "Generic PLA @U1"}},
+                                                                     "spools": {"8": {"U1": "Red #8 @U1"}}}))
         spooler = self.cmd("get_state")["data"]["spooler"]
         self.assertEqual(set(spooler), SPOOLER_KEYS)
         self.assertEqual(spooler["url"], "http://10.0.0.2:7912")
         self.assertEqual(spooler["presetToFilament"]["Generic PLA @U1"], 3)
+        self.assertEqual(spooler["presetToSpool"]["Red #8 @U1"], 8)
 
     def spooler_files(self, url="http://10.0.0.2:7912"):
         root = Path(self.orca.storage_dir).parents[2] / "spooler"
@@ -330,7 +333,7 @@ class Rpc(HostCase):
     def test_check_again_rereads(self):
         self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
         self.spooler_files()
-        self.assertEqual(self.cmd("check_requirements")["data"], {"spooler": {"url": "http://10.0.0.2:7912", "presetToFilament": {}}})
+        self.assertEqual(self.cmd("check_requirements")["data"], {"spooler": {"url": "http://10.0.0.2:7912", "presetToFilament": {}, "presetToSpool": {}}})
 
     def test_no_requirement_check_at_import_or_register(self):
         def boom(*a, **k):
@@ -646,7 +649,7 @@ class Spoolman(HostCase):
         self.assertEqual(set(data), {"currency", "filaments", "spools"})
         self.assertEqual(data["currency"], "BRL")
         self.assertEqual(data["filaments"], [{"id": 3, "name": "PLA+ White", "vendor": "eSun", "material": "PLA",
-                                              "price": 89.9, "weight": 1000.0, "colorHex": "#FFFFFF"}])
+                                              "price": 89.9, "weight": 1000.0, "colorHex": "#FFFFFF", "orcaPreset": None}])
         self.assertEqual(set(data["spools"][0]), SPOOL_KEYS)
         self.assertEqual(data["spools"][0]["filamentId"], 3)
         self.assertEqual(data["spools"][0]["remainingWeight"], 412.5)  # SpoolPicker shows grams left

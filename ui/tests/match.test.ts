@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
+  colorDistance,
+  fitScore,
   matchSlot,
   matchSlots,
   pricePerKg,
@@ -69,13 +71,13 @@ describe("rules", () => {
   });
   test("preset cost when nothing matches", () => {
     expect(matchSlot(slot({ costPerKg: 30 }), ctx())).toEqual({
-      slot: 1, source: "preset", filamentId: null, spoolId: null, pricePerKg: 30, priceSource: "preset",
+      slot: 1, source: "preset", filamentId: null, spoolId: null, pricePerKg: 30, priceSource: "preset", spoolPinned: false,
     });
   });
   test("none when no cost either", () => {
     for (const c of [null, 0, -5, NaN]) {
       expect(matchSlot(slot({ costPerKg: c }), ctx())).toEqual({
-        slot: 1, source: "none", filamentId: null, spoolId: null, pricePerKg: null, priceSource: null,
+        slot: 1, source: "none", filamentId: null, spoolId: null, pricePerKg: null, priceSource: null, spoolPinned: false,
       });
     }
   });
@@ -196,7 +198,7 @@ describe("slot pricing", () => {
   test("matched filament without usable price falls back to preset cost, keeps match", () => {
     const c = ctx({ filaments: [fil(26, { price: null })] });
     const m = matchSlot(slot({ preset: "P (#26)", costPerKg: 40 }), c);
-    expect(m).toEqual({ slot: 1, source: "name", filamentId: 26, spoolId: null, pricePerKg: 40, priceSource: "preset" });
+    expect(m).toEqual({ slot: 1, source: "name", filamentId: 26, spoolId: null, pricePerKg: 40, priceSource: "preset", spoolPinned: false });
   });
   test("matched filament without price or preset cost -> null price", () => {
     const c = ctx({ filaments: [fil(26, { price: 0 })] });
@@ -254,5 +256,80 @@ describe("review T2.6 L11: spool weight sanity floor", () => {
     expect(pricePerKg(fil(1, { price: 5, weight: 50 }), [])?.pricePerKg).toBe(100);
     // tiny spool initialWeight falls back to the filament weight
     expect(pricePerKg(fil(1, { weight: 500 }), [spool(1, 1, { price: 10, initialWeight: 1 })])).toEqual({ pricePerKg: 20, source: "spool", spoolId: 1 });
+  });
+});
+
+// Issue #18: four slots on one printer, a spool per slot, and Auto's sources in order before the Orca preset price.
+describe("spool per slot and Auto order", () => {
+  const red = fil(5, { material: "PLA", colorHex: "#D02020", price: 30 });
+  const blue = fil(6, { material: "PLA", colorHex: "#2040D0", price: 40 });
+  const petg = fil(7, { material: "PETG", colorHex: "#D02020", price: 50 });
+  const base = (o: Partial<MatchContext> = {}): MatchContext =>
+    ctx({ filaments: [red, blue, petg], spools: [spool(50, 5, { price: 15 }), spool(51, 5, { price: 25 }), spool(60, 6, { price: null }), spool(70, 7)], ...o });
+  const pla = (o: Partial<Slot> = {}): Slot => slot({ preset: "Elegoo PLA @Centauri", material: "PLA", color: "#D02222", costPerKg: 20, ...o });
+
+  test("a picked spool prices the slot with its own price and is pinned", () => {
+    const m = matchSlot(pla(), base({ assigned: { filamentId: 5, spoolId: 51 } }));
+    expect(m).toEqual({ slot: 1, source: "assigned", filamentId: 5, spoolId: 51, pricePerKg: 25, priceSource: "spool", spoolPinned: true });
+  });
+  test("a picked spool without a price uses its filament's price, never another spool's", () => {
+    const m = matchSlot(pla(), base({ assigned: { filamentId: 6, spoolId: 60 }, spools: [spool(60, 6, { price: null }), spool(61, 6, { price: 99, lastUsed: "2026-01-01T00:00:00Z" })] }));
+    expect(m).toMatchObject({ source: "assigned", spoolId: 60, pricePerKg: 40, priceSource: "filament", spoolPinned: true });
+  });
+  test("the slot pick wins over every automatic source", () => {
+    const m = matchSlot(pla({ preset: "P (#7)" }), base({ assigned: { filamentId: 6, spoolId: 60 }, overrides: { "P (#7)": { filamentId: 7 } }, spoolerPresetToFilament: { "P (#7)": 7 } }));
+    expect(m).toMatchObject({ source: "assigned", filamentId: 6 });
+  });
+  test("an archived or deleted picked spool falls back to Auto", () => {
+    expect(matchSlot(pla(), base({ assigned: { filamentId: 5, spoolId: 999 } })).source).toBe("color");
+    const archived = base({ assigned: { filamentId: 5, spoolId: 50 }, spools: [spool(50, 5, { archived: true }), spool(51, 5)] });
+    expect(matchSlot(pla(), archived).source).toBe("color");
+  });
+  test("1. Spooler's spool link comes before its filament link and before the Spoolman preset field", () => {
+    const c = base({ spoolerPresetToSpool: { "_local/spooler/Elegoo PLA @Centauri": 50 }, spoolerPresetToFilament: { "Elegoo PLA @Centauri": 6 } });
+    expect(matchSlot(pla(), c)).toMatchObject({ source: "spooler", filamentId: 5, spoolId: 50, pricePerKg: 15, spoolPinned: true });
+    const filamentOnly = base({ spoolerPresetToSpool: { "Elegoo PLA @Centauri": 999 }, spoolerPresetToFilament: { "Elegoo PLA @Centauri": 6 } });
+    expect(matchSlot(pla(), filamentOnly)).toMatchObject({ source: "spooler", filamentId: 6, spoolPinned: false });
+  });
+  test("2. orca_filament_preset on a spool pins that spool", () => {
+    const c = base({ spools: [spool(50, 5), spool(51, 5, { orcaPreset: "elegoo pla @centauri", price: 12 }), spool(60, 6)] });
+    expect(matchSlot(pla(), c)).toMatchObject({ source: "extra", filamentId: 5, spoolId: 51, pricePerKg: 12, spoolPinned: true });
+  });
+  test("2. orca_filament_preset on a filament, by full name or last path segment", () => {
+    const c = base({ filaments: [red, { ...blue, orcaPreset: "Elegoo PLA @Centauri" }, petg] });
+    expect(matchSlot(pla({ preset: "_local/x/Elegoo PLA @Centauri" }), c)).toMatchObject({ source: "extra", filamentId: 6, spoolPinned: false });
+  });
+  test("2. a preset field naming two filaments is ignored", () => {
+    const c = base({ filaments: [{ ...red, orcaPreset: "Elegoo PLA @Centauri" }, { ...blue, orcaPreset: "Elegoo PLA @Centauri" }, petg] });
+    expect(matchSlot(pla({ color: null }), c).source).toBe("preset");
+  });
+  test("3. the only filament of the slot's material in about its colour", () => {
+    expect(matchSlot(pla(), base())).toMatchObject({ source: "color", filamentId: 5, spoolPinned: false });
+    expect(matchSlot(pla({ material: "petg" }), base())).toMatchObject({ source: "color", filamentId: 7 });
+  });
+  test("3. two filaments in the same material and colour, a far colour or no colour: the Orca preset price", () => {
+    const twin = fil(8, { material: "PLA", colorHex: "#D02020" });
+    expect(matchSlot(pla(), base({ filaments: [red, twin, blue, petg], spools: [spool(50, 5), spool(80, 8)] }))).toMatchObject({ source: "preset", pricePerKg: 20, priceSource: "preset" });
+    expect(matchSlot(pla({ color: "#00FF00" }), base()).source).toBe("preset");
+    expect(matchSlot(pla({ color: null }), base()).source).toBe("preset");
+    expect(matchSlot(pla({ material: null }), base()).source).toBe("preset");
+  });
+  test("what worked before still wins over the new sources: preset override, (#id) name, notes", () => {
+    const tagged = base({ filaments: [red, { ...blue, orcaPreset: "P (#7)" }, petg] });
+    expect(matchSlot(pla({ preset: "P (#7)" }), tagged).source).toBe("name");
+    expect(matchSlot(pla({ notes: "Spoolman filament 7" }), base()).source).toBe("notes");
+    expect(matchSlot(pla(), base({ overrides: { "Elegoo PLA @Centauri": { filamentId: 6 } } })).source).toBe("override");
+  });
+  test("3. a used-up filament (no spool in use) neither matches nor blocks the colour match", () => {
+    const usedUp = fil(8, { material: "PLA", colorHex: "#D02020" });
+    expect(matchSlot(pla(), base({ filaments: [red, usedUp, blue, petg], spools: [spool(50, 5), spool(80, 8, { archived: true })] }))).toMatchObject({ source: "color", filamentId: 5 });
+    expect(matchSlot(pla(), base({ spools: [spool(70, 7)] })).source).toBe("preset");
+  });
+  test("colour distance and fit score order the picker: same material first, then the nearest colour", () => {
+    expect(colorDistance("#000000", "#000000")).toBe(0);
+    expect(colorDistance("#FF0000", "bad")).toBeNull();
+    const s = { material: "PLA", color: "#D02020" };
+    const order = [petg, blue, red].sort((a, b) => fitScore(s, a) - fitScore(s, b)).map((f) => f.id);
+    expect(order).toEqual([5, 6, 7]);
   });
 });

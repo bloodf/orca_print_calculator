@@ -10,7 +10,7 @@ import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
 import SpoolPicker from "./SpoolPicker.vue";
 import { takePick, pickRequest } from "./pickRequest";
-import { clearSlot, presetName, hasSlotChoice, perKg, priceSourceText } from "./slots";
+import { clearSlot, presetName, hasSlotChoice, onFallback, perKg, pricedByText, viaText } from "./slots";
 
 const props = defineProps<{ match: SlotMatchView }>();
 const emit = defineEmits<{ change: []; useAuto: [] }>();
@@ -20,14 +20,15 @@ const frozen = computed(() => !!store.draft.frozenPlates);
 const filament = computed(() => store.spoolman.data.filaments.find((f) => f.id === props.match.filamentId));
 const filamentName = computed(() => (filament.value ? [filament.value.vendor, filament.value.name].filter(Boolean).join(" ") : ""));
 const g = computed(() => (props.match.slot.grams === null ? null : grams(props.match.slot.grams, locale.value)));
-const showReset = computed(() => !frozen.value && hasSlotChoice(props.match.slot.preset));
+const showReset = computed(() => !frozen.value && hasSlotChoice(props.match));
+const hint = computed(() => !frozen.value && onFallback(props.match));
 const autoLabel = computed(() => t("match.useAuto"));
 // A "Pick spool" flag asked for this slot: open its picker (after the card has opened its rows).
 const checkRequest = (): void => { if (takePick(props.match.plateIndex, props.match.slot.n)) { open.value = true; emit("change"); } };
 onMounted(checkRequest);
 watch(() => pickRequest.seq, () => void nextTick(checkRequest));
 function toggle(): void { open.value = !open.value; if (open.value) emit("change"); }
-function useAuto(): void { clearSlot(props.match.slot.preset); emit("useAuto"); }
+function useAuto(): void { clearSlot(props.match); emit("useAuto"); }
 </script>
 
 <template>
@@ -36,6 +37,8 @@ function useAuto(): void { clearSlot(props.match.slot.preset); emit("useAuto"); 
     <span class="names">
       <span class="preset oui-truncate" :title="match.slot.preset">{{ presetName(match.slot.preset) }}</span>
       <span v-if="filamentName" class="oui-meta oui-truncate">{{ filamentName }}</span>
+      <span v-if="match.pickGone !== undefined && !frozen" class="sm oui-muted">{{ t("match.pickGone", { id: match.pickGone }) }}</span>
+      <span v-else-if="hint" class="sm oui-muted hint">{{ t("match.fallbackHint") }}</span>
     </span>
     <span class="num g">
       <template v-if="g">{{ g }}</template>
@@ -44,7 +47,8 @@ function useAuto(): void { clearSlot(props.match.slot.preset); emit("useAuto"); 
     <span class="price">
       <template v-if="match.pricePerKg !== null">
         <span class="num">{{ perKg(match.pricePerKg) }}</span>
-        <span class="oui-meta">{{ priceSourceText(match) }}</span>
+        <span class="oui-meta" data-priced-by>{{ pricedByText(match) }}</span>
+        <span v-if="viaText(match)" class="oui-meta">{{ viaText(match) }}</span>
       </template>
       <span v-else class="sm bad">{{ t("plate.missingPrice") }}</span>
     </span>

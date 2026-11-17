@@ -3,7 +3,7 @@ import { LEGACY_CALC, MARKUP_CALC, type ChannelOk, type QuoteInput } from "../..
 import { grams } from "../../format";
 import { intlLocale, t } from "../../i18n";
 import type { FilamentShort } from "../../state/extrasDemand";
-import type { Derived } from "../../state/derive";
+import { isFallback, type Derived } from "../../state/derive";
 import { markupOf } from "../../state/markup";
 
 export type FlagTone = "bad" | "info";
@@ -33,7 +33,7 @@ const itemText = (c: Derived["notCounted"][number]): string =>
       : c.kind === "grams" ? t("notCounted.grams", { slot: c.slot, n: c.plate })
         : t(`notCounted.${c.kind}`);
 
-export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; invalid?: boolean; currencyFrom?: string | null; short?: readonly FilamentShort[] }): Flag[] {
+export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; invalid?: boolean; currencyFrom?: string | null; short?: readonly FilamentShort[]; spoolman?: boolean }): Flag[] {
   const bad: Flag[] = [];
   const info: Flag[] = [];
   const sel = d.selected && d.selected.ok ? d.selected : null;
@@ -73,10 +73,15 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
       info.push({ id: "discount", tone: "info", text: t("flag.discount", { pct: f.pct(sel.effectiveDiscountBp), q: tier }) });
     }
   }
-  for (const s of opts.short ?? []) info.push({ id: `filamentShort-${s.filamentId}`, tone: "info", text: t("flag.filamentShort", { filament: s.name, have: grams(s.haveG, intlLocale()), need: grams(s.needG, intlLocale()) }) });
+  for (const s of opts.short ?? []) {
+    const filament = s.spoolId === undefined ? s.name : `${s.name}, ${t("match.price.spool", { id: s.spoolId })}`;
+    const text = t("flag.filamentShort", { filament, have: grams(s.haveG, intlLocale()), need: grams(s.needG, intlLocale()) });
+    info.push({ id: s.spoolId === undefined ? `filamentShort-${s.filamentId}` : `spoolShort-${s.spoolId}`, tone: "info", text });
+  }
   if (opts.currencyFrom) info.push({ id: "currencyMismatch", tone: "info", text: t("currency.mismatch", { old: opts.currencyFrom }), action: { label: t("nav.settings"), kind: "fees" } });
   if (opts.stale) info.push({ id: "stale", tone: "info", text: t("flag.stale") });
-  const preset = [...includedIdx].some((i) => (d.slotMatches[i] ?? []).some((v) => v.priceSource === "preset"));
-  if (preset) info.push({ id: "presetPrices", tone: "info", text: t("flag.presetPrices") });
+  // The Orca preset fallback: point at the first slot on it, so a spool can be picked from here.
+  const fallback = [...includedIdx].sort((a, b) => a - b).flatMap((i) => (d.slotMatches[i] ?? []).filter(isFallback))[0];
+  if (fallback) info.push({ id: "presetPrices", tone: "info", text: t("flag.presetPrices"), ...(opts.spoolman ? { action: { label: t("flag.pickSpool"), kind: "spool" as const, plate: fallback.plateIndex, slot: fallback.slot.n } } : {}) });
   return [...bad, ...info];
 }

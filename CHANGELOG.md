@@ -8,7 +8,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Added
 - Polish (pl) translation. Thanks to @xtronets for asking (u1control#20). Every tab, message, the quote sheet and the CSV exports are in Polish, with Polish plural forms (1 płyta, 2 płyty, 5 płyt) and the terms OrcaSlicer's own Polish uses. With Language set to Auto, OrcaSlicer in Polish (pl_PL) opens the plugin in Polish; Settings > Language lists it as Polski.
 - In Polish, money, numbers, dates and print times follow Polish rules (12 345,50 zł, 16 lis 2026, 2 h 14 min), quotes are numbered "nr 0042", and on first run the currency is the złoty (PLN). A currency already saved is never changed.
-- The page is about 37 kB larger (1,145 kB) because it carries Polish; the size gate is now 1,170,000 bytes.
+- The page is about 37 kB larger (1,145 kB) because it carries Polish; the size gate is now 1,200,000 bytes, which also covers the per-slot spool picker.
+- Pick the Spoolman spool loaded in each filament slot (#18). **Change** on a slot lists your spools, the ones with the slot's material and nearest colour first, plus **Auto**. The pick is kept per printer preset and slot number, so slots that share one filament preset can each have their own spool, and it survives restarts. The picked spool's price per kg (spool price, else filament price) prices the slot, and the stock note checks the slot against what is left on that spool.
+- Auto also uses, before the Orca preset price: Spooler's per-spool preset links, the Spoolman extra field `orca_filament_preset` on a spool or filament, and the only filament with the slot's material and colour.
+- Each slot says what priced it (Spoolman spool #id, Spoolman filament, Orca preset or typed), with a hint and a Pick spool shortcut when the Orca preset price is in use.
 
 ## [0.6.1] - 2026-11-17
 

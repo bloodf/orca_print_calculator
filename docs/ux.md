@@ -85,8 +85,10 @@ calculator body with the sheet and a toolbar (Back, Itemized/Summary, Print or s
 - **Per printer model** (`settings.printers[printer_model]`): average watts, printer price, lifetime hours. Edited
   from the printer chip and the Machine section; always saved to the profile (never a per-quote override),
   because the printer is the same printer on every quote.
-- **Per filament preset** (`settings.slotOverrides[preset]`, `settings.manualPrices[preset]`): manual spool pick
-  or typed price per kg. Saved globally because a preset is the same material on every quote.
+- **Per printer preset and slot** (`settings.slotSpools["{printer preset}#{n}"]`): the Spoolman spool loaded in
+  that slot. Saved globally: the spool stays in the slot from quote to quote.
+- **Per filament preset** (`settings.slotOverrides[preset]`, `settings.manualPrices[preset]`): spool pick from
+  older versions, or typed price per kg. Saved globally because a preset is the same material on every quote.
 - **Per quote only**: plate include and copies, pieces per set, quantity, selected channel, extras rows, discount
   tiers (seeded from defaults), shipping amount and mode (seeded from defaults), title, customer, note, and any
   override of a global default.
@@ -610,10 +612,17 @@ auto`: slot number `.muted`, preset full name + Spoolman filament name (`vendor 
 grams, price per kg (`{money}/kg` + small source text "spool #14" / "filament" / "Orca preset" / "typed"),
 actions: SpoolPicker button "Change" and ResetButton "Use automatic match" (only when override or manual exists).
 
-**SpoolPicker**: Popover anchored to "Change". Content: search input (filters by name, vendor, material, id),
-then a listbox (`role="listbox"`, arrow keys, Enter picks) grouped by material: each option `#{filamentId}
-{vendor} {name}`, sub-line per non-archived spool `spool #{id} · {remaining} g · {price/kg}`; picking a filament
-row stores `{filamentId}`, picking a spool row stores `{filamentId, spoolId}` in `slotOverrides[preset]`.
+**SpoolPicker**: Popover anchored to "Change". Content: search input (filters by name, vendor, material, spool id),
+then a listbox (`role="listbox"`, arrow keys, Enter picks the first): **Auto** first (hidden while searching), then
+every non-archived spool, best fit first (`fitScore`: the slot's material, then the nearest colour). Each option
+shows the filament colour, `{vendor} {name}` and `{material} · spool #{id} · {remaining} left · {price}/kg`. Picking
+a spool stores `{filamentId, spoolId}` in `slotSpools["{printer preset}#{slot n}"]` (issue #18: one printer, four
+slots, often one shared filament preset); Auto removes that key. Older `slotOverrides[preset]` picks still apply
+under Auto. Auto order: slot pick, preset pick, Spooler links (`profiles.json` `spools`, then `filaments`),
+`(#id)` in the name, notes, Spoolman `extra.orca_filament_preset`, a unique material + colour match, then the
+Orca preset price. A picked or linked spool is priced by itself (spool price, else filament price) and its own
+remaining weight drives the stock note. The material row says what priced the slot ("Spoolman spool #14",
+"filament #3", "Orca preset") and, on the preset fallback, a one-line hint to pick a spool.
 Below a hairline: MoneyField "Or type a price per kg" → `manualPrices[preset]` (used only when Spoolman gives no price for the slot).
 Spoolman unset/offline: the listbox is replaced by a one-line note "Connect Spoolman to pick a spool." and only
 the typed price remains. Max height 320, scrolls inside.

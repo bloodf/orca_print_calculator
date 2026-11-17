@@ -220,7 +220,7 @@ describe("F10/F11 picker", () => {
     const el = await show(PlateList);
     expect(txt(el)).toContain("missing filament price");
   });
-  test("the slot's own material is listed first and focus returns to Change after a pick", async () => {
+  test("Auto comes first, then the slot's own material, and focus returns to Change after a pick", async () => {
     load("ok");
     const el = await show(PlateList);
     el.querySelector<HTMLButtonElement>(".chip")!.click();
@@ -230,9 +230,10 @@ describe("F10/F11 picker", () => {
     change.click();
     await flush();
     await flush();
-    const first = document.querySelector('[role="listbox"] [role="group"]')?.getAttribute("aria-label") ?? document.querySelector(".p-listbox-option-group")?.textContent;
-    expect(first?.trim().toUpperCase()).toBe("PLA");
-    document.querySelector<HTMLElement>('[role="option"] .opt')!.click();
+    const opts = [...document.querySelectorAll<HTMLElement>('[role="option"] .opt')];
+    expect(opts[0]?.textContent).toContain("Auto");
+    expect(opts[1]?.querySelector(".sub")?.textContent?.startsWith("PLA ·")).toBe(true);
+    opts[1]!.click();
     await flush();
     await flush();
     expect(document.activeElement).toBe(change);
