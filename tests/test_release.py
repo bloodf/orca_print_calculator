@@ -74,7 +74,8 @@ class WheelPackaging(unittest.TestCase):
         orca.host.plugin.storage = offline
         icon = load_plugin(folder).CalculatorPage().get_icon()
         self.assertTrue(icon.startswith(os.path.realpath(folder)) or icon.startswith(folder), icon)
-        self.assertIn("<svg", Path(icon).read_text("utf-8"))
+        self.assertTrue(icon.endswith("orca_print_calculator-icon.png"), icon)
+        self.assertEqual(Path(icon).read_bytes(), (ROOT / "brand" / "plugin-icon.png").read_bytes())
 
     def test_page_is_offline(self):
         page = self.zip.read("orca_print_calculator/_assets.py").decode("utf-8")

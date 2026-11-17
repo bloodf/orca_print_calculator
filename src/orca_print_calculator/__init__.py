@@ -19,7 +19,7 @@ class CalculatorPage(orca.pages.PagesPluginCapabilityBase):
 
     def get_icon(self):
         try:
-            return HOST.icon_path(_assets.ICON_SVG)
+            return HOST.icon_path(_assets.ICON_PNG)
         except Exception:
             host.log.exception("get_icon failed")
             return ""

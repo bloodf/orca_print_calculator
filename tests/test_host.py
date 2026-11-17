@@ -127,7 +127,8 @@ class Loading(HostCase):
         self.assertEqual(self.page.get_ui(), self.pkg._assets.APP_HTML)
         icon = self.page.get_icon()
         self.assertTrue(icon.startswith(self.orca.storage_dir))
-        self.assertEqual(Path(icon).read_text("utf-8"), self.pkg._assets.ICON_SVG)
+        self.assertTrue(icon.endswith("orca_print_calculator-icon.png"))
+        self.assertEqual(Path(icon).read_bytes(), base64.b64decode(self.pkg._assets.ICON_PNG))
 
     def test_unknown_lifecycle_event_is_ignored(self):
         self.page.on_lifecycle_event(LE.PlateSelected, ctx())

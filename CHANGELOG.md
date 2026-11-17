@@ -19,6 +19,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ### Fixed
 - When an Orca Cloud install was started offline, Print Calculator logged an error while loading ("Cloud plugin storage is unavailable before networking is initialized"). It no longer asks for its storage folder while loading. Until OrcaSlicer can give it one, it shows its built-in defaults and its own icon, and it never saves those defaults over your saved settings and quotes. Before saving, and when you open the tab again, it reads your files again, so a change you make once networking is up keeps your saved settings and quotes. While they haven't loaded yet, a notice says so (instead of the file-permissions error), and when your saved settings replace the ones on screen, a message says so too. New quote numbers continue after the saved quotes that arrive.
 
+## [0.6.1] - 2026-11-16
+
+### Changed
+- The plugin icon is the new brand tile.
+
 ## [0.6.0] - 2026-11-16
 
 ### Added

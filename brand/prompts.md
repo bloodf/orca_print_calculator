@@ -18,7 +18,7 @@ Negative prompt: shading, ring or circle around the tag, spool, string, text, ar
 ```
 
 ## 2. Tab icon
-Hand-authored SVG, no image-model prompt: `ui/src/icon.svg`. Same geometry as the mark, 24x24 viewBox, `stroke-width="1.5"`, round caps and joins, `currentColor`, rendered at 20px.
+The store tile at 40x40, no prompt of its own: `brand/plugin-icon.png`. The header glyph `ui/src/icon.svg` is hand-authored: same geometry as the mark, 24x24 viewBox, `stroke-width="1.5"`, round caps and joins, `currentColor`.
 
 ## 3. Empty-state illustrations (x3)
 ```

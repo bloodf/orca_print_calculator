@@ -36,7 +36,7 @@ scripts/dev-install.sh
 
 What it does (read from `scripts/dev-install.sh` and `scripts/build.py`):
 
-1. `python3 scripts/build.py`: installs and builds the UI, inlines `ui/dist/index.html` and `ui/src/icon.svg` into
+1. `python3 scripts/build.py`: installs and builds the UI, inlines `ui/dist/index.html` and `brand/plugin-icon.png` into
    `src/orca_print_calculator/_assets.py`, then writes `dist/orca_print_calculator_any.whl` (plus
    `dist/SHA256SUMS`).
 2. Creates `.../orca_plugins/orca_print_calculator/`, deletes any `*.whl` in it, copies the new wheel in.
@@ -70,7 +70,7 @@ Confirms: Q1; checklist C1 (grant shown at enable time).
 
 Do: look at the tab strip.
 
-See: a **Print Calculator** tab with an icon (the plugin writes `orca_print_calculator.svg` into its data folder
+See: a **Print Calculator** tab with an icon (the plugin writes `orca_print_calculator-icon.png` into its data folder
 and hands that path to Orca; if the file exists but no icon shows, note it).
 Log: no `icon not written`.
 Confirms: tab and icon registration (Q7 context).

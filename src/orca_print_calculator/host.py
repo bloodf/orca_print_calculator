@@ -28,7 +28,9 @@ log.propagate = False
 
 LOG_FILE = "plugin.log"
 LOG_CAP = 512 * 1024
-ICON_FILE = "orca_print_calculator.svg"
+# A new name, not orca_print_calculator.png: OrcaSlicer drops the extension and tries .svg first, so the
+# orca_print_calculator.svg older versions wrote would win.
+ICON_FILE = "orca_print_calculator-icon.png"
 IMPORT_CAP = 100 * 1024 * 1024  # ui/src/components/plates/importFlow.ts MAX_BYTES
 B64_CAP = (IMPORT_CAP + 2) // 3 * 4
 IMPORT_CODES = {"bad_zip": "not_zip"}  # core code -> code importFlow.ts maps
@@ -236,15 +238,16 @@ class Host:
     def event(self, name, data):
         self.post({"type": "event", "name": name, "data": data})
 
-    def icon_path(self, svg):
+    def icon_path(self, png_b64):
         if not self.storage():   # the copy shipped in the package (OrcaSlicer may ask for the icon only at load)
             shipped = os.path.join(os.path.dirname(os.path.abspath(__file__)), ICON_FILE)
             return shipped if os.path.isfile(shipped) else ""
         path = os.path.join(self.storage(), ICON_FILE)
         try:
-            if not os.path.isfile(path) or Path(path).read_text("utf-8") != svg:
-                core._atomic_write(path, svg.encode("utf-8"))
-        except (OSError, core.CoreError) as exc:
+            png = base64.b64decode(png_b64)
+            if not os.path.isfile(path) or Path(path).read_bytes() != png:
+                core._atomic_write(path, png)
+        except (OSError, ValueError, core.CoreError) as exc:
             log.warning("icon not written: %s", exc)
             return ""
         return path
