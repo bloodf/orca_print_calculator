@@ -23,7 +23,11 @@ const otherCurrency = computed(() => (frozen.value && store.draft.currency && st
 const saved = computed(() => (frozen.value ? savedOf() : null));
 const open = computed(() => lead(saved.value ? t("quote.openBanner", { no: quoteNo(saved.value.no, intlLocale()), date: date(saved.value.updatedAt, locale.value) }) : t("quote.title")));
 const reset = computed(() => lead(t("settings.reset", { names: store.settingsReset.map(settingLabel).join(", ") })));
-const unreadable = computed(() => lead(t("host.unreadable", { files: filesText(store.unreadable) })));
+// Files not read only because OrcaSlicer had no storage folder yet get their own words: nothing is wrong with them.
+const notLoaded = computed(() => store.unreadable.filter((f) => store.unloaded.includes(f)));
+const broken = computed(() => store.unreadable.filter((f) => !store.unloaded.includes(f)));
+const unreadable = computed(() => lead(t("host.unreadable", { files: filesText(broken.value) })));
+const waiting = computed(() => lead(t("host.notLoaded", { files: filesText(notLoaded.value) })));
 const off = computed(() => lead(t("spoolman.offlineAlert", { url: store.settings.spoolman.url })));
 const stale = computed(() => lead(t("plates.staleAlert")));
 const origin = computed(() => lead(store.pendingPlates ? t("plates.newSlice") : t("plates.fromFile", { file: fileName.value })));
@@ -37,7 +41,8 @@ const blocked = computed(() => !!exportBlock());
     {{ reset[1] }}
     <template #actions><Button severity="secondary" size="small" type="button" @click="dismissSettingsReset">{{ t("common.close") }}</Button></template>
   </OuiBanner>
-  <OuiBanner v-if="store.unreadable.length" tone="error" :title="unreadable[0]" data-unreadable>{{ unreadable[1] }}</OuiBanner>
+  <OuiBanner v-if="broken.length" tone="error" :title="unreadable[0]" data-unreadable>{{ unreadable[1] }}</OuiBanner>
+  <OuiBanner v-if="notLoaded.length" tone="info" :title="waiting[0]" data-not-loaded>{{ waiting[1] }}</OuiBanner>
   <OuiBanner v-if="frozen" tone="info" :title="open[0]" data-quote-banner>
     {{ open[1] }} <span v-if="otherCurrency">{{ t("quote.currencyNote", { old: otherCurrency, now: liveCurrency }) }} </span><span v-if="store.pendingPlates">{{ t("plates.newSlice") }}</span>
     <template #actions>
