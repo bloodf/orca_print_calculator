@@ -59,8 +59,8 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
         <Button type="button" @click="printNow"><OuiIcon :icon="I.file" /><span>{{ t("sheet.printPdf") }}</span></Button>
       </template>
     </div>
-    <OuiBanner v-if="stale" class="warn app-chrome" tone="warn" dismissible :dismiss-key="`preview-stale:${staleKey}`" :close-label="t('common.close')" :title="lead(t('sheet.staleWarning'))[0]">{{ lead(t("sheet.staleWarning"))[1] }}</OuiBanner>
-    <OuiBanner v-if="imported" class="warn app-chrome" tone="info" dismissible :dismiss-key="`preview-imported:${importKey}`" :close-label="t('common.close')" :title="lead(t('sheet.importedWarning'))[0]">{{ lead(t("sheet.importedWarning"))[1] }}</OuiBanner>
+    <OuiBanner :show="stale" class="warn app-chrome" tone="warn" dismissible :dismiss-key="`preview-stale:${staleKey}`" :close-label="t('common.close')" :title="lead(t('sheet.staleWarning'))[0]">{{ lead(t("sheet.staleWarning"))[1] }}</OuiBanner>
+    <OuiBanner :show="imported" class="warn app-chrome" tone="info" dismissible :dismiss-key="`preview-imported:${importKey}`" :close-label="t('common.close')" :title="lead(t('sheet.importedWarning'))[0]">{{ lead(t("sheet.importedWarning"))[1] }}</OuiBanner>
     <QuoteSheet v-if="model && !block" :model="model" />
     <p v-else class="oui-muted sm app-chrome none" role="status">{{ t(block || "quote.blockedNoPrice") }}</p>
   </main>

@@ -46,8 +46,8 @@ async function runTest(): Promise<void> {
       :install-text="t('req.spoolmanInstall')" install-url="https://github.com/Donkie/Spoolman" install-label="github.com/Donkie/Spoolman"
       :check-label="t('req.checkAgain')" data-requirement="spoolman" @check="fetchSpoolman(false)"
     />
-    <OuiBanner v-if="spoolerUrl" tone="info" dismissible :dismiss-key="`spooler-hint:${spoolerUrl}`" :close-label="t('common.close')" :title="lead(t('spoolman.spoolerHint', { url: spoolerUrl }))[0]">
-      {{ lead(t("spoolman.spoolerHint", { url: spoolerUrl }))[1] }}
+    <OuiBanner :show="!!spoolerUrl" tone="info" dismissible :dismiss-key="`spooler-hint:${spoolerUrl ?? ''}`" :close-label="t('common.close')" :title="lead(t('spoolman.spoolerHint', { url: spoolerUrl ?? '' }))[0]">
+      {{ lead(t("spoolman.spoolerHint", { url: spoolerUrl ?? "" }))[1] }}
       <template #actions><Button severity="secondary" size="small" type="button" @click="use(spoolerUrl!)">{{ t("spoolman.useIt") }}</Button></template>
     </OuiBanner>
     <div>

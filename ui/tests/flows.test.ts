@@ -224,9 +224,24 @@ describe("Extras and stock, Spoolman states", () => {
     expect(off.querySelectorAll("button")).toHaveLength(3); // Retry, Settings, Close
     (off.querySelector('[aria-label="Close"]') as HTMLButtonElement).click();
     await tick();
-    expect(off.querySelector(".oui-banner")).toBeNull();
-    await tick(30_000); // the retry poll keeps it offline: it stays closed
-    expect(el.querySelector("[data-stock-offline] .oui-banner")).toBeNull();
+    expect(el.querySelector("[data-stock-offline]")).toBeNull();
+    await tick(70_000); // the retry poll (connecting, then offline again) keeps it down: it stays closed
+    expect(el.querySelector("[data-stock-offline]")).toBeNull();
+  });
+  test("a closed outage notice shows again when Spoolman answers and later goes down again", async () => {
+    const el = await boot("offline");
+    await tick(9000);
+    tab(el, "Extras and stock").click();
+    await tick();
+    (el.querySelector('[data-stock-offline] [aria-label="Close"]') as HTMLButtonElement).click();
+    await tick();
+    expect(el.querySelector("[data-stock-offline]")).toBeNull();
+    const down = store.spoolman;
+    store.spoolman = { ...down, state: "ok", error: null };
+    await tick();
+    store.spoolman = down; // same address, same error
+    await tick();
+    expect(el.querySelector("[data-stock-offline]")?.textContent).toContain("isn't responding");
   });
   test("never configured: the first-time setup stays", async () => {
     const el = await boot("noSpoolman");

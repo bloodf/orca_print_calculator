@@ -1,3 +1,6 @@
+// Toasts only count down while the page has focus (foundation 4.2.1); jsdom never has it. Stubbed here, before any test imports
+// the toast module (it reads focus once at load), so timed toasts leave as they would for someone looking at the page.
+if (typeof document !== "undefined") document.hasFocus = () => true;
 // jsdom gaps that PrimeVue's tabs, selects and overlays read at mount time. These are browser APIs the real WebView has; nothing
 // here changes component behaviour, it only gives jsdom something to observe.
 class ResizeObserverStub { observe(): void {} unobserve(): void {} disconnect(): void {} }

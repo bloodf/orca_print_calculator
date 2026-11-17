@@ -64,6 +64,9 @@ export const selected = computed(() => derived.value.selected);
 export const slotMatches = computed(() => derived.value.slotMatches);
 export const notCounted = computed(() => derived.value.notCounted);
 export const fieldErrors = computed(() => derived.value.fieldErrors);
+// A configured Spoolman that does not answer; a retry of it ("connecting" with the error kept) is still down, so the notice
+// and its close hold until it answers again.
+export const spoolmanDown = computed(() => !!store.settings.spoolman.url && (store.spoolman.state === "offline" || (store.spoolman.state === "connecting" && store.spoolman.error !== null)));
 export const plateOrigin = computed<"live" | "import" | "saved">(() => (store.draft.frozenPlates ? "saved" : store.plates.some((p) => p.source === "file") ? "import" : "live"));
 
 // ---- settings: auto-save, debounced 600 ms trailing; flushed on hidden and before view switch ----
@@ -171,6 +174,7 @@ function onHost(data: unknown): void {
 }
 
 // ---- spoolman ----
+let failedUrl = "";
 let retryTimer: ReturnType<typeof setInterval> | undefined;
 let fetchSeq = 0; // a reply counts only if no newer fetch started meanwhile (the user may have changed the address)
 let dataUrl: string | null = null; // the address the filaments, spools and currency in the store came from
@@ -184,7 +188,8 @@ export async function fetchSpoolman(silent = false): Promise<void> {
   // (A temporary failure of the same address keeps them as last known; that is the offline branch below.)
   if (dataUrl !== null && dataUrl !== url) { store.spoolman = { ...store.spoolman, data: NO_SPOOLMAN_DATA }; dataUrl = null; }
   if (!url) { store.spoolman = { state: "unset", data: NO_SPOOLMAN_DATA, error: null }; return; }
-  store.spoolman = { ...store.spoolman, state: "connecting" };
+  // A retry of the address that failed keeps its error (it is still down until it answers); another address starts clean.
+  store.spoolman = { ...store.spoolman, state: "connecting", error: url === failedUrl ? store.spoolman.error : null };
   try {
     const data = await call("spoolman_fetch", { url });
     if (mine !== fetchSeq) return;
@@ -195,6 +200,7 @@ export async function fetchSpoolman(silent = false): Promise<void> {
     if (mine !== fetchSeq) return;
     // Offline: chips fall back to Orca presets; saved overrides stay in settings (docs/ux.md §6.7); currency stays as last known.
     store.spoolman = { state: "offline", data: { currency: store.spoolman.data.currency, filaments: [], spools: [] }, error: errorCode(e) };
+    failedUrl = url;
     retryTimer = setInterval(() => { if (document.visibilityState === "visible") void fetchSpoolman(true); }, 60_000);
   }
 }

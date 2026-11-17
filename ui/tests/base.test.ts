@@ -147,7 +147,7 @@ describe("toasts", () => {
     expect(root.querySelector("[role=status]")?.textContent).toContain("Deleted");
     expect(root.querySelector("[role=alert]")?.textContent).toContain("Failed");
     expect(root.querySelectorAll('.oui-toast [aria-label="Close"]')).toHaveLength(2);
-    vi.advanceTimersByTime(4900);
+    vi.advanceTimersByTime(7900); // a toast with an action (Undo) stays 8 s
     expect(toasts.list.map((x) => x.title)).toContain("Deleted");
     vi.advanceTimersByTime(200);
     expect(toasts.list.map((x) => x.title)).toEqual(["Failed"]);
