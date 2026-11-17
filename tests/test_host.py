@@ -21,7 +21,7 @@ SRC = ROOT / "src"
 
 # Field lists copied from ui/src/state/types.ts (HostState, HostInfo, HostPlate, HostSlot, SpoolerInfo)
 # and ui/src/engine/match.ts (SpoolmanFilament, SpoolmanSpool).
-STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "requirements", "unreadable"}
+STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable"}
 HOST_KEYS = {"projectName", "printerModel", "printerVendor", "pluginVersion", "appLanguage"}
 PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots", "consumption"}
 SLOT_KEYS = {"n", "preset", "grams", "color", "costPerKg", "notes", "material"}
@@ -241,23 +241,10 @@ class Rpc(HostCase):
         root.mkdir(exist_ok=True)
         (root / "spooler_settings.json").write_text(json.dumps({"spoolman_url": url}))
 
-    def test_requirements_missing(self):
-        reqs = self.cmd("get_state")["data"]["requirements"]
-        self.assertEqual(reqs, [{"id": "spoolman", "status": "missing", "details": {}},
-                                {"id": "spooler", "status": "missing", "details": {}}])
-
-    def test_requirements_spoolman_detected_from_spooler(self):
+    def test_spooler_found_later_is_seen_without_restart(self):  # nothing read before is kept: a miss is never sticky
+        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
         self.spooler_files()
-        reqs = {r["id"]: r for r in self.cmd("get_state")["data"]["requirements"]}
-        self.assertEqual(reqs["spooler"]["status"], "ok")
-        self.assertEqual(reqs["spoolman"], {"id": "spoolman", "status": "ok",
-                                            "details": {"url": "http://10.0.0.2:7912", "source": "spooler"}})
-
-    def test_requirements_spoolman_from_settings_wins(self):
-        self.spooler_files()
-        self.cmd("save_settings", {"settings": {"spoolman": {"url": " http://s:7912 "}}})
-        reqs = {r["id"]: r for r in self.cmd("get_state")["data"]["requirements"]}
-        self.assertEqual(reqs["spoolman"]["details"], {"url": "http://s:7912", "source": "settings"})
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["url"], "http://10.0.0.2:7912")
 
     def test_spooler_changes_reach_the_next_get_state(self):  # Spooler's Sync Presets rewrites profiles.json
         root = Path(self.orca.storage_dir).parents[2] / "spooler"
@@ -272,9 +259,7 @@ class Rpc(HostCase):
     def test_check_again_rereads(self):
         self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
         self.spooler_files()
-        res = self.cmd("check_requirements")["data"]
-        self.assertEqual(res["spooler"]["url"], "http://10.0.0.2:7912")
-        self.assertEqual([r["status"] for r in res["requirements"]], ["ok", "ok"])
+        self.assertEqual(self.cmd("check_requirements")["data"], {"spooler": {"url": "http://10.0.0.2:7912", "presetToFilament": {}}})
 
     def test_no_requirement_check_at_import_or_register(self):
         def boom(*a, **k):

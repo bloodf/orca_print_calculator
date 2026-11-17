@@ -26,7 +26,7 @@ export function createMockHost(name: ScenarioName): OrcaHost {
         case "get_state":
           if (behaviour.hang) return;
           return behaviour.fail ? fail("host_error") : ok({ ...state, settings, quotes });
-        case "check_requirements": return ok({ spooler: state.spooler, requirements: [] });
+        case "check_requirements": return ok({ spooler: state.spooler });
         case "save_settings": settings = (m.args?.settings as Settings) ?? settings; return ok({}, 30);
         case "save_quotes": quotes = (m.args?.quotes as typeof quotes) ?? quotes; return ok({}, 30);
         case "spoolman_fetch": return behaviour.spoolman === "offline" ? fail("unreachable", 400) : ok(spoolman(), 250);

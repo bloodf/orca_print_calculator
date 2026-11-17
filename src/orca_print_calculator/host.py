@@ -260,17 +260,6 @@ class Host:
         info = core.read_spooler_files(datadir) if datadir else {"detected": False}
         return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"]} if info["detected"] else None
 
-    def requirements(self, settings):
-        """Optional requirements, per row {id, status: ok|missing, details}. Spoolman is the saved address, else Spooler's."""
-        spooler = self.spooler()
-        saved = ((settings or {}).get("spoolman") or {}).get("url") if isinstance(settings, dict) else None
-        saved = saved.strip() if isinstance(saved, str) else ""
-        url, source = (saved, "settings") if saved else ((spooler or {}).get("url"), "spooler")
-        return [
-            {"id": "spoolman", "status": "ok" if url else "missing", "details": {"url": url, "source": source} if url else {}},
-            {"id": "spooler", "status": "ok" if spooler else "missing", "details": {"url": spooler["url"]} if spooler else {}},
-        ]
-
     def load(self, name, kind):
         """Parsed file or None. Wrong JSON type is set aside like a corrupt file. A file that can be neither
         read nor set aside degrades to None (the rest of the state still loads) and is locked against saves."""
@@ -297,7 +286,7 @@ class Host:
         unreadable = [key for key, name in (("settings", core.SETTINGS_FILE), ("quotes", core.QUOTES_FILE))
                       if name in self.unreadable]  # null + listed here = "can't read", not "first run"
         return {"host": self.host_info(), "plates": self.plate_list(), "settings": settings, "quotes": quotes,
-                "spooler": self.spooler(), "requirements": self.requirements(settings), "unreadable": unreadable}
+                "spooler": self.spooler(), "unreadable": unreadable}
 
     def on_message(self, page, data):
         self.page = page
@@ -459,7 +448,7 @@ def cmd_get_state(host, args, rid):
 
 def cmd_check_requirements(host, args, rid):
     """Settings › Requirements › Check again: re-read Spooler's files."""
-    return {"spooler": host.spooler(), "requirements": host.requirements(host.load(core.SETTINGS_FILE, dict))}
+    return {"spooler": host.spooler()}
 
 
 def cmd_save_settings(host, args, rid):

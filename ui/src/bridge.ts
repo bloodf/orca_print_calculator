@@ -5,7 +5,7 @@
 // Real Orca 2.5 shape: window.orca.postMessage(obj) sends; window.orca.onMessage(cb) REGISTERS a callback (it is not a
 // property to assign); the host delivers through window.__orcaDispatch(msg), which calls every registered callback.
 // `msg` may arrive as an object or as a JSON string; dispatch() accepts both.
-import type { HostInfo, HostPlate, HostState, Requirement, SavedQuote, Settings, SpoolerInfo, SpoolmanData } from "./state/types";
+import type { HostInfo, HostPlate, HostState, SavedQuote, Settings, SpoolerInfo, SpoolmanData } from "./state/types";
 
 export interface OrcaHost {
   postMessage(msg: unknown): void;
@@ -21,7 +21,7 @@ declare global {
 /** Command table (import_sliced per docs/spike.md section 9). */
 export type Commands = {
   get_state: { args: Record<string, unknown>; data: HostState };
-  check_requirements: { args: Record<string, unknown>; data: { spooler: SpoolerInfo; requirements: Requirement[] } };
+  check_requirements: { args: Record<string, unknown>; data: { spooler: SpoolerInfo } };
   save_settings: { args: { settings: Settings }; data: Record<string, never> };
   save_quotes: { args: { quotes: SavedQuote[] }; data: Record<string, never> };
   spoolman_fetch: { args: { url: string }; data: SpoolmanData };

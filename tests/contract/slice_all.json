@@ -18,18 +18,6 @@
      },
      "plates": [],
      "quotes": null,
-     "requirements": [
-      {
-       "details": {},
-       "id": "spoolman",
-       "status": "missing"
-      },
-      {
-       "details": {},
-       "id": "spooler",
-       "status": "missing"
-      }
-     ],
      "settings": null,
      "spooler": null,
      "unreadable": []
@@ -528,18 +516,6 @@
       }
      ],
      "quotes": null,
-     "requirements": [
-      {
-       "details": {},
-       "id": "spoolman",
-       "status": "missing"
-      },
-      {
-       "details": {},
-       "id": "spooler",
-       "status": "missing"
-      }
-     ],
      "settings": null,
      "spooler": null,
      "unreadable": []

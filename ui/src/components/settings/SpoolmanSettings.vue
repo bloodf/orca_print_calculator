@@ -52,7 +52,7 @@ async function runTest(): Promise<void> {
         </Button>
       </div>
       <Message v-if="error" id="settings-spoolman-err" class="bad" severity="error" size="small" variant="simple" role="alert">{{ error }}</Message>
-      <p v-else-if="!url.trim()" id="settings-spoolman-hint" class="sm oui-muted" data-test-off>{{ t("spoolman.testOff") }}</p>
+      <p v-else-if="!url.trim() && !spoolerUrl" id="settings-spoolman-hint" class="sm oui-muted" data-test-off>{{ t("spoolman.testOff") }}</p>
       <p v-else id="settings-spoolman-hint" class="sm oui-muted">{{ t("spoolman.saveHint") }}</p>
     </div>
     <OuiBanner v-if="test.state === 'ok' || test.state === 'bad'" class="result" :class="test.state" :tone="test.state === 'ok' ? 'success' : 'error'" :title="test.text" />

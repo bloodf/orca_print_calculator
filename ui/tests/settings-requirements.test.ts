@@ -37,7 +37,7 @@ describe("Settings › Requirements", () => {
 
   test("Check again re-reads Spooler on the host; no Spoolman probe without an address", async () => {
     store.spooler = null;
-    const calls = installHost({ check_requirements: () => ({ spooler: { url: "http://10.0.0.9:7912", presetToFilament: {} }, requirements: [] }) });
+    const calls = installHost({ check_requirements: () => ({ spooler: { url: "http://10.0.0.9:7912", presetToFilament: {} } }) });
     const root = mountComponent(RequirementsSettings);
     byText(root, "button", t("req.checkAgain"))!.click();
     await flush();
@@ -55,5 +55,11 @@ describe("Settings › Requirements", () => {
     btn.click();
     await flush();
     expect(calls.filter((c) => c.cmd === "spoolman_fetch")).toHaveLength(0);
+  });
+
+  test("no reason shown when Spooler offers an address", () => {
+    store.spooler = { url: "http://10.0.0.5:7912", presetToFilament: {} };
+    installHost();
+    expect(mountComponent(SpoolmanSettings).querySelector("[data-test-off]")).toBeNull();
   });
 });
