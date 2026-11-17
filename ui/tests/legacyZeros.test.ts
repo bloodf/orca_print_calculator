@@ -11,7 +11,7 @@ import { exportBlock, exportText, isDirty, savedExportBlock } from "../src/quote
 import { confirmable, confirmZero, snapshotGaps } from "../src/state/completeness";
 import { closeQuote, confirmGap, openQuote, saveQuote } from "../src/state/quotes";
 import { derived, store } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import type { PlateSnapshot, SavedQuote } from "../src/state/types";
 import { buildScenario } from "../src/mock/scenarios";
 import { parseQuotes } from "../src/state/validate";

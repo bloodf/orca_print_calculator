@@ -7,7 +7,7 @@ import { t } from "../../i18n";
 import { confirmable, gapsOf, type Gap } from "../../state/completeness";
 import { confirmGap, useCurrentSlice } from "../../state/quotes";
 import { derived, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import { requestPick } from "../plates/pickRequest";
 import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
@@ -28,7 +28,7 @@ const rows = computed(() => gapsOf(derived.value.snapshots, included).map((g) =>
 
 async function confirm(g: Gap): Promise<void> {
   confirmGap(g);
-  toast({ text: t("gap.confirmed") });
+  showToast({ title: t("gap.confirmed") });
   await nextTick();
   // the pressed button is gone: go to the next one, or to Save (the quote is now edited)
   (document.querySelector<HTMLElement>("[data-gap-confirm]") ?? document.getElementById("qa-save"))?.focus();

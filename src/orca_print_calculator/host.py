@@ -198,13 +198,33 @@ class Host:
         self.plates = {}         # plate index -> HostPlate; UI thread only
         self.path_index = {}     # temp G-code path -> plate index (Orca keeps one path per plate); UI thread only
         self.unreadable = set()  # store files that could neither be read nor set aside: never overwritten
+        self.unloaded = set()    # store files not read because storage was unavailable: never overwritten until read
+        self.storage_warned = False
 
     # -- UI thread
     def storage(self):
+        """The plugin's storage folder, or "" while OrcaSlicer can't give one yet (an Orca Cloud install started
+        offline: "Cloud plugin storage is unavailable before networking is initialized"). Never raises; asked
+        again on every use until it answers, and the plugin runs on built-in defaults meanwhile."""
         if self.storage_dir is None:
-            self.storage_dir = orca.host.plugin.storage()
-            _setup_log(self.storage_dir)
+            try:
+                folder = orca.host.plugin.storage()
+            except Exception as exc:
+                if not self.storage_warned:   # once: it is asked again on every use
+                    self.storage_warned = True
+                    log.warning("storage not available yet: %s", exc)
+                return ""
+            if not folder:
+                return ""
+            self.storage_dir = folder
+            _setup_log(folder)
         return self.storage_dir
+
+    def storage_or_raise(self):
+        folder = self.storage()
+        if not folder:
+            raise core.CoreError("io", "plugin storage not available yet")
+        return folder
 
     def post(self, msg):
         page = self.page
@@ -219,6 +239,9 @@ class Host:
         self.post({"type": "event", "name": name, "data": data})
 
     def icon_path(self, png_b64):
+        if not self.storage():   # the copy shipped in the package (OrcaSlicer may ask for the icon only at load)
+            shipped = os.path.join(os.path.dirname(os.path.abspath(__file__)), ICON_FILE)
+            return shipped if os.path.isfile(shipped) else ""
         path = os.path.join(self.storage(), ICON_FILE)
         try:
             png = base64.b64decode(png_b64)
@@ -259,13 +282,17 @@ class Host:
         self.event("plates", {"plates": self.plate_list(), **extra})
 
     def spooler(self):
-        datadir = next((p.parent for p in Path(self.storage()).parents if p.name == "orca_plugins"), None)
+        folder = self.storage()
+        datadir = next((p.parent for p in Path(folder).parents if p.name == "orca_plugins"), None) if folder else None
         info = core.read_spooler_files(datadir) if datadir else {"detected": False}
         return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"]} if info["detected"] else None
 
     def load(self, name, kind):
         """Parsed file or None. Wrong JSON type is set aside like a corrupt file. A file that can be neither
         read nor set aside degrades to None (the rest of the state still loads) and is locked against saves."""
+        if not self.storage():   # built-in defaults until storage is available; the file is not saved over meanwhile
+            self.unloaded.add(name)
+            return None
         path = os.path.join(self.storage(), name)
         try:
             data = core.load_json(path, None)
@@ -277,22 +304,26 @@ class Host:
             self.unreadable.add(name)
             return None
         self.unreadable.discard(name)
+        self.unloaded.discard(name)
         return data
 
     def save(self, name, obj):
-        if name in self.unreadable:
+        if name in self.unreadable or name in self.unloaded:   # unloaded: the page holds defaults, not the file
             raise core.CoreError("unreadable", name)
-        core.save_json(os.path.join(self.storage(), name), obj)
+        core.save_json(os.path.join(self.storage_or_raise(), name), obj)
 
     def state(self):
         settings, quotes = self.load(core.SETTINGS_FILE, dict), self.load(core.QUOTES_FILE, list)
         unreadable = [key for key, name in (("settings", core.SETTINGS_FILE), ("quotes", core.QUOTES_FILE))
-                      if name in self.unreadable]  # null + listed here = "can't read", not "first run"
+                      if name in self.unreadable or name in self.unloaded]  # null + listed here = "can't read", not "first run"
+        unloaded = [key for key, name in (("settings", core.SETTINGS_FILE), ("quotes", core.QUOTES_FILE))
+                    if name in self.unloaded]  # no storage folder yet: the page reads them again before saving
         return {"host": self.host_info(), "plates": self.plate_list(), "settings": settings, "quotes": quotes,
-                "spooler": self.spooler(), "unreadable": unreadable}
+                "spooler": self.spooler(), "unreadable": unreadable, "unloaded": unloaded}
 
     def on_message(self, page, data):
         self.page = page
+        self.storage()   # first use: opens the log file once OrcaSlicer has a storage folder; never raises
         if isinstance(data, str):
             try:
                 data = json.loads(data)
@@ -449,6 +480,11 @@ def cmd_get_state(host, args, rid):
     return host.state()
 
 
+def cmd_check_requirements(host, args, rid):
+    """Settings › Requirements › Check again: re-read Spooler's files."""
+    return {"spooler": host.spooler()}
+
+
 def cmd_save_settings(host, args, rid):
     host.save(core.SETTINGS_FILE, _arg(args, "settings", dict))
     return {}
@@ -537,13 +573,14 @@ def cmd_import_sliced(host, args, rid):
 def cmd_export_file(host, args, rid):
     name, text = _arg(args, "name", str), _arg(args, "text", str)
     try:
-        return {"path": core.write_export(host.storage(), name, text)}
+        return {"path": core.write_export(host.storage_or_raise(), name, text)}
     except ValueError as exc:
         raise core.CoreError("bad_name", str(exc)) from exc
 
 
 COMMANDS = {
     "get_state": cmd_get_state,
+    "check_requirements": cmd_check_requirements,
     "save_settings": cmd_save_settings,
     "save_quotes": cmd_save_quotes,
     "spoolman_fetch": cmd_spoolman_fetch,

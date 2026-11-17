@@ -1,5 +1,6 @@
 """Release metadata: the version, the changelog section Orca Cloud receives, and the publish workflow's contract.
 Run: python3 -m unittest discover tests"""
+import os
 import re
 import sys
 import tomllib
@@ -58,6 +59,23 @@ class WheelPackaging(unittest.TestCase):
         self.assertEqual(self.zip.read(di + "LICENSE"), (ROOT / "LICENSE").read_bytes())
         for name in ("Vue.txt", "PrimeVue.txt", "PrimeUIX.txt", "Lucide.txt", "Manrope.txt"):
             self.assertIn(di + name, names)
+
+    def test_icon_is_shipped_for_an_offline_start(self):
+        """OrcaSlicer may ask for the tab icon only at load, before an Orca Cloud install started offline has a
+        storage folder: the installed package answers with its own copy."""
+        import tempfile
+        from fakes import install_orca, load_plugin
+        folder = tempfile.mkdtemp()
+        self.zip.extractall(folder)
+        orca = install_orca()
+
+        def offline():
+            raise RuntimeError("Cloud plugin storage is unavailable before networking is initialized")
+        orca.host.plugin.storage = offline
+        icon = load_plugin(folder).CalculatorPage().get_icon()
+        self.assertTrue(icon.startswith(os.path.realpath(folder)) or icon.startswith(folder), icon)
+        self.assertTrue(icon.endswith("orca_print_calculator-icon.png"), icon)
+        self.assertEqual(Path(icon).read_bytes(), (ROOT / "brand" / "plugin-icon.png").read_bytes())
 
     def test_page_is_offline(self):
         page = self.zip.read("orca_print_calculator/_assets.py").decode("utf-8")

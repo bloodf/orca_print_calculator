@@ -8,7 +8,7 @@ import SettingsView from "../src/views/SettingsView.vue";
 import { setLocale } from "../src/i18n";
 import { settingsTab, type SettingsTab } from "../src/state/settingsTab";
 import { store } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import { load } from "./priceKit";
 import { choose } from "./pv";
 
@@ -16,7 +16,7 @@ let app: App | null = null;
 let root: HTMLElement | null = null;
 const flush = async () => { for (let i = 0; i < 4; i++) { await nextTick(); await Promise.resolve(); } };
 beforeEach(async () => {
-  setLocale("en"); clearToasts(); load("ok"); settingsTab.value = "spoolman";
+  setLocale("en"); clearToasts(); load("ok"); settingsTab.value = "spoolman"; localStorage.clear(); // OuiSettings remembers the last tab
   store.status = "ready";
   root = document.createElement("div");
   document.body.appendChild(root);
@@ -93,42 +93,38 @@ describe("Pricing defaults", () => {
 });
 
 describe("section index", () => {
-  const links = () => [...root!.querySelectorAll<HTMLAnchorElement>("nav a")];
+  const links = () => [...root!.querySelectorAll<HTMLButtonElement>("nav [role=tab]")];
   const groups = () => [...root!.querySelectorAll(".grp")].map((g) => g.id);
-  test("every group on one page in reading order, one index entry per group, the first marked current", () => {
-    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "sheet", "spoolman"].map((id) => `settings-${id}`));
-    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "About"]);
-    expect(links().filter((l) => l.getAttribute("aria-current") === "true").map((l) => l.getAttribute("href"))).toEqual(["#settings-spoolman"]);
+  test("one tab per group in reading order, the first selected and the only group shown", () => {
+    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "requirements", "sheet", "spoolman"].map((id) => `settings-${id}`));
+    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "Requirements", "About"]);
+    expect(links().filter((l) => l.getAttribute("aria-selected") === "true").map((l) => l.dataset.section)).toEqual(["settings-spoolman"]);
+    expect([...root!.querySelectorAll<HTMLElement>(".grp")].filter((g) => !g.hidden).map((g) => g.id)).toEqual(["settings-spoolman"]);
     expect(root!.querySelector("#settings-extras")).toBeNull();
   });
-  test("a click on an entry goes to its group and marks it current", async () => {
-    const seen: string[] = [];
-    const scroll = Element.prototype.scrollIntoView;
-    Element.prototype.scrollIntoView = function (this: Element) { seen.push(this.id); };
-    try {
-      links().find((l) => l.textContent?.trim() === "Printers")!.click();
-      await flush();
-    } finally { Element.prototype.scrollIntoView = scroll; }
-    expect(seen).toContain("settings-printers");
-    expect(links().find((l) => l.getAttribute("aria-current") === "true")?.getAttribute("href")).toBe("#settings-printers");
+  test("a click on a tab shows its group alone and selects it", async () => {
+    links().find((l) => l.textContent?.trim() === "Printers")!.click();
+    await flush();
+    expect(links().find((l) => l.getAttribute("aria-selected") === "true")?.dataset.section).toBe("settings-printers");
+    expect([...root!.querySelectorAll<HTMLElement>(".grp")].filter((g) => !g.hidden).map((g) => g.id)).toEqual(["settings-printers"]);
   });
-  test("openSettingsTab('settings-printers') brings Printers into view; an unknown anchor changes nothing", async () => {
-    const seen: string[] = [];
-    const scroll = Element.prototype.scrollIntoView;
-    Element.prototype.scrollIntoView = function (this: Element) { seen.push(this.id); };
-    try {
-      const { openSettingsTab } = await import("../src/state/settingsTab");
-      openSettingsTab("settings-printers");
-      await flush();
-      expect(settingsTab.value).toBe("printers");
-      expect(seen).toEqual(["settings-printers"]);
-      openSettingsTab("nowhere");
-      await flush();
-      expect(settingsTab.value).toBe("printers");
-      expect(seen).toEqual(["settings-printers"]);
-    } finally { Element.prototype.scrollIntoView = scroll; }
+  test("openSettingsTab('settings-printers') opens the Printers tab; an unknown anchor changes nothing", async () => {
+    const shown = () => [...root!.querySelectorAll<HTMLElement>(".grp")].filter((g) => !g.hidden).map((g) => g.id);
+    const { openSettingsTab } = await import("../src/state/settingsTab");
+    openSettingsTab("settings-printers");
+    await flush();
+    expect(settingsTab.value).toBe("printers");
+    expect(shown()).toEqual(["settings-printers"]);
+    openSettingsTab("nowhere");
+    await flush();
+    expect(settingsTab.value).toBe("printers");
+    expect(shown()).toEqual(["settings-printers"]);
   });
-  test("the index is reachable with Tab: entries are links in page order", () => {
-    expect(links().every((l) => l.tabIndex === 0 && l.getAttribute("href")!.startsWith("#settings-"))).toBe(true);
+  test("the tabs are one stop for Tab and arrow keys move between them", async () => {
+    expect(links().filter((l) => l.tabIndex === 0)).toHaveLength(1);
+    const first = links()[0];
+    first.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+    await flush();
+    expect(links()[1].getAttribute("aria-selected")).toBe("true");
   });
 });

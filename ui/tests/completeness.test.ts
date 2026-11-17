@@ -11,7 +11,7 @@ import { exportBlock, exportQuote, exportText, printQuote, savedExportBlock } fr
 import { exportBlockOf, snapshotGaps } from "../src/state/completeness";
 import { closeQuote, duplicateQuote, openQuote, saveQuote } from "../src/state/quotes";
 import { derived, notCounted, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import { parseQuotes } from "../src/state/validate";
 import type { HostPlate, PlateSnapshot, SavedQuote } from "../src/state/types";
 import { load, mount, txt } from "./priceKit";
@@ -68,7 +68,7 @@ describe("F01: unknown stays unknown after saving", () => {
     await exportQuote("csv", q);
     expect(call).not.toHaveBeenCalledWith("export_file", expect.anything());
     let toast = toasts.list[toasts.list.length - 1]!;
-    expect(toast.text).toBe(t("quote.blockedUnknown"));
+    expect(toast.title).toBe(t("quote.blockedUnknown"));
     expect(toast.action?.label).toBe(t("quotes.open"));
 
     clearToasts();
@@ -76,7 +76,7 @@ describe("F01: unknown stays unknown after saving", () => {
     printQuote(q);
     expect(store.preview).toBe(false); // nothing opened, nothing printed
     toast = toasts.list[toasts.list.length - 1]!;
-    expect(toast.text).toBe(t("quote.blockedUnknown"));
+    expect(toast.title).toBe(t("quote.blockedUnknown"));
     toast.action!.run();
     expect(store.draft.quoteId).toBe(q.id); // the fix starts by reopening it
 

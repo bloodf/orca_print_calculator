@@ -28,12 +28,10 @@ class CalculatorPage(orca.pages.PagesPluginCapabilityBase):
         return _assets.APP_HTML
 
     def on_load(self):
+        # Storage is not asked for here: an Orca Cloud install started offline has none until networking is up
+        # ("Cloud plugin storage is unavailable before networking is initialized"). It is asked for on first use.
         HOST.page = self
-        try:
-            HOST.storage()
-            host.log.info("loaded %s", VERSION)
-        except Exception:
-            host.log.exception("on_load failed")
+        host.log.info("loaded %s", VERSION)
 
     def on_unload(self):
         if HOST.page is self:

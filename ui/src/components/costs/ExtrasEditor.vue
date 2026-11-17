@@ -8,7 +8,7 @@ import { intlLocale, t } from "../../i18n";
 import { money } from "../../format";
 import { currency, derived, digits, patchDraft, patchSettings, store } from "../../state/store";
 import { catalogItemOf, demandByItem, planOf } from "../../state/extrasDemand";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import type { CatalogExtra, QuoteExtra } from "../../state/types";
 import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
@@ -61,8 +61,8 @@ function remove(r: QuoteExtra): void {
   const at = rows.value.findIndex((x) => x.key === r.key);
   setRows(rows.value.filter((x) => x.key !== r.key));
   void focusAfterRemove(at);
-  toast({
-    text: t("extras.removed"),
+  showToast({
+    title: t("extras.removed"),
     action: { label: t("common.undo"), run: () => { const cur = rows.value; setRows([...cur.slice(0, Math.min(at, cur.length)), r, ...cur.slice(Math.min(at, cur.length))]); } },
   });
 }
@@ -70,7 +70,7 @@ function saveToCatalog(r: QuoteExtra): void {
   const key = newKey("c");
   patchSettings((s) => ({ extrasCatalog: [...s.extrasCatalog, { key, label: r.label, unitMinor: r.unitMinor, qtyE3: r.qtyE3, per: r.per }] }));
   patchRow(r.key, { catalogKey: key });
-  toast({ text: t("extras.saved") });
+  showToast({ title: t("extras.saved") });
   void nextTick().then(() => document.getElementById(`xn-${r.key}`)?.focus()); // the pressed button is gone
 }
 // PrimeVue's Menu gives the menu role, arrow/Home/End keys, Esc and focus return; the items are the catalog plus "custom".

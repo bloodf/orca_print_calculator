@@ -6,7 +6,7 @@ import { computed } from "vue";
 import { matchPrinter } from "../../engine/printerMatch";
 import { t } from "../../i18n";
 import { currency, digits, patchSettings, store } from "../../state/store";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import { presetFor } from "../../state/markup";
 import type { PrinterProfile } from "../../state/types";
 import { OuiIcon } from "../../../shared/src/components";
@@ -30,8 +30,8 @@ function remove(model: string): void {
   const prev = profile(model);
   if (!prev) return;
   patchSettings((s) => ({ printers: Object.fromEntries(Object.entries(s.printers).filter(([k]) => k !== model)) }));
-  toast({
-    text: t("printers.removed", { model }),
+  showToast({
+    title: t("printers.removed", { model }),
     action: { label: t("common.undo"), run: () => patchSettings((s) => ({ printers: { ...s.printers, [model]: prev } })) },
   });
 }

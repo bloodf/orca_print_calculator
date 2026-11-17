@@ -70,7 +70,7 @@ Confirms: Q1; checklist C1 (grant shown at enable time).
 
 Do: look at the tab strip.
 
-See: a **Print Calculator** tab with an icon (the plugin writes `orca_print_calculator.svg` into its data folder
+See: a **Print Calculator** tab with an icon (the plugin writes `orca_print_calculator-icon.png` into its data folder
 and hands that path to Orca; if the file exists but no icon shows, note it).
 Log: no `icon not written`.
 Confirms: tab and icon registration (Q7 context).

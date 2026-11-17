@@ -5,7 +5,7 @@
 // Real Orca 2.5 shape: window.orca.postMessage(obj) sends; window.orca.onMessage(cb) REGISTERS a callback (it is not a
 // property to assign); the host delivers through window.__orcaDispatch(msg), which calls every registered callback.
 // `msg` may arrive as an object or as a JSON string; dispatch() accepts both.
-import type { HostInfo, HostPlate, HostState, SavedQuote, Settings, SpoolmanData } from "./state/types";
+import type { HostInfo, HostPlate, HostState, SavedQuote, Settings, SpoolerInfo, SpoolmanData } from "./state/types";
 
 export interface OrcaHost {
   postMessage(msg: unknown): void;
@@ -21,6 +21,7 @@ declare global {
 /** Command table (import_sliced per docs/spike.md section 9). */
 export type Commands = {
   get_state: { args: Record<string, unknown>; data: HostState };
+  check_requirements: { args: Record<string, unknown>; data: { spooler: SpoolerInfo } };
   save_settings: { args: { settings: Settings }; data: Record<string, never> };
   save_quotes: { args: { quotes: SavedQuote[] }; data: Record<string, never> };
   spoolman_fetch: { args: { url: string }; data: SpoolmanData };
@@ -86,7 +87,7 @@ function host(): OrcaHost {
 }
 
 /** Every command times out with the code `timeout` so no spinner can wait forever: get_state 10 s (docs/ux.md 6.2), importing a big file 120 s, spoolman_fetch 30 s (the host's worst case is 25 s), the rest 25 s. */
-const TIMEOUTS: Record<CommandName, number> = { get_state: 10_000, import_sliced: 120_000, save_settings: 25_000, save_quotes: 25_000, spoolman_fetch: 30_000, export_file: 25_000 };
+const TIMEOUTS: Record<CommandName, number> = { get_state: 10_000, check_requirements: 10_000, import_sliced: 120_000, save_settings: 25_000, save_quotes: 25_000, spoolman_fetch: 30_000, export_file: 25_000 };
 
 export function call<K extends CommandName>(cmd: K, args: Commands[K]["args"], timeoutMs: number = TIMEOUTS[cmd]): Promise<Commands[K]["data"]> {
   return new Promise((resolve, reject) => {

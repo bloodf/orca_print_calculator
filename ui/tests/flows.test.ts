@@ -8,7 +8,7 @@ import { setLocale } from "../src/i18n";
 import { createMockHost } from "../src/mock/host";
 import type { ScenarioName } from "../src/mock/scenarios";
 import { setLanguage, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 
 let app: VueApp | null = null;
 let root: HTMLElement | null = null;
@@ -158,8 +158,8 @@ describe("incomplete quote", () => {
     menuItem("CSV").click();
     await tick(100);
     expect(sent.some((s) => s.cmd === "export_file")).toBe(false);
-    const refused = toasts.list.find((x) => x.tone === "bad")!;
-    expect(refused.text).toMatch(/Slice again/);
+    const refused = toasts.list.find((x) => x.tone === "error")!;
+    expect(refused.title).toMatch(/Slice again/);
     refused.action!.run(); // "Open": the way to fix it
     await tick();
     expect(store.view).toBe("calc");
@@ -221,7 +221,27 @@ describe("Extras and stock, Spoolman states", () => {
     const off = el.querySelector("[data-stock-offline]")!;
     expect(off.textContent).toContain("isn't responding at http://192.168.1.10:7912");
     expect(el.textContent).not.toContain("Connect Spoolman to see");
-    expect(off.querySelectorAll("button")).toHaveLength(2);
+    expect(off.querySelectorAll("button")).toHaveLength(3); // Retry, Settings, Close
+    (off.querySelector('[aria-label="Close"]') as HTMLButtonElement).click();
+    await tick();
+    expect(el.querySelector("[data-stock-offline]")).toBeNull();
+    await tick(70_000); // the retry poll (connecting, then offline again) keeps it down: it stays closed
+    expect(el.querySelector("[data-stock-offline]")).toBeNull();
+  });
+  test("a closed outage notice shows again when Spoolman answers and later goes down again", async () => {
+    const el = await boot("offline");
+    await tick(9000);
+    tab(el, "Extras and stock").click();
+    await tick();
+    (el.querySelector('[data-stock-offline] [aria-label="Close"]') as HTMLButtonElement).click();
+    await tick();
+    expect(el.querySelector("[data-stock-offline]")).toBeNull();
+    const down = store.spoolman;
+    store.spoolman = { ...down, state: "ok", error: null };
+    await tick();
+    store.spoolman = down; // same address, same error
+    await tick();
+    expect(el.querySelector("[data-stock-offline]")?.textContent).toContain("isn't responding");
   });
   test("never configured: the first-time setup stays", async () => {
     const el = await boot("noSpoolman");

@@ -21,7 +21,7 @@ SRC = ROOT / "src"
 
 # Field lists copied from ui/src/state/types.ts (HostState, HostInfo, HostPlate, HostSlot, SpoolerInfo)
 # and ui/src/engine/match.ts (SpoolmanFilament, SpoolmanSpool).
-STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable"}
+STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable", "unloaded"}
 HOST_KEYS = {"projectName", "printerModel", "printerVendor", "pluginVersion", "appLanguage"}
 PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots", "consumption"}
 SLOT_KEYS = {"n", "preset", "grams", "color", "costPerKg", "notes", "material"}
@@ -147,6 +147,76 @@ class Loading(HostCase):
         self.assertTrue((Path(self.orca.storage_dir) / "plugin.log").is_file())
 
 
+class OfflineStorage(unittest.TestCase):
+    """An Orca Cloud install started offline: plugin.storage() raises "Cloud plugin storage is unavailable before
+    networking is initialized" until networking is up."""
+
+    def setUp(self):
+        self.orca = install_orca()
+        self.addCleanup(shutil.rmtree, Path(self.orca.storage_dir).parents[2], True)
+        self.ready = False
+        self.asked = 0
+        real = self.orca.host.plugin.storage
+
+        def storage():
+            self.asked += 1
+            if not self.ready:
+                raise RuntimeError("Cloud plugin storage is unavailable before networking is initialized")
+            return real()
+        self.orca.host.plugin.storage = storage
+        self.pkg = load_plugin(SRC)
+        self.page = self.pkg.CalculatorPage()
+
+    def tearDown(self):
+        logger = logging.getLogger("orca_print_calculator")
+        for h in list(logger.handlers):
+            h.close()
+            logger.removeHandler(h)
+
+    def cmd(self, cmd, args=None):
+        self.page.on_message({"type": "cmd", "id": 1, "cmd": cmd, "args": {} if args is None else args})
+        return self.page.posted[-1]
+
+    def test_on_load_does_not_ask_for_storage(self):
+        self.page.on_load()
+        self.assertEqual(self.asked, 0)
+
+    def test_works_on_defaults_until_storage_is_ready(self):
+        self.page.on_load()
+        self.assertEqual(self.page.get_icon(), "")   # running from source: no packaged icon file
+        state = self.cmd("get_state")
+        self.assertTrue(state["ok"])
+        self.assertIsNone(state["data"]["settings"])   # built-in defaults
+        self.assertEqual(state["data"]["unreadable"], ["settings", "quotes"])   # the page writes neither
+        self.assertEqual(self.cmd("save_settings", {"settings": {}})["error"], "unreadable")
+        self.ready = True   # networking came up: the next get_state reads the files
+        self.assertEqual(self.cmd("get_state")["data"]["unreadable"], [])
+        self.assertTrue(self.cmd("save_settings", {"settings": {}})["ok"])
+        self.assertTrue((Path(self.orca.storage_dir) / "settings.json").is_file())
+
+    def test_saved_files_are_not_overwritten_by_defaults(self):
+        """The real files exist but storage was unavailable when the page loaded: a save once storage is back must
+        not replace them with the defaults the page holds; only after the page reads them again (get_state)."""
+        store = Path(self.orca.storage_dir)
+        (store / "settings.json").write_text('{"currency": "EUR"}', "utf-8")
+        (store / "quotes.json").write_text('[{"id": "q1"}]', "utf-8")
+        self.cmd("get_state")
+        self.ready = True
+        self.assertEqual(self.cmd("save_settings", {"settings": {}})["error"], "unreadable")
+        self.assertEqual(self.cmd("save_quotes", {"quotes": []})["error"], "unreadable")
+        self.assertEqual((store / "settings.json").read_text("utf-8"), '{"currency": "EUR"}')
+        self.assertEqual((store / "quotes.json").read_text("utf-8"), '[{"id": "q1"}]')
+        state = self.cmd("get_state")["data"]   # the page reloads: now it holds the real files
+        self.assertEqual((state["settings"], state["unreadable"]), ({"currency": "EUR"}, []))
+        self.assertTrue(self.cmd("save_settings", {"settings": {"currency": "USD"}})["ok"])
+
+    def test_storage_warning_is_logged_once(self):
+        with self.assertLogs("orca_print_calculator", "WARNING") as logs:
+            self.cmd("get_state")
+            self.cmd("get_state")
+        self.assertEqual(len([r for r in logs.output if "storage not available" in r]), 1)
+
+
 class Rpc(HostCase):
     def test_ready_binds_page_and_posts_nothing(self):
         # The page loads through get_state (timeout, error screen); a `state` push on ready had no listener.
@@ -236,6 +306,45 @@ class Rpc(HostCase):
         self.assertEqual(set(spooler), SPOOLER_KEYS)
         self.assertEqual(spooler["url"], "http://10.0.0.2:7912")
         self.assertEqual(spooler["presetToFilament"]["Generic PLA @U1"], 3)
+
+    def spooler_files(self, url="http://10.0.0.2:7912"):
+        root = Path(self.orca.storage_dir).parents[2] / "spooler"
+        root.mkdir(exist_ok=True)
+        (root / "spooler_settings.json").write_text(json.dumps({"spoolman_url": url}))
+
+    def test_spooler_found_later_is_seen_without_restart(self):  # nothing read before is kept: a miss is never sticky
+        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
+        self.spooler_files()
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["url"], "http://10.0.0.2:7912")
+
+    def test_spooler_changes_reach_the_next_get_state(self):  # Spooler's Sync Presets rewrites profiles.json
+        root = Path(self.orca.storage_dir).parents[2] / "spooler"
+        root.mkdir()
+        profiles = root / "profiles.json"
+        profiles.write_text(json.dumps({"filaments": {"3": {"U1": "Generic PLA @U1"}}}))
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["presetToFilament"], {"Generic PLA @U1": 3})
+        profiles.write_text(json.dumps({"filaments": {"7": {"U1": "Generic PLA @U1"}}}))
+        os.utime(profiles, (time.time() + 5, time.time() + 5))
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["presetToFilament"], {"Generic PLA @U1": 7})
+
+    def test_check_again_rereads(self):
+        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
+        self.spooler_files()
+        self.assertEqual(self.cmd("check_requirements")["data"], {"spooler": {"url": "http://10.0.0.2:7912", "presetToFilament": {}}})
+
+    def test_no_requirement_check_at_import_or_register(self):
+        def boom(*a, **k):
+            raise AssertionError("read_spooler_files ran before the page asked")
+        install_orca()
+        real = self.host_mod.core.read_spooler_files
+        self.host_mod.core.read_spooler_files = boom
+        try:
+            pkg = load_plugin(SRC)  # fresh import: same core module object is replaced, so patch it again
+            pkg.host.core.read_spooler_files = boom
+            pkg.PrintCalculator().register_capabilities()
+            pkg.CalculatorPage().on_load()
+        finally:
+            self.host_mod.core.read_spooler_files = real
 
 
 class Capture(HostCase):

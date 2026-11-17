@@ -68,6 +68,8 @@ def wheel_files(project):
     for name, text in sources.items():
         ast.parse(text, name + ".py")  # syntax check only
         files["%s/%s.py" % (PKG, name)] = text.encode("utf-8")
+    # The icon as a file next to the modules: get_icon's answer while the storage folder is not available yet.
+    files["%s/orca_print_calculator-icon.png" % PKG] = icon_png()  # host.ICON_FILE
     return files
 
 

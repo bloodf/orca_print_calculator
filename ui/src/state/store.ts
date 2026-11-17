@@ -7,7 +7,7 @@ import { currentLocale, intlLocale, setLocale, t, type Lang, type Locale } from 
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft, resetNames, shiftPlateControls } from "./defaults";
 import { deriveQuote, failedDerive, safeDigits } from "./derive";
 import { changeDraft } from "./draftUndo";
-import { toast } from "./toast";
+import { showToast } from "../../shared/src/components";
 import { parseQuotes } from "./validate";
 import type { Draft, HostInfo, HostPlate, HostState, OverridableKey, Defaults, SavedQuote, Settings, SpoolerInfo, SpoolmanData, SpoolmanState, View } from "./types";
 
@@ -34,6 +34,8 @@ export const store = reactive({
   settingsReset: [] as string[],
   /** Saved files the host could not read ("settings", "quotes"): a persistent banner, no first run, nothing is written. */
   unreadable: [] as string[],
+  /** Of those, the ones not read only because the host had no storage folder yet: read again before any save. */
+  unloaded: [] as string[],
   quarantined: [] as unknown[],
   spooler: null as SpoolerInfo,
   spoolman: { state: "unset" as SpoolmanState, data: { currency: null, filaments: [], spools: [] } as SpoolmanData, error: null as string | null },
@@ -62,6 +64,9 @@ export const selected = computed(() => derived.value.selected);
 export const slotMatches = computed(() => derived.value.slotMatches);
 export const notCounted = computed(() => derived.value.notCounted);
 export const fieldErrors = computed(() => derived.value.fieldErrors);
+// A configured Spoolman that does not answer; a retry of it ("connecting" with the error kept) is still down, so the notice
+// and its close hold until it answers again.
+export const spoolmanDown = computed(() => !!store.settings.spoolman.url && (store.spoolman.state === "offline" || (store.spoolman.state === "connecting" && store.spoolman.error !== null)));
 export const plateOrigin = computed<"live" | "import" | "saved">(() => (store.draft.frozenPlates ? "saved" : store.plates.some((p) => p.source === "file") ? "import" : "live"));
 
 // ---- settings: auto-save, debounced 600 ms trailing; flushed on hidden and before view switch ----
@@ -70,10 +75,13 @@ let saveTimer: ReturnType<typeof setTimeout> | undefined;
 let savedTimer: ReturnType<typeof setTimeout> | undefined;
 
 /** Never write before the host's state was read: until then `store.settings` holds built-in defaults, not the user's file. */
-export async function flushSettings(quiet = false): Promise<void> {
+export async function flushSettings(quiet = false, retried = false): Promise<void> {
   clearTimeout(saveTimer);
   saveTimer = undefined;
-  if (store.status !== "ready" || store.unreadable.includes("settings")) return; // an unreadable file is never written over
+  if (store.status !== "ready") return;
+  // an unreadable file is never written over; one the host could not read yet (no storage folder) is read first
+  if (store.unloaded.includes("settings")) await recoverState();
+  if (store.unreadable.includes("settings")) return;
   try {
     await call("save_settings", { settings: store.settings });
     if (!quiet) {
@@ -82,8 +90,9 @@ export async function flushSettings(quiet = false): Promise<void> {
       savedTimer = setTimeout(() => { if (store.saveStatus === "saved") store.saveStatus = "idle"; }, 1500);
     }
   } catch (e) {
+    if (!retried && RECOVER_CODES.includes(errorCode(e))) { await recoverState(true); return flushSettings(quiet, true); }
     store.saveStatus = "error";
-    toast({ text: failText(t("host.cmdFailed", { action: t("settings.title") }), errorCode(e)), tone: "bad", action: { label: t("host.tryAgain"), run: () => void flushSettings() } });
+    showToast({ title: failText(t("host.cmdFailed", { action: t("settings.title") }), errorCode(e)), tone: "error", action: { label: t("host.tryAgain"), run: () => void flushSettings() } });
     console.error("save_settings", errorCode(e));
   }
 }
@@ -165,6 +174,7 @@ function onHost(data: unknown): void {
 }
 
 // ---- spoolman ----
+let failedUrl = "";
 let retryTimer: ReturnType<typeof setInterval> | undefined;
 let fetchSeq = 0; // a reply counts only if no newer fetch started meanwhile (the user may have changed the address)
 let dataUrl: string | null = null; // the address the filaments, spools and currency in the store came from
@@ -178,49 +188,115 @@ export async function fetchSpoolman(silent = false): Promise<void> {
   // (A temporary failure of the same address keeps them as last known; that is the offline branch below.)
   if (dataUrl !== null && dataUrl !== url) { store.spoolman = { ...store.spoolman, data: NO_SPOOLMAN_DATA }; dataUrl = null; }
   if (!url) { store.spoolman = { state: "unset", data: NO_SPOOLMAN_DATA, error: null }; return; }
-  store.spoolman = { ...store.spoolman, state: "connecting" };
+  // A retry of the address that failed keeps its error (it is still down until it answers); another address starts clean.
+  store.spoolman = { ...store.spoolman, state: "connecting", error: url === failedUrl ? store.spoolman.error : null };
   try {
     const data = await call("spoolman_fetch", { url });
     if (mine !== fetchSeq) return;
     store.spoolman = { state: "ok", data, error: null };
     dataUrl = url;
-    if (!silent) toast({ text: t("spoolman.refreshed") });
+    if (!silent) showToast({ title: t("spoolman.refreshed") });
   } catch (e) {
     if (mine !== fetchSeq) return;
     // Offline: chips fall back to Orca presets; saved overrides stay in settings (docs/ux.md §6.7); currency stays as last known.
     store.spoolman = { state: "offline", data: { currency: store.spoolman.data.currency, filaments: [], spools: [] }, error: errorCode(e) };
+    failedUrl = url;
     retryTimer = setInterval(() => { if (document.visibilityState === "visible") void fetchSpoolman(true); }, 60_000);
   }
 }
 
+/** Settings › Requirements › Check again: the host re-reads Spooler's files; a set Spoolman address is probed again. */
+export async function checkRequirements(): Promise<void> {
+  try {
+    store.spooler = (await call("check_requirements", {})).spooler ?? null;
+  } catch (e) {
+    console.error("check_requirements", e);
+  }
+  await fetchSpoolman(true);
+}
+
 // ---- boot ----
+/** A save refused with this code is retried once after the files are read again (get_state): the host refuses to
+ * write over a file it has not read, e.g. one it could not read before its storage folder was available. */
+export const RECOVER_CODES = ["unreadable"];
+const namesOf = (v: unknown): string[] => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
+const unreadableOf = (s: HostState): string[] => namesOf(s.unreadable);
+
+/** Read again the files the host could not read yet (its storage folder was not available when the page loaded),
+ * without touching the working quote or the plates. `all`: after a refused save, every file. Returns true when
+ * nothing wanted is left unread. */
+export async function recoverState(all = false): Promise<boolean> {
+  if (store.status !== "ready") return false;
+  const wanted = all ? ["settings", "quotes"] : store.unloaded;
+  if (!wanted.length) return true;
+  let s: HostState;
+  try {
+    s = await call("get_state", {});
+  } catch (e) {
+    console.error("get_state", errorCode(e));
+    return false;
+  }
+  const still = unreadableOf(s);
+  if (wanted.includes("settings") && !still.includes("settings")) {
+    const { settings, reset } = settingsFrom(s);
+    if (settings) {
+      // the file wins over what the page showed meanwhile (built-ins, maybe edited): say so when that changes anything
+      if (JSON.stringify(settings) !== JSON.stringify(store.settings)) showToast({ title: t("host.settingsLoaded") });
+      store.settings = settings;
+      store.settingsReset = reset;
+      setLocale(store.settings.language, store.host.appLanguage);
+    } else still.push("settings");
+  }
+  if (wanted.includes("quotes") && !still.includes("quotes")) {
+    const parsed = quotesFrom(s);
+    if (parsed) { store.quotes = parsed.quotes; store.quarantined = parsed.bad; store.skippedQuotes = parsed.bad.length; }
+    else still.push("quotes");
+  }
+  store.unreadable = still;
+  store.unloaded = namesOf(s.unloaded);
+  // As at boot: a number is never reused, whichever of the two files arrived now.
+  store.settings = { ...store.settings, sheet: { ...store.settings.sheet, nextNo: freshNextNo(store.settings.sheet.nextNo, store.quotes) } };
+  return !wanted.some((n) => still.includes(n));
+}
+
+const freshNextNo = (nextNo: number, quotes: readonly SavedQuote[]): number => Math.max(nextNo, ...quotes.map((q) => q.no + 1));
+
+/** Settings from the host's state merged over built-ins, or settings null when they make no sense (unreadable). */
+function settingsFrom(s: HostState): { settings: Settings | null; reset: string[] } {
+  const savedCurrency = s.settings && typeof s.settings.currency === "string" ? s.settings.currency : null;
+  const fresh = defaultSettings(null, t("channel.directName"), savedCurrency ?? guessCurrency());
+  try {
+    return { settings: mergeSettings(s.settings, fresh), reset: resetNames(s.settings) };
+  } catch (e) {
+    console.error("settings", e);
+    return { settings: null, reset: [] };
+  }
+}
+function quotesFrom(s: HostState): { quotes: SavedQuote[]; bad: unknown[] } | null {
+  try {
+    return parseQuotes(s.quotes);
+  } catch (e) {
+    console.error("quotes", e);
+    return null;
+  }
+}
+
 function applyState(s: HostState): void {
   store.host = s.host ?? EMPTY_HOST;
   setLocale(s.settings?.language, store.host.appLanguage);
-  store.unreadable = Array.isArray(s.unreadable) ? s.unreadable.filter((x) => typeof x === "string") : [];
+  store.unreadable = unreadableOf(s);
+  store.unloaded = namesOf(s.unloaded);
+  // Anything we cannot make sense of is treated as an unreadable file for this session: built-ins on screen, nothing written.
+  const fromFile = settingsFrom(s);
   const savedCurrency = s.settings && typeof s.settings.currency === "string" ? s.settings.currency : null;
-  const fresh = defaultSettings(null, t("channel.directName"), savedCurrency ?? guessCurrency());
-  let merged = fresh;
-  let reset: string[] = [];
-  try {
-    merged = mergeSettings(s.settings, fresh);
-    reset = resetNames(s.settings);
-  } catch (e) {
-    // Anything we cannot make sense of is treated as an unreadable file for this session: built-ins on screen, nothing written.
-    console.error("settings", e);
-    if (!store.unreadable.includes("settings")) store.unreadable = [...store.unreadable, "settings"];
-  }
-  store.settingsReset = reset;
-  let parsed: { quotes: SavedQuote[]; bad: unknown[] } = { quotes: [], bad: [] };
-  try {
-    parsed = parseQuotes(s.quotes);
-  } catch (e) {
-    console.error("quotes", e);
-    if (!store.unreadable.includes("quotes")) store.unreadable = [...store.unreadable, "quotes"];
-  }
-  const { quotes, bad } = parsed;
+  const merged = fromFile.settings ?? defaultSettings(null, t("channel.directName"), savedCurrency ?? guessCurrency());
+  if (!fromFile.settings && !store.unreadable.includes("settings")) store.unreadable = [...store.unreadable, "settings"];
+  store.settingsReset = fromFile.reset;
+  const parsed = quotesFrom(s);
+  if (!parsed && !store.unreadable.includes("quotes")) store.unreadable = [...store.unreadable, "quotes"];
+  const { quotes, bad } = parsed ?? { quotes: [], bad: [] };
   // A number is never reused: nextNo is at least one above every saved quote, even if the settings save was lost.
-  const nextNo = Math.max(merged.sheet.nextNo, ...quotes.map((q) => q.no + 1));
+  const nextNo = freshNextNo(merged.sheet.nextNo, quotes);
   store.settings = { ...merged, sheet: { ...merged.sheet, nextNo } };
   setLocale(store.settings.language, store.host.appLanguage);
   store.quotes = quotes;
@@ -251,7 +327,10 @@ let booted: (() => void) | null = null;
 export function init(): () => void {
   booted?.();
   const offs = [on("plates", onPlates), on("host", onHost)];
-  const onHide = () => { if (document.visibilityState === "hidden" && saveTimer && store.status === "ready") void flushSettings(true); };
+  const onHide = () => {
+    if (document.visibilityState === "hidden" && saveTimer && store.status === "ready") void flushSettings(true);
+    if (document.visibilityState === "visible" && store.unloaded.length) void recoverState(); // re-opened: storage may be ready now
+  };
   document.addEventListener("visibilitychange", onHide);
   setLocale(store.settings.language, store.host.appLanguage);
   ready();

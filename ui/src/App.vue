@@ -5,9 +5,8 @@ import { usePrimeVue } from "primevue/config";
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import HelpGuide from "./components/HelpGuide.vue";
-import { OuiEmpty, OuiIcon, OuiPanel } from "../shared/src/components";
+import { OuiEmpty, OuiIcon, OuiPanel, OuiToastHost } from "../shared/src/components";
 import * as I from "../shared/src/icons";
-import ToastHost from "./components/base/ToastHost.vue";
 import { currentLocale, t } from "./i18n";
 import { primeLocale } from "./orcaUi";
 import { priceAnnouncement } from "./state/announce";
@@ -77,8 +76,9 @@ onBeforeUnmount(() => { stop?.(); clearTimeout(settle); });
   </div>
   <div class="oui-sr app-chrome" aria-live="polite" aria-atomic="true">{{ live }}</div>
   <HelpGuide />
-  <ToastHost />
   <component :is="DevBar" v-if="DevBar" />
+  <!-- Settings keeps its save bar along the bottom edge (and the narrow calculator its price bar, app.css): the stack sits above it -->
+  <OuiToastHost :close-label="t('common.close')" :label="t('common.notifications')" />
 </template>
 
 <style scoped>
