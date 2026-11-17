@@ -136,3 +136,29 @@ describe("format in Spanish, German and Chinese", () => {
     expect(moneyError("abc", 2, "zh-CN")).toBe("number");
   });
 });
+
+// Polish ("pl-PL"): decimal comma, space-grouped thousands, złoty after the number, spaced units.
+describe("format in Polish", () => {
+  const l = "pl-PL";
+  test("money, field text, symbol, energy price and percent", () => {
+    expect(sp(money(1234550, "PLN", l))).toBe("12 345,50 zł");
+    expect(sp(money(123450, "PLN", l))).toBe("1234,50 zł"); // Polish, like Spanish, groups from five digits
+    expect(sp(money(123450, "EUR", l))).toBe("1234,50 €");
+    expect(sp(moneyPlain(1234550, 2, l))).toBe("12 345,50");
+    expect(currencySymbol("PLN", l)).toBe("zł");
+    expect(sp(perKwh(11500, "PLN", l))).toBe("1,15 zł/kWh");
+    expect(sp(percent(2970, l))).toBe("29,7%");
+  });
+  test("duration, grams, quote number and dates", () => {
+    expect([duration(8040, l), duration(97200, l), duration(2700, l), duration(30, l)]).toEqual(["2 h 14 min", "1 d 3 h", "45 min", "30 s"]);
+    expect([grams(4.6, l), grams(1240, l)]).toEqual(["4,6 g", "1,24 kg"]);
+    expect(quoteNo(42, l)).toBe("nr 0042");
+    expect(date(new Date(2026, 10, 16, 12).toISOString(), l)).toBe("16 lis 2026");
+    expect(slicedTime(new Date(2026, 10, 9, 14, 32).toISOString(), l, new Date(2026, 10, 10, 18, 0))).toBe("9.11.2026, 14:32");
+  });
+  test("typed money is read with Polish separators", () => {
+    expect(moneyError("1234,50", 2, l)).toBeNull();
+    expect(moneyError("1 234,50", 2, l)).toBeNull();
+    expect(moneyError("abc", 2, l)).toBe("number");
+  });
+});
