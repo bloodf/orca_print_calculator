@@ -40,12 +40,12 @@ export const percent = (bp: number, locale: string): string => nf(locale, { styl
 /** Unit marks per Intl tag: day, hour, minute, second, and what sits between two units. */
 type DurationMarks = readonly [d: string, h: string, min: string, s: string, gap: string];
 const MIN: DurationMarks = ["d", "h", "min", "s", " "];
-/** German sets a space between number and unit (DIN 5008): "2 h 14 min". */
+/** German and Polish set a space between number and unit (DIN 5008): "2 h 14 min". */
 const SPACED: DurationMarks = [" d", " h", " min", " s", " "];
-const DURATION: Record<string, DurationMarks> = { "pt-BR": MIN, es: MIN, "de-DE": SPACED, "zh-CN": ["天", "小时", "分钟", "秒", ""] };
+const DURATION: Record<string, DurationMarks> = { "pt-BR": MIN, es: MIN, "de-DE": SPACED, "pl-PL": SPACED, "zh-CN": ["天", "小时", "分钟", "秒", ""] };
 const DURATION_EN: DurationMarks = ["d", "h", "m", "s", " "];
 
-/** Largest two units: "2h 14m", "1d 3h", "45m", "30s". Portuguese and Spanish minutes read "min"; German spaces them, "2 h 14 min"; Chinese writes "2小时14分钟". */
+/** Largest two units: "2h 14m", "1d 3h", "45m", "30s". Portuguese and Spanish minutes read "min"; German and Polish space them, "2 h 14 min"; Chinese writes "2小时14分钟". */
 export function duration(seconds: number, locale: string): string {
   const s = Math.max(0, Math.round(seconds));
   const [D, H, M, S, gap] = DURATION[locale] ?? DURATION_EN;
@@ -70,8 +70,8 @@ export const count = (n: number, locale: string): string => nf(locale, { maximum
 export const bytes = (n: number, locale: string): string =>
   n >= 1_048_576 ? `${nf(locale, { maximumFractionDigits: 1 }).format(n / 1_048_576)} MB` : `${nf(locale, { maximumFractionDigits: 0 }).format(Math.max(1, n / 1024))} KB`;
 
-const QUOTE_NO: Record<string, string> = { "pt-BR": "nº ", es: "n.º ", "de-DE": "Nr. " };
-/** "#0042" (en, zh-CN) / "nº 0042" (pt-BR) / "n.º 0042" (es) / "Nr. 0042" (de). */
+const QUOTE_NO: Record<string, string> = { "pt-BR": "nº ", es: "n.º ", "de-DE": "Nr. ", "pl-PL": "nr " };
+/** "#0042" (en, zh-CN) / "nº 0042" (pt-BR) / "n.º 0042" (es) / "Nr. 0042" (de) / "nr 0042" (pl). */
 export const quoteNo = (no: number, locale: string): string => `${QUOTE_NO[locale] ?? "#"}${String(no).padStart(4, "0")}`;
 
 export function date(iso: string, locale: string): string {

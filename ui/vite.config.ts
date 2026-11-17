@@ -26,9 +26,9 @@ export default defineConfig({
   // side effects, so without this every shared component's CSS (and the spool images) would ship. Unused ones are dropped.
   build: { target: "safari14", rollupOptions: { treeshake: { moduleSideEffects: (id) => !/\/shared\/src\/components\/[^/?]+\.vue$/.test(id) } } },
   test: { environment: "jsdom", include: ["tests/**/*.test.ts"], setupFiles: ["tests/setup.ts"], coverage: {
-      // The whole app layer, not just the engine. Excluded: the dev harness, pure data (the es/de/zh-CN string tables, types), the entry file.
+      // The whole app layer, not just the engine. Excluded: the dev harness, pure data (the es/de/zh-CN/pl string tables, types), the entry file.
       include: ["src/**/*.ts", "src/**/*.vue"],
-      exclude: ["src/mock/**", "src/i18n/{es,de,zh-CN}.ts", "src/state/types.ts", "src/main.ts", "src/env.d.ts"],
+      exclude: ["src/mock/**", "src/i18n/{es,de,zh-CN,pl}.ts", "src/state/types.ts", "src/main.ts", "src/env.d.ts"],
       reporter: ["text-summary", "text"],
       thresholds: { branches: 80, lines: 85 },
     } },

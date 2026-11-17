@@ -40,7 +40,7 @@ No telemetry. Nothing leaves your machine except requests to the Spoolman addres
 
 ## Languages
 
-English, Brazilian Portuguese, Spanish, German and Simplified Chinese. Any currency.
+English, Brazilian Portuguese, Spanish, German, Simplified Chinese and Polish. Any currency.
 
 ## More plugins by bloodf
 
@@ -93,7 +93,7 @@ Sem telemetria. Nada sai da sua máquina, a não ser as requisições ao endere�
 
 ## Idiomas
 
-Português do Brasil, inglês, espanhol, alemão e chinês simplificado. Qualquer moeda.
+Português do Brasil, inglês, espanhol, alemão, chinês simplificado e polonês. Qualquer moeda.
 
 ## Mais plugins do bloodf
 

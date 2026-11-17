@@ -21,7 +21,7 @@ async function built(): Promise<string> {
 }
 
 /** 387,010 B before the Vue + PrimeVue migration; 877 kB after (Vue Options API, PrimeVue components, the shared Aura preset). The CI gate uses the same figure. */
-// 1,115,000 until 0.6.1 (1,092,xxx B with es, de and zh-CN). Raised for the per-slot spool picker (#18, ~1,116,000 B) with room for Polish.
+// 1,115,000 until 0.6.1; 1,170,000 with Polish (1,146,xxx B). Raised to 1,200,000 for the per-slot spool picker (#18).
 const BUDGET = 1_200_000;
 
 describe("built index.html", () => {

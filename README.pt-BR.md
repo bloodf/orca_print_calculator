@@ -254,7 +254,7 @@ Fatie uma mesa no OrcaSlicer, use **Atualizar** ou importe um `.gcode.3mf` fatia
 
 ## 🌍 Idiomas
 
-Português do Brasil, inglês, espanhol, alemão e chinês simplificado. Com o idioma em Automático, segue o OrcaSlicer; nos Ajustes dá para escolher um.
+Português do Brasil, inglês, espanhol, alemão, chinês simplificado e polonês. Com o idioma em Automático, segue o OrcaSlicer; nos Ajustes dá para escolher um.
 
 ## 🧩 Mais plugins do bloodf
 

@@ -1,24 +1,26 @@
 // t(key, params) over flat dictionaries, one per language (docs/ux.md §8). Reactive on `lang`.
-// Plurals: when params.n is a number and `${key}_one` / `${key}_other` exist, Intl.PluralRules picks one.
+// Plurals: when params.n is a number and `${key}_other` exists, Intl.PluralRules picks the form (`_one`, Polish `_few` /
+// `_many`); a form the language does not have reads `_other`.
 // A key missing in a language falls back to en; missing in en renders the key (warns once in dev).
 import { reactive } from "vue";
 import { de } from "./i18n/de";
 import { es } from "./i18n/es";
 import { column } from "./i18n/messages";
+import { pl } from "./i18n/pl";
 import { zhCN } from "./i18n/zh-CN";
 
 const en = column(0);
 
-export const LOCALES = ["en", "pt-BR", "es", "de", "zh-CN"] as const;
+export const LOCALES = ["en", "pt-BR", "es", "de", "zh-CN", "pl"] as const;
 export type Locale = (typeof LOCALES)[number];
 export type Lang = "auto" | Locale;
 export type Params = Record<string, string | number>;
 
-const dicts: Record<Locale, Record<string, string>> = { en, "pt-BR": column(1), es, de, "zh-CN": zhCN };
+const dicts: Record<Locale, Record<string, string>> = { en, "pt-BR": column(1), es, de, "zh-CN": zhCN, pl };
 /** BCP 47 tag each language formats numbers, money and dates with. */
-const INTL: Record<Locale, string> = { en: "en-US", "pt-BR": "pt-BR", es: "es", de: "de-DE", "zh-CN": "zh-CN" };
-/** Language part of an OrcaSlicer code ("zh_CN", "pt_BR", "de") or a browser tag ("es-MX"). Traditional Chinese reads the Simplified text. */
-const BY_LANGUAGE = new Map<string, Locale>([["pt", "pt-BR"], ["es", "es"], ["de", "de"], ["zh", "zh-CN"]]);
+const INTL: Record<Locale, string> = { en: "en-US", "pt-BR": "pt-BR", es: "es", de: "de-DE", "zh-CN": "zh-CN", pl: "pl-PL" };
+/** Language part of an OrcaSlicer code ("zh_CN", "pt_BR", "pl_PL", "de") or a browser tag ("es-MX"). Traditional Chinese reads the Simplified text. */
+const BY_LANGUAGE = new Map<string, Locale>([["pt", "pt-BR"], ["es", "es"], ["de", "de"], ["zh", "zh-CN"], ["pl", "pl"]]);
 const state = reactive({ locale: "en" as Locale });
 const warned = new Set<string>();
 
@@ -51,8 +53,7 @@ const fill = (s: string, params?: Params): string =>
 function pick(key: string, params: Params | undefined, dict: Record<string, string>): string | undefined {
   const n = params?.n;
   if (typeof n === "number" && `${key}_other` in dict) {
-    const form = new Intl.PluralRules(intlLocale()).select(n) === "one" ? "one" : "other";
-    return dict[`${key}_${form}`] ?? dict[`${key}_other`];
+    return dict[`${key}_${new Intl.PluralRules(intlLocale()).select(n)}`] ?? dict[`${key}_other`];
   }
   return dict[key];
 }
