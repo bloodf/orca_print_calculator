@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed
+- When an Orca Cloud install was started offline, Print Calculator logged an error while loading ("Cloud plugin storage is unavailable before networking is initialized"). It no longer asks for its storage folder while loading. Until OrcaSlicer can give it one, it runs on its built-in defaults, and saving or exporting says it can't write yet. Once networking is up, the next use finds the folder.
+
 ## [0.6.0] - 2026-11-16
 
 ### Added

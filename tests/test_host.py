@@ -146,6 +146,52 @@ class Loading(HostCase):
         self.assertTrue((Path(self.orca.storage_dir) / "plugin.log").is_file())
 
 
+class OfflineStorage(unittest.TestCase):
+    """An Orca Cloud install started offline: plugin.storage() raises "Cloud plugin storage is unavailable before
+    networking is initialized" until networking is up."""
+
+    def setUp(self):
+        self.orca = install_orca()
+        self.addCleanup(shutil.rmtree, Path(self.orca.storage_dir).parents[2], True)
+        self.ready = False
+        self.asked = 0
+        real = self.orca.host.plugin.storage
+
+        def storage():
+            self.asked += 1
+            if not self.ready:
+                raise RuntimeError("Cloud plugin storage is unavailable before networking is initialized")
+            return real()
+        self.orca.host.plugin.storage = storage
+        self.pkg = load_plugin(SRC)
+        self.page = self.pkg.CalculatorPage()
+
+    def tearDown(self):
+        logger = logging.getLogger("orca_print_calculator")
+        for h in list(logger.handlers):
+            h.close()
+            logger.removeHandler(h)
+
+    def cmd(self, cmd, args=None):
+        self.page.on_message({"type": "cmd", "id": 1, "cmd": cmd, "args": {} if args is None else args})
+        return self.page.posted[-1]
+
+    def test_on_load_does_not_ask_for_storage(self):
+        self.page.on_load()
+        self.assertEqual(self.asked, 0)
+
+    def test_works_on_defaults_until_storage_is_ready(self):
+        self.page.on_load()
+        self.assertEqual(self.page.get_icon(), "")
+        state = self.cmd("get_state")
+        self.assertTrue(state["ok"])
+        self.assertIsNone(state["data"]["settings"])   # built-in defaults
+        self.assertEqual(self.cmd("save_settings", {"settings": {}})["error"], "io")   # said plainly, nothing lost on disk
+        self.ready = True   # networking came up: the next use finds the folder
+        self.assertTrue(self.cmd("save_settings", {"settings": {}})["ok"])
+        self.assertTrue((Path(self.orca.storage_dir) / "settings.json").is_file())
+
+
 class Rpc(HostCase):
     def test_ready_binds_page_and_posts_nothing(self):
         # The page loads through get_state (timeout, error screen); a `state` push on ready had no listener.

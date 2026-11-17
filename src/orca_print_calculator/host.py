@@ -199,10 +199,26 @@ class Host:
 
     # -- UI thread
     def storage(self):
+        """The plugin's storage folder, or "" while OrcaSlicer can't give one yet (an Orca Cloud install started
+        offline: "Cloud plugin storage is unavailable before networking is initialized"). Never raises; asked
+        again on every use until it answers, and the plugin runs on built-in defaults meanwhile."""
         if self.storage_dir is None:
-            self.storage_dir = orca.host.plugin.storage()
-            _setup_log(self.storage_dir)
+            try:
+                folder = orca.host.plugin.storage()
+            except Exception as exc:
+                log.warning("storage not available yet: %s", exc)
+                return ""
+            if not folder:
+                return ""
+            self.storage_dir = folder
+            _setup_log(folder)
         return self.storage_dir
+
+    def storage_or_raise(self):
+        folder = self.storage()
+        if not folder:
+            raise core.CoreError("io", "plugin storage not available yet")
+        return folder
 
     def post(self, msg):
         page = self.page
@@ -217,6 +233,8 @@ class Host:
         self.post({"type": "event", "name": name, "data": data})
 
     def icon_path(self, svg):
+        if not self.storage():
+            return ""
         path = os.path.join(self.storage(), ICON_FILE)
         try:
             if not os.path.isfile(path) or Path(path).read_text("utf-8") != svg:
@@ -256,13 +274,16 @@ class Host:
         self.event("plates", {"plates": self.plate_list(), **extra})
 
     def spooler(self):
-        datadir = next((p.parent for p in Path(self.storage()).parents if p.name == "orca_plugins"), None)
+        folder = self.storage()
+        datadir = next((p.parent for p in Path(folder).parents if p.name == "orca_plugins"), None) if folder else None
         info = core.read_spooler_files(datadir) if datadir else {"detected": False}
         return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"]} if info["detected"] else None
 
     def load(self, name, kind):
         """Parsed file or None. Wrong JSON type is set aside like a corrupt file. A file that can be neither
         read nor set aside degrades to None (the rest of the state still loads) and is locked against saves."""
+        if not self.storage():
+            return None   # built-in defaults until storage is available
         path = os.path.join(self.storage(), name)
         try:
             data = core.load_json(path, None)
@@ -279,7 +300,7 @@ class Host:
     def save(self, name, obj):
         if name in self.unreadable:
             raise core.CoreError("unreadable", name)
-        core.save_json(os.path.join(self.storage(), name), obj)
+        core.save_json(os.path.join(self.storage_or_raise(), name), obj)
 
     def state(self):
         settings, quotes = self.load(core.SETTINGS_FILE, dict), self.load(core.QUOTES_FILE, list)
@@ -290,6 +311,7 @@ class Host:
 
     def on_message(self, page, data):
         self.page = page
+        self.storage()   # first use: opens the log file once OrcaSlicer has a storage folder; never raises
         if isinstance(data, str):
             try:
                 data = json.loads(data)
@@ -534,7 +556,7 @@ def cmd_import_sliced(host, args, rid):
 def cmd_export_file(host, args, rid):
     name, text = _arg(args, "name", str), _arg(args, "text", str)
     try:
-        return {"path": core.write_export(host.storage(), name, text)}
+        return {"path": core.write_export(host.storage_or_raise(), name, text)}
     except ValueError as exc:
         raise core.CoreError("bad_name", str(exc)) from exc
 
