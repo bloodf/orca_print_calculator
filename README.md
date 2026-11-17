@@ -246,7 +246,7 @@ Slice a plate in OrcaSlicer, press **Refresh**, or import a sliced `.gcode.3mf`.
 
 ## 🌍 Languages
 
-English, Brazilian Portuguese, Spanish, German and Simplified Chinese. With Language set to Auto it follows OrcaSlicer; Settings lets you pick one.
+English, Brazilian Portuguese, Spanish, German, Simplified Chinese and Polish. With Language set to Auto it follows OrcaSlicer; Settings lets you pick one.
 
 ## 🧩 More plugins by bloodf
 

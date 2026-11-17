@@ -16,7 +16,7 @@ const field = (props: Record<string, unknown>, c: Parameters<typeof mount>[0] = 
 beforeEach(() => setLocale("en"));
 afterEach(() => { for (const m of mounted.splice(0)) { m.app.unmount(); m.root.remove(); } setLocale("en"); });
 
-const swap = async (to: "en" | "pt-BR" | "es" | "de" | "zh-CN") => { setLocale(to); await nextTick(); await nextTick(); };
+const swap = async (to: "en" | "pt-BR" | "es" | "de" | "zh-CN" | "pl") => { setLocale(to); await nextTick(); await nextTick(); };
 const typeInto = (el: HTMLInputElement, text: string) => { el.focus(); el.value = text; el.dispatchEvent(new Event("input", { bubbles: true })); };
 const base = { digits: 2, currency: "BRL", label: "price", step: 100 };
 
@@ -84,7 +84,7 @@ describe("F07: language change under a mounted field", () => {
     expect(input.value).toBe("12,345.67");
     expect(seen).toEqual([]);
   });
-  test.each([["de", "2.000,50"], ["es", "2000,50"], ["zh-CN", "2,000.50"]] as const)("typing in %s is read with that language's rules", async (lang, typed) => {
+  test.each([["de", "2.000,50"], ["es", "2000,50"], ["zh-CN", "2,000.50"], ["pl", "2000,50"]] as const)("typing in %s is read with that language's rules", async (lang, typed) => {
     const seen: unknown[] = [];
     const { input } = field({ ...base, modelValue: 123456, "onUpdate:modelValue": (v: unknown) => seen.push(v) });
     await swap(lang);

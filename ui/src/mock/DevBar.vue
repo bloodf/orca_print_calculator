@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Dev harness only (mounted from App.vue under import.meta.env.DEV): theme and language toggles, savedQuote auto-open.
-// `?lang=` accepts a language the plugin has, by its code or a regional form of it (en, en-US, pt, pt-BR, es, de, zh, zh-CN,
+// `?lang=` accepts a language the plugin has, by its code or a regional form of it (en, en-US, pt, pt-BR, es, de, zh, zh-CN, pl, pl_PL,
 // case-insensitive); anything else is ignored. It is applied once the
 // state has loaded, because loading replaces the settings (and with them the language).
 import Button from "primevue/button";

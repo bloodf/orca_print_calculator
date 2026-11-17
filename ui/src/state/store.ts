@@ -14,7 +14,7 @@ import type { Draft, HostInfo, HostPlate, HostState, OverridableKey, Defaults, S
 export type Status = "loading" | "ready" | "error";
 const EMPTY_HOST: HostInfo = { projectName: null, printerModel: null, printerVendor: null, pluginVersion: "" };
 /** First-run currency from the resolved language (OrcaSlicer's, else the browser's); a saved currency always wins. Spanish spans many currencies: USD. */
-const FIRST_CURRENCY: Partial<Record<Locale, string>> = { "pt-BR": "BRL", de: "EUR", "zh-CN": "CNY" };
+const FIRST_CURRENCY: Partial<Record<Locale, string>> = { "pt-BR": "BRL", de: "EUR", "zh-CN": "CNY", pl: "PLN" };
 export const guessCurrency = (): string => FIRST_CURRENCY[currentLocale()] ?? "USD";
 
 export const store = reactive({

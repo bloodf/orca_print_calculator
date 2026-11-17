@@ -34,6 +34,7 @@ export const es: Record<MessageKey, string> = {
   "lang.es": "Español",
   "lang.de": "Deutsch",
   "lang.zh": "简体中文",
+  "lang.pl": "Polski",
   "printer.estimated": "Estimado",
   "printer.power": "Potencia media",
   "printer.powerHelp": "kWh del enchufe inteligente ÷ horas de impresión × 1000",

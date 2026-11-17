@@ -1,4 +1,4 @@
-// The mounted page in Spanish, German and Simplified Chinese: every tab, the help dialog (PrimeVue's own strings), the quote
+// The mounted page in Spanish, German, Simplified Chinese and Polish: every tab, the help dialog (PrimeVue's own strings), the quote
 // sheet and its HTML export, and the sentences built from parts. Driven through the real bridge by the dev mock host.
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { h, nextTick, type App as VueApp } from "vue";
@@ -10,6 +10,7 @@ import { currentLocale, setLocale, t, type Locale } from "../src/i18n";
 import { de } from "../src/i18n/de";
 import { es } from "../src/i18n/es";
 import { column } from "../src/i18n/messages";
+import { pl } from "../src/i18n/pl";
 import { zhCN } from "../src/i18n/zh-CN";
 import { createMockHost } from "../src/mock/host";
 import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
@@ -21,7 +22,7 @@ import { clearToasts } from "../shared/src/components/toast";
 // host -> page delivery in the real injected shape (window.__orcaDispatch calls every registered callback)
 const dispatchToPage = (m: unknown): void => (window as unknown as { __orcaDispatch: (x: unknown) => void }).__orcaDispatch(m);
 const en = column(0);
-const ADDED = { es, de, "zh-CN": zhCN } as const;
+const ADDED = { es, de, "zh-CN": zhCN, pl } as const;
 type Added = keyof typeof ADDED;
 const LANGS = Object.keys(ADDED) as Added[];
 
@@ -103,7 +104,7 @@ describe.each(LANGS)("the page in %s", (lang) => {
     expect(select, "the select shows the chosen language").toBeDefined();
     select!.closest<HTMLElement>(".p-select")!.click();
     await tick(50);
-    expect([...document.querySelectorAll("[role=option]")].map((o) => o.textContent?.trim())).toEqual([d["lang.auto"], "English", "Português (Brasil)", "Español", "Deutsch", "简体中文"]);
+    expect([...document.querySelectorAll("[role=option]")].map((o) => o.textContent?.trim())).toEqual([d["lang.auto"], "English", "Português (Brasil)", "Español", "Deutsch", "简体中文", "Polski"]);
   });
   test("the help dialog and PrimeVue's own strings follow", async () => {
     await boot("ok");
@@ -133,14 +134,14 @@ describe.each(LANGS)("the page in %s", (lang) => {
     const html = sheetHtml(sampleSheetModel({ shopName: "Studio Layer", footer: "", validityDays: 15, payment: "30" }, "EUR"));
     expect(html).toContain(`<html lang="${lang}">`);
     for (const key of ["sheet.date", "sheet.validUntil", "sheet.for", "sheet.item", "sheet.qty", "sheet.unitPrice", "sheet.amount", "sheet.subtotal", "sheet.total", "sheet.payment", "sheet.made", "sheet.sampleCustomer"] as const) expect(html, key).toContain(d[key]);
-    expect(html).toContain({ es: "Presupuesto n.º 0001", de: "Angebot Nr. 0001", "zh-CN": "报价单 #0001" }[lang]);
-    expect(html.replace(/[\u00a0\u202f]/g, " ")).toContain({ es: "90,00 €", de: "90,00 €", "zh-CN": "€90.00" }[lang]);
+    expect(html).toContain({ es: "Presupuesto n.º 0001", de: "Angebot Nr. 0001", "zh-CN": "报价单 #0001", pl: "Wycena nr 0001" }[lang]);
+    expect(html.replace(/[\u00a0\u202f]/g, " ")).toContain({ es: "90,00 €", de: "90,00 €", "zh-CN": "€90.00", pl: "90,00 €" }[lang]);
     expect(html).not.toMatch(/Quote|Valid until|Unit price|Amount|Made with/);
   });
 });
 
 describe("OrcaSlicer's language is followed while the setting is Auto", () => {
-  test.each([["es", "es"], ["de", "de"], ["zh_CN", "zh-CN"], ["zh_TW", "zh-CN"], ["ja", "en"]] as const)("OrcaSlicer in %s opens the page in %s", async (appLanguage, locale) => {
+  test.each([["es", "es"], ["de", "de"], ["zh_CN", "zh-CN"], ["zh_TW", "zh-CN"], ["pl_PL", "pl"], ["ja", "en"]] as const)("OrcaSlicer in %s opens the page in %s", async (appLanguage, locale) => {
     await boot("ok", appLanguage);
     expect(store.settings.language).toBe("auto");
     expect(currentLocale()).toBe(locale);
@@ -168,6 +169,7 @@ describe("sentences built from parts", () => {
     expect(names("pt-BR")).toBe("ajustes e orçamentos");
     expect(names("es")).toBe("ajustes y presupuestos");
     expect(names("de")).toBe("Einstellungen und Angebote"); // German nouns keep their capital
+    expect(names("pl")).toBe("ustawienia i wyceny");
     expect(names("zh-CN")).toBe("设置和报价列表");
     expect(filesText(["quotes"])).toBe("报价列表");
     expect(filesText([])).toBe("");
@@ -183,6 +185,9 @@ describe("sentences built from parts", () => {
     // "Nr. 0042" is an abbreviation before a number, not the end of the title.
     expect(lead(t("quote.openBanner", { no: quoteNo(42, "de-DE"), date: date("2026-11-16T10:00:00Z", "de-DE") })))
       .toEqual(["Angebot Nr. 0042 · gespeichert am 16.11.2026.", "Platten und Preise sind wie gespeichert."]);
+    setLocale("pl");
+    expect(lead(t("quote.openBanner", { no: quoteNo(42, "pl-PL"), date: date("2026-11-16T10:00:00Z", "pl-PL") })))
+      .toEqual(["Wycena nr 0042 · zapisana 16 lis 2026.", "Płyty i ceny są takie, jak je zapisano."]);
     setLocale("es");
     expect(lead(t("quote.openBanner", { no: quoteNo(42, "es"), date: "16 nov 2026" }))[0]).toBe("Presupuesto n.º 0042 · guardado el 16 nov 2026.");
   });

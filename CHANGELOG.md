@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Added
+- Polish (pl) translation. Thanks to @xtronets for asking (u1control#20). Every tab, message, the quote sheet and the CSV exports are in Polish, with Polish plural forms (1 płyta, 2 płyty, 5 płyt) and the terms OrcaSlicer's own Polish uses. With Language set to Auto, OrcaSlicer in Polish (pl_PL) opens the plugin in Polish; Settings > Language lists it as Polski.
+- In Polish, money, numbers, dates and print times follow Polish rules (12 345,50 zł, 16 lis 2026, 2 h 14 min), quotes are numbered "nr 0042", and on first run the currency is the złoty (PLN). A currency already saved is never changed.
+- The page is about 37 kB larger (1,145 kB) because it carries Polish; the size gate is now 1,170,000 bytes.
+
 ## [0.6.1] - 2026-11-17
 
 ### Added

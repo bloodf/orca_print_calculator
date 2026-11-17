@@ -53,7 +53,7 @@ describe("boot", () => {
   });
   test("first-run currency follows the language: EUR for German, CNY for Chinese, BRL for Portuguese, USD otherwise", () => {
     const pick = (l: Parameters<typeof setLocale>[0]): string => { setLocale(l); return S.guessCurrency(); };
-    expect([pick("de"), pick("zh-CN"), pick("pt-BR"), pick("es"), pick("en")]).toEqual(["EUR", "CNY", "BRL", "USD", "USD"]);
+    expect([pick("de"), pick("zh-CN"), pick("pl"), pick("pt-BR"), pick("es"), pick("en")]).toEqual(["EUR", "CNY", "PLN", "BRL", "USD", "USD"]);
   });
   test("a saved currency is kept whatever the language", async () => {
     const state = buildScenario("noSpoolman").state;

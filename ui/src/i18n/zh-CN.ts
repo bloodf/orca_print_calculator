@@ -34,6 +34,7 @@ export const zhCN: Record<MessageKey, string> = {
   "lang.es": "Español",
   "lang.de": "Deutsch",
   "lang.zh": "简体中文",
+  "lang.pl": "Polski",
   "printer.estimated": "估算",
   "printer.power": "平均功率",
   "printer.powerHelp": "智能插座 kWh ÷ 打印小时数 × 1000",

@@ -1,5 +1,5 @@
 // Every UI string, once per key: [en, pt-BR]. A one-item row means pt-BR is the same text. Plural keys end in _one / _other (see i18n.ts).
-// Spanish, German and Simplified Chinese are one file each (es.ts, de.ts, zh-CN.ts), typed by MessageKey: a missing or extra key
+// Spanish, German, Simplified Chinese and Polish are one file each (es.ts, de.ts, zh-CN.ts, pl.ts), typed by MessageKey: a missing or extra key
 // there does not compile. tests/i18n.test.ts checks placeholders match in every language, and that no value is empty.
 export const messages = {
   "app.name": ["Orca Print Calculator"],
@@ -33,6 +33,7 @@ export const messages = {
   "lang.es": ["Español"],
   "lang.de": ["Deutsch"],
   "lang.zh": ["简体中文"],
+  "lang.pl": ["Polski"],
   "printer.estimated": ["Estimated", "Estimado"],
   "printer.power": ["Average power", "Potência média"],
   "printer.powerHelp": ["Smart-plug kWh ÷ print hours × 1000", "kWh da tomada inteligente ÷ horas de impressão × 1000"],
@@ -632,6 +633,10 @@ export const messages = {
 } satisfies Record<string, readonly [string, string?]>;
 
 export type MessageKey = keyof typeof messages;
+/** Keys with plural forms, without the `_one` / `_other` suffix. */
+export type PluralBase = { [K in MessageKey]: K extends `${infer B}_one` ? B : never }[MessageKey];
+/** The extra plural forms Polish needs (CLDR few: 2-4, 22-24…; many: 0, 5-21, 25…), next to each `_one` / `_other` pair. */
+export type PluralExtraKey = `${PluralBase}_${"few" | "many"}`;
 
 /** One language as a flat dictionary: 0 = en, 1 = pt-BR. */
 export const column = (i: 0 | 1): Record<string, string> =>

@@ -34,6 +34,7 @@ export const de: Record<MessageKey, string> = {
   "lang.es": "Español",
   "lang.de": "Deutsch",
   "lang.zh": "简体中文",
+  "lang.pl": "Polski",
   "printer.estimated": "Geschätzt",
   "printer.power": "Durchschnittsleistung",
   "printer.powerHelp": "kWh der smarten Steckdose ÷ Druckstunden × 1000",
