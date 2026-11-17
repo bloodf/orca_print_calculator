@@ -69,7 +69,7 @@ The page is <https://cloud.orcaslicer.com/p/521c07cf6de2>. Its text is in [orca-
 
 The GitHub social preview is set in the repository settings, not on Orca Cloud. The README heroes are listed for completeness.
 
-Each image is a generated photograph whose empty square holds a real screenshot of the plugin's page (sample data, mock host, not captured inside OrcaSlicer). The native images are in `assets/marketing/source/`, and `assets/marketing/asset-manifest.json` records the source, screenshot, operation, size, bytes and date of every export. To redo them after an interface change, see [development.md](development.md#store-and-readme-images). The store tile is for listings only: the tab icon inside OrcaSlicer is the vector mark in `ui/src/icon.svg`.
+Each image is a generated photograph whose empty square holds a real screenshot of the plugin's page (sample data, mock host, not captured inside OrcaSlicer). The native images are in `assets/marketing/source/`, and `assets/marketing/asset-manifest.json` records the source, screenshot, operation, size, bytes and date of every export. To redo them after an interface change, see [development.md](development.md#store-and-readme-images). The tab icon inside OrcaSlicer is the store tile at 40x40, `brand/plugin-icon.png`; after a new tile, export it again (Pillow, Lanczos, white surround made transparent).
 
 ## Local gates
 

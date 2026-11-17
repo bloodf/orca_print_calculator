@@ -55,10 +55,10 @@ Rule of thumb: on light, green text is `#446600`; on dark, it is `#B9DC6C`.
 ## Logo
 The mark: a price tag pointing left (the "price"), a punched hole at its point, two layer-line bars on the face (the "print"). 24x24 grid, 1.5 stroke, round caps and joins, single color. Spool meaning lives in the empty states and copy, not in the mark. Do not put a centered hub circle in a ring: that is the Spooler tab glyph.
 - Construction: tag `M2.75 12L8 6.25H21.25V17.75H8Z`; hole `circle (7.75,12) r1.25` solid; bars `M12 9.6H18M12 14.4H18` (y snapped to the 1.2 grid so edges land on whole pixels at 20px).
-- Files: `brand/logo.svg` (deep green `#446600`, for light), `brand/logo-dark.svg` (lime `#B9DC6C`, for graphite), `ui/src/icon.svg` (`currentColor`, 20px tab glyph, same geometry and 1.5 stroke as the Spooler and Orca tab icons).
+- Files: `brand/logo.svg` (deep green `#446600`, for light), `brand/logo-dark.svg` (lime `#B9DC6C`, for graphite), `ui/src/icon.svg` (`currentColor`, the page header glyph, same geometry and 1.5 stroke as the interface icons).
 - Clear space: 1/4 of mark width on all sides. Minimum size: 16px. Wordmark lockup minimum 120px wide.
 - Lockup: mark left, wordmark right, gap = 1/3 mark width, vertically centered.
-- Store tile (`assets/orca-cloud/orca_print_calculator-tile.png`, 512x512): a deep green rounded square with the tag in white. It is a generated raster for listings and the README only. It differs from the mark: the hole is a ring, not a solid dot, the corners are rounder and the stroke is heavier. The construction above stays the source of truth, and the tab icon in OrcaSlicer is `ui/src/icon.svg`.
+- Store tile (`assets/orca-cloud/orca_print_calculator-tile.png`, 512x512): a deep green rounded square with the tag in white. It is the plugin icon: listings, the README and, as `brand/plugin-icon.png` (the tile at 40x40, white surround made transparent), the tab icon in OrcaSlicer. It differs from the mark: the hole is a ring, not a solid dot, the corners are rounder and the stroke is heavier. The construction above stays the source of truth for the mark.
 - Checked at 16px and 20px on `#2B2B2B` and `#FFFFFF`, beside the Spooler glyph (nearest-neighbour zoom): tag outline, hole and both bars stay separate at 20px; at 16px the bars are slightly soft but distinct.
 
 ## Do

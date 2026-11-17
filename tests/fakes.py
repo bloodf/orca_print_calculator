@@ -133,7 +133,7 @@ def load_plugin(path):
         del sys.modules[name]
     if not (Path(path) / "orca_print_calculator" / "_assets.py").is_file():
         stub = types.ModuleType("orca_print_calculator._assets")
-        stub.APP_HTML, stub.ICON_SVG = "<!doctype html><title>stub</title>", "<svg/>"
+        stub.APP_HTML, stub.ICON_PNG = "<!doctype html><title>stub</title>", "iVBORw0KGgo="
         sys.modules[stub.__name__] = stub
     sys.path[:] = [p for p in sys.path if p != str(path)]
     sys.path.insert(0, str(path))
