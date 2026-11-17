@@ -58,7 +58,14 @@ const flat = computed(() => {
 watch(() => props.open, (o) => { if (o) q.value = ""; });
 
 const chosen = computed(() => slotSpoolOf(props.match));
-const selectedId = computed(() => (!chosen.value ? AUTO : chosen.value.spoolId === undefined ? `fil-${chosen.value.filamentId}` : `sp-${chosen.value.spoolId}`));
+const optId = (p: { filamentId?: number; spoolId?: number }): string => (p.spoolId === undefined ? `fil-${p.filamentId}` : `sp-${p.spoolId}`);
+// The slot's pick, else the older pick for its preset (still in force under Auto), else Auto.
+const selectedId = computed(() => {
+  if (chosen.value) return optId(chosen.value);
+  const old = Object.prototype.hasOwnProperty.call(store.settings.slotOverrides, preset.value) ? store.settings.slotOverrides[preset.value] : undefined;
+  const id = old ? optId(old) : AUTO;
+  return flat.value.some((o) => o.id === id) ? id : AUTO;
+});
 function pick(o: Opt | undefined): void {
   if (!o) return;
   setSlotSpool(props.match, o.filamentId === undefined ? null : { filamentId: o.filamentId, ...(o.spoolId === undefined ? {} : { spoolId: o.spoolId }) });

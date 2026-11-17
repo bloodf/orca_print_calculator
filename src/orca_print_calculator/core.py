@@ -620,7 +620,8 @@ def spoolman_fetch(base_url, opener=None, timeout=SPOOLMAN_TIMEOUT, deadline=SPO
     currency = _currency(base, opener, timeout, end)
     filaments, bad_f = _rows(_get_json(base, "/api/v1/filament", opener, timeout, end),
                              _filament_row, "filament")
-    spools, bad_s = _rows(_get_json(base, "/api/v1/spool?allow_archived=false", opener, timeout, end),
+    # Archived spools too (flagged `archived`): a slot's picked spool that was archived is kept, a deleted one is dropped.
+    spools, bad_s = _rows(_get_json(base, "/api/v1/spool?allow_archived=true", opener, timeout, end),
                           _spool_row, "spool")
     version = info.get("version") if isinstance(info, dict) else None
     return {"currency": currency, "version": _text(version, 50), "filaments": filaments,

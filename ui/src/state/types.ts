@@ -104,8 +104,8 @@ export type SlotMatchView = {
   priceSource: "spool" | "filament" | "preset" | "manual" | null;
   /** `spoolId` is a choice (picked or linked), so its remaining weight is the stock that counts. */
   spoolPinned?: boolean;
-  /** The spool picked for this slot is gone from Spoolman (deleted or archived): Auto prices it until it is pruned. */
-  pickGone?: number;
+  /** The spool (or filament) picked for this slot is archived or deleted in Spoolman: Auto prices it meanwhile. */
+  pickGone?: { kind: "spool" | "filament"; id: number };
 };
 
 export type NotCounted =

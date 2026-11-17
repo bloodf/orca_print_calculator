@@ -159,12 +159,37 @@ describe("chips, rows and picker", () => {
     store.settings = { ...store.settings, slotSpools: { "Snapmaker U1 (0.4 nozzle)#2": { filamentId: 12, spoolId: 999 } } };
     await mount(PlateList);
     root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
-    expect(root.querySelectorAll(".mrow")[1]?.textContent).toContain("Spool #999 is no longer in Spoolman");
+    expect(root.querySelectorAll(".mrow")[1]?.textContent).toContain("Spool #999 is archived or deleted in Spoolman");
     root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
     const bare = [...document.querySelectorAll<HTMLElement>(".p-listbox-option")].find((o) => o.textContent?.includes("Bare PLA"))!;
     bare.click(); await settle();
     expect(store.settings.slotSpools).toEqual({ "Snapmaker U1 (0.4 nozzle)#1": { filamentId: 30, preset: "Generic PLA @U1" } }); // #2's dead pick pruned
     expect(root.querySelector(".mrow")?.textContent).toContain("R$50.00/kg");
+  });
+  test("the older pick for the preset is the one highlighted in the picker", async () => {
+    seed("ok");
+    store.settings = { ...store.settings, slotOverrides: { "Generic PLA @U1": { filamentId: 4, spoolId: 4 } } };
+    await mount(PlateList);
+    root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
+    root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
+    expect(document.querySelector(".p-listbox-option[aria-selected='true'] [data-spool='4']")).not.toBeNull();
+  });
+  test("no printer preset: the picker offers no spools, nothing is stored, the hint is hidden", async () => {
+    seed("ok", false);
+    store.host = { ...store.host, printerPreset: null };
+    store.spoolman = { ...store.spoolman, state: "ok" };
+    store.settings = { ...store.settings, slotOverrides: { "Generic PLA @U1": { filamentId: 4 } } };
+    await mount(PlateList);
+    root.querySelector<HTMLButtonElement>(".chip")!.click(); await flush();
+    expect(root.querySelector(".mrow .hint")).toBeNull();
+    root.querySelector<HTMLButtonElement>(".mrow .actions button")!.click(); await settle();
+    expect(document.body.textContent).toContain("Select a printer preset to pick a spool per slot.");
+    expect(document.querySelector("[role=listbox]")).toBeNull();
+    const { setSlotSpool } = await import("../src/components/plates/slots");
+    const m = { plateIndex: 0, slot: store.plates[0]!.slots[0]!, key: "", source: "preset", filamentId: null, spoolId: null, pricePerKg: 24, priceSource: "preset" } as const;
+    setSlotSpool(m, { filamentId: 1, spoolId: 1 });
+    expect(store.settings.slotSpools).toEqual({});
+    expect(store.settings.slotOverrides).toEqual({ "Generic PLA @U1": { filamentId: 4 } }); // a refused pick is not an Auto
   });
   test("the preset-price hint shows only while Spoolman is connected", async () => {
     seed("ok", false);

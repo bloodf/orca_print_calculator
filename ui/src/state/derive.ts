@@ -67,12 +67,12 @@ export function slotSpoolFor(slotSpools: Readonly<Record<string, SlotSpool>> | u
   const p = key !== null && slotSpools && Object.prototype.hasOwnProperty.call(slotSpools, key) ? slotSpools[key] : undefined;
   return p && (p.preset === undefined || p.preset === preset) ? p : undefined;
 }
-/** Picks whose spool (or filament) Spoolman no longer has in use. Only call with loaded Spoolman data. */
+/** Picks whose spool (or filament) Spoolman deleted; an archived spool's pick is kept (unarchiving brings it back). Only call with loaded Spoolman data. */
 export function pruneSlotSpools(
   slotSpools: Readonly<Record<string, SlotSpool>>,
   data: { filaments: readonly { id: number }[]; spools: readonly { id: number; archived: boolean }[] },
 ): Record<string, SlotSpool> {
-  const ok = (p: SlotSpool) => (p.spoolId === undefined ? data.filaments.some((f) => f.id === p.filamentId) : data.spools.some((s) => s.id === p.spoolId && !s.archived));
+  const ok = (p: SlotSpool) => (p.spoolId === undefined ? data.filaments.some((f) => f.id === p.filamentId) : data.spools.some((s) => s.id === p.spoolId));
   return Object.fromEntries(Object.entries(slotSpools).filter(([, p]) => ok(p)));
 }
 
@@ -96,7 +96,8 @@ function viewOf(plateIndex: number, slot: HostSlot, i: DeriveInput): SlotMatchVi
   // The engine merges slots by key and needs one price per key: a preset-priced match is keyed by its preset, not the filament.
   const keySource = fromSpoolman ? m.source : m.priceSource === "preset" ? "preset" : "none";
   return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource, spoolPinned: m.spoolPinned,
-    ...(assigned?.spoolId !== undefined && m.source !== "assigned" && i.spoolman.filaments.length ? { pickGone: assigned.spoolId } : {}) };
+    ...(assigned && m.source !== "assigned" && i.spoolman.filaments.length
+      ? { pickGone: assigned.spoolId === undefined ? { kind: "filament" as const, id: assigned.filamentId } : { kind: "spool" as const, id: assigned.spoolId } } : {}) };
 }
 
 const toQuoteSlot = (v: SlotMatchView, digits: number): QuoteSlot => ({
