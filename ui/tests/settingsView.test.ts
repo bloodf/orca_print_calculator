@@ -96,8 +96,8 @@ describe("section index", () => {
   const links = () => [...root!.querySelectorAll<HTMLButtonElement>("nav [role=tab]")];
   const groups = () => [...root!.querySelectorAll(".grp")].map((g) => g.id);
   test("one tab per group in reading order, the first selected and the only group shown", () => {
-    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "sheet", "spoolman"].map((id) => `settings-${id}`));
-    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "About"]);
+    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "requirements", "sheet", "spoolman"].map((id) => `settings-${id}`));
+    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "Requirements", "About"]);
     expect(links().filter((l) => l.getAttribute("aria-selected") === "true").map((l) => l.dataset.section)).toEqual(["settings-spoolman"]);
     expect([...root!.querySelectorAll<HTMLElement>(".grp")].filter((g) => !g.hidden).map((g) => g.id)).toEqual(["settings-spoolman"]);
     expect(root!.querySelector("#settings-extras")).toBeNull();

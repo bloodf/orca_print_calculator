@@ -62,34 +62,6 @@ describe("Spoolman test connection", () => {
     expect(root.querySelector("button[aria-label='Copy Spoolman address']")).not.toBeNull();
   });
 
-  test("the Spoolman requirement row shows its status and Check again reconnects", async () => {
-    store.settings = { ...store.settings, spoolman: { url: "http://10.0.0.1:7912" } };
-    store.spoolman = { ...store.spoolman, state: "offline", error: "timeout" };
-    const calls = installHost({ spoolman_fetch: () => ({ currency: "EUR", filaments: [], spools: [{}, {}] }) });
-    const root = mountComponent(SpoolmanSettings);
-    const row = root.querySelector<HTMLElement>("[data-requirement=spoolman]")!;
-    expect(row.dataset.status).toBe("missing");
-    expect(row.textContent).toContain("Not reachable");
-    expect(row.textContent).toContain("http://10.0.0.1:7912 · Spoolman took too long to answer.");
-    expect(row.querySelector<HTMLAnchorElement>(".oui-req-link")?.href).toBe("https://github.com/Donkie/Spoolman");
-    byText(row, "button", "Check again")!.click();
-    await flush();
-    expect(calls.filter((c) => c.cmd === "spoolman_fetch").map((c) => c.args)).toEqual([{ url: "http://10.0.0.1:7912" }]);
-    expect(row.dataset.status).toBe("found");
-    expect(row.textContent).toContain("Found");
-    expect(row.textContent).toContain("http://10.0.0.1:7912 · Spoolman · 2 spools");
-    expect(row.querySelector(".oui-req-link")).toBeNull();
-  });
-
-  test("never set up: the requirement says so and links to Spoolman", () => {
-    installHost();
-    const root = mountComponent(SpoolmanSettings);
-    const row = root.querySelector<HTMLElement>("[data-requirement=spoolman]")!;
-    expect(row.dataset.status).toBe("missing");
-    expect(row.textContent).toContain("Not set up");
-    expect(row.textContent).toContain("Run Spoolman on this computer");
-  });
-
   test("detected Spooler address is offered and applied", async () => {
     const calls = installHost({ spoolman_fetch: () => ({ currency: "USD", filaments: [], spools: [] }) });
     store.spooler = { url: "http://192.168.1.10:7912", presetToFilament: {} };

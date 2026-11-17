@@ -477,6 +477,11 @@ def cmd_get_state(host, args, rid):
     return host.state()
 
 
+def cmd_check_requirements(host, args, rid):
+    """Settings › Requirements › Check again: re-read Spooler's files."""
+    return {"spooler": host.spooler()}
+
+
 def cmd_save_settings(host, args, rid):
     host.save(core.SETTINGS_FILE, _arg(args, "settings", dict))
     return {}
@@ -572,6 +577,7 @@ def cmd_export_file(host, args, rid):
 
 COMMANDS = {
     "get_state": cmd_get_state,
+    "check_requirements": cmd_check_requirements,
     "save_settings": cmd_save_settings,
     "save_quotes": cmd_save_quotes,
     "spoolman_fetch": cmd_spoolman_fetch,

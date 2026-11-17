@@ -6,7 +6,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Added
-- Settings lists what Spoolman pricing needs on this computer, whether Spoolman was found, and how to install it, with a Check again button.
+- Settings > Requirements lists what the plugin can use but does not need: a Spoolman server (configured, detected from Spooler, or not set) and the Spooler plugin (detected or not installed). Each row says what it is for and how to install it, and Check again looks for them again without restarting.
+- Test connection in Settings > Spoolman says why it is off when no Spoolman address is set or detected.
 
 ### Changed
 - Notifications appear bottom-left and each one can be closed; warnings and notices on the page can be dismissed. A closed notice comes back only when what it is about changes (another Spoolman address, other plates, another file), or when the problem clears and later happens again.

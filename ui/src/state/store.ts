@@ -205,6 +205,16 @@ export async function fetchSpoolman(silent = false): Promise<void> {
   }
 }
 
+/** Settings › Requirements › Check again: the host re-reads Spooler's files; a set Spoolman address is probed again. */
+export async function checkRequirements(): Promise<void> {
+  try {
+    store.spooler = (await call("check_requirements", {})).spooler ?? null;
+  } catch (e) {
+    console.error("check_requirements", e);
+  }
+  await fetchSpoolman(true);
+}
+
 // ---- boot ----
 /** A save refused with this code is retried once after the files are read again (get_state): the host refuses to
  * write over a file it has not read, e.g. one it could not read before its storage folder was available. */

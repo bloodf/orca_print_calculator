@@ -306,6 +306,45 @@ class Rpc(HostCase):
         self.assertEqual(spooler["url"], "http://10.0.0.2:7912")
         self.assertEqual(spooler["presetToFilament"]["Generic PLA @U1"], 3)
 
+    def spooler_files(self, url="http://10.0.0.2:7912"):
+        root = Path(self.orca.storage_dir).parents[2] / "spooler"
+        root.mkdir(exist_ok=True)
+        (root / "spooler_settings.json").write_text(json.dumps({"spoolman_url": url}))
+
+    def test_spooler_found_later_is_seen_without_restart(self):  # nothing read before is kept: a miss is never sticky
+        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
+        self.spooler_files()
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["url"], "http://10.0.0.2:7912")
+
+    def test_spooler_changes_reach_the_next_get_state(self):  # Spooler's Sync Presets rewrites profiles.json
+        root = Path(self.orca.storage_dir).parents[2] / "spooler"
+        root.mkdir()
+        profiles = root / "profiles.json"
+        profiles.write_text(json.dumps({"filaments": {"3": {"U1": "Generic PLA @U1"}}}))
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["presetToFilament"], {"Generic PLA @U1": 3})
+        profiles.write_text(json.dumps({"filaments": {"7": {"U1": "Generic PLA @U1"}}}))
+        os.utime(profiles, (time.time() + 5, time.time() + 5))
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"]["presetToFilament"], {"Generic PLA @U1": 7})
+
+    def test_check_again_rereads(self):
+        self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
+        self.spooler_files()
+        self.assertEqual(self.cmd("check_requirements")["data"], {"spooler": {"url": "http://10.0.0.2:7912", "presetToFilament": {}}})
+
+    def test_no_requirement_check_at_import_or_register(self):
+        def boom(*a, **k):
+            raise AssertionError("read_spooler_files ran before the page asked")
+        install_orca()
+        real = self.host_mod.core.read_spooler_files
+        self.host_mod.core.read_spooler_files = boom
+        try:
+            pkg = load_plugin(SRC)  # fresh import: same core module object is replaced, so patch it again
+            pkg.host.core.read_spooler_files = boom
+            pkg.PrintCalculator().register_capabilities()
+            pkg.CalculatorPage().on_load()
+        finally:
+            self.host_mod.core.read_spooler_files = real
+
 
 class Capture(HostCase):
     def test_single_slice(self):
