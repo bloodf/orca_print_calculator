@@ -17,7 +17,7 @@ const RUNS = [
   { n: "calc-firstrun", q: "state=firstRun", ready: "document.querySelector('.fr')" },
   { n: "calc-empty", q: "state=empty", ready: "document.querySelector('.p-button')" },
   { n: "calc-saved", q: "state=savedQuote", ready: "document.querySelector('[data-quote-banner]')" },
-  { n: "calc-undo", q: "state=savedQuote&act=closeDirty", ready: "document.querySelector('.toast-host .toast')" },
+  { n: "calc-undo", q: "state=savedQuote&act=closeDirty", ready: "document.querySelector('.oui-toasts .oui-toast')" },
   { n: "calc-offline", q: "state=offline", ready: "document.querySelector('[data-spoolman-offline]')" },
   { n: "calc-loading", q: "state=loading", ready: "document.querySelector('header')" },
   { n: "error", q: "state=hostError", ready: "document.querySelector('.host-error')" },

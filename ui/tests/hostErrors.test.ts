@@ -14,7 +14,7 @@ import { setLocale, t, LOCALES } from "../src/i18n";
 import { exportQuote } from "../src/quoteFlow";
 import { saveQuote } from "../src/state/quotes";
 import { flushSettings, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import type { HostSlot, SlotMatchView } from "../src/state/types";
 import { load } from "./priceKit";
 
@@ -60,20 +60,20 @@ describe("B. Host codes a user can act on", () => {
     load("ok");
     calls().mockRejectedValueOnce(new BridgeError("too_large"));
     await saveQuote();
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/delete old quotes/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/delete old quotes/i);
     clearToasts();
     calls().mockRejectedValueOnce(new BridgeError("io"));
     await saveQuote();
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/disk/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/disk/i);
   });
   test("saving settings: io and too_large are specific too", async () => {
     calls().mockRejectedValueOnce(new BridgeError("io"));
     await flushSettings();
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/disk/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/disk/i);
     clearToasts();
     calls().mockRejectedValueOnce(new BridgeError("too_large"));
     await flushSettings();
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/delete old quotes/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/delete old quotes/i);
   });
   test("export: bad_name and io are specific; an unknown code stays generic", async () => {
     load("ok");
@@ -81,21 +81,21 @@ describe("B. Host codes a user can act on", () => {
     clearToasts();
     calls().mockRejectedValueOnce(new BridgeError("bad_name"));
     await exportQuote("csv", q);
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/name/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/name/i);
     clearToasts();
     calls().mockRejectedValueOnce(new BridgeError("io"));
     await exportQuote("csv", q);
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/disk/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/disk/i);
     clearToasts();
     calls().mockRejectedValueOnce(new BridgeError("weird"));
     await exportQuote("csv", q);
-    expect(toasts.list[toasts.list.length - 1]!.text).toBe(t("export.failed"));
+    expect(toasts.list[toasts.list.length - 1]!.title).toBe(t("export.failed"));
   });
   test("pt-BR has all of them (no English fallthrough)", async () => {
     setLocale("pt-BR");
     calls().mockRejectedValueOnce(new BridgeError("io"));
     await flushSettings();
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/disco/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/disco/i);
     expect(store.saveStatus).toBe("error");
   });
 });

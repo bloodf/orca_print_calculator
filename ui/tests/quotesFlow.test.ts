@@ -9,7 +9,7 @@ import { exportQuote, exportQuoteList, exportText, sheetFor } from "../src/quote
 import { deleteQuote, openQuote, saveQuote } from "../src/state/quotes";
 import { defaultSettings, mergeSettings, newDraft } from "../src/state/defaults";
 import { derived, patchDefaults, store } from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 
 const calls: { cmd: string; args: unknown }[] = [];
 let failExport: string | null = null;
@@ -87,7 +87,7 @@ describe("export", () => {
     expect(ex.name).toBe("quote-0043.csv");
     expect(ex.text.startsWith("﻿")).toBe(true);
     const last = toasts.list[toasts.list.length - 1]!;
-    expect(last.text).toBe(t("export.saved", { path: "/out/quote-0043.csv" }));
+    expect(last.title).toBe(t("export.saved", { path: "/out/quote-0043.csv" }));
     expect(last.action?.label).toBe(t("export.copyPath"));
   });
 
@@ -105,9 +105,9 @@ describe("export", () => {
     const rec = (await saveQuote())!;
     await exportQuote("html", rec);
     const last = toasts.list[toasts.list.length - 1]!;
-    expect(last.tone).toBe("bad");
-    expect(last.text).toBe(t("export.failed"));
-    expect(last.text).not.toContain(code);
+    expect(last.tone).toBe("error");
+    expect(last.title).toBe(t("export.failed"));
+    expect(last.title).not.toContain(code);
     expect(err).toHaveBeenCalledWith("export_file", code);
     err.mockRestore();
     expect(new BridgeError(code).code).toBe(code);
@@ -125,13 +125,13 @@ describe("export the quote list", () => {
     expect(sent.name).toBe("quotes-2026-11-14.csv");
     expect(sent.text.split("\r\n").filter(Boolean)).toHaveLength(2); // header + Bruno's quote only
     expect(sent.text).toContain(",Bruno,");
-    expect(toasts.list[toasts.list.length - 1]?.text).toBe(t("export.saved", { path: "/out/quotes-2026-11-14.csv" }));
+    expect(toasts.list[toasts.list.length - 1]?.title).toBe(t("export.saved", { path: "/out/quotes-2026-11-14.csv" }));
   });
   test("a host failure says so", async () => {
     await saveQuote(true);
     failExport = "denied";
     await exportQuoteList(store.quotes);
-    expect(toasts.list[toasts.list.length - 1]?.tone).toBe("bad");
+    expect(toasts.list[toasts.list.length - 1]?.tone).toBe("error");
   });
 });
 

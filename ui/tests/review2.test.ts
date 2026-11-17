@@ -10,7 +10,7 @@ import PricePanel from "../src/components/price/PricePanel.vue";
 import { setLocale } from "../src/i18n";
 import { deleteQuote, openQuote, saveQuote } from "../src/state/quotes";
 import * as S from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import { load } from "./priceKit";
 
 const calls = () => vi.mocked(call);

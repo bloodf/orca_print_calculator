@@ -5,7 +5,7 @@ import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
 import { currentLocale, setLocale } from "../src/i18n";
 import * as S from "../src/state/store";
 import { closeQuote, deleteQuote, duplicateQuote, openQuote, saveQuote } from "../src/state/quotes";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 // host -> page delivery in the real injected shape (window.__orcaDispatch calls every registered callback)
 const dispatchToPage = (m: unknown): void => (window as unknown as { __orcaDispatch: (x: unknown) => void }).__orcaDispatch(m);
 
@@ -215,7 +215,7 @@ describe("events", () => {
     expect(S.store.draft.customer).toBe("");
     expect(S.store.plates).toHaveLength(0);
     const undo = toasts.list.find((x) => x.action?.label === "Undo")!;
-    expect(undo.text).toMatch(/project changed/);
+    expect(undo.title).toMatch(/project changed/);
     undo.action!.run();
     expect(S.store.draft).toMatchObject({ quantity: 50, customer: "Ana" });
     expect(S.store.plates).toHaveLength(0);
@@ -265,7 +265,7 @@ describe("saved quotes", () => {
     expect(S.store.quotes).toHaveLength(3);
     await settle(duplicateQuote(q!.id));
     expect(S.store.quotes).toHaveLength(4);
-    toasts.list = [];
+    clearToasts();
     await settle(deleteQuote(q!.id));
     expect(S.store.quotes).toHaveLength(3);
     toasts.list[toasts.list.length - 1]!.action!.run();

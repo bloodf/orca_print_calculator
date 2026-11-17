@@ -7,7 +7,7 @@ import SectionsArea from "../src/views/SectionsArea.vue";
 import { unknownLines } from "../src/components/price/unknownLines";
 import { setLocale } from "../src/i18n";
 import { derived } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import { load, mount, txt } from "./priceKit";
 
 let app: App | null = null;

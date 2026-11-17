@@ -4,7 +4,7 @@ import Button from "primevue/button";
 // Reused by Settings (no defaultValue there, so no override dot).
 import { computed } from "vue";
 import { t } from "../../i18n";
-import { toast } from "../../state/toast";
+import { showToast } from "../../../shared/src/components";
 import type { DiscountTier } from "../../state/types";
 import { OuiIcon } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
@@ -40,7 +40,7 @@ function add(): void {
 function remove(i: number): void {
   const before = props.modelValue;
   emit("update:modelValue", before.filter((_, k) => k !== i));
-  toast({ text: t("tier.removed"), action: { label: t("common.undo"), run: () => emit("update:modelValue", before) } });
+  showToast({ title: t("tier.removed"), action: { label: t("common.undo"), run: () => emit("update:modelValue", before) } });
 }
 </script>
 

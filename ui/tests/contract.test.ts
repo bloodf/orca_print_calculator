@@ -14,7 +14,7 @@ import { exportBlock, exportQuote } from "../src/quoteFlow";
 import { saveQuote } from "../src/state/quotes";
 import { EMPTY_BRAND } from "../src/state/sheet";
 import * as S from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import type { HostPlate, SavedQuote, Settings } from "../src/state/types";
 
 type Msg = Record<string, unknown>;
@@ -65,7 +65,7 @@ const SpoolmanData = obj({
   spools: list(obj({ id: num, filamentId: num, price: nul(num), initialWeight: nul(num), remainingWeight: opt(nul(num)), archived: bool, lastUsed: nul(iso) })),
 });
 // settings/quotes are written by the UI and handed back unchanged: object / array, contents owned by the UI.
-const HostState = obj({ host: HostInfo, plates: list(HostPlate), settings: nul(record(any)), quotes: nul(list(any)), spooler: SpoolerInfo, unreadable: opt(list(str)) });
+const HostState = obj({ host: HostInfo, plates: list(HostPlate), settings: nul(record(any)), quotes: nul(list(any)), spooler: SpoolerInfo, unreadable: opt(list(str)), unloaded: opt(list(str)) });
 const DATA: Record<string, Check> = {
   get_state: HostState, save_settings: obj({}), save_quotes: obj({}), spoolman_fetch: SpoolmanData,
   import_sliced: obj({ plates: list(HostPlate) }), export_file: obj({ path: str }),
@@ -332,7 +332,7 @@ describe("an unreadable quotes file (real host answers)", () => {
     const saved = saveQuote();
     await settle();
     expect(await saved).toBeNull();
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/can't be read|not being saved/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/can't be read|not being saved/i);
   });
 });
 
@@ -361,8 +361,8 @@ describe("import and export flows with real host answers", () => {
     for (const step of steps.slice(1)) {
       clearToasts();
       await runImport(fileOf("x.gcode.3mf"));
-      expect(toasts.list[0]?.tone).toBe("bad");
-      expect(toasts.list[0]!.text).toBe(errorText(step.out[0]!.error as string, 4));
+      expect(toasts.list[0]?.tone).toBe("error");
+      expect(toasts.list[0]!.title).toBe(errorText(step.out[0]!.error as string, 4));
       expect(S.store.plates).toBe(before);
     }
   });
@@ -384,12 +384,12 @@ describe("import and export flows with real host answers", () => {
     const sent = last(r.sent.filter((m) => m.cmd === "export_file"));
     expect(Object.keys(sent.args as Msg).sort()).toEqual(["name", "text"]);
     expect((sent.args as { name: string }).name).toMatch(/^quote-\d{4}\.csv$/);
-    expect(toasts.list[0]!.text).toBe(t("export.saved", { path: "/orca-data/orca_plugins/plugin_data/orca_print_calculator/exports/quote-0042.csv" }));
+    expect(toasts.list[0]!.title).toBe(t("export.saved", { path: "/orca-data/orca_plugins/plugin_data/orca_print_calculator/exports/quote-0042.csv" }));
     clearToasts();
     const q = exportQuote("csv", rec);
     await settle();
     await q;
-    expect(toasts.list[0]).toMatchObject({ text: failText(t("export.failed"), "bad_name"), tone: "bad" }); // the host's bad_name gets its own sentence
+    expect(toasts.list[0]).toMatchObject({ title: failText(t("export.failed"), "bad_name"), tone: "error" }); // the host's bad_name gets its own sentence
   });
 });
 

@@ -11,7 +11,7 @@ import { setLocale } from "../src/i18n";
 import { SCENARIO_NAMES } from "../src/mock/scenarios";
 import type { Derived } from "../src/state/derive";
 import { derived } from "../src/state/store";
-import { clearToasts } from "../src/state/toast";
+import { clearToasts } from "../shared/src/components/toast";
 import { en, load, mount, txt } from "./priceKit";
 
 let app: App | null = null;

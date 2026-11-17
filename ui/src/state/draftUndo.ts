@@ -3,7 +3,7 @@
 import { t } from "../i18n";
 import { hasUnsavedWork, stable } from "./dirty";
 import { store } from "./store";
-import { toast } from "./toast";
+import { showToast } from "../../shared/src/components";
 import type { Draft, HostPlate } from "./types";
 
 type Snap = { draft: Draft; plates: HostPlate[]; pending: HostPlate[] | null };
@@ -24,19 +24,19 @@ export function changeDraft(change: () => void, messageKey: string, opts: { with
   change();
   if (!had) return;
   const after = snap();
-  toast({
-    text: t(messageKey),
-    ms: UNDO_MS,
+  showToast({
+    title: t(messageKey),
+    timeout: UNDO_MS,
     action: {
       label: t("common.undo"),
       run: () => {
-        if (stable(store.draft) !== stable(after.draft)) { toast({ text: t("draft.undoStale") }); return; }
+        if (stable(store.draft) !== stable(after.draft)) { showToast({ title: t("draft.undoStale") }); return; }
         store.draft = before.draft;
         if (opts.withPlates !== false && store.plates === after.plates && store.pendingPlates === after.pending) {
           store.plates = before.plates;
           store.pendingPlates = before.pending;
         }
-        toast({ text: t("draft.restored") });
+        showToast({ title: t("draft.restored") });
       },
     },
   });

@@ -1,6 +1,6 @@
 # Development
 
-The UI is Vue 3 and PrimeVue 5 (shared Orca UI foundation 4.0.1 in `ui/shared`: theme, components, icons and the Manrope font) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
+The UI is Vue 3 and PrimeVue 5 (shared Orca UI foundation 4.2.1 in `ui/shared`: theme, components, icons and the Manrope font) with TypeScript and Vite, built into one offline HTML file. The host is Python 3.12 with no dependencies.
 
 ```bash
 pnpm -C ui install

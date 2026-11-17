@@ -24,7 +24,8 @@ export type SpoolerInfo = { url: string | null; presetToFilament: Record<string,
 export type SpoolmanSpoolRow = SpoolmanSpool & { remainingWeight?: number | null };
 export type SpoolmanData = { currency: string | null; filaments: SpoolmanFilament[]; spools: SpoolmanSpoolRow[] };
 /** `unreadable`: names of saved files ("settings", "quotes") that exist but could not be read; the host refuses to overwrite them. */
-export type HostState = { host: HostInfo; plates: HostPlate[]; settings: Settings | null; quotes: SavedQuote[] | null; spooler: SpoolerInfo; unreadable?: string[] };
+/** `unloaded`: of those, the ones not read only because the host had no storage folder yet (read again before a save). */
+export type HostState = { host: HostInfo; plates: HostPlate[]; settings: Settings | null; quotes: SavedQuote[] | null; spooler: SpoolerInfo; unreadable?: string[]; unloaded?: string[] };
 
 export type PrinterProfile = { watts: number | null; acquisitionMinor: number | null; lifetimeHours: number | null };
 export type CatalogExtra = { key: string; label: string; unitMinor: number; qtyE3: number; per: "piece" | "plate" | "order"; /** Units on hand at qty scale (E3); absent or null = stock not tracked. */ stockE3?: number | null };

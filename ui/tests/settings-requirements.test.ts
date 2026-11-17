@@ -11,42 +11,64 @@ afterEach(() => { unmountComponent(); });
 const row = (root: HTMLElement, id: string) => root.querySelector<HTMLElement>(`[data-req='${id}']`)!;
 
 describe("Settings › Requirements", () => {
-  test("both missing: not set / not installed, with how to install", () => {
+  test("both missing: not set up / not installed, optional, with how to install", () => {
     store.spooler = null;
     installHost();
     const root = mountComponent(RequirementsSettings);
-    expect(row(root, "spoolman").dataset.ok).toBe("false");
-    expect(row(root, "spoolman").textContent).toContain(t("req.spoolman.unset"));
+    expect(root.querySelectorAll(".oui-req")).toHaveLength(2);
+    expect(row(root, "spoolman").dataset.status).toBe("missing");
+    expect(row(root, "spoolman").textContent).toContain(t("req.notSet"));
     expect(row(root, "spoolman").textContent).toContain(t("req.spoolman.how"));
-    expect(row(root, "spooler").textContent).toContain(t("req.spooler.missing"));
-    expect(row(root, "spooler").querySelector(".cv-text")?.textContent).toBe("https://cloud.orcaslicer.com/p/50c35dcbd6f3");
-    expect(root.textContent).toContain(t("req.optional"));
+    expect(row(root, "spoolman").querySelector<HTMLAnchorElement>(".oui-req-link")?.href).toBe("https://github.com/Donkie/Spoolman");
+    expect(row(root, "spooler").textContent).toContain(t("req.notInstalled"));
+    expect(row(root, "spooler").querySelector<HTMLAnchorElement>(".oui-req-link")?.href).toBe("https://cloud.orcaslicer.com/p/50c35dcbd6f3");
+    expect(row(root, "spooler").textContent).toContain(t("req.optional"));
   });
 
-  test("detected from Spooler, then configured", () => {
+  test("detected from Spooler, then a saved address shows the connection", () => {
     store.spooler = { url: "http://10.0.0.5:7912", presetToFilament: {} };
     installHost();
     const root = mountComponent(RequirementsSettings);
-    expect(row(root, "spoolman").dataset.ok).toBe("true");
+    expect(row(root, "spoolman").dataset.status).toBe("found");
     expect(row(root, "spoolman").textContent).toContain(t("req.spoolman.detected", { url: "http://10.0.0.5:7912" }));
-    expect(row(root, "spooler").textContent).toContain(t("req.spooler.found"));
+    expect(row(root, "spooler").textContent).toContain(t("req.detected"));
     unmountComponent();
-    store.settings = { ...store.settings, spoolman: { url: "http://s:7912" } };
-    expect(row(mountComponent(RequirementsSettings), "spoolman").textContent).toContain(t("req.spoolman.configured", { url: "http://s:7912" }));
+    store.settings = { ...store.settings, spoolman: { url: "http://10.0.0.1:7912" } };
+    store.spoolman = { ...store.spoolman, state: "offline", error: "timeout" };
+    const r = row(mountComponent(RequirementsSettings), "spoolman");
+    expect(r.dataset.status).toBe("missing");
+    expect(r.textContent).toContain(t("req.notFound"));
+    expect(r.textContent).toContain("http://10.0.0.1:7912 · Spoolman took too long to answer.");
   });
 
-  test("Check again re-reads Spooler on the host; no Spoolman probe without an address", async () => {
+  test("Check again re-reads Spooler on the host and reconnects a saved Spoolman", async () => {
     store.spooler = null;
-    const calls = installHost({ check_requirements: () => ({ spooler: { url: "http://10.0.0.9:7912", presetToFilament: {} } }) });
+    store.settings = { ...store.settings, spoolman: { url: "http://10.0.0.1:7912" } };
+    store.spoolman = { ...store.spoolman, state: "offline", error: "timeout" };
+    const calls = installHost({
+      check_requirements: () => ({ spooler: { url: "http://10.0.0.9:7912", presetToFilament: {} } }),
+      spoolman_fetch: () => ({ currency: "EUR", filaments: [], spools: [{}, {}] }),
+    });
     const root = mountComponent(RequirementsSettings);
-    byText(root, "button", t("req.checkAgain"))!.click();
+    byText(row(root, "spooler"), "button", t("req.checkAgain"))!.click();
+    await flush();
+    await flush(); // the Spooler re-read, then the Spoolman reconnect
+    expect(calls.map((c) => c.cmd)).toEqual(["check_requirements", "spoolman_fetch"]);
+    expect(row(root, "spooler").textContent).toContain(t("req.detected"));
+    expect(row(root, "spoolman").dataset.status).toBe("found");
+    expect(row(root, "spoolman").textContent).toContain("http://10.0.0.1:7912 · Spoolman · 2 spools");
+  });
+
+  test("Check again without a saved address sends no Spoolman request", async () => {
+    store.spooler = null;
+    const calls = installHost({ check_requirements: () => ({ spooler: null }) });
+    const root = mountComponent(RequirementsSettings);
+    byText(row(root, "spoolman"), "button", t("req.checkAgain"))!.click();
     await flush();
     expect(calls.map((c) => c.cmd)).toEqual(["check_requirements"]);
-    expect((store.spooler as { url: string } | null)?.url).toBe("http://10.0.0.9:7912");
-    expect(row(root, "spooler").textContent).toContain(t("req.spooler.found"));
   });
 
-  test("Test connection is disabled with a reason when no Spoolman address is set", async () => {
+  test("Test connection is off with a reason when no Spoolman address is set or detected", async () => {
     const calls = installHost();
     const root = mountComponent(SpoolmanSettings);
     const btn = byText(root, "button", t("spoolman.test"))!;

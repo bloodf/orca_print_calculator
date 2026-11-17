@@ -13,7 +13,7 @@ import { isDirty, exportText, sheetFor } from "../src/quoteFlow";
 import { defaultSettings, mergeSettings, migrateSettings, resetNames } from "../src/state/defaults";
 import { openQuote } from "../src/state/quotes";
 import * as S from "../src/state/store";
-import { clearToasts, toasts } from "../src/state/toast";
+import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
 import { parseQuotes } from "../src/state/validate";
 import { load } from "./priceKit";
 
@@ -203,7 +203,7 @@ describe("M3: quotes with missing engine input are quarantined, never half-opene
     delete q.input.costs.labor;
     S.store.quotes = [q];
     expect(() => openQuote(q.id)).not.toThrow();
-    expect(toasts.list[toasts.list.length - 1]!.text).toMatch(/couldn't open/i);
+    expect(toasts.list[toasts.list.length - 1]!.title).toMatch(/couldn't open/i);
     expect(S.store.draft.frozenPlates).toBeNull();
   });
 });
