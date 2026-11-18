@@ -74,11 +74,11 @@ onBeforeUnmount(() => { watcher?.disconnect(); window.removeEventListener("hashc
 </script>
 
 <template>
-  <div ref="wrap" class="sp" :data-open="open || undefined" @click="onClick">
+  <div ref="wrap" class="spg" :data-open="open || undefined" @click="onClick">
     <OuiSettings ref="inner" :sections="flagged" :nav-label="navLabel">
-      <div class="sp-bar">
-        <Button type="button" text size="small" severity="secondary" class="sp-back" data-test="settings-back" @click.stop="back">
-          <OuiIcon :icon="I.chevronRight" :size="14" class="sp-back-icon" /><span>{{ backLabel }}</span>
+      <div class="spg-bar">
+        <Button type="button" text size="small" severity="secondary" class="spg-back" data-test="settings-back" @click.stop="back">
+          <OuiIcon :icon="I.chevronRight" :size="14" class="spg-back-icon" /><span>{{ backLabel }}</span>
         </Button>
       </div>
       <slot />
@@ -89,23 +89,23 @@ onBeforeUnmount(() => { watcher?.disconnect(); window.removeEventListener("hashc
 
 <style>
 /* Wide (700 px and up): the side list beside the page, also between 700 and 820 px, where OuiSettings would use a strip. */
-.sp-bar { display: none; }
+.spg-bar { display: none; }
 @container oui-settings (min-width: 700px) and (max-width: 820px) {
-  .sp .oui-settings-grid { grid-template-columns: 208px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'nav body' 'foot foot'; }
-  .sp .oui-settings-nav { overflow-y: auto; }
-  .sp .oui-settings-tabs { display: grid; gap: 1px; overflow: visible; padding-bottom: 0; }
-  .sp .oui-settings-link { width: 100%; }
+  .spg .oui-settings-grid { grid-template-columns: 208px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'nav body' 'foot foot'; }
+  .spg .oui-settings-nav { overflow-y: auto; }
+  .spg .oui-settings-tabs { display: grid; gap: 1px; overflow: visible; padding-bottom: 0; }
+  .spg .oui-settings-link { width: 100%; }
 }
 /* Narrow: the list of pages, or one page with Back. */
 @container oui-settings (max-width: 699.98px) {
-  .sp .oui-settings-tabs { display: grid; gap: 1px; overflow: visible; padding-bottom: 0; }
-  .sp .oui-settings-link { width: 100%; min-height: 44px; }
-  .sp:not([data-open]) .oui-settings-grid { grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'nav' 'foot'; }
-  .sp:not([data-open]) .oui-settings-nav { overflow-y: auto; }
-  .sp:not([data-open]) .oui-settings-body { display: none; }
-  .sp[data-open] .oui-settings-grid { grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'body' 'foot'; }
-  .sp[data-open] .oui-settings-nav { display: none; }
-  .sp-bar { display: flex; }
-  .sp-back-icon { transform: scaleX(-1); }
+  .spg .oui-settings-tabs { display: grid; gap: 1px; overflow: visible; padding-bottom: 0; }
+  .spg .oui-settings-link { width: 100%; min-height: 44px; }
+  .spg:not([data-open]) .oui-settings-grid { grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'nav' 'foot'; }
+  .spg:not([data-open]) .oui-settings-nav { overflow-y: auto; }
+  .spg:not([data-open]) .oui-settings-body { display: none; }
+  .spg[data-open] .oui-settings-grid { grid-template-rows: minmax(0, 1fr) auto; grid-template-areas: 'body' 'foot'; }
+  .spg[data-open] .oui-settings-nav { display: none; }
+  .spg-bar { display: flex; }
+  .spg-back-icon { transform: scaleX(-1); }
 }
 </style>

@@ -24,7 +24,7 @@ async function mount(): Promise<void> {
 function unmount(): void { app?.unmount(); root?.remove(); app = null; root = null; }
 const link = (id: string): HTMLElement => root!.querySelector<HTMLElement>(`.oui-settings-link[data-section="settings-${id}"]`)!;
 const selected = (): string | undefined => root!.querySelector<HTMLElement>('.oui-settings-link[aria-selected="true"]')?.dataset.section;
-const isOpen = (): boolean => root!.querySelector(".sp")!.hasAttribute("data-open");
+const isOpen = (): boolean => root!.querySelector(".spg")!.hasAttribute("data-open");
 const heading = (id: string): HTMLElement => root!.querySelector<HTMLElement>(`#settings-${id} .oui-panel-title`)!;
 
 beforeEach(async () => {
