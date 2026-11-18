@@ -23,15 +23,15 @@ const BOTH = [["dark", "en"], ["dark", "pt-BR"]];
 const ALL = [...BOTH, ["light", "en"], ["light", "pt-BR"]];
 const SHOTS = [
   // slot captures: a narrow window, so the text stays readable inside the square (under 560 px the tab row is cut, under 640 the names)
-  { n: "slot-overview", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: ALL },
-  { n: "slot-overview-social", q: "state=ok", ready: PRICE, w: 640, slot: "social", sets: BOTH },
+  { n: "slot-overview", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: ALL, steps: [click(".card .chip")] },
+  { n: "slot-overview-social", q: "state=ok", ready: PRICE, w: 640, slot: "social", sets: BOTH, steps: [click(".card .chip")] },
   { n: "slot-filament", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: BOTH, steps: [click(".card .chip")] },
   { n: "slot-costs", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: BOTH, steps: [open("machine"), top(".sections-area")] },
   { n: "slot-price", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: BOTH, steps: [top("[data-price-panel]")] },
   { n: "slot-price-square", q: "state=ok", ready: PRICE, w: 560, slot: "square", sets: BOTH, steps: [top("[data-price-panel]")] },
   { n: "slot-quotes", q: "state=ok&view=quotes", ready: "document.querySelector('#quotes-title')", w: 560, slot: "land", sets: BOTH, steps: [click("tbody tr:last-child .acts [aria-haspopup=menu]")] },
   // README screenshots: the wide layout (1440 px keeps the names whole in Portuguese too)
-  { n: "calculator", q: "state=ok", ready: PRICE, w: 1440, h: 900, sets: ALL },
+  { n: "calculator", q: "state=ok", ready: PRICE, w: 1440, h: 900, sets: ALL, steps: [click(".card .chip")] },
   { n: "quotes", q: "state=ok&view=quotes", ready: "document.querySelector('#quotes-title')", w: 1440, h: 440, sets: ALL },
 ];
 
