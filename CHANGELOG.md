@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+- A spool whose weight Spoolman does not know is drawn as a full reel in its colour with a small "?" badge, instead of the bare reel that looked like an empty spool (shared UI foundation 4.2.2).
+
 ## [0.6.2] - 2026-11-17
 
 ### Added
