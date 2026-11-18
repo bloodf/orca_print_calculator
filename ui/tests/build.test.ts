@@ -21,8 +21,9 @@ async function built(): Promise<string> {
 }
 
 /** 387,010 B before the Vue + PrimeVue migration; 877 kB after (Vue Options API, PrimeVue components, the shared Aura preset). The CI gate uses the same figure. */
-// 1,115,000 until 0.6.1; 1,170,000 with Polish (1,146,xxx B). Raised to 1,200,000 for the per-slot spool picker (#18).
-const BUDGET = 1_200_000;
+// 1,115,000 until 0.6.1; 1,170,000 with Polish (1,146,xxx B). Raised to 1,200,000 for the per-slot spool picker (#18),
+// then to 1,300,000 for the OuiSpool reel renders (16 webp, ~72 kB raw, ~100 kB inline; 1,256,xxx B).
+const BUDGET = 1_300_000;
 
 describe("built index.html", () => {
   test("carries the CSP meta, before the first <script", async () => {

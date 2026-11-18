@@ -5,11 +5,12 @@ import InputText from "primevue/inputtext";
 import Listbox from "primevue/listbox";
 import { computed, ref, useId, watch } from "vue";
 import { grams, safeColor } from "../../format";
+import { spoolFraction } from "../../spoolFill";
 import { fitScore, pinnedPrice, pricePerKg } from "../../engine/match";
 import { t } from "../../i18n";
 import { currency, digits, locale, store } from "../../state/store";
 import type { SlotMatchView } from "../../state/types";
-import { OuiIcon, OuiSwatch } from "../../../shared/src/components";
+import { OuiIcon, OuiSpool, OuiSwatch } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import Popover from "../base/Popover.vue";
@@ -18,7 +19,7 @@ import { canPickSpool, kgMoney, setManualPrice, setSlotSpool, slotSpoolOf, UNKNO
 const props = defineProps<{ match: SlotMatchView; open: boolean; anchor: HTMLElement | null }>();
 const emit = defineEmits<{ close: [] }>();
 
-type Opt = { id: string; filamentId?: number; spoolId?: number; title: string; sub: string; color: string | null; score: number };
+type Opt = { id: string; filamentId?: number; spoolId?: number; title: string; sub: string; color: string | null; score: number; fill?: number | null };
 const AUTO = "auto";
 const q = ref("");
 const list = ref<{ $el?: HTMLElement } | null>(null);
@@ -47,7 +48,7 @@ const flat = computed(() => {
     const price = sp ? kgMoney(sp.pricePerKg) : UNKNOWN;
     const left = typeof s.remainingWeight === "number" ? grams(Math.max(0, s.remainingWeight), locale.value) : UNKNOWN;
     opts.push({
-      id: `sp-${s.id}`, filamentId: f.id, spoolId: s.id, color: safeColor(f.colorHex), score: fitScore(props.match.slot, f),
+      id: `sp-${s.id}`, filamentId: f.id, spoolId: s.id, color: safeColor(f.colorHex), fill: spoolFraction(s), score: fitScore(props.match.slot, f),
       title: [f.vendor, f.name].filter(Boolean).join(" ") || `#${f.id}`,
       sub: [f.material, t("picker.spoolLine", { id: s.id, left, price })].filter(Boolean).join(" · "),
     });
@@ -95,7 +96,8 @@ const typed = computed(() => store.settings.manualPrices[preset.value] ?? null);
         >
           <template #option="{ option }">
             <span class="opt" :data-spool="option.spoolId" @click.stop="pick(option)">
-              <OuiSwatch v-if="option.filamentId !== undefined" :color="option.color" :size="12" />
+              <OuiSpool v-if="option.spoolId !== undefined" :color="option.color" :fraction="option.fill" :size="28" />
+              <OuiSwatch v-else-if="option.filamentId !== undefined" :color="option.color" :size="12" />
               <OuiIcon v-else :icon="I.refresh" :size="12" />
               <span class="text">
                 <span class="title oui-truncate">{{ option.title }}</span>
