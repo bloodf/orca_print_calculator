@@ -30,12 +30,14 @@ const FIL: [number, string, string, string, number, string][] = [
   [12, "Overture", "PETG Blue", "PETG", 119, "#2E6FBF"], [13, "Polymaker", "PolyLite PETG Grey", "PETG", 124, "#8A8A8A"],
   [20, "Sunlu", "TPU 95A Black", "TPU", 159, "#1A1A1A"], [21, "Bambu Lab", "ASA Black", "ASA", 169, "#111111"],
 ];
+// What is left on each sample spool (g of 1000): full, half, low and one Spoolman cannot weigh (null); the plate links #3 (half) and #5 (unknown).
+const LEFT = [1000, 610, 470, 835, null, 655, 430, 910, 520, 70, 450, 395, 340, 285];
 export const spoolman = (): SpoolmanData => ({
   currency: "BRL",
   filaments: FIL.map(([id, vendor, name, material, price, colorHex]) => ({ id, vendor, name, material, price, weight: 1000, colorHex })),
   spools: Array.from({ length: 14 }, (_, i) => {
     const f = FIL[i % FIL.length]!;
-    return { id: i + 1, filamentId: f[0], price: f[4] + (i % 3) * 5, initialWeight: 1000, archived: i === 13, lastUsed: `2026-1${i % 2}-0${(i % 9) + 1}T10:00:00Z`, remainingWeight: 1000 - i * 55 };
+    return { id: i + 1, filamentId: f[0], price: f[4] + (i % 3) * 5, initialWeight: 1000, archived: i === 13, lastUsed: `2026-1${i % 2}-0${(i % 9) + 1}T10:00:00Z`, remainingWeight: LEFT[i] };
   }),
 });
 
