@@ -41,8 +41,8 @@ jobs:
       - run: python3 scripts/build.py
       - name: Bundle size gate
         run: |
-          # 1,200,000 B since the per-slot spool picker (#18), with room for Polish; ui/tests/build.test.ts uses the same figure.
+          # 1,300,000 B since the OuiSpool reel renders (1,200,000 since the per-slot spool picker, #18); ui/tests/build.test.ts uses the same figure.
           size="$(wc -c < ui/dist/index.html)"
-          echo "ui/dist/index.html: $size bytes (limit 1200000)"
-          [ "$size" -le 1200000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 1200000"; exit 1; }
+          echo "ui/dist/index.html: $size bytes (limit 1300000)"
+          [ "$size" -le 1300000 ] || { echo "::error::ui/dist/index.html is $size bytes, over 1300000"; exit 1; }
       - run: python -m unittest discover tests

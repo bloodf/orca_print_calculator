@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
-import { grams } from "../../format";
+import { grams, safeColor } from "../../format";
+import { spoolFraction } from "../../spoolFill";
 import { t } from "../../i18n";
 import { locale, store } from "../../state/store";
 import type { SlotMatchView } from "../../state/types";
 import { elOf } from "../base/el";
-import { OuiIcon } from "../../../shared/src/components";
+import { OuiIcon, OuiSpool } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
 import SpoolPicker from "./SpoolPicker.vue";
 import { takePick, pickRequest } from "./pickRequest";
@@ -18,6 +19,8 @@ const anchor = ref<HTMLElement | null>(null);
 const open = ref(false);
 const frozen = computed(() => !!store.draft.frozenPlates);
 const filament = computed(() => store.spoolman.data.filaments.find((f) => f.id === props.match.filamentId));
+// The Spoolman spool pricing this slot, drawn as a reel as full as it is. A filament or preset price has no spool to show.
+const spool = computed(() => (props.match.spoolId === null ? undefined : store.spoolman.data.spools.find((s) => s.id === props.match.spoolId)));
 const filamentName = computed(() => (filament.value ? [filament.value.vendor, filament.value.name].filter(Boolean).join(" ") : ""));
 const g = computed(() => (props.match.slot.grams === null ? null : grams(props.match.slot.grams, locale.value)));
 const showReset = computed(() => !frozen.value && hasSlotChoice(props.match));
@@ -34,11 +37,14 @@ function useAuto(): void { clearSlot(props.match); emit("useAuto"); }
 <template>
   <div class="mrow" tabindex="-1" role="group" :aria-label="`${match.slot.n} ${match.slot.preset}`">
     <span class="n num oui-muted">{{ match.slot.n }}</span>
-    <span class="names">
-      <span class="preset oui-truncate" :title="match.slot.preset">{{ presetName(match.slot.preset) }}</span>
-      <span v-if="filamentName" class="oui-meta oui-truncate">{{ filamentName }}</span>
-      <span v-if="match.pickGone !== undefined && !frozen" class="sm oui-muted">{{ t(match.pickGone.kind === "spool" ? "match.pickGone" : "match.pickGoneFilament", { id: match.pickGone.id }) }}</span>
-      <span v-else-if="hint" class="sm oui-muted hint">{{ t("match.fallbackHint") }}</span>
+    <span class="who">
+      <OuiSpool v-if="spool" :color="safeColor(filament?.colorHex)" :fraction="spoolFraction(spool)" :size="32" />
+      <span class="names">
+        <span class="preset oui-truncate" :title="match.slot.preset">{{ presetName(match.slot.preset) }}</span>
+        <span v-if="filamentName" class="oui-meta oui-truncate">{{ filamentName }}</span>
+        <span v-if="match.pickGone !== undefined && !frozen" class="sm oui-muted">{{ t(match.pickGone.kind === "spool" ? "match.pickGone" : "match.pickGoneFilament", { id: match.pickGone.id }) }}</span>
+        <span v-else-if="hint" class="sm oui-muted hint">{{ t("match.fallbackHint") }}</span>
+      </span>
     </span>
     <span class="num g">
       <template v-if="g">{{ g }}</template>
@@ -64,6 +70,7 @@ function useAuto(): void { clearSlot(props.match); emit("useAuto"); }
 .mrow { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto auto auto; align-items: center; column-gap: 12px; padding: 6px 0; }
 .mrow + .mrow { border-top: 1px solid var(--oui-border); }
 .mrow:focus-visible { outline: 2px solid var(--oui-primary); outline-offset: 2px; }
+.who { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .names { display: flex; flex-direction: column; min-width: 0; }
 .price { display: flex; flex-direction: column; align-items: flex-end; }
 .g { text-align: right; }

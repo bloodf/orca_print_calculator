@@ -2,7 +2,7 @@
 // Extras and stock: the extras catalog with counts on hand, and a read-only filament summary from Spoolman.
 import Button from "primevue/button";
 import { computed } from "vue";
-import { materialTone, OuiBanner, OuiEmpty, OuiIcon, OuiPanel, OuiSwatch } from "../../shared/src/components";
+import { materialTone, OuiBanner, OuiEmpty, OuiIcon, OuiPanel, OuiSpool } from "../../shared/src/components";
 import * as I from "../../shared/src/icons";
 import { lead } from "../components/base/lead";
 import ExtrasCatalog from "../components/settings/ExtrasCatalog.vue";
@@ -10,6 +10,7 @@ import { gotoSettings } from "../components/costs/shared";
 import { grams, safeColor } from "../format";
 import { intlLocale, t } from "../i18n";
 import { fetchSpoolman, spoolmanDown, store } from "../state/store";
+import { stockFraction } from "../spoolFill";
 
 const connected = computed(() => store.spoolman.state === "ok");
 // A configured Spoolman that does not answer (spoolmanDown) is not "not connected": say so, and offer the retry instead of the first-time setup.
@@ -20,7 +21,7 @@ const filaments = computed(() => {
     const mine = spools.filter((s) => s.filamentId === f.id && !s.archived);
     const known = mine.map((s) => s.remainingWeight).filter((w): w is number => typeof w === "number" && Number.isFinite(w));
     return {
-      id: f.id, name: f.name, vendor: f.vendor ?? "", material: f.material ?? "", color: safeColor(f.colorHex), spools: mine.length,
+      id: f.id, name: f.name, vendor: f.vendor ?? "", material: f.material ?? "", color: safeColor(f.colorHex), spools: mine.length, fill: stockFraction(mine),
       remaining: known.length ? grams(known.reduce((a, b) => a + b, 0), intlLocale()) : "—",
     };
   });
@@ -63,7 +64,7 @@ const off = computed(() => lead(t("stock.offline", { url: store.settings.spoolma
               </thead>
               <tbody>
                 <tr v-for="f in filaments" :key="f.id">
-                  <td><span class="fil"><OuiSwatch :color="f.color" :size="14" /><span class="oui-strong">{{ f.name }}</span></span></td>
+                  <td><span class="fil"><OuiSpool :color="f.color" :fraction="f.fill" :size="28" /><span class="oui-strong">{{ f.name }}</span></span></td>
                   <td><span class="fil"><span v-if="f.material" class="oui-chip" :data-tone="materialTone(f.material)">{{ f.material }}</span><span class="oui-muted">{{ f.vendor }}</span></span></td>
                   <td class="num r">{{ f.spools }}</td><td class="num r oui-strong">{{ f.remaining }}</td>
                 </tr>
