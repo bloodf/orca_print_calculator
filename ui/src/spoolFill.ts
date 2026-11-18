@@ -5,7 +5,7 @@ const usable = (s: Weights): s is { remainingWeight: number; initialWeight: numb
   typeof s.remainingWeight === "number" && Number.isFinite(s.remainingWeight)
   && typeof s.initialWeight === "number" && Number.isFinite(s.initialWeight) && s.initialWeight > 0;
 
-/** remaining / initial, clamped to 0..1; null when either weight is missing (OuiSpool then draws the bare reel). */
+/** remaining / initial, clamped to 0..1; null when either weight is missing (OuiSpool then draws the full reel with its unknown badge when there is a colour, else the bare reel). */
 export const spoolFraction = (s: Weights | undefined): number | null =>
   s && usable(s) ? Math.min(1, Math.max(0, s.remainingWeight / s.initialWeight)) : null;
 

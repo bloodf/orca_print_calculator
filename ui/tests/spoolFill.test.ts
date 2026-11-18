@@ -1,5 +1,8 @@
-// The fill drawn by OuiSpool: remaining over initial weight, null (bare reel) whenever Spoolman does not say.
+// The fill drawn by OuiSpool: remaining over initial weight, null whenever Spoolman does not say (the full reel with the unknown badge when there is a colour).
 import { describe, expect, test } from "vitest";
+import { h } from "vue";
+import { createOrcaApp as createApp } from "../src/orcaUi";
+import OuiSpool from "../shared/src/components/OuiSpool.vue";
 import { spoolFraction, stockFraction } from "../src/spoolFill";
 
 describe("spoolFraction", () => {
@@ -36,5 +39,24 @@ describe("stockFraction", () => {
   test("null with no spool, or none with both weights", () => {
     expect(stockFraction([])).toBeNull();
     expect(stockFraction([{ remainingWeight: 300, initialWeight: null }])).toBeNull();
+  });
+});
+
+describe("the drawn spool", () => {
+  const draw = (color: string | null, fraction: number | null): HTMLElement => {
+    const root = document.createElement("div");
+    document.body.appendChild(root);
+    createApp({ render: () => h(OuiSpool, { color, fraction }) }).mount(root);
+    return root.querySelector<HTMLElement>(".oui-spool")!;
+  };
+  test("an unknown weight with a colour: the full reel with the unknown badge", () => {
+    const spool = draw("#2E6FBF", spoolFraction({ remainingWeight: null, initialWeight: 1000 }));
+    expect([spool.dataset.level, spool.hasAttribute("data-unknown"), spool.querySelector(".oui-spool-unknown")?.textContent]).toEqual(["1", true, "?"]);
+  });
+  test("a known weight: its level, no badge; no colour and no weight: the bare reel", () => {
+    const known = draw("#2E6FBF", spoolFraction({ remainingWeight: 250, initialWeight: 1000 }));
+    expect([known.dataset.level, known.querySelector(".oui-spool-unknown")]).toEqual(["6", null]);
+    const bare = draw(null, null);
+    expect([bare.dataset.level, bare.hasAttribute("data-unknown"), bare.querySelector(".oui-spool-unknown")]).toEqual(["8", false, null]);
   });
 });
