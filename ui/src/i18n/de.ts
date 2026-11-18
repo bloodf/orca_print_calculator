@@ -600,6 +600,7 @@ export const de: Record<MessageKey, string> = {
   "field.extraNameRequired": "Geben Sie einen Namen ein.",
   "tier.none": "Keine Rabattstufen",
   "settings.nav": "Einstellungsbereiche",
+  "settings.hasError": "enthält einen Wert zum Korrigieren",
   "common.copy": "Kopieren",
   "common.copied": "Kopiert",
   "common.copyFailed": "Kopieren fehlgeschlagen",

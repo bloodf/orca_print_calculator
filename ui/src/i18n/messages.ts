@@ -599,6 +599,7 @@ export const messages = {
   "field.extraNameRequired": ["Enter a name.", "Informe um nome."],
   "tier.none": ["No discount tiers", "Sem faixas de desconto"],
   "settings.nav": ["Settings sections", "Seções dos ajustes"],
+  "settings.hasError": ["has a value to fix", "tem um valor a corrigir"],
   "common.copy": ["Copy", "Copiar"],
   "common.copied": ["Copied", "Copiado"],
   "common.copyFailed": ["Couldn't copy", "N\u00e3o foi poss\u00edvel copiar"],

@@ -6,7 +6,7 @@ import { createOrcaApp as createApp } from "../src/orcaUi";
 vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src/bridge")>()), call: vi.fn(async () => ({})) }));
 import SettingsView from "../src/views/SettingsView.vue";
 import { setLocale } from "../src/i18n";
-import { settingsTab, type SettingsTab } from "../src/state/settingsTab";
+import { openSettingsTab, settingsTab, type SettingsTab } from "../src/state/settingsTab";
 import { store } from "../src/state/store";
 import { clearToasts } from "../shared/src/components/toast";
 import { load } from "./priceKit";
@@ -26,7 +26,7 @@ beforeEach(async () => {
 });
 afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; });
 
-const open = async (id: SettingsTab): Promise<void> => { settingsTab.value = id; await flush(); };
+const open = async (id: SettingsTab): Promise<void> => { openSettingsTab(id); await flush(); };
 const input = (label: string): HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement => {
   const l = [...root!.querySelectorAll("label")].find((x) => x.textContent?.trim() === label);
   if (!l) throw new Error(`no label "${label}"`);
