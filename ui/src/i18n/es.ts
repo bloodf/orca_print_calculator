@@ -600,6 +600,7 @@ export const es: Record<MessageKey, string> = {
   "field.extraNameRequired": "Introduzca un nombre.",
   "tier.none": "Sin tramos de descuento",
   "settings.nav": "Secciones de los ajustes",
+  "settings.hasError": "tiene un valor que corregir",
   "common.copy": "Copiar",
   "common.copied": "Copiado",
   "common.copyFailed": "No se pudo copiar",

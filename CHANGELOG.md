@@ -6,6 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 ## [Unreleased]
 
 ### Changed
+- Settings pages: in a narrow window the list of settings pages opens one page at a time, with a Back button; a link into Settings opens its page and moves focus to its heading, a plain visit opens the page used last, and a page with a value to fix is flagged in the list.
 - A spool whose weight Spoolman does not know is drawn as a full reel in its colour with a small "?" badge, instead of the bare reel that looked like an empty spool (shared UI foundation 4.2.2).
 
 ## [0.6.2] - 2026-11-17

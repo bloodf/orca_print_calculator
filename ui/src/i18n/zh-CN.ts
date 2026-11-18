@@ -600,6 +600,7 @@ export const zhCN: Record<MessageKey, string> = {
   "field.extraNameRequired": "请输入名称。",
   "tier.none": "没有折扣档位",
   "settings.nav": "设置分区",
+  "settings.hasError": "有需要修正的值",
   "common.copy": "复制",
   "common.copied": "已复制",
   "common.copyFailed": "无法复制",

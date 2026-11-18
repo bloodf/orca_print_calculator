@@ -632,6 +632,7 @@ export const pl: Record<MessageKey | PluralExtraKey, string> = {
   "field.extraNameRequired": "Wpisz nazwę.",
   "tier.none": "Brak progów rabatowych",
   "settings.nav": "Sekcje ustawień",
+  "settings.hasError": "zawiera wartość do poprawienia",
   "common.copy": "Kopiuj",
   "common.copied": "Skopiowano",
   "common.copyFailed": "Nie można skopiować",
