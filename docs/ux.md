@@ -922,8 +922,18 @@ per slot). First run shows checklist row 1 instead.
 
 Header status bad "Spoolman offline". InlineAlert warn above plates: "Spoolman isn't responding at {url}. Filament
 uses Orca preset prices until it's back." + actions "Retry", "Settings". Chips switch to preset/none sources.
-Saved overrides are kept, not cleared. Price flag info "Filament prices come from Orca presets." Retry every 60 s
-silently while the tab is visible (`document.visibilityState`), status "Connecting…" during retries.
+Saved overrides are kept, not cleared. Price flag info "Filament prices come from Orca presets." Retries run
+silently while the tab is visible, 30 s after the failure, then 60, 120 s and so on up to 5 minutes; status
+"Connecting…" during retries.
+
+### 6.7a Timed refresh
+
+While the page is visible, Spoolman is re-read every `settings.spoolman.refreshS` seconds (Settings › Spoolman ›
+"Refresh Spoolman every": Off, 10–300 s, 30 by default), so the stock and the spool picker follow a spool changed in
+Spooler, U1 Control, Kobra Control or Spoolman. Hidden, it pauses; shown again, it reads at once. One read at a time.
+It never runs while a dialog, popover or picker is open or a form field has focus: it waits until that closes. A
+quiet re-read of the address already shown keeps the data on screen until the answer (no "Connecting…" flash).
+Code: `src/autorefresh.ts` (the same file as in Spooler, U1 Control and Kobra Control).
 
 ### 6.8 Unmatched filament slot [`unmatched`]
 

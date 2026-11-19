@@ -44,7 +44,7 @@ export type Defaults = {
 export type OverridableKey = keyof Defaults;
 export type Settings = {
   version: 1; onboarded: boolean; language: Lang; currency: string | null; defaultsCurrency: string | null;
-  spoolman: { url: string }; defaults: Defaults;
+  spoolman: { url: string; /** Seconds between Spoolman re-reads while the page shows; 0 = off. */ refreshS?: number }; defaults: Defaults;
   channels: ChannelDef[]; comparedChannelIds: string[]; defaultChannelId: string;
   printers: Record<string, PrinterProfile>; // key = printer_model
   slotOverrides: Record<string, SlotOverride>; // key = filament preset name (picks made before slotSpools; still honoured)

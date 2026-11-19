@@ -18,7 +18,7 @@ export function useSpoolmanUrl() {
     const next = url.value.trim();
     url.value = next;
     if (next !== store.settings.spoolman.url) {
-      patchSettings({ spoolman: { url: next } });
+      patchSettings((s) => ({ spoolman: { ...s.spoolman, url: next } }));
       void fetchSpoolman(true);
     }
     return true;
