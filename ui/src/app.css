@@ -60,6 +60,3 @@ img { max-width: 100%; }
 .opc-table th.r, .opc-table td.r { text-align: end; }
 .opc-table.dense { font-size: var(--oui-text-sm); }
 .opc-table.dense th, .opc-table.dense td { padding-block: 4px; height: 30px; }
-/* foundation-gap (reported for 5.0.1): a closed OuiHint bubble is only hidden, so it still widens the page when its (i) is
-   near the right edge (a horizontal scrollbar in a narrow window). Closed, it takes no room here. */
-.oui-hint-bubble:not([data-open]) { display: none; }
