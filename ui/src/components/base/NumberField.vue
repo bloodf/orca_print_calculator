@@ -5,7 +5,7 @@ import InputText from "primevue/inputtext";
 import { computed, onBeforeUnmount, ref, useId, watch } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { markInvalid } from "../../state/invalid";
-import FieldHint from "./FieldHint.vue";
+import { OuiHint } from "../../../shared/src/components";
 import ResetButton from "./ResetButton.vue";
 import { checkText, clamp, formatNum, keyDelta, parseNum, type FieldError, type NumSpec } from "./numeric";
 
@@ -102,7 +102,7 @@ function onKey(e: KeyboardEvent): void {
       <label :for="fid" class="sm oui-muted">{{ label }}</label>
       <ResetButton v-if="overridden" :label="label" :default-text="defaultText" @click="emit('reset')" />
       <!-- what the field is for: behind the (i). A state (an error, "not set") is said under the field instead. -->
-      <FieldHint v-if="!shownError && helper" :id="`${fid}-d`" :label="label" :text="helper" />
+      <OuiHint v-if="!shownError && helper" :label="label"><span :id="`${fid}-d`">{{ helper }}</span></OuiHint>
     </div>
     <InputGroup class="nf-box">
       <InputGroupAddon v-if="prefix" class="num">{{ prefix }}</InputGroupAddon>

@@ -3,7 +3,7 @@
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import { useId } from "vue";
-import FieldHint from "../base/FieldHint.vue";
+import { OuiHint } from "../../../shared/src/components";
 const props = withDefaults(
   defineProps<{ modelValue: string; label: string; maxlength?: number; error?: string; helper?: string; multiline?: boolean; rows?: number; width?: "sm" | "md"; upper?: boolean; id?: string }>(),
   { maxlength: undefined, error: undefined, helper: undefined, multiline: false, rows: 3, width: undefined, upper: false, id: undefined },
@@ -18,7 +18,7 @@ const onInput = (e: Event): void => {
 
 <template>
   <div class="tf" :class="width">
-    <div class="tf-head"><label :for="fid" class="sm oui-muted tf-label">{{ label }}</label><FieldHint v-if="!error && helper" :id="`${fid}-d`" :label="label" :text="helper" /></div>
+    <div class="tf-head"><label :for="fid" class="sm oui-muted tf-label">{{ label }}</label><OuiHint v-if="!error && helper" :label="label"><span :id="`${fid}-d`">{{ helper }}</span></OuiHint></div>
     <Textarea v-if="multiline" :id="fid" :model-value="modelValue" :rows="rows" :maxlength="maxlength" auto-resize :invalid="!!error" :aria-invalid="error ? 'true' : undefined" :aria-describedby="error || helper ? `${fid}-d` : undefined" @input="onInput" @change="emit('change')" />
     <InputText v-else :id="fid" type="text" autocomplete="off" spellcheck="false" :model-value="modelValue" :maxlength="maxlength" :invalid="!!error" :aria-invalid="error ? 'true' : undefined" :aria-describedby="error || helper ? `${fid}-d` : undefined" @input="onInput" @change="emit('change')" />
     <p v-if="error" :id="`${fid}-d`" class="sm tf-help bad" role="alert">{{ error }}</p>
