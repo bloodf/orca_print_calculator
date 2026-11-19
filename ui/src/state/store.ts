@@ -1,6 +1,7 @@
 // The one reactive store (docs/ux.md §5.1, §7). Plain Vue reactive + computed; every update replaces, never mutates.
 // Quote actions live in state/quotes.ts.
-import { computed, reactive } from "vue";
+import { computed, reactive, watch } from "vue";
+import { autoRefresh, cleanEvery, userBusy } from "../autorefresh";
 import { call, errorCode, on, ready, type HostEvent, type PlatesEvent } from "../bridge";
 import { failText } from "../hostError";
 import { currentLocale, intlLocale, setLocale, t, type Lang, type Locale } from "../i18n";
@@ -177,34 +178,43 @@ function onHost(data: unknown): void {
 
 // ---- spoolman ----
 let failedUrl = "";
-let retryTimer: ReturnType<typeof setInterval> | undefined;
 let fetchSeq = 0; // a reply counts only if no newer fetch started meanwhile (the user may have changed the address)
 let dataUrl: string | null = null; // the address the filaments, spools and currency in the store came from
 const NO_SPOOLMAN_DATA: SpoolmanData = { currency: null, filaments: [], spools: [] };
-export async function fetchSpoolman(silent = false): Promise<void> {
+/** Read Spoolman again; false when it couldn't be reached. Also run on a timer (startAutoRefresh). */
+export async function fetchSpoolman(silent = false): Promise<boolean> {
   const url = store.settings.spoolman.url.trim();
   const mine = ++fetchSeq;
-  clearInterval(retryTimer);
-  retryTimer = undefined;
   // Prices and currency belong to the connection they came from: no address, or another one, means they are gone.
   // (A temporary failure of the same address keeps them as last known; that is the offline branch below.)
   if (dataUrl !== null && dataUrl !== url) { store.spoolman = { ...store.spoolman, data: NO_SPOOLMAN_DATA }; dataUrl = null; }
-  if (!url) { store.spoolman = { state: "unset", data: NO_SPOOLMAN_DATA, error: null }; return; }
+  if (!url) { store.spoolman = { state: "unset", data: NO_SPOOLMAN_DATA, error: null }; return true; }
   // A retry of the address that failed keeps its error (it is still down until it answers); another address starts clean.
-  store.spoolman = { ...store.spoolman, state: "connecting", error: url === failedUrl ? store.spoolman.error : null };
+  // A quiet re-read of the address already shown keeps showing its data until the answer (no "connecting" flash).
+  if (!(silent && store.spoolman.state === "ok" && dataUrl === url)) store.spoolman = { ...store.spoolman, state: "connecting", error: url === failedUrl ? store.spoolman.error : null };
   try {
     const data = await call("spoolman_fetch", { url });
-    if (mine !== fetchSeq) return;
+    if (mine !== fetchSeq) return true;
     store.spoolman = { state: "ok", data, error: null };
     dataUrl = url;
     if (!silent) showToast({ title: t("spoolman.refreshed") });
+    return true;
   } catch (e) {
-    if (mine !== fetchSeq) return;
+    if (mine !== fetchSeq) return true;
     // Offline: chips fall back to Orca presets; saved overrides stay in settings (docs/ux.md §6.7); currency stays as last known.
     store.spoolman = { state: "offline", data: { currency: store.spoolman.data.currency, filaments: [], spools: [] }, error: errorCode(e) };
     failedUrl = url;
-    retryTimer = setInterval(() => { if (document.visibilityState === "visible") void fetchSpoolman(true); }, 60_000);
+    return false;
   }
+}
+
+/** Re-read Spoolman every settings.spoolman.refreshS seconds (30 by default, 0 = off) while the page shows; after
+ *  failures it waits longer (up to 5 min), and never while a dialog, picker or form field is in use. */
+function startAutoRefresh(): () => void {
+  let every = cleanEvery(store.settings.spoolman.refreshS);
+  const a = autoRefresh({ load: () => (store.status === "ready" ? fetchSpoolman(true) : Promise.resolve(true)), every: () => every, held: userBusy });
+  const off = watch(() => store.settings.spoolman.refreshS, (v) => { every = cleanEvery(v); a.restart(); });
+  return () => { off(); a.stop(); };
 }
 
 /** Settings › Requirements › Check again: the host re-reads Spooler's files; a set Spoolman address is probed again. */
@@ -337,6 +347,7 @@ export function init(): () => void {
   setLocale(store.settings.language, store.host.appLanguage);
   ready();
   void loadState();
-  booted = () => { offs.forEach((o) => o()); document.removeEventListener("visibilitychange", onHide); clearInterval(retryTimer); };
+  const stopAuto = startAutoRefresh();
+  booted = () => { offs.forEach((o) => o()); document.removeEventListener("visibilitychange", onHide); stopAuto(); };
   return booted;
 }

@@ -69,7 +69,7 @@ describe("Cost defaults", () => {
   });
   test("failure mode and the two checkboxes", async () => {
     await open("costs");
-    await choose(root!, "Add on top of cost");
+    await choose(root!.querySelector("#settings-costs")!, "Add on top of cost");
     expect(store.settings.defaults.failureMode).toBe("markup");
     const boxes = [...root!.querySelectorAll<HTMLInputElement>('.checks input[type="checkbox"]')];
     expect(boxes.length).toBe(2);

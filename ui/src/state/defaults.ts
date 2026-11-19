@@ -27,7 +27,7 @@ export const directChannel = (name: string) => {
 
 export const defaultSettings = (currency: string | null, directName: string, presetCurrency?: string | null): Settings => ({
   version: 1, onboarded: false, language: "auto", currency, defaultsCurrency: presetFor(presetCurrency) ? presetCurrency! : null,
-  spoolman: { url: "" }, defaults: defaultDefaults(presetCurrency),
+  spoolman: { url: "", refreshS: 30 }, defaults: defaultDefaults(presetCurrency),
   channels: [directChannel(directName)], comparedChannelIds: ["direct"], defaultChannelId: "direct",
   printers: {}, slotOverrides: {}, slotSpools: {}, manualPrices: {}, extrasCatalog: [],
   sheet: { shopName: "", footer: "", validityDays: 15, nextNo: 1, ...EMPTY_BRAND },
@@ -114,7 +114,7 @@ const SCALARS: Record<string, (v: unknown) => boolean> = {
   comparedChannelIds: (v) => Array.isArray(v) && v.every((x) => typeof x === "string"), defaultChannelId: (v) => typeof v === "string",
 };
 const NESTED: Record<string, Record<string, (v: unknown) => boolean>> = {
-  spoolman: { url: (v) => typeof v === "string" },
+  spoolman: { url: (v) => typeof v === "string", refreshS: (v) => v === 0 || int(10, 300)(v) },
   sheet: { shopName: (v) => typeof v === "string", footer: (v) => typeof v === "string", validityDays: int(0, 3650), nextNo: int(1, 999_999_999), ...BRAND_SHAPES },
   ui: { open: (v) => isRec(v) && Object.values(v).every(bool), sheetMode: (v) => v === "itemized" || v === "summary" },
 };

@@ -2,10 +2,12 @@
 // Settings › Spoolman: address, Test connection (spoolman_fetch), Spooler hint (docs/ux.md §5.3 Settings 1).
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
+import Select from "primevue/select";
 import { computed, ref } from "vue";
 import { call, errorCode } from "../../bridge";
 import { t } from "../../i18n";
-import { store } from "../../state/store";
+import { patchSettings, store } from "../../state/store";
+import { cleanEvery } from "../../autorefresh";
 import { OuiBanner, OuiIcon, showToast } from "../../../shared/src/components";
 import * as I from "../../../shared/src/icons";
 import { lead } from "../base/lead";
@@ -17,6 +19,10 @@ const { url, error, problem, commit, use, touched } = useSpoolmanUrl();
 const testing = ref(false);
 const spoolerUrl = computed(() => (store.spooler?.url && store.spooler.url !== store.settings.spoolman.url ? store.spooler.url : null));
 const saved = computed(() => store.settings.spoolman.url);
+// How often the stock and the spool picker re-read Spoolman while the page shows (0 = off).
+const every = computed(() => cleanEvery(store.settings.spoolman.refreshS));
+const everyOptions = computed(() => [0, 10, 15, 30, 60, 120, 300].map((n) => ({ value: n, label: n ? t("spoolman.everyOption", { n }) : t("spoolman.everyOff") })));
+const setEvery = (n: number) => patchSettings((s) => ({ spoolman: { ...s.spoolman, refreshS: n } }));
 const canTest = computed(() => !!url.value.trim() && !problem.value && !testing.value);
 
 async function runTest(): Promise<void> {
@@ -56,6 +62,12 @@ async function runTest(): Promise<void> {
       <p v-else id="settings-spoolman-hint" class="sm oui-muted">{{ t("spoolman.saveHint") }}</p>
     </div>
     <CopyValue v-if="saved" :value="saved" :label="t('spoolman.url')" />
+    <div>
+      <label id="settings-spoolman-every-l" class="sm oui-muted lbl">{{ t("spoolman.every") }}</label>
+      <Select :model-value="every" :options="everyOptions" option-label="label" option-value="value" aria-labelledby="settings-spoolman-every-l"
+              aria-describedby="settings-spoolman-every-hint" data-test="spoolman-every" @update:model-value="setEvery($event as number)" />
+      <p id="settings-spoolman-every-hint" class="sm oui-muted">{{ t("spoolman.everyHelp") }}</p>
+    </div>
   </div>
 </template>
 

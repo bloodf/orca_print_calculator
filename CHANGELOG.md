@@ -5,6 +5,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+- The stock and the spool picker follow Spoolman by themselves: while the calculator is visible it re-reads Spoolman every 30 s (Settings › Spoolman › **Refresh Spoolman every**: 10 to 300 s, or off), so a spool changed in Spooler, U1 Control, Kobra Control or Spoolman shows without pressing Refresh. It pauses while hidden, waits longer after failed reads (up to 5 minutes) and never refreshes while a picker or dialog is open.
+
 ## [0.7.0] - 2026-11-18
 
 ### Changed
