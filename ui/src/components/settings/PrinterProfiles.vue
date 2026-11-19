@@ -45,7 +45,7 @@ function remove(model: string): void {
       <li v-for="m in models" :key="m" class="pp-card surface">
         <div class="row pp-head">
           <span class="lg oui-truncate">{{ m }}</span>
-          <span v-if="m === current" class="oui-chip badge" data-tone="accent">{{ t("printers.current") }}</span>
+          <span v-if="m === current" class="oui-chip badge" data-tone="primary">{{ t("printers.current") }}</span>
           <span class="pp-grow" />
           <Button text severity="secondary" v-if="profile(m)" type="button" class="icon-btn" :aria-label="t('common.removeNamed', { name: m })" @click="remove(m)"><OuiIcon :icon="I.trash" /></Button>
         </div>

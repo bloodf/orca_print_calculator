@@ -56,6 +56,8 @@ const canReload = computed(() => ready.value && props.view === "calc" && !store.
 /* Layout of this bar's own parts; the band, the tabs and the buttons on it come from the shared app bar. */
 .app-header .proj { flex: 0 2 auto; min-width: 4em; font-weight: 650; }
 .app-header .oui-appbar-status > :not(.proj) { min-width: 0; }
+/* the tabs are never cut while they share the bar's line with the rest: the project and the printer give way instead */
+@container oui-appbar (min-width: 1100px) { .app-header .oui-appbar-tabs { flex-shrink: 0; } }
 .app-header .ah-act { gap: 6px; }
 /* what gives way as the bar narrows: the Spoolman text, then the action labels (their names stay as title and accessible name) */
 @container oui-appbar (max-width: 1499px) { .app-header .sm-text { display: none; } .app-header .sp-chip .oui-status { gap: 0; padding-inline: 7px; } }

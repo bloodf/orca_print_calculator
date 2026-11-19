@@ -83,6 +83,6 @@ function remove(id: string): void {
 .ce-row > * + * { margin-left: 8px; }
 .ce-name { flex: 1 1 auto; min-width: 0; font-weight: 500; }
 .ce-fee { flex: none; }
-.ce-edit { padding: 4px 0 12px 8px; border-left: 2px solid var(--oui-primary); margin: 0 0 8px 6px; padding-left: 12px; }
+.ce-edit { padding: 4px 0 12px 8px; border-left: 2px solid var(--oui-primary-mark); margin: 0 0 8px 6px; padding-left: 12px; }
 .ce-edit > * + * { margin-top: 12px; }
 </style>

@@ -56,8 +56,10 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
 </script>
 
 <template>
-  <OuiPanel class="fr" :icon="I.wrench" tone="accent" aria-labelledby="setup-title">
+  <OuiPanel class="fr" :icon="I.wrench" :hint-label="t('setup.title')" aria-labelledby="setup-title">
     <template #title><span id="setup-title">{{ t("setup.title") }}</span></template>
+    <!-- what the plugin is allowed to read: behind the (i), said in full in Settings > About -->
+    <template #hint><span class="fr-perm">{{ t("setup.permission") }}</span></template>
     <!-- the checklist is a notice too: closing it is the same as Done (onboarding is saved) -->
     <template #actions><Button text severity="secondary" size="small" type="button" class="icon-btn-sm" :aria-label="t('common.close')" :title="t('common.close')" data-setup-close @click="finishOnboarding()"><OuiIcon :icon="I.x" :size="14" /></Button></template>
     <ol class="fr-rows">
@@ -96,7 +98,6 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
         </div>
       </li>
     </ol>
-    <p class="sm oui-muted fr-perm">{{ t("setup.permission") }}</p>
     <template #footer><Button type="button" @click="finishOnboarding()"><OuiIcon :icon="I.check" :size="14" /><span>{{ t("setup.done") }}</span></Button></template>
   </OuiPanel>
 </template>
@@ -115,5 +116,4 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
 .fr-act > * + * { margin-left: 8px; }
 .fr-skip { margin-left: -10px; }
 .fr-time { align-items: flex-start; }
-.fr-perm { margin-top: 8px; max-width: 64ch; }
 </style>

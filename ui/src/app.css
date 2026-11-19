@@ -17,10 +17,10 @@ img { max-width: 100%; }
 .row > * + * { margin-left: var(--oui-s2); }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: var(--oui-s3); }
 /* the "edited" marker next to an overridden field or section */
-.ovr-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--oui-primary); flex: none; }
+.ovr-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--oui-primary-mark); flex: none; }
 .skeleton { background: var(--oui-raised); border-radius: var(--oui-radius-lg); }
 /* .p-button sets position: relative; the doubled class keeps the skip link out of flow until it is focused */
-.p-button.skip-link { position: absolute; left: 8px; top: -64px; z-index: 50; background: var(--oui-surface); border: 1px solid var(--oui-border); color: var(--oui-primary); }
+.p-button.skip-link { position: absolute; left: 8px; top: -64px; z-index: 50; background: var(--oui-surface); border: 1px solid var(--oui-border); color: var(--oui-primary-text); }
 .p-button.skip-link:focus, .p-button.skip-link:focus-visible { top: 8px; }
 .p-button.icon-btn { width: var(--oui-control); height: var(--oui-control); padding: 0; flex: none; }
 .p-button.icon-btn-sm { width: var(--oui-control-sm); height: var(--oui-control-sm); padding: 0; }
@@ -60,3 +60,6 @@ img { max-width: 100%; }
 .opc-table th.r, .opc-table td.r { text-align: end; }
 .opc-table.dense { font-size: var(--oui-text-sm); }
 .opc-table.dense th, .opc-table.dense td { padding-block: 4px; height: 30px; }
+/* foundation-gap (reported for 5.0.1): a closed OuiHint bubble is only hidden, so it still widens the page when its (i) is
+   near the right edge (a horizontal scrollbar in a narrow window). Closed, it takes no room here. */
+.oui-hint-bubble:not([data-open]) { display: none; }

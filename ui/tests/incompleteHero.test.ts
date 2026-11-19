@@ -30,10 +30,16 @@ describe("incomplete price (C03, B-26)", () => {
     expect(txt(el.querySelector(".tiles"))).toMatch(/Profit per piece.* · partial.*Margin.* · partial/);
     // the line sits right under the price block, before the order controls and before the actions
     expect(el.querySelector("[data-price-hero]")!.nextElementSibling?.getAttribute("data-testid")).toBe("incomplete-line");
+    expect(el.querySelector(".hero-box")!.getAttribute("data-tone")).toBe("warn"); // the block is tinted as a warning, not as done
   });
-  test("a complete price keeps the accent hero with no incomplete marks", async () => {
+  test("a complete price sits in the neutral hero (no accent fill) with no incomplete marks", async () => {
     load("ok");
     const el = await show(PricePanel);
+    const box = el.querySelector(".hero-box")!;
+    expect(box.classList.contains("oui-hero")).toBe(true);
+    expect(box.classList.contains("oui-on-band")).toBe(false); // ui-foundation 5: nothing is filled with the plugin's hue
+    expect(box.hasAttribute("data-tone")).toBe(false);
+    expect(el.querySelector(".oui-panel-icon")!.getAttribute("data-tone")).toBe("lime"); // money is lime; the header itself is neutral
     expect(el.querySelector("[data-testid=hero-price]")!.classList.contains("partial")).toBe(false);
     expect(el.querySelector("[data-testid=incomplete-line]")).toBeNull();
     expect(txt(el.querySelector(".tiles"))).not.toContain("partial");

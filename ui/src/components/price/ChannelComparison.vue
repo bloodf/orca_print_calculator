@@ -73,7 +73,7 @@ const select = (id: string): void => patchDraft({ channelId: id });
 .pick { cursor: pointer; }
 .pick:hover { background: var(--oui-raised); }
 .pick.sel > td { background: var(--oui-primary-soft); }
-.pick.sel > td:first-child { box-shadow: inset 2px 0 0 var(--oui-primary); }
+.pick.sel > td:first-child { box-shadow: inset 2px 0 0 var(--oui-primary-mark); }
 .name { white-space: nowrap; }
 .cmp :deep(.pickbtn) { font-weight: 500; padding: 2px 6px; }
 .px { font-weight: 500; }

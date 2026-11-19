@@ -2,6 +2,7 @@
 // PrimeVue Select with the NumberField head (override dot + reset) so cost sections look uniform.
 import Select from "primevue/select";
 import { useId } from "vue";
+import FieldHint from "../base/FieldHint.vue";
 import ResetButton from "../base/ResetButton.vue";
 import { t } from "../../i18n";
 
@@ -20,9 +21,9 @@ const fid = `sf-${useId()}`;
       <span v-if="overridden" class="oui-sr">{{ t("a11y.edited") }}</span>
       <label :id="`${fid}-l`" class="sm oui-muted">{{ label }}</label>
       <ResetButton v-if="overridden" :label="label" :default-text="defaultText" @click="$emit('reset')" />
+      <FieldHint v-if="helper" :id="`${fid}-d`" :label="label" :text="helper" />
     </div>
     <Select :input-id="fid" :model-value="modelValue" :options="options" option-label="label" option-value="value" :aria-labelledby="`${fid}-l`" :aria-describedby="helper ? `${fid}-d` : undefined" fluid @update:model-value="(v: string) => $emit('update:modelValue', v)" />
-    <p v-if="helper" :id="`${fid}-d`" class="sm oui-muted sf-help">{{ helper }}</p>
   </div>
 </template>
 
@@ -30,5 +31,4 @@ const fid = `sf-${useId()}`;
 .sf { min-width: 0; }
 .sf-head { min-height: 24px; }
 .sf-head > * + * { margin-left: 4px; }
-.sf-help { margin-top: 2px; }
 </style>

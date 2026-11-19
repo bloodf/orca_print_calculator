@@ -100,6 +100,20 @@ describe("MoneyField", () => {
     await key(input(), "ArrowDown");
     expect(model.value).toBe(0);
   });
+  test("a helper is behind the (i) beside the label, and is still the input's description; an error replaces it under the field", async () => {
+    const { input } = mount(NumberField, { label: "Labor", scale: 1, step: 5, max: 100, helper: "Minutes of your own work per piece." }, 10);
+    const id = input().getAttribute("aria-describedby")!;
+    const help = document.getElementById(id)!;
+    expect(help.textContent).toBe("Minutes of your own work per piece.");
+    expect(help.closest(".oui-hint-bubble[role=tooltip]")).not.toBeNull(); // not a paragraph under the control
+    expect(root.querySelector(".nf-head .oui-hint-btn")!.getAttribute("aria-label")).toBe("Labor");
+    expect(root.querySelector("p.nf-help")).toBeNull();
+    await type(input(), "500");
+    vi.advanceTimersByTime(900);
+    await nextTick();
+    expect(root.querySelector(".oui-hint")).toBeNull(); // one description at a time, under the same id
+    expect(document.getElementById(id)!.matches("p.nf-help.bad[role=alert]")).toBe(true);
+  });
   test("nullable: empty text sets null and shows the not-set helper", async () => {
     const { model, input } = mount(MoneyField, { ...money, nullable: true }, 1000);
     await type(input(), "");

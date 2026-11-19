@@ -69,7 +69,7 @@ function useAuto(): void { clearSlot(props.match); emit("useAuto"); }
 <style scoped>
 .mrow { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto auto auto; align-items: center; column-gap: 12px; padding: 6px 0; }
 .mrow + .mrow { border-top: 1px solid var(--oui-border); }
-.mrow:focus-visible { outline: 2px solid var(--oui-primary); outline-offset: 2px; }
+.mrow:focus-visible { outline: 2px solid var(--oui-primary-mark); outline-offset: 2px; }
 .who { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .names { display: flex; flex-direction: column; min-width: 0; }
 .price { display: flex; flex-direction: column; align-items: flex-end; }
