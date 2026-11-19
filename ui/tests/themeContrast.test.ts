@@ -1,6 +1,7 @@
 // @vitest-environment node
 // X01 / B-25: contrast of the colours the page shows. Since UI foundation 4.0 the page has no colour tokens of its own: it uses the
-// shared --oui-* tokens with the lime accent (ui/src/orcaUi.ts), so the pairs below are read from the shared palette for that accent.
+// shared --oui-* tokens (ui/src/orcaUi.ts). Since 5.0 every surface is OrcaSlicer's neutral grey and the primary action its teal,
+// whatever the plugin; lime is only the mark tile and the line under the open tab. The pairs below are read from the shared palette.
 // Nothing here is a claim about native Orca rendering or WCAG compliance as a whole.
 import { describe, expect, test } from "vitest";
 import { readFileSync } from "node:fs";
@@ -20,13 +21,16 @@ describe("the page's colours meet 4.5:1 for text, from the shared palette with t
   });
   for (const theme of ["light", "dark"] as const) {
     const c = (k: string): string => { const v = palette[theme][k]; if (!v) throw new Error(`no ${k} in the ${theme} palette`); return v; };
-    test(`${theme}: primary action label, the app bar and the price band`, () => {
-      expect(ratio(c("onLime"), c("lime")), "on-primary / primary").toBeGreaterThanOrEqual(4.5);
-      expect(ratio(c("onBand"), c("limeBand")), "app bar and hero price on the band").toBeGreaterThanOrEqual(4.5);
+    test(`${theme}: primary action label and the mark on its lime tile`, () => {
+      expect(ratio(c("onPrimary"), c("primary")), "on-primary / primary").toBeGreaterThanOrEqual(4.5);
+      expect(ratio(c("onSolid"), c("limeSolid")), "the mark on the accent tile").toBeGreaterThanOrEqual(4.5);
+    });
+    test(`${theme}: there is no accent-filled band or accent-tinted surface left in the palette`, () => {
+      for (const gone of ["band", "onBand", "limeBand", "limeBackground", "limeSurface", "limeRaised"]) expect(palette[theme][gone], gone).toBeUndefined();
     });
     test(`${theme}: text colours on the page, on panels and on raised rows`, () => {
-      for (const bg of ["limeBackground", "limeSurface", "limeRaised"]) {
-        for (const n of ["text", "muted", "lime", "warning", "danger", "success"]) expect(ratio(c(n), c(bg)), `${theme}: ${n} on ${bg}`).toBeGreaterThanOrEqual(4.5);
+      for (const bg of ["background", "surface", "raised"]) {
+        for (const n of ["text", "muted", "primaryText", "lime", "warning", "danger", "success"]) expect(ratio(c(n), c(bg)), `${theme}: ${n} on ${bg}`).toBeGreaterThanOrEqual(4.5);
       }
     });
     test(`${theme}: status text on its own tinted background`, () => {
@@ -57,7 +61,7 @@ describe("forced colors and checkbox accent", () => {
     expect(fc).toMatch(/\.seg-opt\[aria-checked="true"\][^{]*\{[^}]*Highlight/);
   });
   test("native controls that remain (none are checkboxes) follow the shared accent", () => {
-    expect(readFileSync(new URL("../shared/src/base.css", import.meta.url), "utf8")).toMatch(/accent-color:\s*var\(--oui-primary\)/);
+    expect(readFileSync(new URL("../shared/src/base.css", import.meta.url), "utf8")).toMatch(/accent-color:\s*var\(--oui-primary-mark\)/);
   });
   test("reduced motion lives in the shared base.css (universal, over PrimeVue's runtime styles); app.css keeps no copy", () => {
     expect(readFileSync(new URL("../shared/src/base.css", import.meta.url), "utf8")).toMatch(/prefers-reduced-motion: reduce\)\s*\{\s*\.orca-ui \*/);

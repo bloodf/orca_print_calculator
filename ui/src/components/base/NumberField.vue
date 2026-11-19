@@ -5,6 +5,7 @@ import InputText from "primevue/inputtext";
 import { computed, onBeforeUnmount, ref, useId, watch } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { markInvalid } from "../../state/invalid";
+import FieldHint from "./FieldHint.vue";
 import ResetButton from "./ResetButton.vue";
 import { checkText, clamp, formatNum, keyDelta, parseNum, type FieldError, type NumSpec } from "./numeric";
 
@@ -100,6 +101,8 @@ function onKey(e: KeyboardEvent): void {
       <span v-if="overridden" class="oui-sr">{{ t("a11y.edited") }}</span>
       <label :for="fid" class="sm oui-muted">{{ label }}</label>
       <ResetButton v-if="overridden" :label="label" :default-text="defaultText" @click="emit('reset')" />
+      <!-- what the field is for: behind the (i). A state (an error, "not set") is said under the field instead. -->
+      <FieldHint v-if="!shownError && helper" :id="`${fid}-d`" :label="label" :text="helper" />
     </div>
     <InputGroup class="nf-box">
       <InputGroupAddon v-if="prefix" class="num">{{ prefix }}</InputGroupAddon>
@@ -111,7 +114,7 @@ function onKey(e: KeyboardEvent): void {
       <InputGroupAddon v-if="unit" class="num">{{ unit }}</InputGroupAddon>
     </InputGroup>
     <p v-if="shownError" :id="`${fid}-d`" class="sm nf-help bad" role="alert">{{ shownError }}</p>
-    <p v-else-if="helperText" :id="`${fid}-d`" class="sm nf-help">{{ helperText }}</p>
+    <p v-else-if="!helper && helperText" :id="`${fid}-d`" class="sm nf-help">{{ helperText }}</p>
   </div>
 </template>
 

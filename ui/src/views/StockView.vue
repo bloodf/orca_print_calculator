@@ -33,9 +33,9 @@ const off = computed(() => lead(t("stock.offline", { url: store.settings.spoolma
   <main class="oui-page stock" tabindex="-1">
     <h2 class="oui-sr" tabindex="-1" data-view-title>{{ t("nav.stock") }}</h2>
     <div class="stock-grid">
-      <OuiPanel :icon="I.parcel" tone="violet" aria-labelledby="stock-extras-h">
+      <OuiPanel :icon="I.parcel" tone="violet" :hint-label="t('stock.extras')" aria-labelledby="stock-extras-h">
         <template #title><span id="stock-extras-h">{{ t("stock.extras") }}</span></template>
-        <p class="oui-meta help">{{ t("stock.extrasHelp") }}</p>
+        <template #hint>{{ t("stock.extrasHelp") }}</template>
         <ExtrasCatalog />
       </OuiPanel>
       <OuiPanel :icon="I.spool" tone="magenta" flush aria-labelledby="stock-filament-h">
@@ -81,7 +81,6 @@ const off = computed(() => lead(t("stock.offline", { url: store.settings.spoolma
 .stock:focus { outline: none; }
 .stock-grid { display: grid; gap: var(--oui-s3); grid-template-columns: minmax(0, 1fr); align-items: start; }
 @container oui-page (min-width: 1160px) { .stock-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-.help { margin-bottom: var(--oui-s3); max-width: 70ch; }
 .off { margin: var(--oui-s3); }
 .fil { display: inline-flex; align-items: center; gap: var(--oui-s2); }
 </style>

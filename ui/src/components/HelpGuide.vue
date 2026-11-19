@@ -39,8 +39,8 @@ async function onShow(): Promise<void> {
 .help .help-intro { margin: 0; }
 .help .help-steps { list-style: none; margin: 12px 0 0; padding: 0; }
 .help .help-steps li { display: flex; padding: 10px 8px; border-left: 2px solid transparent; border-top: 1px solid var(--oui-border); scroll-margin-top: 8px; }
-.help .help-steps li.on { border-left-color: var(--oui-primary); background: var(--oui-raised); }
-.help .help-n { flex: none; width: 24px; color: var(--oui-primary); font-weight: 600; }
+.help .help-steps li.on { border-left-color: var(--oui-primary-mark); background: var(--oui-raised); }
+.help .help-n { flex: none; width: 24px; color: var(--oui-primary-text); font-weight: 600; }
 .help .help-steps h3 { margin: 0 0 2px; font-size: inherit; font-weight: 600; }
 .help .help-steps p { margin: 0; color: var(--oui-muted); }
 </style>

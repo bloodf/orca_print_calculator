@@ -133,7 +133,7 @@ const menuItems = computed<MenuRow[]>(() => [
 .add { margin-top: var(--oui-s2); }
 .mi { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 8px 12px; text-decoration: none; color: inherit; cursor: pointer; }
 .mi > * + * { margin-left: 12px; }
-.mi.custom { color: var(--oui-primary); }
+.mi.custom { color: var(--oui-primary-text); }
 @media (min-width: 1100px) {
   .xrow { grid-template-columns: minmax(0, 2fr) 128px 96px 140px 36px; }
   .xname { grid-column: auto; }

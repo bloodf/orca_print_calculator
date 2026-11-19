@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// The Price panel, the page's hero: the suggested price in a block of the accent (or its warning-tinted stand-in while the
-// figure is partial), profit, margin and break-even; then what the price depends on, where it goes, and the quote's actions.
+// The Price panel, the page's hero: the suggested price at its large size in a neutral block (tinted as a warning while the
+// figure is partial, as an error for a loss), profit, margin and break-even; then what the price depends on, where it goes, and the quote's actions.
 // The price itself is announced by the shared live region in App.vue (debounced), so the visible number is not live.
 import Button from "primevue/button";
 import { computed } from "vue";
@@ -24,8 +24,8 @@ import { editChannelFees, focusMissing, focusSelector, hasPlates, hero, m, missi
 const incomplete = computed(() => missingCount.value > 0);
 const label = computed(() => (incomplete.value ? t("price.labelIncomplete") : t("price.label")));
 const sel = computed(() => (hero.value.kind === "price" ? hero.value.sel : null));
-// The accent band is for a whole, profitable price; a partial figure takes the warning tint and a loss the danger tint, so neither reads as done.
-const band = computed(() => !incomplete.value && !!sel.value && sel.value.profit >= 0);
+// A whole, profitable price sits in the neutral block; a partial figure takes the warning tint and a loss the danger tint, so neither reads as done.
+const heroTone = computed(() => (incomplete.value ? "warn" : sel.value && sel.value.profit < 0 ? "danger" : undefined));
 const sentence = computed(() => (hero.value.kind === "sentence" ? hero.value : null));
 const q = computed(() => store.draft.quantity);
 const source = computed(() => t(currencySource.value === "spoolman" ? "header.currencyFromSpoolman" : "header.currencyFromSettings"));
@@ -58,7 +58,7 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
 </script>
 
 <template>
-  <OuiPanel class="panel" :icon="I.tag" tone="accent" data-price-panel>
+  <OuiPanel class="panel" :icon="I.tag" tone="lime" data-price-panel>
     <template #title><span id="price-title">{{ t("price.title") }}</span></template>
     <template v-if="sel && incomplete" #meta><OuiStatus state="warn">{{ t("price.incompleteStatus") }}</OuiStatus></template>
     <template #actions>
@@ -67,7 +67,7 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
 
     <div class="summary">
       <div class="hero-wrap" data-price-hero>
-        <div v-if="hero.kind === 'price' && sel" class="oui-hero hero-box" :class="{ 'oui-on-band': band }" :data-tone="band ? undefined : incomplete ? 'warn' : 'danger'">
+        <div v-if="hero.kind === 'price' && sel" class="oui-hero hero-box" :data-tone="heroTone">
           <OuiReadout class="hero" size="hero" :label="label" :incomplete="incomplete">
             <span class="price-figure" :class="{ partial: incomplete }" data-testid="hero-price">{{ m(sel.price) }}</span>
             <template v-if="sub || priceFromFallback" #sub>
@@ -122,7 +122,7 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
 .sub, .origin { display: block; }
 .order-line { font-size: var(--oui-text-md); font-weight: 600; overflow-wrap: anywhere; white-space: normal; }
 .tiles { display: flex; flex-wrap: wrap; gap: var(--oui-s3) var(--oui-s6); padding-top: var(--oui-s3); border-top: 1px solid var(--oui-border); }
-.oui-hero:not(.oui-on-band) .tile.bad :deep(.oui-readout-value) { color: var(--oui-danger); }
+.tile.bad :deep(.oui-readout-value) { color: var(--oui-danger); }
 .xl-sentence { font-size: var(--oui-text-xl); font-weight: 650; line-height: 1.2; }
 .inc-line { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-weight: 600; color: var(--oui-warning); }
 .inc-act { margin-inline-start: auto; }

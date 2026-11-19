@@ -45,7 +45,7 @@ function toDetails(): void {
   border-top: 1px solid var(--oui-border); box-shadow: 0 -6px 16px rgb(0 0 0 / .12); transform: none; transition: transform var(--oui-base) var(--oui-ease); }
 /* slides away instead of vanishing; its contents are already gone (one price at a time), visibility ends the tab stops */
 .price-bar[hidden] { display: flex !important; transform: translateY(100%); visibility: hidden; pointer-events: none; transition: transform var(--oui-fast) var(--oui-ease), visibility 0s linear var(--oui-fast); }
-.price-figure { font-size: 22px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: var(--oui-primary); }
+.price-figure { font-size: 22px; font-weight: 700; line-height: 1.05; letter-spacing: -0.02em; color: var(--oui-text); }
 .price-figure.partial { color: var(--oui-muted); text-decoration: underline dashed; text-underline-offset: 4px; }
 .total { white-space: nowrap; }
 .msg { min-width: 0; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
