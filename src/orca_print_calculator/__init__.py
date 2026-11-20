@@ -1,6 +1,6 @@
 """OrcaSlicer plugin: prices every build plate of the open project."""
 
-from importlib import resources
+import pkgutil
 
 import orca
 
@@ -27,8 +27,10 @@ class CalculatorPage(orca.pages.PagesPluginCapabilityBase):
             return ""
 
     def get_ui(self):
-        # The compiled page, shipped as a plain file next to the modules (scripts/build.py).
-        return resources.files(__package__).joinpath("app.html").read_text("utf-8")
+        # The compiled page, shipped as a plain file next to the modules (scripts/build.py). pkgutil, not
+        # importlib.resources: its first use imports modules lazily, and OrcaSlicer audits the bytecode cache write
+        # of a module imported inside the plugin's scope as an "open" without a path (a prompt with no target).
+        return pkgutil.get_data(__package__, "app.html").decode("utf-8")
 
     def on_load(self):
         # Storage is not asked for here: an Orca Cloud install started offline has none until networking is up
