@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-11-20
+
+### Fixed
+- Activating the plugin no longer makes OrcaSlicer ask for the Python audit event "open" with no file named. The page is read with `pkgutil` instead of `importlib.resources`, whose first use loaded more modules and so wrote to OrcaSlicer's Python cache without a path, and files are saved without opening them through a file descriptor. OrcaSlicer can only show either as a permission prompt with no target.
+
 ## [0.8.1] - 2026-11-20
 
 ### Changed

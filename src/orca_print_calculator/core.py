@@ -695,10 +695,15 @@ def _atomic_write(path, data):
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=path.name + ".", suffix=".tmp")
-        with os.fdopen(fd, "wb") as fh:
-            fh.write(data)
-            fh.flush()
-            os.fsync(fh.fileno())
+        # os.write on the descriptor, not os.fdopen: opening a file object on a descriptor is an audited "open" with
+        # no path, which OrcaSlicer can only put to the user as a permission prompt without a target.
+        try:
+            view = memoryview(data)
+            while view:
+                view = view[os.write(fd, view):]
+            os.fsync(fd)
+        finally:
+            os.close(fd)
         os.replace(tmp, path)
         tmp = None
     except PermissionError as exc:
