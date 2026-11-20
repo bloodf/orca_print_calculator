@@ -24,7 +24,7 @@ Since 0.5.0 the plugin is lime, the accent it has in the Orca UI foundation 4 fa
 | Warning amber, light | `#7A4F00` | Warnings on light surfaces only (from the shared palette) |
 | Warning amber, dark | `#F3CC70` | Warnings on dark surfaces only (from the shared palette) |
 
-Brand values above are for assets and docs. The plugin UI takes every colour from the shared foundation (`ui/shared`, `--oui-*` tokens) with the `lime` accent (`installOrcaUI(app, locale, "lime")` in `ui/src/orcaUi.ts`); it writes no colour of its own.
+Brand values above are for assets and docs. The plugin UI takes every colour from the shared foundation (`@orca-plugins/ui-foundation`, `--oui-*` tokens) with the `lime` accent (`installOrcaUI(app, locale, "lime")` in `ui/src/orcaUi.ts`); it writes no colour of its own.
 
 ### Contrast (WCAG 2.x, computed)
 | Pair | Ratio | Verdict |
@@ -50,7 +50,7 @@ Rule of thumb: on light, green text is `#446600`; on dark, it is `#B9DC6C`.
 
 ## Typography
 - Listing, social and README images: the name and headline are part of the generated image (a Manrope-style semibold). They are never retyped over it; a new headline means a new image.
-- Plugin UI: Manrope, embedded by the shared foundation (`ui/shared/src/fonts`, a `data:` font allowed by the page policy `font-src data:`). Tabular numerals for money and weights.
+- Plugin UI: Manrope, embedded by the shared foundation (`@orca-plugins/ui-foundation/src/fonts`, a `data:` font allowed by the page policy `font-src data:`). Tabular numerals for money and weights.
 
 ## Logo
 The mark: a price tag pointing left (the "price"), a punched hole at its point, two layer-line bars on the face (the "print"). 24x24 grid, 1.5 stroke, round caps and joins, single color. Spool meaning lives in the empty states and copy, not in the mark. Do not put a centered hub circle in a ring: that is the Spooler tab glyph.

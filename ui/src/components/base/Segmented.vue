@@ -3,7 +3,7 @@
 // toggle buttons with no radio semantics or arrow keys, so the group behaviour lives here).
 import Button from "primevue/button";
 import { ref } from "vue";
-import { OuiIcon, type OuiIconData } from "../../../shared/src/components";
+import { OuiIcon, type OuiIconData } from "@orca-plugins/ui-foundation/src/components";
 
 export type SegOption<T extends string> = { value: T; label: string; icon?: OuiIconData };
 const props = defineProps<{ options: SegOption<V>[]; modelValue: V; label: string }>();

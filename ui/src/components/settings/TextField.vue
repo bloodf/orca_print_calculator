@@ -3,7 +3,7 @@
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import { useId } from "vue";
-import { OuiHint } from "../../../shared/src/components";
+import { OuiHint } from "@orca-plugins/ui-foundation/src/components";
 const props = withDefaults(
   defineProps<{ modelValue: string; label: string; maxlength?: number; error?: string; helper?: string; multiline?: boolean; rows?: number; width?: "sm" | "md"; upper?: boolean; id?: string }>(),
   { maxlength: undefined, error: undefined, helper: undefined, multiline: false, rows: 3, width: undefined, upper: false, id: undefined },

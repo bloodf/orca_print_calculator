@@ -17,7 +17,7 @@ import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
 import { createOrcaApp, primeLocale } from "../src/orcaUi";
 import { sampleSheetModel, sheetHtml } from "../src/quoteExport";
 import { setLanguage, store } from "../src/state/store";
-import { clearToasts } from "../shared/src/components/toast";
+import { clearToasts } from "@orca-plugins/ui-foundation/src/components/toast";
 
 // host -> page delivery in the real injected shape (window.__orcaDispatch calls every registered callback)
 const dispatchToPage = (m: unknown): void => (window as unknown as { __orcaDispatch: (x: unknown) => void }).__orcaDispatch(m);

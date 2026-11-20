@@ -7,7 +7,7 @@ import { call } from "../src/bridge";
 import { exportText } from "../src/quoteFlow";
 import { duplicateQuote, saveQuote } from "../src/state/quotes";
 import { store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { load } from "./priceKit";
 
 type Gate = { release: () => void; fail: (e: unknown) => void; promise: Promise<unknown> };

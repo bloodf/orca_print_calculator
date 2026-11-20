@@ -10,7 +10,7 @@ import type { OverridableKey } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
 import PercentField from "../base/PercentField.vue";
-import * as I from "../../../shared/src/icons";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import Section from "../base/Section.vue";
 import CheckField from "./CheckField.vue";
 import FrozenNote from "./FrozenNote.vue";

@@ -3,7 +3,7 @@
 // saved quote, Spoolman not answering, plates that may be out of date, where the plates came from, and a quote that is incomplete.
 import Button from "primevue/button";
 import { computed } from "vue";
-import { OuiBanner } from "../../../shared/src/components";
+import { OuiBanner } from "@orca-plugins/ui-foundation/src/components";
 import { filesText } from "../../files";
 import { date, quoteNo } from "../../format";
 import { intlLocale, t } from "../../i18n";

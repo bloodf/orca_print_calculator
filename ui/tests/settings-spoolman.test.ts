@@ -3,7 +3,7 @@ import SpoolmanSettings from "../src/components/settings/SpoolmanSettings.vue";
 import { spoolmanErrorMessage, urlProblem } from "../src/components/settings/spoolmanError";
 import { t } from "../src/i18n";
 import { store } from "../src/state/store";
-import { toastList } from "../shared/src/components/toast";
+import { toastList } from "@orca-plugins/ui-foundation/src/components/toast";
 import { byText, flush, installHost, mountComponent, resetStore, type, unmountComponent } from "./settings-helpers";
 
 beforeEach(() => { resetStore(); });

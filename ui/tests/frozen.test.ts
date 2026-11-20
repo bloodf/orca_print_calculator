@@ -9,7 +9,7 @@ import { savedQuotes } from "../src/mock/fixtures";
 import { exportQuote, isDirty } from "../src/quoteFlow";
 import { openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import * as S from "../src/state/store";
-import { clearToasts } from "../shared/src/components/toast";
+import { clearToasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { load } from "./priceKit";
 
 const price = (): number | null => { const s = S.selected.value; return s && s.ok ? s.price : null; };

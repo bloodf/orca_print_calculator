@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // The Costs panel: the five cost sections as expandable rows, and what one piece costs under them.
 import { computed } from "vue";
-import { OuiPanel } from "../../shared/src/components";
-import * as I from "../../shared/src/icons";
+import { OuiPanel } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import ExtrasSection from "../components/costs/ExtrasSection.vue";
 import LaborSection from "../components/costs/LaborSection.vue";
 import MachineSection from "../components/costs/MachineSection.vue";

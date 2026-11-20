@@ -7,7 +7,7 @@ import SalesSection from "../src/components/costs/SalesSection.vue";
 import ShippingSection from "../src/components/costs/ShippingSection.vue";
 import { t } from "../src/i18n";
 import { store } from "../src/state/store";
-import { toastList as toasts } from "../shared/src/components/toast";
+import { toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { choose, optionLabels, settle } from "./pv";
 import { click, field, mount, openAll, seed, type, unmount } from "./costsHarness";
 

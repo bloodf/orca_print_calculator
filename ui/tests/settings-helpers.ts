@@ -4,7 +4,7 @@ import { createOrcaApp as createApp } from "../src/orcaUi";
 import { setLocale } from "../src/i18n";
 import { defaultSettings } from "../src/state/defaults";
 import { store } from "../src/state/store";
-import { clearToasts } from "../shared/src/components/toast";
+import { clearToasts } from "@orca-plugins/ui-foundation/src/components/toast";
 
 export type Call = { cmd: string; args: Record<string, unknown> };
 type Handler = (args: Record<string, unknown>) => unknown;
@@ -70,6 +70,6 @@ export function type(el: HTMLInputElement | HTMLTextAreaElement, value: string):
 }
 export const byText = (root: ParentNode, sel: string, text: string): HTMLElement | undefined =>
   [...root.querySelectorAll<HTMLElement>(sel)].find((e) => e.textContent?.trim() === text);
-import { toastList as toasts } from "../shared/src/components/toast";
+import { toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 /** Newest toast (Array.prototype.at is outside the Safari 14 floor). */
 export const lastToast = () => toasts.list[toasts.list.length - 1];

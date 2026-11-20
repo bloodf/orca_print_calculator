@@ -3,8 +3,8 @@
 // disabled and points at its reason (the incomplete notice, or the line here), which is said once.
 import Button from "primevue/button";
 import { computed } from "vue";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { intlLocale, t } from "../../i18n";
 import { quoteNo } from "../../format";
 import { exportBlock, exportQuote, isDirty, savedOf } from "../../quoteFlow";

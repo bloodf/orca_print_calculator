@@ -14,7 +14,7 @@ import { setLocale, t, LOCALES } from "../src/i18n";
 import { exportQuote } from "../src/quoteFlow";
 import { saveQuote } from "../src/state/quotes";
 import { flushSettings, store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import type { HostSlot, SlotMatchView } from "../src/state/types";
 import { load } from "./priceKit";
 

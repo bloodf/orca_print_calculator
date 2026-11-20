@@ -9,7 +9,7 @@ import { currency, derived, digits, patchSettings, selected, store } from "../..
 import type { ChannelDef, OverridableKey, PrettyMode } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import PercentField from "../base/PercentField.vue";
-import * as I from "../../../shared/src/icons";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import Section from "../base/Section.vue";
 import { charges, m } from "../price/priceState";
 import FrozenNote from "./FrozenNote.vue";

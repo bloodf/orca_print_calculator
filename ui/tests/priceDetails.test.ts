@@ -6,7 +6,7 @@ import ChannelComparison from "../src/components/price/ChannelComparison.vue";
 import DiscountTierEditor from "../src/components/price/DiscountTierEditor.vue";
 import OrderControls from "../src/components/price/OrderControls.vue";
 import { derived, result, store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import type { DiscountTier } from "../src/state/types";
 import { en, load, mount, txt } from "./priceKit";
 import { optionLabels } from "./pv";

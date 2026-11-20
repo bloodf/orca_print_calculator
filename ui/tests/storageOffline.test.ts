@@ -9,7 +9,7 @@ import { savedQuotes } from "../src/mock/fixtures";
 import { setLocale } from "../src/i18n";
 import { HOST, plates, settings as fxSettings } from "../src/mock/fixtures";
 import * as S from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 
 type Sent = { cmd: string; args: Record<string, unknown> };
 const flush = async () => { for (let i = 0; i < 8; i++) { await vi.advanceTimersByTimeAsync(50); await nextTick(); } };

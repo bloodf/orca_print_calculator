@@ -2,7 +2,7 @@
 // PrimeVue Select with the NumberField head (override dot + reset) so cost sections look uniform.
 import Select from "primevue/select";
 import { useId } from "vue";
-import { OuiHint } from "../../../shared/src/components";
+import { OuiHint } from "@orca-plugins/ui-foundation/src/components";
 import ResetButton from "../base/ResetButton.vue";
 import { t } from "../../i18n";
 

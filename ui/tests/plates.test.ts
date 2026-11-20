@@ -6,7 +6,7 @@ vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src
 import { call, BridgeError } from "../src/bridge";
 import { newDraft } from "../src/state/defaults";
 import { store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { setLocale } from "../src/i18n";
 import { buildScenario, type ScenarioName } from "../src/mock/scenarios";
 import { spoolman } from "../src/mock/fixtures";

@@ -3,7 +3,7 @@
 import { computed, ref } from "vue";
 import { t } from "../../i18n";
 import { checkRequirements, store } from "../../state/store";
-import { OuiRequirement } from "../../../shared/src/components";
+import { OuiRequirement } from "@orca-plugins/ui-foundation/src/components";
 import { spoolmanErrorMessage } from "./spoolmanError";
 
 type Row = { status: "found" | "missing" | "checking" | "unknown"; label: string; detail?: string };

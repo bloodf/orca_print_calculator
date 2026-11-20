@@ -3,8 +3,8 @@
 // the amount, the chevron. `flush` is a quiet heading inside the price panel (breakdown, channels, batch).
 import Button from "primevue/button";
 import { computed } from "vue";
-import { OuiIcon, type OuiIconData, type OuiTone } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon, type OuiIconData, type OuiTone } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { t } from "../../i18n";
 import { openHelp, type HelpStep } from "../../state/help";
 

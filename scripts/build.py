@@ -40,8 +40,6 @@ def build_ui():
     node = shutil.which("node")
     if not node:
         raise SystemExit("node not found on PATH")
-    # the shared Orca UI snapshot (Vue + PrimeVue preset, palette): refuse to build on drifted or edited files
-    subprocess.run([node, str(UI / "shared" / "scripts" / "check.mjs")], check=True, stdout=subprocess.DEVNULL)
     subprocess.run([pnpm, "-C", str(UI), "install", "--frozen-lockfile"], check=True)
     subprocess.run([pnpm, "-C", str(UI), "build"], check=True)
     index = UI / "dist" / "index.html"
@@ -96,7 +94,7 @@ def dist_info(project, files):
     meta = {k: v.encode("utf-8") for k, v in meta.items()}
     meta[di + "licenses/LICENSE"] = (ROOT / "LICENSE").read_bytes()
     # the single-file UI bundles Vue, PrimeVue and PrimeUIX (MIT): their notices travel with the wheel
-    for lic in sorted((UI / "shared" / "licenses").glob("*.txt")):
+    for lic in sorted((UI / "node_modules" / "@orca-plugins" / "ui-foundation" / "licenses").glob("*.txt")):
         meta[di + "licenses/" + lic.name] = lic.read_bytes()
     record = []
     for path, data in {**files, **meta}.items():

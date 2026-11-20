@@ -13,7 +13,7 @@ import { isDirty, exportText, sheetFor } from "../src/quoteFlow";
 import { defaultSettings, mergeSettings, migrateSettings, resetNames } from "../src/state/defaults";
 import { openQuote } from "../src/state/quotes";
 import * as S from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { parseQuotes } from "../src/state/validate";
 import { load } from "./priceKit";
 

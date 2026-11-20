@@ -5,7 +5,7 @@ import { computed, ref } from "vue";
 import { t } from "../i18n";
 import { fetchSpoolman } from "../state/store";
 import type { SpoolmanState } from "../state/types";
-import { OuiStatus } from "../../shared/src/components";
+import { OuiStatus } from "@orca-plugins/ui-foundation/src/components";
 import { elOf } from "./base/el";
 import Popover from "./base/Popover.vue";
 import { gotoSettings } from "./costs/shared";

@@ -3,8 +3,8 @@
 import Button from "primevue/button";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { elOf } from "../base/el";
-import { OuiBanner, OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiBanner, OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { lead } from "../base/lead";
 import Segmented from "../base/Segmented.vue";
 import { t } from "../../i18n";

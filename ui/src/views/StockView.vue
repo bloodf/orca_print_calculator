@@ -2,8 +2,8 @@
 // Extras and stock: the extras catalog with counts on hand, and a read-only filament summary from Spoolman.
 import Button from "primevue/button";
 import { computed } from "vue";
-import { materialTone, OuiBanner, OuiEmpty, OuiIcon, OuiPanel, OuiSpool } from "../../shared/src/components";
-import * as I from "../../shared/src/icons";
+import { materialTone, OuiBanner, OuiEmpty, OuiIcon, OuiPanel, OuiSpool } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { lead } from "../components/base/lead";
 import ExtrasCatalog from "../components/settings/ExtrasCatalog.vue";
 import { gotoSettings } from "../components/costs/shared";

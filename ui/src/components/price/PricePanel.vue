@@ -4,8 +4,8 @@
 // The price itself is announced by the shared live region in App.vue (debounced), so the visible number is not live.
 import Button from "primevue/button";
 import { computed } from "vue";
-import { OuiIcon, OuiPanel, OuiReadout, OuiStatus } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon, OuiPanel, OuiReadout, OuiStatus } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { computeQuote } from "../../engine/quote";
 import { t } from "../../i18n";
 import { exportBlock } from "../../quoteFlow";

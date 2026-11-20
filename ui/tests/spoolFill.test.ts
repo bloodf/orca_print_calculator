@@ -2,7 +2,7 @@
 import { describe, expect, test } from "vitest";
 import { h } from "vue";
 import { createOrcaApp as createApp } from "../src/orcaUi";
-import OuiSpool from "../shared/src/components/OuiSpool.vue";
+import OuiSpool from "@orca-plugins/ui-foundation/src/components/OuiSpool.vue";
 import { spoolFraction, stockFraction } from "../src/spoolFill";
 
 describe("spoolFraction", () => {

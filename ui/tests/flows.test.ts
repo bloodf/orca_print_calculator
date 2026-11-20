@@ -8,7 +8,7 @@ import { setLocale } from "../src/i18n";
 import { createMockHost } from "../src/mock/host";
 import type { ScenarioName } from "../src/mock/scenarios";
 import { setLanguage, store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 
 let app: VueApp | null = null;
 let root: HTMLElement | null = null;

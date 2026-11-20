@@ -57,8 +57,6 @@ jobs:
           echo "VERSION=$version" >> "$GITHUB_ENV"
       # The same checks as CI, so a tag on an unchecked commit cannot ship.
       - run: pnpm -C ui install --frozen-lockfile
-      - name: Shared Orca UI snapshot is unmodified (Vue + PrimeVue preset, palette)
-        run: node ui/shared/scripts/check.mjs
       - run: pnpm -C ui lint
       - run: pnpm -C ui typecheck
       - run: pnpm -C ui test:coverage

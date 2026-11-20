@@ -4,8 +4,8 @@ import { onBeforeUnmount, ref, watch } from "vue";
 import { bytes } from "../../format";
 import { t } from "../../i18n";
 import { locale } from "../../state/store";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { cancelImport, importFile, importState } from "./importFlow";
 
 /** `bar`: the quiet version for the app bar (its label gives way when the bar is narrow). */

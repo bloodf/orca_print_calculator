@@ -8,7 +8,7 @@ import { currentLocale, intlLocale, setLocale, t, type Lang, type Locale } from 
 import { defaultSettings, keepPlateControls, mergeSettings, newDraft, resetNames, shiftPlateControls } from "./defaults";
 import { deriveQuote, failedDerive, pruneSlotSpools, safeDigits } from "./derive";
 import { changeDraft } from "./draftUndo";
-import { showToast } from "../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import { parseQuotes } from "./validate";
 import type { Draft, HostInfo, HostPlate, HostState, OverridableKey, Defaults, SavedQuote, Settings, SpoolerInfo, SpoolmanData, SpoolmanState, View } from "./types";
 

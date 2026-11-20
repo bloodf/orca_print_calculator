@@ -7,10 +7,10 @@ import { t } from "../../i18n";
 import { confirmable, gapsOf, type Gap } from "../../state/completeness";
 import { confirmGap, useCurrentSlice } from "../../state/quotes";
 import { derived, store } from "../../state/store";
-import { showToast } from "../../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import { requestPick } from "../plates/pickRequest";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 
 const frozen = computed(() => !!store.draft.frozenPlates);
 const included = (index: number): boolean => store.draft.plates[index]?.include !== false;

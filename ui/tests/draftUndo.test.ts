@@ -11,7 +11,7 @@ import { hasUnsavedWork } from "../src/state/dirty";
 import { confirmGap, closeQuote, openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import { newDraft } from "../src/state/defaults";
 import { derived, patchDraft, store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import type { PlateSnapshot, SavedQuote } from "../src/state/types";
 import { load, mount } from "./priceKit";
 

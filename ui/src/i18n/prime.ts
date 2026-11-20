@@ -1,5 +1,5 @@
 // PrimeVue's own strings (dialog close, empty lists, pagination, calendar) for the languages the shared Orca UI snapshot
-// does not carry. Same keys as its pt-BR block (ui/shared/src/index.ts); English is PrimeVue's built-in.
+// does not carry. Same keys as its pt-BR block (@orca-plugins/ui-foundation/src/index.ts); English is PrimeVue's built-in.
 const FILE_SIZES = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
 export const PRIME_LOCALES = {

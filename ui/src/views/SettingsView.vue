@@ -3,8 +3,8 @@
 // saved as they are made, and the one bar at the bottom says so (or says that saving failed, with Retry).
 import Button from "primevue/button";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
-import { OuiFormSection, OuiIcon, OuiStatus, type OuiIconData, type OuiTone } from "../../shared/src/components";
-import * as I from "../../shared/src/icons";
+import { OuiFormSection, OuiIcon, OuiStatus, type OuiIconData, type OuiTone } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { t } from "../i18n";
 import { SETTINGS_TABS, settingsLinked, settingsTab, type SettingsTab } from "../state/settingsTab";
 import { flushSettings, store } from "../state/store";

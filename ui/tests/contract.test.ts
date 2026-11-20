@@ -14,7 +14,7 @@ import { exportBlock, exportQuote } from "../src/quoteFlow";
 import { saveQuote } from "../src/state/quotes";
 import { EMPTY_BRAND } from "../src/state/sheet";
 import * as S from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import type { HostPlate, SavedQuote, Settings } from "../src/state/types";
 
 type Msg = Record<string, unknown>;

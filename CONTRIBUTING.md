@@ -12,7 +12,6 @@ Setup, commands and how the UI and the Python host are kept in step are in [docs
 
 ```bash
 pnpm -C ui install --frozen-lockfile
-node ui/shared/scripts/check.mjs
 pnpm -C ui lint && pnpm -C ui typecheck && pnpm -C ui test:coverage
 python3 scripts/gen_contract.py --check
 python3 scripts/build.py
@@ -21,7 +20,7 @@ python3 -m unittest discover tests
 
 A few rules the checks enforce or assume:
 
-- `ui/shared` is a snapshot of the shared Orca UI foundation. Do not edit it here.
+- The shared Orca UI foundation is the `@orca-plugins/ui-foundation` dependency, pinned to a tag of [bloodf/orca-ui-foundation](https://github.com/bloodf/orca-ui-foundation); change it there, and Renovate brings the new tag here.
 - No colour literals in `ui/src`; use the `--oui-*` tokens ([brand/BRAND.md](brand/BRAND.md)).
 - Every string in the page exists in English and Brazilian Portuguese.
 - The built page stays under 1,010,000 bytes and runs under its Content-Security-Policy with no network access.

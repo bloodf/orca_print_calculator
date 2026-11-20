@@ -10,7 +10,7 @@ import { HOST, plates as fxPlates, savedQuotes, settings as fxSettings } from ".
 import { defaultSettings, mergeSettings, resetNames } from "../src/state/defaults";
 import { saveBusy, saveQuote } from "../src/state/quotes";
 import * as S from "../src/state/store";
-import { clearToasts } from "../shared/src/components/toast";
+import { clearToasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { load } from "./priceKit";
 
 const calls = () => vi.mocked(call);
