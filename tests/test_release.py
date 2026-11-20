@@ -123,6 +123,12 @@ class PublishWorkflow(unittest.TestCase):
         self.assertEqual(uses(PUBLISH), uses(ci))
         self.assertEqual(len(re.findall(r"uses: \S+", PUBLISH)), len(re.findall(r"uses: \S+@[0-9a-f]{40}", PUBLISH)))
 
+    def test_python_is_the_one_orcaslicer_bundles(self):
+        # OrcaSlicer runs plugins on the Python it bundles (3.12, deps/python3/python3.cmake), so CI tests that one.
+        ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text("utf-8")
+        for text in (ci, PUBLISH):
+            self.assertEqual(re.findall(r'python-version: "([^"]+)"', text), ["3.12"])
+
 
 if __name__ == "__main__":
     unittest.main()
