@@ -36,7 +36,8 @@ scripts/dev-install.sh
 
 What it does (read from `scripts/dev-install.sh` and `scripts/build.py`):
 
-1. `python3 scripts/build.py`: installs and builds the UI, inlines `ui/dist/index.html` and `brand/plugin-icon.png` into
+1. `python3 scripts/build.py`: installs and builds the UI, copies `ui/dist/index.html` to
+   `src/orca_print_calculator/app.html` (shipped as a plain file) and puts `brand/plugin-icon.png` into
    `src/orca_print_calculator/_assets.py`, then writes `dist/orca_print_calculator_any.whl` (plus
    `dist/SHA256SUMS`).
 2. Creates `.../orca_plugins/orca_print_calculator/`, deletes any `*.whl` in it, copies the new wheel in.
@@ -46,8 +47,8 @@ It writes no `.install_state.json`. A local plugin with no sidecar is discovered
 until you enable it in the Plugins dialog (spike.md, "Installed copy"). Reinstall after a code change by quitting
 Orca, running the script again, and relaunching.
 
-Before moving on: `unzip -l dist/orca_print_calculator_any.whl` lists `orca_print_calculator/{__init__,_assets,core,host}.py`
-and a `.dist-info/`. Check `ls -l` on `ui/dist/index.html`: expect about 880 kB (limit 900,000 B).
+Before moving on: `unzip -l dist/orca_print_calculator_any.whl` lists `orca_print_calculator/{__init__,_assets,core,host}.py`,
+`orca_print_calculator/app.html`, the icon and a `.dist-info/`. Check `ls -l` on `ui/dist/index.html`: expect about 880 kB (limit 900,000 B).
 
 ## Steps
 

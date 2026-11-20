@@ -2,6 +2,7 @@ node_modules/
 dist/
 ui/dist/
 _assets.py
+src/orca_print_calculator/app.html
 __pycache__/
 *.pyc
 .venv/

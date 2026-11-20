@@ -124,7 +124,7 @@ class Loading(HostCase):
     def test_page_basics(self):
         self.assertEqual(self.page.get_name(), "Print Calculator")
         self.assertEqual(self.page.get_type(), "Pages")
-        self.assertEqual(self.page.get_ui(), self.pkg._assets.APP_HTML)
+        self.assertEqual(self.page.get_ui(), (Path(self.pkg.__file__).parent / "app.html").read_text("utf-8"))
         icon = self.page.get_icon()
         self.assertTrue(icon.startswith(self.orca.storage_dir))
         self.assertTrue(icon.endswith("orca_print_calculator-icon.png"))
