@@ -212,7 +212,7 @@ white-space: nowrap`). Numbers in tables are right-aligned; their headers too. U
 
 ### 4.0 Vue + PrimeVue (2026-11-11): what supersedes the rest of this section
 
-The UI is Vue 3.5.45 + PrimeVue 5.0.5 + @primeuix/themes 3.1.1 (MIT) with the shared Orca UI foundation 5.0.2 (its Aura-based
+The UI is Vue 3.5.45 + PrimeVue 5.0.5 + @primeuix/themes 3.1.1 (MIT) with the shared Orca UI foundation 5.0.8 (its Aura-based
 preset and OrcaSlicer palette), vendored unchanged in `ui/shared/` (`manifest.json`, hashes checked by
 `node ui/shared/scripts/check.mjs` and by `scripts/build.py`). Documentation for PrimeVue is primevue.org for v5 (the 5.0.5 tag). Where §4.1-4.9 below contradict this block, this block wins.
 

@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Changed
+
+- Shared Orca UI foundation 5.0.8 (built with lucide-static 1.77.0); no visible change. The page stays on Vue 3.5.45 for now.
+
 ## [0.8.2] - 2026-11-20
 
 ### Fixed
