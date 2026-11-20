@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-20
+
+### Changed
+- The page ships in the plugin as a plain `app.html` file next to the code instead of inside a Python file. Nothing changes in OrcaSlicer.
+
 ## [0.8.0] - 2026-11-19
 
 ### Changed
