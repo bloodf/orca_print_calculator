@@ -5,12 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-19
+
 ### Changed
 - New look on the shared Orca UI foundation 5.0.2: every page uses OrcaSlicer's own greys, with its teal for the main action, focus and the selected row. Print Calculator's lime is now only on its mark and under the open tab. The price sits in a plain grey block at its large size (amber while it is incomplete, red for a loss), and the Price and Quotes panels carry a lime icon.
 - The note under a field is now behind an (i) beside its label, in the calculator and in Settings. An error, or "Not set", still shows under the field. The note about saved extras and the one in the first-run checklist moved behind the panel's (i).
 - In a wide window the tabs are no longer cut when the project name is long: the project and the printer give way instead.
 - **Reset everything** in Settings is an outlined red button.
 - The stock and the spool picker follow Spoolman by themselves: while the calculator is visible it re-reads Spoolman every 30 s (Settings › Spoolman › **Refresh Spoolman every**: 10 to 300 s, or off), so a spool changed in Spooler, U1 Control, Kobra Control or Spoolman shows without pressing Refresh. It pauses while hidden, waits longer after failed reads (up to 5 minutes) and never refreshes while a picker or dialog is open.
+- The README and Orca Cloud pictures show the new look, in English and Brazilian Portuguese.
 
 ## [0.7.0] - 2026-11-18
 
