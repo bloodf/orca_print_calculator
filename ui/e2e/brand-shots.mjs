@@ -16,6 +16,17 @@ const open = (section) => `const b = document.querySelector('[data-section=${sec
 // scrolls an element to just under the app bar, which stays at the top of the window
 const top = (sel, gap = 12) => `const el = document.querySelector(${JSON.stringify(sel)}); if (!el) throw new Error("no " + ${JSON.stringify(sel)}); const bar = document.querySelector("header").getBoundingClientRect().bottom; window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - bar - ${gap}); ${wait}`;
 const PRICE = "document.querySelector('[data-price-panel]')";
+// A slot capture ends cleanly: a line, field or button that the bottom edge would cut in half is hidden. The edge is
+// the top of the price bar when it sits at the bottom of the window, else the window's own.
+const TRIM = `let foot = document.elementFromPoint(innerWidth / 2, innerHeight - 3);
+  while (foot && foot !== document.body && !/sticky|fixed/.test(getComputedStyle(foot).position)) foot = foot.parentElement;
+  if (foot === document.body) foot = null;
+  const edge = (foot ? foot.getBoundingClientRect().top : innerHeight) - 4;
+  for (const e of document.querySelectorAll("body *")) {
+    if (foot && foot.contains(e)) continue;
+    const r = e.getBoundingClientRect();
+    if (r.height && r.height < 64 && r.top < edge && r.bottom > edge) e.style.visibility = "hidden";
+  }`;
 
 // height / width of the empty square in the generated images (measured from their pixels): landscape, square, social
 const SLOT = { land: 686 / 712, square: 490 / 494, social: 661 / 666 };
@@ -53,6 +64,7 @@ try {
     await delay(500);
     for (const step of s.steps ?? []) await evaluate(call, step);
     await delay(350);
+    if (s.slot) await evaluate(call, TRIM);
     const m = await evaluate(call, `const r = document.documentElement; return { overflowX: r.scrollWidth > innerWidth, dark: r.classList.contains('orca-dark'), lang: r.lang };`);
     const ok = !m.overflowX && m.dark === (theme === "dark") && m.lang === lang;
     if (!ok) failed++;
