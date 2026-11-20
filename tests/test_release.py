@@ -77,8 +77,19 @@ class WheelPackaging(unittest.TestCase):
         self.assertTrue(icon.endswith("orca_print_calculator-icon.png"), icon)
         self.assertEqual(Path(icon).read_bytes(), (ROOT / "brand" / "plugin-icon.png").read_bytes())
 
+    def test_page_ships_as_a_plain_file_the_installed_plugin_serves(self):
+        import tempfile
+        from fakes import install_orca, load_plugin
+        folder = tempfile.mkdtemp()
+        self.zip.extractall(folder)
+        install_orca()
+        built = (ROOT / "ui" / "dist" / "index.html").read_text("utf-8")
+        self.assertEqual(self.zip.read("orca_print_calculator/app.html").decode("utf-8"), built)
+        self.assertEqual(load_plugin(folder).CalculatorPage().get_ui(), built)
+        self.assertNotIn("APP_HTML", self.zip.read("orca_print_calculator/_assets.py").decode("utf-8"))
+
     def test_page_is_offline(self):
-        page = self.zip.read("orca_print_calculator/_assets.py").decode("utf-8")
+        page = self.zip.read("orca_print_calculator/app.html").decode("utf-8")
         # A real @import is followed by a quote or url(; PrimeVue 5's style sanitizer only names "@import\s+" in a regex.
         self.assertIsNone(re.search(r"<script[^>]+src=|<link[^>]+href=.?https?:|@import\s*(?:url\(|['\"])|url\(https?:|\bnew Function\b|\beval\(", page))
 

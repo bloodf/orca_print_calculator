@@ -1,5 +1,7 @@
 """OrcaSlicer plugin: prices every build plate of the open project."""
 
+from importlib import resources
+
 import orca
 
 from . import _assets, host
@@ -25,7 +27,8 @@ class CalculatorPage(orca.pages.PagesPluginCapabilityBase):
             return ""
 
     def get_ui(self):
-        return _assets.APP_HTML
+        # The compiled page, shipped as a plain file next to the modules (scripts/build.py).
+        return resources.files(__package__).joinpath("app.html").read_text("utf-8")
 
     def on_load(self):
         # Storage is not asked for here: an Orca Cloud install started offline has none until networking is up
