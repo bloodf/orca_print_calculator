@@ -56,16 +56,16 @@ The page is <https://cloud.orcaslicer.com/p/521c07cf6de2>. Its text is in [orca-
 
 | Slot | File | Size | Bytes |
 |---|---|---|---|
-| Plugin icon (store tile) | `assets/orca-cloud/orca_print_calculator-tile.png` | 512×512 | 187,848 |
-| Main image | `assets/orca-cloud/orca_print_calculator-main-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-pt-BR.png` | 1600×900 | 1,257,067 / 1,221,579 |
-| Main image, square | `assets/orca-cloud/orca_print_calculator-main-square-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-square-pt-BR.png` | 900×900 | 853,290 / 840,460 |
-| Gallery 1: filament cost | `assets/orca-cloud/orca_print_calculator-feature-01-filament-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png` | 1600×900 | 1,252,379 / 1,275,025 |
-| Gallery 2: machine, energy and labour | `assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png` | 1600×900 | 1,324,754 / 1,326,860 |
-| Gallery 3: price with margin | `assets/orca-cloud/orca_print_calculator-feature-03-price-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-03-price-pt-BR.png` | 1600×900 | 1,270,211 / 1,239,578 |
-| Gallery 4: saved quotes | `assets/orca-cloud/orca_print_calculator-feature-04-quotes-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-04-quotes-pt-BR.png` | 1600×900 | 1,235,968 / 1,228,029 |
-| GitHub social preview | `assets/social/orca_print_calculator-social-preview-en.png`<br>`assets/social/orca_print_calculator-social-preview-pt-BR.png` | 1280×640 | 780,973 / 791,651 |
-| README hero, dark | `assets/readme/orca_print_calculator-hero-dark-en.png`<br>`assets/readme/orca_print_calculator-hero-dark-pt-BR.png` | 1600×900 | 1,222,686 / 1,242,722 |
-| README hero, light | `assets/readme/orca_print_calculator-hero-light-en.png`<br>`assets/readme/orca_print_calculator-hero-light-pt-BR.png` | 1600×900 | 1,279,922 / 1,241,248 |
+| Plugin icon (store tile) | `assets/orca-cloud/orca_print_calculator-tile.png` | 512×512 | 187,169 |
+| Main image | `assets/orca-cloud/orca_print_calculator-main-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-pt-BR.png` | 1600×900 | 1,277,846 / 1,243,915 |
+| Main image, square | `assets/orca-cloud/orca_print_calculator-main-square-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-square-pt-BR.png` | 900×900 | 834,185 / 819,831 |
+| Gallery 1: filament cost | `assets/orca-cloud/orca_print_calculator-feature-01-filament-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png` | 1600×900 | 1,251,519 / 1,276,625 |
+| Gallery 2: machine, energy and labour | `assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png` | 1600×900 | 1,293,843 / 1,280,418 |
+| Gallery 3: price with margin | `assets/orca-cloud/orca_print_calculator-feature-03-price-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-03-price-pt-BR.png` | 1600×900 | 1,226,476 / 1,189,040 |
+| Gallery 4: saved quotes | `assets/orca-cloud/orca_print_calculator-feature-04-quotes-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-04-quotes-pt-BR.png` | 1600×900 | 1,226,757 / 1,213,850 |
+| GitHub social preview | `assets/social/orca_print_calculator-social-preview-en.png`<br>`assets/social/orca_print_calculator-social-preview-pt-BR.png` | 1280×640 | 785,028 / 797,180 |
+| README hero, dark | `assets/readme/orca_print_calculator-hero-dark-en.png`<br>`assets/readme/orca_print_calculator-hero-dark-pt-BR.png` | 1600×900 | 1,243,180 / 1,263,469 |
+| README hero, light | `assets/readme/orca_print_calculator-hero-light-en.png`<br>`assets/readme/orca_print_calculator-hero-light-pt-BR.png` | 1600×900 | 1,295,848 / 1,257,203 |
 
 The GitHub social preview is set in the repository settings, not on Orca Cloud. The README heroes are listed for completeness.
 
