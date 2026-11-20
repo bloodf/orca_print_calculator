@@ -8,11 +8,11 @@
     "build": "vite build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "node shared/scripts/vue-tsc.mjs --noEmit",
-    "lint": "oxlint src tests",
-    "check:shared": "node shared/scripts/check.mjs"
+    "typecheck": "node node_modules/@orca-plugins/ui-foundation/scripts/vue-tsc.mjs --noEmit",
+    "lint": "oxlint src tests"
   },
   "dependencies": {
+    "@orca-plugins/ui-foundation": "github:bloodf/orca-ui-foundation#v5.0.8",
     "@primeuix/themes": "3.1.1",
     "primevue": "5.0.5",
     "vue": "3.5.45"

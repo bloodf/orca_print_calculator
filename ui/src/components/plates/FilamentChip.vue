@@ -5,7 +5,7 @@ import { grams, safeColor } from "../../format";
 import { t } from "../../i18n";
 import { locale } from "../../state/store";
 import type { HostSlot, SlotMatchView } from "../../state/types";
-import { OuiSwatch } from "../../../shared/src/components";
+import { OuiSwatch } from "@orca-plugins/ui-foundation/src/components";
 import { chipLabel, sourceText, sourceTone } from "./slots";
 
 const props = defineProps<{ slot: HostSlot; match: SlotMatchView }>();

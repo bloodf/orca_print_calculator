@@ -7,7 +7,7 @@ import { setLocale } from "../src/i18n";
 import { HOST, plates, settings as fxSettings, spoolman as fxSpoolman } from "../src/mock/fixtures";
 import { defaultDefaults } from "../src/state/defaults";
 import * as S from "../src/state/store";
-import { clearToasts } from "../shared/src/components/toast";
+import { clearToasts } from "@orca-plugins/ui-foundation/src/components/toast";
 
 const BAD: unknown[] = [null, "x", "5", -1, 1e18, 0.5, {}, [], true, [{ minQty: "a" }], { mode: "weird", minor: "x" }];
 let app: App | null = null;

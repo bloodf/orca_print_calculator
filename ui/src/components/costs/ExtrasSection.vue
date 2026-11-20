@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { money } from "../../format";
 import { currency, store } from "../../state/store";
-import * as I from "../../../shared/src/icons";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import Section from "../base/Section.vue";
 import ExtrasEditor from "./ExtrasEditor.vue";
 import { hasProblem, perPiece, sectionAmount, useOpen } from "./shared";

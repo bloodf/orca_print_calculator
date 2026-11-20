@@ -5,7 +5,7 @@ import { t } from "../../i18n";
 import { currency, patchSettings, setLanguage, store } from "../../state/store";
 import type { Lang } from "../../state/types";
 import Button from "primevue/button";
-import { OuiBanner } from "../../../shared/src/components";
+import { OuiBanner } from "@orca-plugins/ui-foundation/src/components";
 import { lead } from "../base/lead";
 import SelectField from "../costs/SelectField.vue";
 import TextField from "./TextField.vue";

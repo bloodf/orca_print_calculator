@@ -18,7 +18,7 @@ import { exportBlock, sheetFor } from "../src/quoteFlow";
 import { DEFAULT_ACCENT } from "../src/state/sheet";
 import { closeQuote, openQuote, saveQuote, useCurrentSlice } from "../src/state/quotes";
 import { derived, flushSettings, patchSettings, setView, store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import type { HostPlate } from "../src/state/types";
 import { plates as fixturePlates } from "../src/mock/fixtures";
 import { load, mount, txt } from "./priceKit";

@@ -24,7 +24,7 @@ export default defineConfig({
   define: { __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: false, __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false },
   // The shared components are imported through their index, which also names the ones this page never uses: their styles are
   // side effects, so without this every shared component's CSS (and the spool images) would ship. Unused ones are dropped.
-  build: { target: "safari14", rollupOptions: { treeshake: { moduleSideEffects: (id) => !/\/shared\/src\/components\/[^/?]+\.vue$/.test(id) } } },
+  build: { target: "safari14", rollupOptions: { treeshake: { moduleSideEffects: (id) => !/\/ui-foundation\/src\/components\/[^/?]+\.vue$/.test(id) } } },
   test: { environment: "jsdom", include: ["tests/**/*.test.ts"], setupFiles: ["tests/setup.ts"], coverage: {
       // The whole app layer, not just the engine. Excluded: the dev harness, pure data (the es/de/zh-CN/pl string tables, types), the entry file.
       include: ["src/**/*.ts", "src/**/*.vue"],

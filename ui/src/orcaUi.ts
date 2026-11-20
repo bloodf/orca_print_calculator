@@ -1,7 +1,7 @@
 // Vue + PrimeVue bootstrap shared by main.ts, the dev harness and the tests: one place installs the shared Orca preset,
 // keeps the PrimeVue locale in step with the plugin language, and mirrors the host theme onto the shared palette tokens.
 import { createApp as createVueApp, type App, type Component } from "vue";
-import { applyOrcaTheme, installOrcaUI, primeVueOptions } from "../shared/src";
+import { applyOrcaTheme, installOrcaUI, primeVueOptions } from "@orca-plugins/ui-foundation/src";
 import { currentLocale, type Locale } from "./i18n";
 import { PRIME_LOCALES } from "./i18n/prime";
 

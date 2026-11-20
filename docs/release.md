@@ -75,7 +75,6 @@ Each image is a generated photograph whose empty square holds a real screenshot 
 
 ```bash
 pnpm -C ui install --frozen-lockfile
-node ui/shared/scripts/check.mjs
 pnpm -C ui lint && pnpm -C ui typecheck && pnpm -C ui test:coverage
 python3 scripts/gen_contract.py --check
 python3 scripts/build.py --release-tag vX.Y.Z      # dist/orca_print_calculator_any.whl, dist/SHA256SUMS

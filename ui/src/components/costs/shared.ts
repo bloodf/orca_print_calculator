@@ -5,7 +5,7 @@ import { t } from "../../i18n";
 import { kwhE4 } from "../../engine/money";
 import { clearOverride, derived, patchDefaults, patchDraft, patchSettings, result, setOverride, setSectionOpen, setView, store } from "../../state/store";
 import { openSettingsTab } from "../../state/settingsTab";
-import { showToast } from "../../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import type { Defaults, OverridableKey, PrinterProfile } from "../../state/types";
 import { money } from "../../format";
 import { currency, locale } from "../../state/store";

@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { defineComponent, h, nextTick, ref, type App } from "vue";
 import { createOrcaApp as createApp } from "../src/orcaUi";
-import { OuiBanner, OuiEmpty, OuiToastHost } from "../shared/src/components";
-import * as SHARED_ICONS from "../shared/src/icons";
+import { OuiBanner, OuiEmpty, OuiToastHost } from "@orca-plugins/ui-foundation/src/components";
+import * as SHARED_ICONS from "@orca-plugins/ui-foundation/src/icons";
 import Popover from "../src/components/base/Popover.vue";
 import Section from "../src/components/base/Section.vue";
 import Segmented from "../src/components/base/Segmented.vue";
 import { setLocale } from "../src/i18n";
-import { clearToasts, showToast, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, showToast, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 
 let app: App | null = null;
 let root: HTMLElement;

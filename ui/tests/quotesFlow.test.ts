@@ -9,7 +9,7 @@ import { exportQuote, exportQuoteList, exportText, sheetFor } from "../src/quote
 import { deleteQuote, openQuote, saveQuote } from "../src/state/quotes";
 import { defaultSettings, mergeSettings, newDraft } from "../src/state/defaults";
 import { derived, patchDefaults, store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 
 const calls: { cmd: string; args: unknown }[] = [];
 let failExport: string | null = null;

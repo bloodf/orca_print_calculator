@@ -4,10 +4,10 @@ import Button from "primevue/button";
 // Reused by Settings (no defaultValue there, so no override dot).
 import { computed } from "vue";
 import { t } from "../../i18n";
-import { showToast } from "../../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import type { DiscountTier } from "../../state/types";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import PercentField from "../base/PercentField.vue";
 import ResetButton from "../base/ResetButton.vue";
 import Stepper from "../base/Stepper.vue";

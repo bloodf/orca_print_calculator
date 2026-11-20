@@ -11,7 +11,7 @@ import { isDirty, savedOf } from "./state/dirty";
 import { openQuote, saveQuote } from "./state/quotes";
 import { safeDigits } from "./state/derive";
 import { derived, store } from "./state/store";
-import { showToast } from "../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import type { SavedQuote } from "./state/types";
 
 export type ExportKind = "html" | "csv";

@@ -5,7 +5,7 @@ import { onBeforeUnmount, ref } from "vue";
 import { t } from "../../i18n";
 import { defaultSettings } from "../../state/defaults";
 import { fetchSpoolman, liveCurrency, patchSettings, store } from "../../state/store";
-import { showToast } from "../../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import CopyValue from "./CopyValue.vue";
 
 const README_URL = "https://github.com/bloodf/orca_print_calculator#readme";

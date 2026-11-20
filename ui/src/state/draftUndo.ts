@@ -3,7 +3,7 @@
 import { t } from "../i18n";
 import { hasUnsavedWork, stable } from "./dirty";
 import { store } from "./store";
-import { showToast } from "../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import type { Draft, HostPlate } from "./types";
 
 type Snap = { draft: Draft; plates: HostPlate[]; pending: HostPlate[] | null };

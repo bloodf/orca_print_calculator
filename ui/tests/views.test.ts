@@ -4,13 +4,13 @@ import { h, nextTick, type App as VueApp } from "vue";
 import { createOrcaApp as createApp } from "../src/orcaUi";
 import AppRoot from "../src/App.vue";
 import PriceBar from "../src/components/price/PriceBar.vue";
-import { OuiToastHost } from "../shared/src/components";
+import { OuiToastHost } from "@orca-plugins/ui-foundation/src/components";
 import { setLocale } from "../src/i18n";
 import { createMockHost } from "../src/mock/host";
 import type { ScenarioName } from "../src/mock/scenarios";
 import { priceAnnouncement } from "../src/state/announce";
 import { derived, store } from "../src/state/store";
-import { clearToasts, showToast, toastList } from "../shared/src/components/toast";
+import { clearToasts, showToast, toastList } from "@orca-plugins/ui-foundation/src/components/toast";
 import { load } from "./priceKit";
 
 let app: VueApp | null = null;

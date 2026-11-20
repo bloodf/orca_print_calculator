@@ -110,7 +110,7 @@ class PublishWorkflow(unittest.TestCase):
 
     def test_same_gates_as_ci(self):
         ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text("utf-8")
-        for step in ("pnpm -C ui install --frozen-lockfile", "node ui/shared/scripts/check.mjs", "pnpm -C ui lint",
+        for step in ("pnpm -C ui install --frozen-lockfile", "pnpm -C ui lint",
                      "pnpm -C ui typecheck", "pnpm -C ui test:coverage", "scripts/gen_contract.py --check",
                      "python -m unittest discover tests", "-le 1300000"):
             self.assertIn(step, ci, step)

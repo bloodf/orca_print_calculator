@@ -8,7 +8,7 @@ import { currency, digits } from "../../state/store";
 import type { OverridableKey, ShippingMode } from "../../state/types";
 import MoneyField from "../base/MoneyField.vue";
 import ResetButton from "../base/ResetButton.vue";
-import * as I from "../../../shared/src/icons";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import Section from "../base/Section.vue";
 import Segmented from "../base/Segmented.vue";
 import { hasOverride, hasProblem, saveSectionDefaults, sectionAmount, useDefault, useOpen } from "./shared";

@@ -4,7 +4,7 @@ import { call, errorCode } from "../../bridge";
 import { bytes } from "../../format";
 import { t } from "../../i18n";
 import { applyImported, locale } from "../../state/store";
-import { showToast } from "../../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 
 export const MAX_BYTES = 100 * 1024 * 1024;
 export const importState = reactive({ phase: "idle" as "idle" | "reading" | "parsing", name: "", size: 0, loaded: 0, total: 0 });

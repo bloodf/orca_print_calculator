@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 
 const css = readFileSync(new URL("../src/app.css", import.meta.url), "utf8");
 const orcaUi = readFileSync(new URL("../src/orcaUi.ts", import.meta.url), "utf8");
-const palette = JSON.parse(readFileSync(new URL("../shared/src/palette.json", import.meta.url), "utf8")) as Record<"light" | "dark", Record<string, string>>;
+const palette = JSON.parse(readFileSync(new URL("../node_modules/@orca-plugins/ui-foundation/src/palette.json", import.meta.url), "utf8")) as Record<"light" | "dark", Record<string, string>>;
 const lum = (h: string): number => {
   const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
   return 0.2126 * c[0]! + 0.7152 * c[1]! + 0.0722 * c[2]!;
@@ -61,10 +61,10 @@ describe("forced colors and checkbox accent", () => {
     expect(fc).toMatch(/\.seg-opt\[aria-checked="true"\][^{]*\{[^}]*Highlight/);
   });
   test("native controls that remain (none are checkboxes) follow the shared accent", () => {
-    expect(readFileSync(new URL("../shared/src/base.css", import.meta.url), "utf8")).toMatch(/accent-color:\s*var\(--oui-primary-mark\)/);
+    expect(readFileSync(new URL("../node_modules/@orca-plugins/ui-foundation/src/base.css", import.meta.url), "utf8")).toMatch(/accent-color:\s*var\(--oui-primary-mark\)/);
   });
   test("reduced motion lives in the shared base.css (universal, over PrimeVue's runtime styles); app.css keeps no copy", () => {
-    expect(readFileSync(new URL("../shared/src/base.css", import.meta.url), "utf8")).toMatch(/prefers-reduced-motion: reduce\)\s*\{\s*\.orca-ui \*/);
+    expect(readFileSync(new URL("../node_modules/@orca-plugins/ui-foundation/src/base.css", import.meta.url), "utf8")).toMatch(/prefers-reduced-motion: reduce\)\s*\{\s*\.orca-ui \*/);
     expect(css).not.toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{\s*\*/);
   });
 });

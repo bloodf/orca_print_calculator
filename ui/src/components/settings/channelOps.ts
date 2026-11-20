@@ -2,7 +2,7 @@
 import { t } from "../../i18n";
 import { MAX_TIERS, newCustomChannel, validateChannelDef, validateChannelList, type ChannelDef, type Problem, type TierDef } from "../../engine/channels";
 import { patchSettings, store } from "../../state/store";
-import { showToast } from "../../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 
 export const channelById = (id: string): ChannelDef | undefined => store.settings.channels.find((c) => c.id === id);
 

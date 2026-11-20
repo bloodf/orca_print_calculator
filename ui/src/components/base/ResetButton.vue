@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Button from "primevue/button";
 import { t } from "../../i18n";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 defineProps<{ label: string; defaultText: string }>();
 defineEmits<{ click: [] }>();
 </script>

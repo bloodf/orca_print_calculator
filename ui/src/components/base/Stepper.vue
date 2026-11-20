@@ -4,8 +4,8 @@ import InputText from "primevue/inputtext";
 import { ref, watch } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { count } from "../../format";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { clamp, keyDelta } from "./numeric";
 
 const props = defineProps<{ modelValue: number; min: number; max: number; label: string }>();

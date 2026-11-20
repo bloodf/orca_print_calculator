@@ -4,8 +4,8 @@ import Button from "primevue/button";
 import { onBeforeUnmount, ref } from "vue";
 import { copyText } from "../../clipboard";
 import { t } from "../../i18n";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 
 const props = defineProps<{ value: string; label: string }>();
 const copied = ref(false); // a copy was attempted

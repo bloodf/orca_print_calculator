@@ -5,7 +5,7 @@ import InputText from "primevue/inputtext";
 import { computed, onBeforeUnmount, ref, useId, watch } from "vue";
 import { intlLocale, t } from "../../i18n";
 import { markInvalid } from "../../state/invalid";
-import { OuiHint } from "../../../shared/src/components";
+import { OuiHint } from "@orca-plugins/ui-foundation/src/components";
 import ResetButton from "./ResetButton.vue";
 import { checkText, clamp, formatNum, keyDelta, parseNum, type FieldError, type NumSpec } from "./numeric";
 

@@ -5,8 +5,8 @@ import Button from "primevue/button";
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { derived, store } from "../../state/store";
-import { OuiIcon } from "../../../shared/src/components";
-import * as I from "../../../shared/src/icons";
+import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { buildFlags } from "./flagList";
 import { hero, m, missingCount, pct, priceFromFallback } from "./priceState";
 

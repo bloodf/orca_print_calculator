@@ -12,7 +12,7 @@ import { newKey } from "../ids";
 import { CALC_VERSION, LEGACY_CALC } from "../engine/quote";
 import { defaultsDiff, defaultsFromInput, safeDigits } from "./derive";
 import { RECOVER_CODES, currency, derived, flushSettings, patchSettings, recoverState, setPlates, store } from "./store";
-import { showToast } from "../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 import type { Draft, SavedQuote, SheetDetails } from "./types";
 
 const sheetNow = (): SheetDetails => {

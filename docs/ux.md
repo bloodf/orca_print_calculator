@@ -213,13 +213,13 @@ white-space: nowrap`). Numbers in tables are right-aligned; their headers too. U
 ### 4.0 Vue + PrimeVue (2026-11-11): what supersedes the rest of this section
 
 The UI is Vue 3.5.45 + PrimeVue 5.0.5 + @primeuix/themes 3.1.1 (MIT) with the shared Orca UI foundation 5.0.8 (its Aura-based
-preset and OrcaSlicer palette), vendored unchanged in `ui/shared/` (`manifest.json`, hashes checked by
-`node ui/shared/scripts/check.mjs` and by `scripts/build.py`). Documentation for PrimeVue is primevue.org for v5 (the 5.0.5 tag). Where §4.1-4.9 below contradict this block, this block wins.
+preset and OrcaSlicer palette), the `@orca-plugins/ui-foundation` dependency pinned to a tag of
+github.com/bloodf/orca-ui-foundation. Documentation for PrimeVue is primevue.org for v5 (the 5.0.5 tag). Where §4.1-4.9 below contradict this block, this block wins.
 
 - **Colour** comes only from the shared palette (`--oui-*`, set on `<html>` by `applyOrcaTheme`). `theme.css` keeps `--opc-*` as
   aliases of it so layout CSS keeps its names; the host `--orca-*` colours are no longer read. The host still decides light or dark:
   `src/orcaUi.ts` mirrors `<html data-orca-theme>` onto the palette (and `.orca-dark`) and follows changes. `tests/themeContrast.test.ts`
-  computes the contrast pairs from `ui/shared/src/palette.json` through those aliases.
+  computes the contrast pairs from the foundation's `src/palette.json` through those aliases.
 - **Type and space**: system sans 14 px body, 12 px secondary, 16 px section titles, 20 px view title, 28 px price; 4/8/12/16/24/32 spacing;
   6 px controls, 12 px panels. The 40 px hero price became 28 px (shared scale).
 - **Controls are PrimeVue**: Button (primary / secondary-outlined / text / icon), InputText, Textarea, Checkbox, RadioButton, Select

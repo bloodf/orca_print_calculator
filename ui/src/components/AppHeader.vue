@@ -3,8 +3,8 @@
 // (import, refresh, help). The state text gives way first; the tabs drop to their own line when the bar is narrow.
 import Button from "primevue/button";
 import { computed } from "vue";
-import { OuiAppBar, OuiIcon } from "../../shared/src/components";
-import * as I from "../../shared/src/icons";
+import { OuiAppBar, OuiIcon } from "@orca-plugins/ui-foundation/src/components";
+import * as I from "@orca-plugins/ui-foundation/src/icons";
 import mark from "../icon.svg?raw";
 import { t } from "../i18n";
 import { openHelp } from "../state/help";

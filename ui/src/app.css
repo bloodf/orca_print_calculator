@@ -1,5 +1,5 @@
 /* Orca Print Calculator: what is local to this page. Colour, type, spacing, controls and the shared components come from
-   ui/shared (--oui-* written by applyOrcaTheme, base.css, the PrimeVue preset). The host decides light/dark through
+   @orca-plugins/ui-foundation (--oui-* written by applyOrcaTheme, base.css, the PrimeVue preset). The host decides light/dark through
    html[data-orca-theme]; src/orcaUi.ts mirrors it onto the palette. Never prefers-color-scheme, never light-dark(). */
 html { -webkit-text-size-adjust: 100%; }
 .p-button[aria-busy="true"] { cursor: progress; }

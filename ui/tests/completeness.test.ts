@@ -11,7 +11,7 @@ import { exportBlock, exportQuote, exportText, printQuote, savedExportBlock } fr
 import { exportBlockOf, snapshotGaps } from "../src/state/completeness";
 import { closeQuote, duplicateQuote, openQuote, saveQuote } from "../src/state/quotes";
 import { derived, notCounted, store } from "../src/state/store";
-import { clearToasts, toastList as toasts } from "../shared/src/components/toast";
+import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { parseQuotes } from "../src/state/validate";
 import type { HostPlate, PlateSnapshot, SavedQuote } from "../src/state/types";
 import { load, mount, txt } from "./priceKit";

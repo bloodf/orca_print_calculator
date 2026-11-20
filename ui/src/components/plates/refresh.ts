@@ -3,7 +3,7 @@ import { ref } from "vue";
 import { call, errorCode } from "../../bridge";
 import { t } from "../../i18n";
 import { fetchSpoolman, setPlates, store } from "../../state/store";
-import { showToast } from "../../../shared/src/components";
+import { showToast } from "@orca-plugins/ui-foundation/src/components";
 
 export const refreshing = ref(false);
 
