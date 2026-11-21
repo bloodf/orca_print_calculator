@@ -7,7 +7,7 @@ vi.mock("../src/bridge", async (orig) => ({ ...(await orig<typeof import("../src
 import { BridgeError, call } from "../src/bridge";
 import FilamentChip from "../src/components/plates/FilamentChip.vue";
 import MaterialRow from "../src/components/plates/MaterialRow.vue";
-import { chipLabel, presetName } from "../src/components/plates/slots";
+import { chipLabel, hasSlotChoice, presetName } from "../src/components/plates/slots";
 import { errorText } from "../src/components/plates/importFlow";
 import { spoolmanErrorMessage } from "../src/components/settings/spoolmanError";
 import { setLocale, t, LOCALES } from "../src/i18n";
@@ -166,4 +166,9 @@ describe("host code `unreadable` (a saved file that can be neither read nor set 
     setLocale("en");
     expect(failText("x", "unreadable")).toMatch(/permissions/i);
   });
+});
+
+test("a preset named like an object key is not a saved slot choice", () => {
+  const m = view({ ...realSlots()[0]!, preset: "constructor" });
+  expect(hasSlotChoice(m)).toBe(false);
 });

@@ -49,9 +49,10 @@ export function defaultsDiff(value: Defaults, base: Defaults): Draft["overrides"
 /** Draft overrides win over the defaults (§7.2). */
 export const effectiveDefaults = (d: Defaults, overrides: Draft["overrides"]): Defaults => ({ ...d, ...overrides });
 
-export function slotKey(source: SlotMatchView["source"], filamentId: number | null, spoolId: number | null, preset: string): string {
+export function slotKey(source: SlotMatchView["source"], filamentId: number | null, spoolId: number | null, preset: string, pricePerKg: number | null = null): string {
   if (source === "manual") return `manual:${preset}`;
-  if (source === "preset") return `preset:${preset}`;
+  // each plate carries the preset price it was sliced with: plates sliced before and after a price change are two lines, not a conflict
+  if (source === "preset") return pricePerKg === null ? `preset:${preset}` : `preset:${preset}@${pricePerKg}`;
   if (source === "none" || filamentId === null) return `none:${preset}`;
   return `sm:${filamentId}:${spoolId ?? 0}`;
 }
@@ -95,7 +96,7 @@ function viewOf(plateIndex: number, slot: HostSlot, i: DeriveInput): SlotMatchVi
   }
   // The engine merges slots by key and needs one price per key: a preset-priced match is keyed by its preset, not the filament.
   const keySource = fromSpoolman ? m.source : m.priceSource === "preset" ? "preset" : "none";
-  return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource, spoolPinned: m.spoolPinned,
+  return { plateIndex, slot, key: slotKey(keySource, m.filamentId, m.spoolId, slot.preset, m.pricePerKg), source: m.source, filamentId: m.filamentId, spoolId: m.spoolId, pricePerKg: m.pricePerKg, priceSource: m.priceSource, spoolPinned: m.spoolPinned,
     ...(assigned && m.source !== "assigned" && i.spoolman.filaments.length
       ? { pickGone: assigned.spoolId === undefined ? { kind: "filament" as const, id: assigned.filamentId } : { kind: "spool" as const, id: assigned.spoolId } } : {}) };
 }

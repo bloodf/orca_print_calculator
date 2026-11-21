@@ -106,6 +106,11 @@ class ParseGcodeOrca(unittest.TestCase):
         slots = core.parse_gcode("", tail)["slots"]
         self.assertEqual([(s["n"], s["grams"]) for s in slots], [(1, None), (2, 1.5)])
 
+    def test_zero_weight_with_length_is_unknown(self):
+        tail = "; filament used [mm] = 100, 50\n; filament used [g] = 0.00, 1.5\n"
+        slots = core.parse_gcode("", tail)["slots"]
+        self.assertEqual([(s["n"], s["grams"]) for s in slots], [(1, None), (2, 1.5)])
+
 class ParseGcodeBbl(unittest.TestCase):
     """SYNTHETIC fixtures (synthetic_bbl_*.txt) built from docs/spike.md section 4.
     They must be replaced by a real Bambu capture once one exists."""

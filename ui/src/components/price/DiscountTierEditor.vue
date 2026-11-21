@@ -38,9 +38,12 @@ function add(): void {
   emit("update:modelValue", [...props.modelValue, next]);
 }
 function remove(i: number): void {
-  const before = props.modelValue;
-  emit("update:modelValue", before.filter((_, k) => k !== i));
-  showToast({ title: t("tier.removed"), action: { label: t("common.undo"), run: () => emit("update:modelValue", before) } });
+  const gone = props.modelValue[i];
+  if (!gone) return;
+  emit("update:modelValue", props.modelValue.filter((_, k) => k !== i));
+  // undo puts the tier back into the list as it is now, keeping edits made since
+  const undo = (): void => { if (props.modelValue.length < MAX_TIERS) emit("update:modelValue", [...props.modelValue.slice(0, i), gone, ...props.modelValue.slice(i)]); };
+  showToast({ title: t("tier.removed"), action: { label: t("common.undo"), run: undo } });
 }
 </script>
 
