@@ -658,12 +658,19 @@ def _invert_profiles(profiles, section="filaments"):
     return out
 
 
+# Any one of these in <data folder>/spooler/ means Spooler runs in this OrcaSlicer: presence.json and spooler.log are
+# written on every load, the other two once it is set up (a Bambu Lab spool source or no Spoolman yet writes no URL).
+SPOOLER_FILES = ("presence.json", "spooler.log", "spooler_settings.json", "profiles.json")
+
+
 def read_spooler_files(datadir):
     """Spooler plugin data -> {detected, spoolman_url, preset_to_filament, preset_to_spool}. Never raises.
     `preset_to_spool` comes from profiles.json `spools` (Spooler's presets per spool), which win over the filament's."""
     result = {"detected": False, "spoolman_url": None, "preset_to_filament": {}, "preset_to_spool": {}}
     try:
         root = Path(datadir) / "spooler"
+        if not any((root / name).is_file() for name in SPOOLER_FILES):
+            return result
         profiles = _read_small_json(root / "profiles.json")
         mapping = _invert_profiles(profiles)
         spools = _invert_profiles(profiles, "spools")
@@ -674,7 +681,7 @@ def read_spooler_files(datadir):
             url = None
     except (OSError, TypeError, ValueError):
         return result
-    return {"detected": bool(mapping or spools or url), "spoolman_url": url, "preset_to_filament": mapping,
+    return {"detected": True, "spoolman_url": url, "preset_to_filament": mapping,
             "preset_to_spool": spools}
 
 

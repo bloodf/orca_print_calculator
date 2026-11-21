@@ -340,6 +340,9 @@
       "presetToSpool": {},
       "url": "http://192.168.1.10:7912"
      },
+     "spoolerLooked": [
+      "/orca-data/spooler"
+     ],
      "unloaded": [],
      "unreadable": []
     },
@@ -786,6 +789,9 @@
       "presetToSpool": {},
       "url": "http://192.168.1.10:7912"
      },
+     "spoolerLooked": [
+      "/orca-data/spooler"
+     ],
      "unloaded": [],
      "unreadable": []
     },

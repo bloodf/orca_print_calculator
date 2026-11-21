@@ -21,7 +21,7 @@ declare global {
 /** Command table (import_sliced per docs/spike.md section 9). */
 export type Commands = {
   get_state: { args: Record<string, unknown>; data: HostState };
-  check_requirements: { args: Record<string, unknown>; data: { spooler: SpoolerInfo } };
+  check_requirements: { args: Record<string, unknown>; data: { spooler: SpoolerInfo; spoolerLooked?: string[] } };
   save_settings: { args: { settings: Settings }; data: Record<string, never> };
   save_quotes: { args: { quotes: SavedQuote[] }; data: Record<string, never> };
   spoolman_fetch: { args: { url: string }; data: SpoolmanData };

@@ -27,6 +27,9 @@
      "quotes": null,
      "settings": null,
      "spooler": null,
+     "spoolerLooked": [
+      "/orca-data/spooler"
+     ],
      "unloaded": [],
      "unreadable": []
     },

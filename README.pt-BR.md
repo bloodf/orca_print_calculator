@@ -32,7 +32,7 @@ O Print Calculator cria uma aba no OrcaSlicer que precifica cada mesa do projeto
 
 ## 📦 Instalação
 
-O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Assine por lá e depois, no OrcaSlicer, abra **Plugins**, atualize e ative o plugin. Para instalar a partir de um arquivo:
+O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Assine por lá e depois, no OrcaSlicer, abra **Plugins**, atualize e ative o plugin. No macOS, **Plugins** fica no menu **Arquivo** da barra de menus, no alto da tela. No Windows e no Linux, clique na setinha ao lado de **Arquivo**, no canto superior esquerdo da janela do OrcaSlicer, e depois em **Plugins**. Para instalar a partir de um arquivo:
 
 1. Baixe `orca_print_calculator_any.whl` da [última versão](https://github.com/bloodf/orca_print_calculator/releases/latest). O `SHA256SUMS` ao lado traz o checksum.
 2. Copie o arquivo para `~/Library/Application Support/OrcaSlicer/orca_plugins/orca_print_calculator/` (crie a pasta e apague qualquer `.whl` antigo que esteja nela).
@@ -96,7 +96,7 @@ O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://clou
 
 ## 🛠️ Como usar
 
-1. Abra a aba **Print Calculator**. No primeiro uso, **Configure uma vez** pede três coisas: o preço do filamento (conecte o Spoolman, ou pule e use o preço dos perfis), o preço da energia e o valor da sua hora. Se o Spooler estiver instalado, ele oferece o endereço do Spoolman que o Spooler já usa.
+1. Abra a aba **Print Calculator**. No primeiro uso, **Configure uma vez** pede três coisas: o preço do filamento (conecte o Spoolman, ou pule e use o preço dos perfis), o preço da energia e o valor da sua hora. Se o Spooler estiver instalado, ele oferece o endereço do Spoolman que o Spooler já usa. **Ajustes › Requisitos** mostra se o Spooler foi encontrado e, se não, a pasta onde procurou (`spooler` dentro da pasta de dados do OrcaSlicer).
 2. Para conectar o Spoolman depois, abra **Ajustes**, digite o **Endereço do Spoolman** (por exemplo `http://localhost:7912`) e use **Testar conexão**. O OrcaSlicer pergunta uma vez se o plugin pode acessar esse endereço.
 3. Fatie uma mesa, ou use "Fatiar tudo". Cada mesa aparece em **Placas**. Use **Atualizar** se faltar alguma, ou **Importar arquivo fatiado** para um `.gcode.3mf`.
 4. Clique nos filamentos de uma mesa para ver o preço por kg de cada slot e de onde ele veio. **Trocar** escolhe o carretel do Spoolman que está naquele slot (os mais parecidos primeiro), volta para **Automático** ou deixa você digitar um preço por kg.

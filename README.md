@@ -32,7 +32,7 @@ Print Calculator adds a tab to OrcaSlicer that prices every build plate of the o
 
 ## 📦 Install
 
-The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Subscribe there, then in OrcaSlicer open **Plugins**, refresh and enable it. To install from a file instead:
+The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud.orcaslicer.com/p/521c07cf6de2). Subscribe there, then in OrcaSlicer open **Plugins**, refresh and enable it. On macOS, **Plugins** is in the **File** menu of the menu bar at the top of the screen. On Windows and Linux, click the small arrow next to **File** at the top left of the OrcaSlicer window, then **Plugins**. To install from a file instead:
 
 1. Download `orca_print_calculator_any.whl` from the [latest release](https://github.com/bloodf/orca_print_calculator/releases/latest). `SHA256SUMS` beside it has the checksum.
 2. Copy it into `~/Library/Application Support/OrcaSlicer/orca_plugins/orca_print_calculator/` (create the folder, and remove any older `.whl` in it).
@@ -96,7 +96,7 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
 
 ## 🛠️ How to use
 
-1. Open the **Print Calculator** tab. On the first run, **Set up once** asks for three things: filament prices (connect Spoolman, or skip and use preset prices), the energy price and your hourly rate. If Spooler is installed, it offers the Spoolman address Spooler already uses.
+1. Open the **Print Calculator** tab. On the first run, **Set up once** asks for three things: filament prices (connect Spoolman, or skip and use preset prices), the energy price and your hourly rate. If Spooler is installed, it offers the Spoolman address Spooler already uses. **Settings › Requirements** shows whether Spooler was found, and if not, the folder it looked in (`spooler` inside OrcaSlicer's data folder).
 2. To connect Spoolman later, open **Settings**, type the **Spoolman address** (for example `http://localhost:7912`) and press **Test connection**. OrcaSlicer asks once whether the plugin may reach that address.
 3. Slice a plate, or use "Slice all". Each plate appears under **Plates**. Press **Refresh** if one is missing, or use **Import sliced file** for a `.gcode.3mf`.
 4. Click the filament chips of a plate to see the price per kg of each slot and what priced it. **Change** picks the Spoolman spool loaded in that slot (best matches first), goes back to **Auto**, or lets you type a price per kg.

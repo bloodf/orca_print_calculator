@@ -30,7 +30,7 @@ Price every plate: filament, energy, labour, fees and margin.
 
 ## How to start
 
-1. Subscribe on this page. In OrcaSlicer open Plugins, refresh and enable the plugin. Leave full access off.
+1. Subscribe on this page. In OrcaSlicer open Plugins, refresh and enable the plugin. Leave full access off. On macOS, Plugins is in the File menu of the menu bar at the top of the screen. On Windows and Linux, click the small arrow next to File at the top left of the OrcaSlicer window, then Plugins.
 2. Open the Print Calculator tab and answer "Set up once": filament prices, energy price and your hourly rate.
 3. Slice a plate. It appears under Plates, and the Price panel shows the suggested price per piece.
 
@@ -83,7 +83,7 @@ Preço de cada mesa: filamento, energia, mão de obra, taxas e margem.
 
 ## Como começar
 
-1. Assine nesta página. No OrcaSlicer, abra Plugins, atualize e ative o plugin. Deixe o acesso total desligado.
+1. Assine nesta página. No OrcaSlicer, abra Plugins, atualize e ative o plugin. Deixe o acesso total desligado. No macOS, Plugins fica no menu Arquivo da barra de menus, no alto da tela. No Windows e no Linux, clique na setinha ao lado de Arquivo, no canto superior esquerdo da janela do OrcaSlicer, e depois em Plugins.
 2. Abra a aba Print Calculator e responda ao "Configure uma vez": preço do filamento, preço da energia e o valor da sua hora.
 3. Fatie uma mesa. Ela aparece em Placas, e o painel Preço mostra o preço sugerido por peça.
 

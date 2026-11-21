@@ -679,5 +679,7 @@ export const pl: Record<MessageKey | PluralExtraKey, string> = {
   "req.notInstalled": "Nie zainstalowano",
   "req.spoolman.why": "Ceny i stan filamentu oraz waluta twoich szpul.",
   "req.spooler.why": "Uzupełnia za ciebie adres Spoolman i przypisanie filamentów.",
-  "req.spooler.how": "Zainstaluj Spooler z Orca Cloud w OrcaSlicer (tak samo na macOS, Windows i Linux).",
+  "req.spooler.how": "Zasubskrybuj Spooler w Orca Cloud, potem w OrcaSlicer otwórz Wtyczki, odśwież i włącz go. Na macOS Wtyczki są w menu Plik na pasku menu. Na Windows i Linux kliknij małą strzałkę obok Plik w lewym górnym rogu okna.",
+  "req.spooler.looked": "Szukano plików Spoolera (presence.json, spooler.log, spooler_settings.json lub profiles.json) w {folder}. Jeśli Spooler jest zainstalowany, otwórz raz jego kartę, aby je zapisał, a potem sprawdź ponownie.",
+  "req.spooler.noFolder": "OrcaSlicer nie przekazał jeszcze tej wtyczce, gdzie jest jej folder danych. Poczekaj chwilę i sprawdź ponownie.",
 };

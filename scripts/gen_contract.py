@@ -181,7 +181,8 @@ class Run:
 
     def result(self):
         text = json.dumps(self.steps, default=str, ensure_ascii=False)
-        text = text.replace(str(self.storage), STORAGE).replace(str(self.tmp), TEMP)
+        text = text.replace(str(self.storage), STORAGE).replace(str(self.datadir), STORAGE.split("/orca_plugins")[0])
+        text = text.replace(str(self.tmp), TEMP)
         if self.orca.violations:
             raise SystemExit("orca called off the UI thread: %s" % self.orca.violations)
         return json.loads(text)

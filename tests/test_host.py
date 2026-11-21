@@ -12,6 +12,7 @@ import unittest
 import urllib.error
 import zipfile
 from pathlib import Path
+from unittest import mock
 
 from fakes import LifecycleEvent as LE, LifecycleEvtCode as Code, Preset, ctx, install_orca, load_plugin
 
@@ -21,7 +22,7 @@ SRC = ROOT / "src"
 
 # Field lists copied from ui/src/state/types.ts (HostState, HostInfo, HostPlate, HostSlot, SpoolerInfo)
 # and ui/src/engine/match.ts (SpoolmanFilament, SpoolmanSpool).
-STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "unreadable", "unloaded"}
+STATE_KEYS = {"host", "plates", "settings", "quotes", "spooler", "spoolerLooked", "unreadable", "unloaded"}
 HOST_KEYS = {"projectName", "printerModel", "printerVendor", "printerPreset", "pluginVersion", "appLanguage"}
 PLATE_KEYS = {"index", "name", "seconds", "stale", "thumb", "slicedAt", "source", "fileName", "slots", "consumption"}
 SLOT_KEYS = {"n", "preset", "grams", "color", "costPerKg", "notes", "material"}
@@ -333,7 +334,28 @@ class Rpc(HostCase):
     def test_check_again_rereads(self):
         self.assertIsNone(self.cmd("get_state")["data"]["spooler"])
         self.spooler_files()
-        self.assertEqual(self.cmd("check_requirements")["data"], {"spooler": {"url": "http://10.0.0.2:7912", "presetToFilament": {}, "presetToSpool": {}}})
+        looked = [str(Path(self.orca.storage_dir).parents[2] / "spooler")]
+        self.assertEqual(self.cmd("check_requirements")["data"], {"spooler": {"url": "http://10.0.0.2:7912", "presetToFilament": {}, "presetToSpool": {}},
+                                                                  "spoolerLooked": looked})
+
+    def test_spooler_installed_but_not_set_up_is_detected(self):  # Bambu Lab source or no Spoolman yet: no URL, no presets
+        root = Path(self.orca.storage_dir).parents[2] / "spooler"
+        state = self.cmd("get_state")["data"]
+        self.assertIsNone(state["spooler"])
+        self.assertEqual(state["spoolerLooked"], [str(root)])   # shown on the page when Spooler isn't found
+        root.mkdir()
+        (root / "presence.json").write_text(json.dumps({"schema": "orca-plugin-presence", "plugin": "spooler"}))
+        self.assertEqual(self.cmd("get_state")["data"]["spooler"], {"url": None, "presetToFilament": {}, "presetToSpool": {}})
+
+    def test_spooler_found_from_the_package_folder_without_storage(self):  # cloud install, storage not up yet
+        datadir = Path(self.tmp) / "OrcaSlicer"
+        pkg = datadir / "orca_plugins" / "_subscribed" / "owner" / "uuid" / "__whl_extracted__" / "orca_print_calculator"
+        (datadir / "spooler").mkdir(parents=True)
+        (datadir / "spooler" / "spooler.log").write_text("loaded")
+        with mock.patch.object(self.host_mod.Host, "storage", lambda host: ""), \
+                mock.patch.object(self.host_mod, "__file__", str(pkg / "host.py")):
+            self.assertEqual(self.pkg.HOST.spooler_folders(), [datadir / "spooler"])
+            self.assertIsNotNone(self.pkg.HOST.spooler())
 
     def test_no_requirement_check_at_import_or_register(self):
         def boom(*a, **k):

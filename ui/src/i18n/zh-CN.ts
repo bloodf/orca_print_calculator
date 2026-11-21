@@ -647,5 +647,7 @@ export const zhCN: Record<MessageKey, string> = {
   "req.notInstalled": "未安装",
   "req.spoolman.why": "耗材价格和库存，以及线盘使用的货币。",
   "req.spooler.why": "自动填写 Spoolman 地址和耗材映射。",
-  "req.spooler.how": "在 OrcaSlicer 中从 Orca Cloud 安装 Spooler（macOS、Windows 和 Linux 相同）。",
+  "req.spooler.how": "在 Orca Cloud 上订阅 Spooler，然后在 OrcaSlicer 中打开“插件”，刷新并启用它。macOS 上，“插件”在菜单栏的“文件”菜单中。Windows 和 Linux 上，点击窗口左上角“文件”旁边的小箭头。",
+  "req.spooler.looked": "已在 {folder} 中查找 Spooler 的文件（presence.json、spooler.log、spooler_settings.json 或 profiles.json）。如果已安装 Spooler，请先打开一次它的标签页让它写入这些文件，然后再次检查。",
+  "req.spooler.noFolder": "OrcaSlicer 尚未告知此插件其数据文件夹的位置。请稍候，然后再次检查。",
 };

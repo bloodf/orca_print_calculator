@@ -23,7 +23,9 @@ const spoolman = computed<Row>(() => {
   return { status: "checking", label: t("req.checking"), detail: saved.value };
 });
 const spooler = computed<Row>(() => (busy.value ? { status: "checking", label: t("req.checking") }
-  : store.spooler ? { status: "found", label: t("req.detected") } : { status: "missing", label: t("req.notInstalled") }));
+  : store.spooler ? { status: "found", label: t("req.detected") }
+  : { status: "missing", label: t("req.notInstalled"), detail: store.spoolerLooked.length
+    ? t("req.spooler.looked", { folder: store.spoolerLooked.join(" · ") }) : t("req.spooler.noFolder") }));
 
 async function again(): Promise<void> {
   busy.value = true;
@@ -39,7 +41,7 @@ async function again(): Promise<void> {
       :check-label="t('req.checkAgain')" :checking="busy" data-req="spoolman" @check="again"
     />
     <OuiRequirement
-      name="Spooler" :why="optional('req.spooler.why')" :status="spooler.status" :status-label="spooler.label"
+      name="Spooler" :why="optional('req.spooler.why')" :status="spooler.status" :status-label="spooler.label" :detail="spooler.detail"
       :install-text="t('req.spooler.how')" install-url="https://cloud.orcaslicer.com/p/50c35dcbd6f3" install-label="cloud.orcaslicer.com/p/50c35dcbd6f3"
       :check-label="t('req.checkAgain')" :checking="busy" data-req="spooler" @check="again"
     />
