@@ -39,6 +39,7 @@ export const store = reactive({
   unloaded: [] as string[],
   quarantined: [] as unknown[],
   spooler: null as SpoolerInfo,
+  spoolerLooked: [] as string[],
   spoolman: { state: "unset" as SpoolmanState, data: { currency: null, filaments: [], spools: [] } as SpoolmanData, error: null as string | null },
   draft: newDraft(defaultSettings(null, "Direct")),
   saveStatus: "idle" as "idle" | "saved" | "error",
@@ -220,7 +221,9 @@ function startAutoRefresh(): () => void {
 /** Settings › Requirements › Check again: the host re-reads Spooler's files; a set Spoolman address is probed again. */
 export async function checkRequirements(): Promise<void> {
   try {
-    store.spooler = (await call("check_requirements", {})).spooler ?? null;
+    const res = await call("check_requirements", {});
+    store.spooler = res.spooler ?? null;
+    store.spoolerLooked = res.spoolerLooked ?? [];
   } catch (e) {
     console.error("check_requirements", e);
   }
@@ -315,6 +318,7 @@ function applyState(s: HostState): void {
   store.quarantined = bad;
   store.skippedQuotes = bad.length;
   store.spooler = s.spooler ?? null;
+  store.spoolerLooked = s.spoolerLooked ?? [];
   store.plates = s.plates ?? [];
   store.draft = newDraft(store.settings);
   store.pendingPlates = null;

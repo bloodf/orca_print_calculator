@@ -65,7 +65,7 @@ const SpoolmanData = obj({
   spools: list(obj({ id: num, filamentId: num, price: nul(num), initialWeight: nul(num), remainingWeight: opt(nul(num)), archived: bool, lastUsed: nul(iso), orcaPreset: opt(nul(str)) })),
 });
 // settings/quotes are written by the UI and handed back unchanged: object / array, contents owned by the UI.
-const HostState = obj({ host: HostInfo, plates: list(HostPlate), settings: nul(record(any)), quotes: nul(list(any)), spooler: SpoolerInfo, unreadable: opt(list(str)), unloaded: opt(list(str)) });
+const HostState = obj({ host: HostInfo, plates: list(HostPlate), settings: nul(record(any)), quotes: nul(list(any)), spooler: SpoolerInfo, spoolerLooked: opt(list(str)), unreadable: opt(list(str)), unloaded: opt(list(str)) });
 const DATA: Record<string, Check> = {
   get_state: HostState, save_settings: obj({}), save_quotes: obj({}), spoolman_fetch: SpoolmanData,
   import_sliced: obj({ plates: list(HostPlate) }), export_file: obj({ path: str }),

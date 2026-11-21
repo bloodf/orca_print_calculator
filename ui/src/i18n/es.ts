@@ -647,5 +647,7 @@ export const es: Record<MessageKey, string> = {
   "req.notInstalled": "No instalado",
   "req.spoolman.why": "Precios y existencias de filamento, y la moneda de sus bobinas.",
   "req.spooler.why": "Rellena por usted la dirección de Spoolman y la asignación de filamentos.",
-  "req.spooler.how": "Instale Spooler desde Orca Cloud en OrcaSlicer (igual en macOS, Windows y Linux).",
+  "req.spooler.how": "Suscríbase a Spooler en Orca Cloud y luego, en OrcaSlicer, abra Plugins, actualice y actívelo. En macOS, Plugins está en el menú Archivo de la barra de menús. En Windows y Linux, haga clic en la flechita junto a Archivo, arriba a la izquierda de la ventana.",
+  "req.spooler.looked": "Se buscaron los archivos de Spooler (presence.json, spooler.log, spooler_settings.json o profiles.json) en {folder}. Si Spooler está instalado, abra su pestaña una vez para que los escriba y vuelva a comprobar.",
+  "req.spooler.noFolder": "OrcaSlicer aún no le ha indicado a este plugin dónde está su carpeta de datos. Espere un momento y vuelva a comprobar.",
 };

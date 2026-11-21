@@ -3,6 +3,14 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.2] - 2026-11-21
+
+### Fixed
+- Spooler is now found as soon as it is installed. Before, the calculator only saw it once Spooler had a Spoolman address or had made presets, so Spooler with no Spoolman yet, with a Bambu Lab spool source, or with an address that has a user name and password showed as "Not installed".
+- Spooler is also found while OrcaSlicer hasn't yet given an Orca Cloud plugin its storage folder (for example right after starting offline).
+- When Spooler isn't found, **Settings › Requirements** now says which folder was searched and for which files.
+- The install steps (README, Orca Cloud page and Settings › Requirements) now say where **Plugins** is: in the **File** menu of the menu bar on macOS, and under the small arrow next to **File** at the top left of the window on Windows and Linux.
+
 ## [0.9.1] - 2026-11-21
 
 ### Changed

@@ -647,5 +647,7 @@ export const de: Record<MessageKey, string> = {
   "req.notInstalled": "Nicht installiert",
   "req.spoolman.why": "Filamentpreise und Bestand sowie die Währung Ihrer Spulen.",
   "req.spooler.why": "Trägt die Spoolman-Adresse und die Filamentzuordnung für Sie ein.",
-  "req.spooler.how": "Spooler in OrcaSlicer aus Orca Cloud installieren (gleich unter macOS, Windows und Linux).",
+  "req.spooler.how": "Spooler in Orca Cloud abonnieren, dann in OrcaSlicer Plugins öffnen, aktualisieren und aktivieren. Unter macOS steht Plugins im Menü Datei der Menüleiste. Unter Windows und Linux auf den kleinen Pfeil neben Datei oben links im Fenster klicken.",
+  "req.spooler.looked": "Nach den Dateien von Spooler (presence.json, spooler.log, spooler_settings.json oder profiles.json) gesucht in {folder}. Ist Spooler installiert, seinen Tab einmal öffnen, damit er sie schreibt, dann erneut prüfen.",
+  "req.spooler.noFolder": "OrcaSlicer hat diesem Plugin seinen Datenordner noch nicht mitgeteilt. Kurz warten, dann erneut prüfen.",
 };

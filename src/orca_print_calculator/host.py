@@ -283,12 +283,28 @@ class Host:
     def push_plates(self, **extra):
         self.event("plates", {"plates": self.plate_list(), **extra})
 
+    def spooler_folders(self):
+        """Where Spooler keeps its files: <data folder>/spooler, the data folder being the one above orca_plugins.
+        Found from the storage folder (orca_plugins/plugin_data/[_subscribed/<user>/]<key>) and from this package's
+        own folder (orca_plugins/[_subscribed/<user>/<uuid>/__whl_extracted__/]...), known before storage is."""
+        out = []
+        for start in (self.storage(), os.path.dirname(os.path.abspath(__file__))):
+            datadir = next((p.parent for p in Path(start).parents if p.name == "orca_plugins"), None) if start else None
+            if datadir and datadir / "spooler" not in out:
+                out.append(datadir / "spooler")
+        return out
+
     def spooler(self):
-        folder = self.storage()
-        datadir = next((p.parent for p in Path(folder).parents if p.name == "orca_plugins"), None) if folder else None
-        info = core.read_spooler_files(datadir) if datadir else {"detected": False}
-        return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"],
-                "presetToSpool": info["preset_to_spool"]} if info["detected"] else None
+        for folder in self.spooler_folders():
+            info = core.read_spooler_files(folder.parent)
+            if info["detected"]:
+                return {"url": info["spoolman_url"], "presetToFilament": info["preset_to_filament"],
+                        "presetToSpool": info["preset_to_spool"]}
+        return None
+
+    def spooler_state(self):
+        """`spooler` plus `spoolerLooked`, the folders searched, which the page shows when Spooler isn't found."""
+        return {"spooler": self.spooler(), "spoolerLooked": [str(f) for f in self.spooler_folders()]}
 
     def load(self, name, kind):
         """Parsed file or None. Wrong JSON type is set aside like a corrupt file. A file that can be neither
@@ -322,7 +338,7 @@ class Host:
         unloaded = [key for key, name in (("settings", core.SETTINGS_FILE), ("quotes", core.QUOTES_FILE))
                     if name in self.unloaded]  # no storage folder yet: the page reads them again before saving
         return {"host": self.host_info(), "plates": self.plate_list(), "settings": settings, "quotes": quotes,
-                "spooler": self.spooler(), "unreadable": unreadable, "unloaded": unloaded}
+                **self.spooler_state(), "unreadable": unreadable, "unloaded": unloaded}
 
     def on_message(self, page, data):
         self.page = page
@@ -485,7 +501,7 @@ def cmd_get_state(host, args, rid):
 
 def cmd_check_requirements(host, args, rid):
     """Settings › Requirements › Check again: re-read Spooler's files."""
-    return {"spooler": host.spooler()}
+    return host.spooler_state()
 
 
 def cmd_save_settings(host, args, rid):

@@ -41,6 +41,7 @@ export function resetStore(): void {
   store.settings = defaultSettings("USD", "Direct");
   store.spoolman = { state: "unset", data: { currency: null, filaments: [], spools: [] }, error: null };
   store.spooler = null;
+  store.spoolerLooked = [];
   store.saveStatus = "idle";
   store.host = { projectName: null, printerModel: null, printerVendor: null, pluginVersion: "0.1.0" };
   clearToasts();

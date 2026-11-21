@@ -59,6 +59,17 @@ describe("Settings › Requirements", () => {
     expect(row(root, "spoolman").textContent).toContain("http://10.0.0.1:7912 · Spoolman · 2 spools");
   });
 
+  test("not found: says where it looked, and the folder follows Check again", async () => {
+    store.spooler = null;
+    installHost({ check_requirements: () => ({ spooler: null, spoolerLooked: ["C:\\Users\\me\\AppData\\Roaming\\OrcaSlicer\\spooler"] }) });
+    const root = mountComponent(RequirementsSettings);
+    expect(row(root, "spooler").textContent).toContain(t("req.spooler.noFolder"));
+    byText(row(root, "spooler"), "button", t("req.checkAgain"))!.click();
+    await flush();
+    expect(row(root, "spooler").dataset.status).toBe("missing");
+    expect(row(root, "spooler").textContent).toContain(t("req.spooler.looked", { folder: "C:\\Users\\me\\AppData\\Roaming\\OrcaSlicer\\spooler" }));
+  });
+
   test("Check again without a saved address sends no Spoolman request", async () => {
     store.spooler = null;
     const calls = installHost({ check_requirements: () => ({ spooler: null }) });

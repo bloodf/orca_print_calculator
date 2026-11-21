@@ -2,6 +2,7 @@
 import io
 import json
 import os
+import shutil
 import sys
 import tempfile
 import unittest
@@ -461,12 +462,25 @@ class SpoolerFiles(unittest.TestCase):
         self.assertEqual(core.read_spooler_files(str(self.dir)), empty)
         self.assertEqual(core.read_spooler_files(str(self.dir / "nope")), empty)
         self.assertEqual(core.read_spooler_files(None), empty)
+        (self.dir / "spooler").mkdir()
+        self.put("other.json", "{}")   # not one of Spooler's files
+        self.assertEqual(core.read_spooler_files(str(self.dir)), empty)
+
+    def test_files_without_data_still_mean_installed(self):  # Spooler runs here, just not set up (or a file is broken)
+        found = {"detected": True, "spoolman_url": None, "preset_to_filament": {}, "preset_to_spool": {}}
+        for name in core.SPOOLER_FILES:
+            with self.subTest(name):
+                shutil.rmtree(self.dir / "spooler", ignore_errors=True)
+                self.put(name, "")
+                self.assertEqual(core.read_spooler_files(str(self.dir)), found)
         self.put("profiles.json", "{broken")
         self.put("spooler_settings.json", "[1]")
-        self.assertEqual(core.read_spooler_files(str(self.dir)), empty)
+        self.assertEqual(core.read_spooler_files(str(self.dir)), found)
         self.put("profiles.json", json.dumps({"filaments": []}))
         self.put("spooler_settings.json", json.dumps({"spoolman_url": "ftp://x"}))
-        self.assertEqual(core.read_spooler_files(str(self.dir)), empty)
+        self.assertEqual(core.read_spooler_files(str(self.dir)), found)
+        self.put("spooler_settings.json", json.dumps({"spoolman_url": "http://user:pw@h:7912"}))  # not usable here
+        self.assertEqual(core.read_spooler_files(str(self.dir)), found)
 
     def test_spool_presets(self):  # Spooler's presets per spool: profiles.json "spools", read like "filaments"
         self.put("profiles.json", json.dumps({"filaments": {}, "spools": {

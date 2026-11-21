@@ -646,7 +646,9 @@ export const messages = {
   "req.notInstalled": ["Not installed", "Não instalado"],
   "req.spoolman.why": ["Filament prices and stock, and the currency of your spools.", "Preços e estoque de filamento, e a moeda dos seus carretéis."],
   "req.spooler.why": ["Fills in the Spoolman address and the filament mapping for you.", "Preenche o endereço do Spoolman e o mapeamento de filamentos para você."],
-  "req.spooler.how": ["Install Spooler from Orca Cloud in OrcaSlicer (the same on macOS, Windows and Linux).", "Instale o Spooler pelo Orca Cloud no OrcaSlicer (igual no macOS, Windows e Linux)."],
+  "req.spooler.how": ["Subscribe to Spooler on Orca Cloud, then open Plugins in OrcaSlicer, refresh and enable it. On macOS, Plugins is in the File menu of the menu bar. On Windows and Linux, click the small arrow next to File at the top left of the window.", "Assine o Spooler no Orca Cloud e depois, no OrcaSlicer, abra Plugins, atualize e ative o plugin. No macOS, Plugins fica no menu Arquivo da barra de menus. No Windows e no Linux, clique na setinha ao lado de Arquivo, no canto superior esquerdo da janela."],
+  "req.spooler.looked": ["Looked for Spooler's files (presence.json, spooler.log, spooler_settings.json or profiles.json) in {folder}. If Spooler is installed, open its tab once so it writes them, then Check again.", "Procuramos os arquivos do Spooler (presence.json, spooler.log, spooler_settings.json ou profiles.json) em {folder}. Se o Spooler estiver instalado, abra a aba dele uma vez para que ele os grave e clique em Verificar de novo."],
+  "req.spooler.noFolder": ["OrcaSlicer hasn't told this plugin where its data folder is yet. Wait a moment, then Check again.", "O OrcaSlicer ainda não informou a este plugin onde fica a pasta de dados. Aguarde um pouco e verifique de novo."],
 } satisfies Record<string, readonly [string, string?]>;
 
 export type MessageKey = keyof typeof messages;

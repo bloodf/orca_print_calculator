@@ -105,6 +105,9 @@
       "version": 1
      },
      "spooler": null,
+     "spoolerLooked": [
+      "/orca-data/spooler"
+     ],
      "unloaded": [],
      "unreadable": [
       "quotes"
