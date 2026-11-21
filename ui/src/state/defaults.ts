@@ -93,7 +93,7 @@ const SHAPES: { [K in keyof Defaults]: (v: unknown) => boolean } = {
   laborMinutes: int(0, 6000), setupMinutes: int(0, 6000), targetMarginBp: int(0, MAX_MARGIN_BP),
   pretty: (v) => (PRETTY_MODES as readonly unknown[]).includes(v), minOrderMinor: int(0, BIG),
   shipping: (v) => isRec(v) && (v.mode === "none" || v.mode === "customer" || v.mode === "absorbed") && int(0, BIG)(v.minor),
-  discountTiers: (v) => Array.isArray(v) && v.length <= 20 && v.every((t) => isRec(t) && int(1, 1_000_000)(t.minQty) && int(0, 10000)(t.discountBp)),
+  discountTiers: (v) => Array.isArray(v) && v.length <= 20 && v.every((t) => isRec(t) && int(1, 1_000_000)(t.minQty) && int(0, 9999)(t.discountBp)),
 };
 /** Every cost default is checked for type and range; a bad one falls back to the built-in value and is named in `reset`. */
 export function migrateDefaults(saved: unknown, base: Defaults): { value: Defaults; reset: string[] } {
@@ -178,8 +178,8 @@ export function mergeSettings(raw: unknown, base: Settings): Settings {
   const channels = saved.channels?.length ? saved.channels : base.channels;
   return {
     ...base, ...saved, version: 1, channels,
-    // A saved "not set" energy or labor rate takes the built-in value when the currency has one.
-    defaults: { ...base.defaults, ...saved.defaults, energyPerKwh: saved.defaults?.energyPerKwh ?? base.defaults.energyPerKwh, laborPerHourMinor: saved.defaults?.laborPerHourMinor ?? base.defaults.laborPerHourMinor },
+    // A cost default the file lacks takes the built-in value; a saved "not set" stays not set.
+    defaults: migrateDefaults((raw as Rec).defaults, base.defaults).value,
     spoolman: { ...base.spoolman, ...saved.spoolman },
     sheet: { ...base.sheet, ...saved.sheet },
     ui: { ...base.ui, ...saved.ui },

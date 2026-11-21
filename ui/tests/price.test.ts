@@ -274,7 +274,7 @@ describe("flags", () => {
       expect(f.map((x) => x.text)).toEqual([
         "Margin 15% is under the 30% your markup aims for, after discount or minimum.",
         "Price per piece raised so the order reaches the $9900 minimum.",
-        "Raised to $8000: between $4000 and $4999 Shop's next fee step leaves you less.", // first zone ending below the price
+        "Raised to $8000: between $7000 and $7999 Shop's next fee step leaves you less.", // the nearest zone below the price, the one jumped
         "12.5% volume discount from 10 pieces.", // effective discount, the tier that applies at q = 12
       ]);
     });

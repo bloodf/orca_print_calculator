@@ -65,7 +65,7 @@ export function buildFlags(d: Derived, f: FlagFmt, opts: { stale: boolean; inval
     if (fl.belowTarget && !fl.belowBreakEven && !fl.orderBelowBreakEven) info.push({ id: "belowTarget", tone: "info", text: belowTargetText(sel, d.quoteInput, f.pct) });
     if (fl.minimumApplied) info.push({ id: "minimum", tone: "info", text: t("flag.minimum", { amount: f.m(d.quoteInput.minOrderMinor) }) });
     if (fl.deadZoneJumped) {
-      const zone = sel.deadZones.find((z) => z.untilCents < sel.price) ?? sel.deadZones[sel.deadZones.length - 1];
+      const zone = [...sel.deadZones].reverse().find((z) => z.untilCents < sel.price) ?? sel.deadZones[sel.deadZones.length - 1];
       if (zone) info.push({ id: "deadZone", tone: "info", text: t("flag.deadZone", { price: f.m(sel.price), from: f.m(zone.fromCents), until: f.m(zone.untilCents), channel: sel.name }) });
     }
     if (fl.discounted) {

@@ -3,11 +3,16 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.9.0] - 2026-11-21
 
 ### Changed
+- Shared UI 5.6.1. The page stays on Vue 3.5.45 for now.
 
-- Shared Orca UI foundation 5.0.8 (built with lucide-static 1.77.0); no visible change. The page stays on Vue 3.5.45 for now.
+### Fixed
+- A quote save that OrcaSlicer took too long to confirm (for example while it asked for permission to write the file) no longer disappears from the list. Before, the next save could erase a quote that had in fact been written; now it stays, and **Try again** writes the list as shown.
+- An energy price or labor rate you cleared in Settings stays "not counted" after reopening OrcaSlicer, instead of coming back as the typical value for your currency.
+- The note about a skipped fee step now names the step just below the price, not the first one, when a channel has more than one.
+- A 100% volume discount in a hand-edited settings file is reset with the other invalid settings instead of making every quote fail.
 
 ## [0.8.2] - 2026-11-20
 
