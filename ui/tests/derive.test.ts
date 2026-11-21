@@ -163,8 +163,15 @@ describe("price sources and not-counted items", () => {
   test("Spoolman unset: preset prices, source preset", () => {
     const d = deriveQuote(input({ spoolman: { filaments: [], spools: [] }, spooler: null }));
     expect(d.slotMatches[0]!.map((v) => v.source)).toEqual(["preset", "preset"]);
-    expect(d.slotMatches[0]![0]!.key).toBe("preset:Generic PLA @U1");
+    expect(d.slotMatches[0]![0]!.key).toBe("preset:Generic PLA @U1@24");
     expect(d.quoteInput.plates[0]!.slots[0]!.pricePerKgMinor).toBe(2400);
+  });
+  test("one preset sliced at two prices on two plates is two lines, not a conflict", () => {
+    const [a] = plates();
+    const cheaper = { ...a!, index: 1, slots: a!.slots.map((s) => ({ ...s, costPerKg: (s.costPerKg ?? 0) / 2 })) };
+    const d = deriveQuote(input({ plates: [a!, cheaper], spoolman: { filaments: [], spools: [] }, spooler: null }));
+    expect(d.result.ok).toBe(true);
+    expect(d.slotMatches[0]![0]!.key).not.toBe(d.slotMatches[1]![0]!.key);
   });
   test("slot without any price: source none, counted as 0, and the engine still prices", () => {
     const { state } = buildScenario("unmatched");

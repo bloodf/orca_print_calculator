@@ -185,7 +185,8 @@ def _slots(tail, head):
     for i in range(count):
         row = {u: (series[u][i] if series[u] and i < len(series[u]) else None) for u in series}
         if any(v and v > 0 for v in row.values()):
-            grams = row["g"] if row["g"] is None or row["g"] >= 0 else None  # negative: unreadable, never a credit
+            # negative is unreadable, never a credit; 0 g beside a positive length or volume (density-0 preset) is unknown, never free
+            grams = row["g"] if row["g"] is None or row["g"] > 0 else None
             slots.append({"n": i + 1, "grams": grams, "mm": row["mm"], "cm3": row["cm3"]})
     return slots, series["g"]
 

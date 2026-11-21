@@ -81,4 +81,4 @@ export function clearSlot(m: SlotMatchView): void {
   });
 }
 export const hasSlotChoice = (m: SlotMatchView): boolean =>
-  m.slot.preset in store.settings.slotOverrides || m.slot.preset in store.settings.manualPrices || slotSpoolOf(m) !== undefined;
+  Object.prototype.hasOwnProperty.call(store.settings.slotOverrides, m.slot.preset) || Object.prototype.hasOwnProperty.call(store.settings.manualPrices, m.slot.preset) || slotSpoolOf(m) !== undefined;

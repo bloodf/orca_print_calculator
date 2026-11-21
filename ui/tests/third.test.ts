@@ -151,7 +151,7 @@ describe("M2: prototype keys in a settings file", () => {
   });
   test("a throw while reading the quotes marks quotes unreadable and writes nothing", async () => {
     const quotes = [{}] as unknown[];
-    Object.defineProperty(quotes, "filter", { value: () => { throw new Error("boom"); } });
+    Object.defineProperty(quotes, Symbol.iterator, { value: () => { throw new Error("boom"); } });
     calls().mockImplementation((async (cmd: string) => (cmd === "get_state" ? { host: HOST, plates: fxPlates(), settings: fxSettings(), quotes, spooler: null, unreadable: [] } : {})) as never);
     const err = vi.spyOn(console, "error").mockImplementation(() => undefined);
     S.store.status = "loading";

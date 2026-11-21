@@ -3,6 +3,18 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.9.1] - 2026-11-21
+
+### Changed
+- Shared UI 5.6.2.
+
+### Fixed
+- A filament whose OrcaSlicer preset has a density of 0 now shows its weight as unknown and flags the quote as incomplete, instead of counting 0 g and pricing it as free.
+- Plates sliced before and after you changed a filament preset's price no longer block the quote with "Same filament with two prices". Each plate is priced at the cost it was sliced with, shown as two lines.
+- Undo after removing a volume discount tier puts that tier back without throwing away edits you made to the other tiers in the meantime.
+- A filament preset named like a built-in JavaScript name (for example "constructor") no longer shows a reset button for a choice you never made.
+- Opening the Quotes list checks each saved quote once instead of twice.
+
 ## [0.9.0] - 2026-11-21
 
 ### Changed

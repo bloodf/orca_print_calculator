@@ -55,5 +55,7 @@ export function isSavedQuote(q: unknown): q is SavedQuote {
 /** Good rows stay; anything else is returned in `bad` so it can be kept on disk and counted, never silently dropped. */
 export function parseQuotes(raw: unknown): { quotes: SavedQuote[]; bad: unknown[] } {
   if (!arr(raw)) return { quotes: [], bad: [] };
-  return { quotes: raw.filter(isSavedQuote), bad: raw.filter((q) => !isSavedQuote(q)) };
+  const quotes: SavedQuote[] = [], bad: unknown[] = [];
+  for (const q of raw) (isSavedQuote(q) ? quotes : bad).push(q); // one check each: it runs the engine
+  return { quotes, bad };
 }

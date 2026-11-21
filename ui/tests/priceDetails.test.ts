@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { nextTick, type App } from "vue";
+import { defineComponent, h, nextTick, ref, type App } from "vue";
 import BatchTable from "../src/components/price/BatchTable.vue";
 import BreakdownBars from "../src/components/price/BreakdownBars.vue";
 import ChannelComparison from "../src/components/price/ChannelComparison.vue";
@@ -185,13 +185,25 @@ describe("discount tier editor", () => {
     expect((await host(six)).el.querySelector(".add")).toBeNull();
   });
   test("remove emits the shorter list and a toast whose Undo restores it", async () => {
-    const { el, seen } = await host(tiers);
+    const list = ref<DiscountTier[]>(tiers);
+    const el = await show(defineComponent(() => () => h(DiscountTierEditor, { modelValue: list.value, "onUpdate:modelValue": (v: DiscountTier[]) => { list.value = v; } })));
     el.querySelectorAll<HTMLButtonElement>(".rm")[0]!.click();
-    expect(seen[0]).toEqual([tiers[1]]);
+    await nextTick();
+    expect(list.value).toEqual([tiers[1]]);
     const t = toasts.list[toasts.list.length - 1]!;
     expect(t.title).toBe("Discount tier removed");
     t.action!.run();
-    expect(seen[1]).toEqual(tiers);
+    expect(list.value).toEqual(tiers);
+  });
+  test("undo after a later edit puts the tier back and keeps the edit", async () => {
+    const list = ref<DiscountTier[]>(tiers);
+    const el = await show(defineComponent(() => () => h(DiscountTierEditor, { modelValue: list.value, "onUpdate:modelValue": (v: DiscountTier[]) => { list.value = v; } })));
+    el.querySelectorAll<HTMLButtonElement>(".rm")[0]!.click();
+    await nextTick();
+    list.value = [{ minQty: 60, discountBp: 1000 }];
+    await nextTick();
+    toasts.list[toasts.list.length - 1]!.action!.run();
+    expect(list.value).toEqual([tiers[0], { minQty: 60, discountBp: 1000 }]);
   });
   test("duplicate quantities show an inline error", async () => {
     const { el } = await host([{ minQty: 10, discountBp: 500 }, { minQty: 10, discountBp: 900 }]);
