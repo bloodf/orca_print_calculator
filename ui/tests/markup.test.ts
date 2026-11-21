@@ -11,8 +11,9 @@ test("a saved 95% margin (price = cost x 20) is out of range and resets to 100% 
   const base = defaultSettings(null, "Direct", "BRL");
   const s = mergeSettings({ defaults: { targetMarginBp: 9500, energyPerKwh: null, laborPerHourMinor: 4000 } }, base);
   expect(s.defaults.targetMarginBp).toBe(5000);
-  expect(s.defaults.energyPerKwh).toBe("0.95"); // "not set" takes the built-in value
+  expect(s.defaults.energyPerKwh).toBeNull(); // a saved "not set" stays not set
   expect(s.defaults.laborPerHourMinor).toBe(4000); // a typed value wins
+  expect(mergeSettings({ defaults: { laborMinutes: 5 } }, base).defaults.energyPerKwh).toBe("0.95"); // a missing one takes the built-in value
 });
 test("presets only for currencies with known typical values", () => {
   expect(presetFor("BRL")?.printerMinor).toBe(500000);

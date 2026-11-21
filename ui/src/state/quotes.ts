@@ -35,9 +35,11 @@ function persist(update: (cur: SavedQuote[]) => SavedQuote[]): Promise<boolean> 
       await call("save_quotes", { quotes: [...quotes, ...(store.quarantined as SavedQuote[])] });
       return true;
     } catch (e) {
-      store.quotes = before; // safe: writes are serialized, so nothing else changed the list meanwhile
+      // A timed-out write may still land on disk: keep the list as sent, so the next write cannot drop it, and Try again resends it.
+      const late = errorCode(e) === "timeout";
+      if (!late) store.quotes = before; // safe: writes are serialized, so nothing else changed the list meanwhile
       if (!retried && RECOVER_CODES.includes(errorCode(e))) { await recoverState(true); return run(true); } // the update applies to the list as read
-      showToast({ title: failText(t("host.cmdFailed", { action: t("quote.save") }), errorCode(e)), tone: "error", action: { label: t("host.tryAgain"), run: () => void persist(update) } });
+      showToast({ title: failText(t("host.cmdFailed", { action: t("quote.save") }), errorCode(e)), tone: "error", action: { label: t("host.tryAgain"), run: () => void persist(late ? (cur) => cur : update) } });
       console.error("save_quotes", errorCode(e));
       return false;
     }

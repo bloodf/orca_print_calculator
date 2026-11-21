@@ -13,10 +13,12 @@ import { clearToasts, toastList as toasts } from "@orca-plugins/ui-foundation/sr
 
 const calls: { cmd: string; args: unknown }[] = [];
 let failExport: string | null = null;
+let failSave: string | null = null;
 vi.mock("../src/bridge", async (orig) => ({
   ...(await orig<typeof import("../src/bridge")>()),
   call: vi.fn(async (cmd: string, args: unknown) => {
     calls.push({ cmd, args });
+    if (cmd === "save_quotes" && failSave) throw new (await orig<typeof import("../src/bridge")>()).BridgeError(failSave);
     if (cmd === "export_file" && failExport) throw new (await orig<typeof import("../src/bridge")>()).BridgeError(failExport);
     return cmd === "export_file" ? { path: `/out/${(args as { name: string }).name}` } : {};
   }),
@@ -25,6 +27,7 @@ vi.mock("../src/bridge", async (orig) => ({
 beforeEach(() => {
   calls.length = 0;
   failExport = null;
+  failSave = null;
   clearToasts();
   store.settings = mergeSettings(settings(), defaultSettings(null, "Direct"));
   store.status = "ready";
@@ -55,6 +58,20 @@ describe("saved quotes", () => {
     expect(re?.ok && re.price).toBe(rec!.summary.price);
     expect(re?.ok && re.grandTotal).toBe(rec!.summary.grandTotal);
     expect(store.draft.frozenPlates).toEqual(rec!.plates);
+  });
+
+  test("a save that timed out stays in the list (the host may still write it), so the next save keeps it", async () => {
+    failSave = "timeout";
+    expect(await saveQuote()).toBeNull();
+    expect(store.quotes).toHaveLength(1);
+    failSave = "denied"; // any other failure rolls back
+    store.draft = { ...store.draft, quoteId: null };
+    expect(await saveQuote(true)).toBeNull();
+    expect(store.quotes).toHaveLength(1);
+    failSave = null;
+    await saveQuote(true);
+    const last = calls.filter((c) => c.cmd === "save_quotes").pop()!.args as { quotes: unknown[] };
+    expect(last.quotes).toHaveLength(2);
   });
 
   test("numbering advances and save-as-new keeps the old record", async () => {

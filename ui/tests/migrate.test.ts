@@ -94,3 +94,10 @@ describe("QuotesView with skipped rows", () => {
     store.skippedQuotes = 0;
   });
 });
+
+test("a saved 100% volume discount (the engine refuses it) resets to the built-in tiers", () => {
+  const base = defaultSettings(null, "Direct");
+  const s = mergeSettings({ defaults: { discountTiers: [{ minQty: 10, discountBp: 10000 }] } }, base);
+  expect(s.defaults.discountTiers).toEqual(base.defaults.discountTiers);
+  expect(mergeSettings({ defaults: { discountTiers: [{ minQty: 10, discountBp: 9999 }] } }, base).defaults.discountTiers).toEqual([{ minQty: 10, discountBp: 9999 }]);
+});
