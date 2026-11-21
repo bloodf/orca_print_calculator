@@ -15,7 +15,7 @@
     "@orca-plugins/ui-foundation": "github:bloodf/orca-ui-foundation#v5.6.1",
     "@primeuix/themes": "3.1.1",
     "primevue": "5.0.5",
-    "vue": "3.5.45"
+    "vue": "3.5.46"
   },
   "devDependencies": {
     "@typescript/typescript6": "6.0.2",
