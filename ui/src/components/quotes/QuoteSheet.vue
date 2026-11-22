@@ -42,7 +42,7 @@ defineProps<{ model: SheetModel }>();
     <p v-if="model.note" class="free">{{ model.note }}</p>
     <p v-if="model.payment" class="free"><strong>{{ model.payment.label }}</strong><br>{{ model.payment.text }}</p>
     <p v-if="model.footer" class="free mu">{{ model.footer }}</p>
-    <p class="small">{{ model.made }}</p>
+    <p v-if="model.made" class="small">{{ model.made }}</p>
   </article>
 </template>
 

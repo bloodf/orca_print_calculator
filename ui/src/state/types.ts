@@ -53,7 +53,7 @@ export type Settings = {
   slotSpools: Record<string, SlotSpool>;
   manualPrices: Record<string, number>; // key = preset; minor units per kg
   extrasCatalog: CatalogExtra[];
-  sheet: { shopName: string; footer: string; validityDays: number; nextNo: number } & SheetBrand;
+  sheet: { shopName: string; footer: string; validityDays: number; nextNo: number; /** The "Made with Orca Print Calculator" line; absent in older files (shown). */ showMade?: boolean } & SheetBrand;
   ui: { open: Record<string, boolean>; sheetMode: "itemized" | "summary" };
   /** Rows from an older or hand-edited file that this version could not read. Written back untouched, never deleted. */
   invalid?: Record<string, unknown>;

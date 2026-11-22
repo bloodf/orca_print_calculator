@@ -509,6 +509,7 @@ export const pl: Record<MessageKey | PluralExtraKey, string> = {
   "sheet.shopName": "Nazwa sklepu",
   "sheet.footer": "Notka w stopce",
   "sheet.footerHelp": "Czas realizacji, gwarancja lub krótka notka.",
+  "sheet.showMade": "Pokaż „Utworzono w Orca Print Calculator” na dole",
   "sheet.validity": "Ważna przez",
   "sheet.validityUnit": "dni",
   "sheet.validityHelp": "0 ukrywa datę.",

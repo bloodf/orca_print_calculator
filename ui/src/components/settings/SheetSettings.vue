@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Settings › Quote sheet: logo, company details, payment, footer, accent, validity and numbering, with a live sample beside the form.
 import Button from "primevue/button";
+import Checkbox from "primevue/checkbox";
 import ColorPicker from "primevue/colorpicker";
 import InputText from "primevue/inputtext";
 import { computed, ref } from "vue";
@@ -89,6 +90,10 @@ function removeLogo(): void {
         <legend class="sm oui-muted">{{ t("sheet.groupTerms") }}</legend>
         <TextField :model-value="sheet.payment" :label="t('sheet.payment')" :maxlength="280" multiline :rows="2" :helper="t('sheet.paymentHelp')" @update:model-value="(v) => patchSheet({ payment: v })" />
         <TextField :model-value="sheet.footer" :label="t('sheet.footer')" :maxlength="280" multiline :rows="2" :helper="t('sheet.footerHelp')" @update:model-value="(v) => patchSheet({ footer: v })" />
+        <div class="se-check">
+          <Checkbox input-id="sheet-show-made" binary :model-value="sheet.showMade !== false" @update:model-value="(v: boolean) => patchSheet({ showMade: v })" />
+          <label for="sheet-show-made">{{ t("sheet.showMade") }}</label>
+        </div>
         <div class="form-grid">
           <NumberField
             :model-value="sheet.validityDays" :label="t('sheet.validity')" :scale="1" :step="1" :max="3650" :unit="t('sheet.validityUnit')" :helper="t('sheet.validityHelp')"
@@ -118,6 +123,7 @@ function removeLogo(): void {
 .se-color label { display: block; min-height: 24px; line-height: 24px; }
 .se-color .se-hex { width: 11ch; min-width: 11ch; }
 .se-color .row > * + * { margin-left: 8px; }
+.se-check { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .se-preview > p { margin-bottom: 6px; }
 .se-preview :deep(.quote-sheet) { width: 100%; margin: 0; padding: 20px; font-size: 9.5pt; }
 @media (min-width: 1280px) {
