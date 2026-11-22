@@ -11,8 +11,8 @@ importers:
   .:
     dependencies:
       '@orca-plugins/ui-foundation':
-        specifier: github:bloodf/orca-ui-foundation#v5.6.2
-        version: https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/06399ecc850b26eb2fcb585e3b70146ad70aa222(@primeuix/themes@3.1.1)(primevue@5.0.5(vue@3.5.46(typescript@7.0.2)))(vue@3.5.46(typescript@7.0.2))
+        specifier: github:bloodf/orca-ui-foundation#v5.10.0
+        version: https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/7bd2c6bbd7807fed2b3ee3b18471c41e825ec630(@primeuix/themes@3.1.1)(primevue@5.0.5(vue@3.5.46(typescript@7.0.2)))(vue@3.5.46(typescript@7.0.2))
       '@primeuix/themes':
         specifier: 3.1.1
         version: 3.1.1
@@ -96,9 +96,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@orca-plugins/ui-foundation@https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/06399ecc850b26eb2fcb585e3b70146ad70aa222':
-    resolution: {gitHosted: true, integrity: sha512-26/sRrPkZ01RKrAkjug+46m4IdnLy9XZ8wZphfakXDABvfBdazYiiLC6yNOgukJu2dzyfCBV54/bm+HkUSuD9g==, tarball: https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/06399ecc850b26eb2fcb585e3b70146ad70aa222}
-    version: 5.6.2
+  '@orca-plugins/ui-foundation@https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/7bd2c6bbd7807fed2b3ee3b18471c41e825ec630':
+    resolution: {gitHosted: true, integrity: sha512-a3zWt51aui4SH4+u5tArN9RmLUN4ZltEtV1pH5s6xj5fjX90b9xiZbP1fHlb6JGugOJPAU2DqiTXr4uQNa5/kQ==, tarball: https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/7bd2c6bbd7807fed2b3ee3b18471c41e825ec630}
+    version: 5.10.0
     peerDependencies:
       '@primeuix/themes': 3.1.1
       primevue: 5.0.5
@@ -1079,7 +1079,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@orca-plugins/ui-foundation@https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/06399ecc850b26eb2fcb585e3b70146ad70aa222(@primeuix/themes@3.1.1)(primevue@5.0.5(vue@3.5.46(typescript@7.0.2)))(vue@3.5.46(typescript@7.0.2))':
+  '@orca-plugins/ui-foundation@https://codeload.github.com/bloodf/orca-ui-foundation/tar.gz/7bd2c6bbd7807fed2b3ee3b18471c41e825ec630(@primeuix/themes@3.1.1)(primevue@5.0.5(vue@3.5.46(typescript@7.0.2)))(vue@3.5.46(typescript@7.0.2))':
     dependencies:
       '@primeuix/themes': 3.1.1
       primevue: 5.0.5(vue@3.5.46(typescript@7.0.2))
