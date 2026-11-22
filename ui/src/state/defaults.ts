@@ -115,7 +115,7 @@ const SCALARS: Record<string, (v: unknown) => boolean> = {
 };
 const NESTED: Record<string, Record<string, (v: unknown) => boolean>> = {
   spoolman: { url: (v) => typeof v === "string", refreshS: (v) => v === 0 || int(10, 300)(v) },
-  sheet: { shopName: (v) => typeof v === "string", footer: (v) => typeof v === "string", validityDays: int(0, 3650), nextNo: int(1, 999_999_999), ...BRAND_SHAPES },
+  sheet: { shopName: (v) => typeof v === "string", footer: (v) => typeof v === "string", validityDays: int(0, 3650), nextNo: int(1, 999_999_999), showMade: bool, ...BRAND_SHAPES },
   ui: { open: (v) => isRec(v) && Object.values(v).every(bool), sheetMode: (v) => v === "itemized" || v === "summary" },
 };
 /** Names of every setting in a raw settings file that will be reset to a built-in value (for the one-time notice). */

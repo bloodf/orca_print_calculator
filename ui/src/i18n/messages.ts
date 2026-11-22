@@ -476,6 +476,7 @@ export const messages = {
   "sheet.shopName": ["Shop name", "Nome da loja"],
   "sheet.footer": ["Footer note", "Rodapé"],
   "sheet.footerHelp": ["Lead time, warranty or a short note.", "Prazo, garantia ou um recado curto."],
+  "sheet.showMade": ["Show \"Made with Orca Print Calculator\" at the bottom", "Mostrar \"Feito com Orca Print Calculator\" no final"],
   "sheet.validity": ["Valid for", "Validade"],
   "sheet.validityUnit": ["days", "dias"],
   "sheet.validityHelp": ["0 hides the date.", "0 esconde a data."],

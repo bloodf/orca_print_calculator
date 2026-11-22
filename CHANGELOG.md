@@ -3,6 +3,14 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- **Settings › Quote sheet** has a new option to hide the "Made with Orca Print Calculator" line at the bottom of quotes. It is on by default; switch it off to leave only your own footer note. Thanks @tanishqmanuja for asking (#58).
+
+### Changed
+- Shared UI 5.10.0.
+
 ## [0.9.3] - 2026-11-22
 
 ### Changed

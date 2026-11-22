@@ -477,6 +477,7 @@ export const es: Record<MessageKey, string> = {
   "sheet.shopName": "Nombre de la tienda",
   "sheet.footer": "Nota al pie",
   "sheet.footerHelp": "Plazo de entrega, garantía o una nota breve.",
+  "sheet.showMade": "Mostrar «Hecho con Orca Print Calculator» al final",
   "sheet.validity": "Validez",
   "sheet.validityUnit": "días",
   "sheet.validityHelp": "0 oculta la fecha.",

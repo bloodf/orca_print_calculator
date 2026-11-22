@@ -477,6 +477,7 @@ export const zhCN: Record<MessageKey, string> = {
   "sheet.shopName": "店铺名称",
   "sheet.footer": "页脚备注",
   "sheet.footerHelp": "交期、保修或简短说明。",
+  "sheet.showMade": "在底部显示“由 Orca Print Calculator 生成”",
   "sheet.validity": "有效期",
   "sheet.validityUnit": "天",
   "sheet.validityHelp": "0 表示不显示日期。",

@@ -20,7 +20,7 @@ export type SheetModel = {
 export type SheetSource = {
   no: number | null; dateIso: string; title: string; customer: string; note: string; currency: string;
   plates: QuotePlate[]; quantity: number; result: QuoteOk; selected: ChannelOk;
-  sheet: { shopName: string; footer: string; validityDays: number } & Partial<SheetBrand>; itemized: boolean;
+  sheet: { shopName: string; footer: string; validityDays: number; showMade?: boolean } & Partial<SheetBrand>; itemized: boolean;
 };
 
 /** Split `total` across `weights` so the parts sum exactly to `total` (largest remainder; ties to the earlier index). */
@@ -75,7 +75,7 @@ export function sampleSheetModel(sheet: SheetSource["sheet"], currency: string):
     head: { item: t("sheet.item"), qty: t("sheet.qty"), unit: t("sheet.unitPrice"), amount: t("sheet.amount") },
     rows: [{ label: t("sheet.sampleTitle"), qty: count(qty, loc), unit: money(unit, currency, loc), amount: money(unit * qty, currency, loc) }],
     subtotal: { label: t("sheet.subtotal"), value: money(unit * qty, currency, loc) }, shipping: null, discountNote: "",
-    total: { label: t("sheet.total"), value: money(unit * qty, currency, loc) }, note: "", footer: str(sheet.footer), made: t("sheet.made"),
+    total: { label: t("sheet.total"), value: money(unit * qty, currency, loc) }, note: "", footer: str(sheet.footer), made: sheet.showMade === false ? "" : t("sheet.made"),
     ...brandOf(sheet),
   };
 }
@@ -102,7 +102,7 @@ export function buildSheetModel(s: SheetSource): SheetModel {
     rows, subtotal: { label: t("sheet.subtotal"), value: m(sel.orderTotal) },
     shipping: sel.shippingCharged > 0 ? { label: t("sheet.shipping"), value: m(sel.shippingCharged) } : null,
     discountNote: sel.flags.discounted ? t("sheet.discountNote", { pct: percent(sel.effectiveDiscountBp, loc) }) : "",
-    total: { label: t("sheet.total"), value: m(sel.grandTotal) }, note: s.note, footer: str(s.sheet.footer), made: t("sheet.made"),
+    total: { label: t("sheet.total"), value: m(sel.grandTotal) }, note: s.note, footer: str(s.sheet.footer), made: s.sheet.showMade === false ? "" : t("sheet.made"),
     ...brandOf(s.sheet),
   };
 }
@@ -154,7 +154,7 @@ export function sheetHtml(m: SheetModel): string {
     m.note ? `<p class="n">${esc(m.note)}</p>` : "",
     m.payment ? `<p class="n"><strong>${esc(m.payment.label)}</strong><br>${esc(m.payment.text)}</p>` : "",
     m.footer ? `<p class="n muted">${esc(m.footer)}</p>` : "",
-    `<p class="small">${esc(m.made)}</p>`,
+    m.made ? `<p class="small">${esc(m.made)}</p>` : "",
   ].join("");
   return `<!doctype html><html lang="${esc(m.lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(`${m.shop} ${m.heading}`.trim())}</title><style>${CSS}</style></head><body><main style="--accent:${esc(m.accent)}">${body}</main></body></html>`;
 }

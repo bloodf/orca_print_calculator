@@ -46,6 +46,15 @@ describe("brandOf + sheetHtml", () => {
       expect(sheetHtml(sampleSheetModel(sheet({ logo }), "USD"))).not.toContain("<img");
     }
   });
+  test("the Made with line shows by default and hides when switched off (settings and older files)", () => {
+    expect(base().sheet.showMade).toBeUndefined();
+    expect(sheetHtml(sampleSheetModel(sheet({}), "USD"))).toContain("Made with Orca Print Calculator");
+    const off = sampleSheetModel({ ...sheet({}), showMade: false }, "USD");
+    expect(off.made).toBe("");
+    expect(sheetHtml(off)).not.toContain("Made with");
+    expect(mergeSettings({ sheet: { showMade: false } }, base()).sheet.showMade).toBe(false);
+    expect(mergeSettings({ sheet: { showMade: "no" } }, base()).sheet.showMade).toBeUndefined();
+  });
   test("company lines and payment are escaped; tax id and address lines come before the contact line", () => {
     const b = brandOf({ taxId: "CNPJ <b>1</b>", address: "Rua A, 1\n  \nSão Paulo", phone: "555", email: "a@b.c", website: "", payment: "Pix & \"cash\"" });
     expect(b.contact).toEqual(["CNPJ <b>1</b>", "Rua A, 1", "São Paulo", "555 · a@b.c"]);
