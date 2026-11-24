@@ -30,8 +30,9 @@ const TRIM = `let foot = document.elementFromPoint(innerWidth / 2, innerHeight -
 
 // height / width of the empty square in the generated images (measured from their pixels): landscape, square, social
 const SLOT = { land: 686 / 712, square: 490 / 494, social: 661 / 666 };
-const BOTH = [["dark", "en"], ["dark", "pt-BR"]];
-const ALL = [...BOTH, ["light", "en"], ["light", "pt-BR"]];
+// English only: the listing and README.md are English (README.pt-BR.md keeps its earlier captures)
+const BOTH = [["dark", "en"]];
+const ALL = [...BOTH, ["light", "en"]];
 const SHOTS = [
   // slot captures: a narrow window, so the text stays readable inside the square (under 560 px the tab row is cut, under 640 the names)
   { n: "slot-overview", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: ALL, steps: [click(".card .chip")] },
@@ -39,7 +40,7 @@ const SHOTS = [
   { n: "slot-filament", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: BOTH, steps: [click(".card .chip")] },
   { n: "slot-costs", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: BOTH, steps: [open("machine"), top(".sections-area")] },
   { n: "slot-price", q: "state=ok", ready: PRICE, w: 640, slot: "land", sets: BOTH, steps: [top("[data-price-panel]")] },
-  { n: "slot-price-square", q: "state=ok", ready: PRICE, w: 560, slot: "square", sets: BOTH, steps: [top("[data-price-panel]")] },
+  { n: "slot-price-square", q: "state=ok", ready: PRICE, w: 640, slot: "square", sets: BOTH, steps: [top("[data-price-panel]")] },
   { n: "slot-quotes", q: "state=ok&view=quotes", ready: "document.querySelector('#quotes-title')", w: 560, slot: "land", sets: BOTH, steps: [click("tbody tr:last-child .acts [aria-haspopup=menu]")] },
   // README screenshots: the wide layout (1440 px keeps the names whole in Portuguese too)
   { n: "calculator", q: "state=ok", ready: PRICE, w: 1440, h: 900, sets: ALL, steps: [click(".card .chip")] },

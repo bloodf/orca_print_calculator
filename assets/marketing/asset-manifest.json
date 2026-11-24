@@ -346,9 +346,9 @@
       "operation": "Lanczos resize from 1254x1254",
       "width": 512,
       "height": 512,
-      "bytes": 187169,
-      "sha256": "6b8bceb280c2fafd0c3fb01600406d725d9179d353d55198ba135fba743d9dd8",
-      "date": "2026-11-19"
+      "bytes": 187848,
+      "sha256": "36e16af811f9728022b23a6d57cc4791c2542bda08664a91a4a1292d2fd29908",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/orca-cloud/orca_print_calculator-main-en.png",
@@ -357,9 +357,9 @@
       "operation": "screenshot scaled to cover the empty square at 885,102 712x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
       "width": 1600,
       "height": 900,
-      "bytes": 1277846,
-      "sha256": "a1796414261c0f09214d066eea2e8bd8c07e150ea9e9832ec8556a04d0f72486",
-      "date": "2026-11-19"
+      "bytes": 1279743,
+      "sha256": "7c591d7627bdcbaeaaee9bb57ae08d321634c863550c5c16b3b4c62b76ed513a",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/orca-cloud/orca_print_calculator-main-square-en.png",
@@ -368,9 +368,9 @@
       "operation": "screenshot scaled to cover the empty square at 708,451 494x490 of the source and clipped to its rounded corners; Lanczos resize from 1254x1254",
       "width": 900,
       "height": 900,
-      "bytes": 834185,
-      "sha256": "f3f6ae082d18ba94c22aa67f7194fd7634682e4bbd902074a45a6fc3e549e253",
-      "date": "2026-11-19"
+      "bytes": 831831,
+      "sha256": "440e9172a498eb75a0e7cc20e8ed230f9e3af65f23c31f6f0f1afc931625db06",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/orca-cloud/orca_print_calculator-feature-01-filament-en.png",
@@ -379,9 +379,9 @@
       "operation": "screenshot scaled to cover the empty square at 884,101 713x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
       "width": 1600,
       "height": 900,
-      "bytes": 1251519,
-      "sha256": "75ff32d1e9e1e55b886118c23f1a678dd59a92369928c76e4f839a75b1b177b7",
-      "date": "2026-11-19"
+      "bytes": 1253672,
+      "sha256": "0fd54ad0c1b5600c2533a44ac352db209bd79cbb5672d99215d5e7ee78fb8216",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png",
@@ -390,9 +390,9 @@
       "operation": "screenshot scaled to cover the empty square at 885,102 712x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
       "width": 1600,
       "height": 900,
-      "bytes": 1293843,
-      "sha256": "d2cc61d57fdc0d65d5ea537f5fc24c79cad9d7862fe848a82a6a35f16fd2816b",
-      "date": "2026-11-19"
+      "bytes": 1295860,
+      "sha256": "5b5a05718e0d9aa390a6f0b2a6e49f72c6c486dfb52f6f2c52a4beadb0d68830",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/orca-cloud/orca_print_calculator-feature-03-price-en.png",
@@ -401,9 +401,9 @@
       "operation": "screenshot scaled to cover the empty square at 884,100 713x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
       "width": 1600,
       "height": 900,
-      "bytes": 1226476,
-      "sha256": "7bc304f4e9fbf182d1c88022b4f5b02981dd4bed20dfbc091d6f2cbc57b47f92",
-      "date": "2026-11-19"
+      "bytes": 1228789,
+      "sha256": "a739cd9d46d393373e2aa3c8cbe3fecf5da81b3daad458675315ed0fa0d4c050",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/orca-cloud/orca_print_calculator-feature-04-quotes-en.png",
@@ -412,9 +412,9 @@
       "operation": "screenshot scaled to cover the empty square at 885,102 712x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
       "width": 1600,
       "height": 900,
-      "bytes": 1226757,
-      "sha256": "f42a03d822d1e0af55571108f958c0e1d369049b992147c22f47b7b05cdee9c5",
-      "date": "2026-11-19"
+      "bytes": 1228694,
+      "sha256": "d07e1d33f9a589fc6005a572d644d5db56a61aa7f2125f3faa4127491b69b937",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/readme/orca_print_calculator-hero-dark-en.png",
@@ -423,9 +423,9 @@
       "operation": "screenshot scaled to cover the empty square at 884,102 713x684 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
       "width": 1600,
       "height": 900,
-      "bytes": 1243180,
-      "sha256": "bccde2a294c5727bb495dab1eefd7eeb72c60ebf3e591b98b4fd24847e722e32",
-      "date": "2026-11-19"
+      "bytes": 1245233,
+      "sha256": "23a094c46570fb62ba8b1cb82208c8ff0cd9765646de541f901e41ece8089fea",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/readme/orca_print_calculator-hero-light-en.png",
@@ -434,9 +434,9 @@
       "operation": "screenshot scaled to cover the empty square at 883,99 716x689 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
       "width": 1600,
       "height": 900,
-      "bytes": 1295848,
-      "sha256": "3ea1e9c7dd52e91cf1f9c5c84a60f4f81c35ed08e8c980da2cddad68a3ec3002",
-      "date": "2026-11-19"
+      "bytes": 1297704,
+      "sha256": "4157abb91ccbf9072e033448583e9a7272ce8a1efd1fa5f91f259ec51cb86e79",
+      "date": "2026-11-24"
     },
     {
       "file": "assets/social/orca_print_calculator-social-preview-en.png",
@@ -445,108 +445,9 @@
       "operation": "screenshot scaled to cover the empty square at 1029,90 666x661 of the source and clipped to its rounded corners; Lanczos resize from 1774x887",
       "width": 1280,
       "height": 640,
-      "bytes": 785028,
-      "sha256": "e3890106d42ac1709631ca86ee1270487f4e3c8b312e8b80cedb07d27f43091f",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/orca-cloud/orca_print_calculator-main-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-main-pt-BR.png",
-      "screenshot": "slot-overview-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 884,102 712x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
-      "width": 1600,
-      "height": 900,
-      "bytes": 1243915,
-      "sha256": "adb598566c42296c2201a28bbbac1d89aaa78b65c83e7544db5b97be9688dea3",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/orca-cloud/orca_print_calculator-main-square-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-main-square-pt-BR.png",
-      "screenshot": "slot-price-square-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 684,455 497x492 of the source and clipped to its rounded corners; Lanczos resize from 1254x1254",
-      "width": 900,
-      "height": 900,
-      "bytes": 819831,
-      "sha256": "6e39b4fa1cd432d6c1b81f5bba1819ad96fef6a2b15296e9c831006eb58b6ca9",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-01-filament-pt-BR.png",
-      "screenshot": "slot-filament-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 886,102 710x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
-      "width": 1600,
-      "height": 900,
-      "bytes": 1276625,
-      "sha256": "9b79d6821f193965567fff8d203f3c5189025d31ea112e72f5cf9cc202274064",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-02-costs-pt-BR.png",
-      "screenshot": "slot-costs-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 884,100 713x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
-      "width": 1600,
-      "height": 900,
-      "bytes": 1280418,
-      "sha256": "7d83568fd2e754f67a561a282f461ebebd943ac08acf622af0d568b1818e9408",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/orca-cloud/orca_print_calculator-feature-03-price-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-03-price-pt-BR.png",
-      "screenshot": "slot-price-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 884,102 712x685 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
-      "width": 1600,
-      "height": 900,
-      "bytes": 1189040,
-      "sha256": "4df70b016827120251e0b9a0a0b53fc0bd09c39e7bb471d1fe5786ff78891a4f",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/orca-cloud/orca_print_calculator-feature-04-quotes-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-feature-04-quotes-pt-BR.png",
-      "screenshot": "slot-quotes-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 885,100 712x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
-      "width": 1600,
-      "height": 900,
-      "bytes": 1213850,
-      "sha256": "d60f2dbd0a4e1501214196d917de2d0ea37028d235deef47c7ac0432420ed833",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/readme/orca_print_calculator-hero-dark-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-hero-dark-pt-BR.png",
-      "screenshot": "slot-overview-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 884,101 713x686 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
-      "width": 1600,
-      "height": 900,
-      "bytes": 1263469,
-      "sha256": "c7d393f611f47fa1ff151723946df5b33208b56759ec8b26c8bc65d5f638a8de",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/readme/orca_print_calculator-hero-light-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-hero-light-pt-BR.png",
-      "screenshot": "slot-overview-light-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 885,101 711x687 of the source and clipped to its rounded corners; centre crop to the aspect of 1600x900; Lanczos resize from 1672x941",
-      "width": 1600,
-      "height": 900,
-      "bytes": 1257203,
-      "sha256": "fe46e66a04ce4847a5c49ee6bad7445e832dce4c509a2170dcba22f5fa410db3",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "assets/social/orca_print_calculator-social-preview-pt-BR.png",
-      "source": "assets/marketing/source/orca_print_calculator-workshop-social-preview-pt-BR.png",
-      "screenshot": "slot-overview-social-dark-pt-BR.png",
-      "operation": "screenshot scaled to cover the empty square at 1021,98 674x656 of the source and clipped to its rounded corners; Lanczos resize from 1774x887",
-      "width": 1280,
-      "height": 640,
-      "bytes": 797180,
-      "sha256": "79ad46e6622fcb9faae3b8a9030e890b9e2ab49d4a66c239010d7a80eab790e4",
-      "date": "2026-11-19"
+      "bytes": 785983,
+      "sha256": "2cff0c2d61e4a6581d01b09f7953d23ae4bc6ea431dab3ca34e157d5bd5e9571",
+      "date": "2026-11-24"
     },
     {
       "file": "docs/screenshots/calculator-dark-en.png",
@@ -555,20 +456,9 @@
       "operation": "mock-host capture at device scale 2, saved as is",
       "width": 2880,
       "height": 1800,
-      "bytes": 433312,
-      "sha256": "00570c60caa802b9d4fae18e8a3c2542d82429424c6a585c732c4d5c29f909ee",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "docs/screenshots/calculator-dark-pt-BR.png",
-      "source": "ui/e2e/brand-shots.mjs",
-      "screenshot": "calculator-dark-pt-BR.png",
-      "operation": "mock-host capture at device scale 2, saved as is",
-      "width": 2880,
-      "height": 1800,
-      "bytes": 460660,
-      "sha256": "7ee990896187e906396dadffff2cefdc30e2de6c15a5988bc2291042040a6028",
-      "date": "2026-11-19"
+      "bytes": 438005,
+      "sha256": "50f390f7c4802fea57ef5d575ae1c252df2642643b59c48f8e532ca161577496",
+      "date": "2026-11-24"
     },
     {
       "file": "docs/screenshots/calculator-light-en.png",
@@ -577,20 +467,9 @@
       "operation": "mock-host capture at device scale 2, saved as is",
       "width": 2880,
       "height": 1800,
-      "bytes": 434197,
-      "sha256": "7fabf620a240423fa184bb0effb021d6fd7616b7189810ddb4c4468724f07300",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "docs/screenshots/calculator-light-pt-BR.png",
-      "source": "ui/e2e/brand-shots.mjs",
-      "screenshot": "calculator-light-pt-BR.png",
-      "operation": "mock-host capture at device scale 2, saved as is",
-      "width": 2880,
-      "height": 1800,
-      "bytes": 461826,
-      "sha256": "0add5e4e5d6510d3fe817eab1f803b47cce087187ecd514b98238e29efb4f0f6",
-      "date": "2026-11-19"
+      "bytes": 438327,
+      "sha256": "81d8d19fb86b3c074126e088a42033372596cebf1b79f206311b5ced3f563ecd",
+      "date": "2026-11-24"
     },
     {
       "file": "docs/screenshots/quotes-dark-en.png",
@@ -599,20 +478,9 @@
       "operation": "mock-host capture at device scale 2, saved as is",
       "width": 2880,
       "height": 880,
-      "bytes": 111292,
-      "sha256": "13a52c8660d7f07b21726f45392215bd5d76f451d5f0cf3316822430eb7d11a4",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "docs/screenshots/quotes-dark-pt-BR.png",
-      "source": "ui/e2e/brand-shots.mjs",
-      "screenshot": "quotes-dark-pt-BR.png",
-      "operation": "mock-host capture at device scale 2, saved as is",
-      "width": 2880,
-      "height": 880,
-      "bytes": 118340,
-      "sha256": "d85752c29a58f3966e9632a790b8d84b27263cbf314072a74eb30647ca068eb3",
-      "date": "2026-11-19"
+      "bytes": 112655,
+      "sha256": "39bdf2262af99ee3a81304ce7f0224a5093011b4c2be23a3ce3654100954a726",
+      "date": "2026-11-24"
     },
     {
       "file": "docs/screenshots/quotes-light-en.png",
@@ -621,20 +489,9 @@
       "operation": "mock-host capture at device scale 2, saved as is",
       "width": 2880,
       "height": 880,
-      "bytes": 112619,
-      "sha256": "44e8aacab82d5e5b93adba5b8aacddd860a24f7f0c29c60ca631c541809acbe8",
-      "date": "2026-11-19"
-    },
-    {
-      "file": "docs/screenshots/quotes-light-pt-BR.png",
-      "source": "ui/e2e/brand-shots.mjs",
-      "screenshot": "quotes-light-pt-BR.png",
-      "operation": "mock-host capture at device scale 2, saved as is",
-      "width": 2880,
-      "height": 880,
-      "bytes": 119995,
-      "sha256": "f313294508eb5156042478617abc81f0883f6a92df90c6066d6cb89d5a4d5e44",
-      "date": "2026-11-19"
+      "bytes": 114208,
+      "sha256": "4e617514d5f0ee853f363b50f69b8a601df2d3b80bc9c66410d58a7df87c3830",
+      "date": "2026-11-24"
     }
   ]
 }

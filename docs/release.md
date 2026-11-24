@@ -52,22 +52,22 @@ The other plugins of this family publish the same way.
 
 ## Orca Cloud listing
 
-The page is <https://cloud.orcaslicer.com/p/521c07cf6de2>. Its text is in [orca-cloud-description.md](orca-cloud-description.md), in English and Portuguese. The images are uploaded by hand on the plugin's edit page; publishing a release does not change them. All are PNG and under 2 MB. Bytes are English / Portuguese.
+The page is <https://cloud.orcaslicer.com/p/521c07cf6de2>. Its text is in [orca-cloud-description.md](orca-cloud-description.md), in English only; it links to [README.md](../README.md) for the full description. The images are uploaded by hand on the plugin's edit page; publishing a release does not change them. All are PNG and under 2 MB.
 
 | Slot | File | Size | Bytes |
 |---|---|---|---|
-| Plugin icon (store tile) | `assets/orca-cloud/orca_print_calculator-tile.png` | 512×512 | 187,169 |
-| Main image | `assets/orca-cloud/orca_print_calculator-main-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-pt-BR.png` | 1600×900 | 1,277,846 / 1,243,915 |
-| Main image, square | `assets/orca-cloud/orca_print_calculator-main-square-en.png`<br>`assets/orca-cloud/orca_print_calculator-main-square-pt-BR.png` | 900×900 | 834,185 / 819,831 |
-| Gallery 1: filament cost | `assets/orca-cloud/orca_print_calculator-feature-01-filament-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-01-filament-pt-BR.png` | 1600×900 | 1,251,519 / 1,276,625 |
-| Gallery 2: machine, energy and labour | `assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png` | 1600×900 | 1,293,843 / 1,280,418 |
-| Gallery 3: price with margin | `assets/orca-cloud/orca_print_calculator-feature-03-price-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-03-price-pt-BR.png` | 1600×900 | 1,226,476 / 1,189,040 |
-| Gallery 4: saved quotes | `assets/orca-cloud/orca_print_calculator-feature-04-quotes-en.png`<br>`assets/orca-cloud/orca_print_calculator-feature-04-quotes-pt-BR.png` | 1600×900 | 1,226,757 / 1,213,850 |
-| GitHub social preview | `assets/social/orca_print_calculator-social-preview-en.png`<br>`assets/social/orca_print_calculator-social-preview-pt-BR.png` | 1280×640 | 785,028 / 797,180 |
-| README hero, dark | `assets/readme/orca_print_calculator-hero-dark-en.png`<br>`assets/readme/orca_print_calculator-hero-dark-pt-BR.png` | 1600×900 | 1,243,180 / 1,263,469 |
-| README hero, light | `assets/readme/orca_print_calculator-hero-light-en.png`<br>`assets/readme/orca_print_calculator-hero-light-pt-BR.png` | 1600×900 | 1,295,848 / 1,257,203 |
+| Plugin icon (store tile) | `assets/orca-cloud/orca_print_calculator-tile.png` | 512×512 | 187,848 |
+| Main image | `assets/orca-cloud/orca_print_calculator-main-en.png` | 1600×900 | 1,279,743 |
+| Main image, square | `assets/orca-cloud/orca_print_calculator-main-square-en.png` | 900×900 | 831,831 |
+| Gallery 1: filament cost | `assets/orca-cloud/orca_print_calculator-feature-01-filament-en.png` | 1600×900 | 1,253,672 |
+| Gallery 2: machine, energy and labour | `assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png` | 1600×900 | 1,295,860 |
+| Gallery 3: price with margin | `assets/orca-cloud/orca_print_calculator-feature-03-price-en.png` | 1600×900 | 1,228,789 |
+| Gallery 4: saved quotes | `assets/orca-cloud/orca_print_calculator-feature-04-quotes-en.png` | 1600×900 | 1,228,694 |
+| GitHub social preview | `assets/social/orca_print_calculator-social-preview-en.png` | 1280×640 | 785,983 |
+| README hero, dark | `assets/readme/orca_print_calculator-hero-dark-en.png` | 1600×900 | 1,245,233 |
+| README hero, light | `assets/readme/orca_print_calculator-hero-light-en.png` | 1600×900 | 1,297,704 |
 
-The GitHub social preview is set in the repository settings, not on Orca Cloud. The README heroes are listed for completeness.
+The GitHub social preview is set in the repository settings, not on Orca Cloud. The README heroes are listed for completeness. Only English images are exported now; the older Portuguese gallery, hero and screenshot files stay because README.pt-BR.md uses them.
 
 Each image is a generated photograph whose empty square holds a real screenshot of the plugin's page (sample data, mock host, not captured inside OrcaSlicer). The native images are in `assets/marketing/source/`, and `assets/marketing/asset-manifest.json` records the source, screenshot, operation, size, bytes and date of every export. To redo them after an interface change, see [development.md](development.md#store-and-readme-images). The tab icon inside OrcaSlicer is the store tile at 40x40, `brand/plugin-icon.png`; after a new tile, export it again (Pillow, Lanczos, white surround made transparent).
 
