@@ -43,7 +43,7 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
 | OrcaSlicer | 2.5 or newer |
 | Spoolman | Optional. Without it the plugin uses the cost stored in each filament preset, or a price you type |
 | Printer | Any. Only G-code from a Snapmaker U1 has been checked against real files (see the [FAQ](#-faq)) |
-| Status | In development. Tested with a mock host, not yet verified inside OrcaSlicer ([live-run procedure](docs/live-run.md)). Every screenshot here is the plugin's page in a browser with sample data and a mock host |
+| Screenshots | Every screenshot here is the plugin's page in a browser with sample data and a mock host |
 
 ## 🧰 Features
 

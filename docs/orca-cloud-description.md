@@ -28,7 +28,7 @@ Full description: https://github.com/bloodf/orca_print_calculator/blob/main/READ
 2. In OrcaSlicer open Plugins, refresh and enable Print Calculator. Leave full access off. macOS: File > Plugins. Windows and Linux: the ▾ next to File > Plugins.
 3. Open the Print Calculator tab, answer "Set up once", then slice a plate.
 
-Needs OrcaSlicer 2.5 or newer. Spoolman is optional. Status: in development, tested with a mock host, not yet verified inside OrcaSlicer.
+Needs OrcaSlicer 2.5 or newer. Spoolman is optional.
 
 ## Privacy
 
