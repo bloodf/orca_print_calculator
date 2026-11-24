@@ -30,7 +30,7 @@ LAND, SQUARE, SOCIAL, TILE = (1600, 900), (900, 900), (1280, 640), (512, 512)
 def jobs():
     """(source file, screenshot or None, export path, export size)"""
     out = [("workshop-tile", None, "assets/orca-cloud/%s-tile.png" % ID, TILE)]
-    for lang, main in (("en", "workshop-cover-en"), ("pt-BR", "workshop-main-pt-BR")):
+    for lang, main in (("en", "workshop-cover-en"),):  # English only; README.pt-BR.md keeps its earlier exports
         out.append((main, "slot-overview-dark-" + lang, "assets/orca-cloud/%s-main-%s.png" % (ID, lang), LAND))
         out.append(("workshop-main-square-" + lang, "slot-price-square-dark-" + lang, "assets/orca-cloud/%s-main-square-%s.png" % (ID, lang), SQUARE))
         for feature, shot in (("01-filament", "filament"), ("02-costs", "costs"), ("03-price", "price"), ("04-quotes", "quotes")):
@@ -41,7 +41,7 @@ def jobs():
     return out
 
 
-SCREENSHOTS = ["%s-%s-%s" % (view, theme, lang) for view in ("calculator", "quotes") for theme in ("dark", "light") for lang in ("en", "pt-BR")]
+SCREENSHOTS = ["%s-%s-%s" % (view, theme, lang) for view in ("calculator", "quotes") for theme in ("dark", "light") for lang in ("en",)]
 
 
 def find_square(im):

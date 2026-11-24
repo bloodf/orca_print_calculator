@@ -39,7 +39,7 @@ node ui/e2e/brand-shots.mjs /tmp/opc-harness/index.html /tmp/opc-shots          
 python3 scripts/brand_assets.py /tmp/opc-shots                                               # needs Pillow
 ```
 
-`ui/e2e/brand-shots.mjs` captures the screens (dark and light, English and Portuguese). `scripts/brand_assets.py` finds the empty square in each source from its pixels, scales the screenshot to cover it, clips it to the rounded corners, exports the listing sizes and records every export in `assets/marketing/asset-manifest.json`. Neither runs in CI, and neither touches the plugin build. `brand/src/build.mjs` regenerates the vector mark only.
+`ui/e2e/brand-shots.mjs` captures the screens (dark and light, English only). `scripts/brand_assets.py` finds the empty square in each source from its pixels, scales the screenshot to cover it, clips it to the rounded corners, exports the listing sizes and records every export in `assets/marketing/asset-manifest.json`. Neither runs in CI, and neither touches the plugin build. `brand/src/build.mjs` regenerates the vector mark only.
 
 ## Other documents
 
