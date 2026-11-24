@@ -243,7 +243,7 @@ def slice_all(r):
     r.orca.state["printer"] = {"printer_model": "Bambu Lab X1 Carbon", "printer_vendor": "BBL"}
     r.lifecycle(LE.PresetSelected, msg="printer", name="Bambu Lab X1 Carbon 0.4 nozzle")
     r.lifecycle(LE.PlateCreated)  # no move/reorder event exists: a new plate flags everything stale
-    r.orca.state["project"] = "/Users/x/Projects/Gridfinity bins.3mf"
+    r.orca.state["project"] = "/example/user/Projects/Gridfinity bins.3mf"
     r.lifecycle(LE.ProjectOpened)
     r.lifecycle(LE.ProjectClosed)
 

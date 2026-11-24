@@ -610,7 +610,7 @@ class DenyList(unittest.TestCase):
     def test_our_files_pass(self):
         self.assertEqual(core.SETTINGS_FILE, "settings.json")
         self.assertEqual(core.QUOTES_FILE, "quotes.json")
-        base = Path("/Users/x/Library/Application Support/OrcaSlicer/orca_plugins/plugin_data/orca_print_calculator")
+        base = Path("/example/user/Library/Application Support/OrcaSlicer/orca_plugins/plugin_data/orca_print_calculator")
         for rel in (core.SETTINGS_FILE, core.QUOTES_FILE, core.EXPORT_DIR, core.EXPORT_DIR + "/quote-1.html",
                     core.EXPORT_DIR + "/quote-1.csv", "icon.svg"):
             self.assertFalse(core.deny_listed(base / rel), rel)

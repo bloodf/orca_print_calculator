@@ -9,7 +9,7 @@ export type Scenario = { state: HostState; behaviour: Behaviour };
 
 export const isScenario = (s: string | null): s is ScenarioName => !!s && (SCENARIO_NAMES as readonly string[]).includes(s);
 
-const base = (over: Partial<HostState> = {}): HostState => ({ host: HOST, plates: plates(), settings: settings(), quotes: savedQuotes(), spooler: spooler(), spoolerLooked: ["/Users/you/Library/Application Support/OrcaSlicer/spooler"], ...over });
+const base = (over: Partial<HostState> = {}): HostState => ({ host: HOST, plates: plates(), settings: settings(), quotes: savedQuotes(), spooler: spooler(), spoolerLooked: ["/example/user/Library/Application Support/OrcaSlicer/spooler"], ...over });
 const withPlates = (f: (p: HostPlate[]) => HostPlate[]): HostPlate[] => f(plates());
 
 export function buildScenario(name: ScenarioName): Scenario {

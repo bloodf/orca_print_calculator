@@ -54,7 +54,7 @@ def install_orca(storage=None):
     orca.permissions = []
     orca.state = {
         "plate": 0,
-        "project": "/Users/x/Projects/Desk organizer.3mf",
+        "project": "/example/user/Projects/Desk organizer.3mf",
         "printer": {"printer_model": "Snapmaker U1", "printer_vendor": "Snapmaker"},
         "printer_name": "Snapmaker U1 (0.4 nozzle)",
         "filaments": [Preset("Generic PLA @U1", {"filament_cost": "24", "filament_notes": "", "filament_type": "PLA"}),
