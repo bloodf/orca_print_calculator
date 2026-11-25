@@ -3,6 +3,12 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.10.1] - 2026-11-25
+
+### Changed
+- Shared UI 5.10.1.
+- The Orca Cloud listing, store images and README screenshots were refreshed; the listing is English only now.
+
 ## [0.10.0] - 2026-11-22
 
 ### Added
