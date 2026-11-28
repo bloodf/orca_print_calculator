@@ -12,7 +12,7 @@ const click = (sel, text) => `const els = [...document.querySelectorAll(${JSON.s
 const VIEWPORTS = { w1280: [1280, 900, 1], w720: [720, 900, 1], z200: [640, 450, 2] };
 const RUNS = [
   { n: "calc-ok", q: "state=ok", ready: "document.querySelector('[data-price-panel]')" },
-  { n: "calc-unknown", q: "state=unknown", ready: "document.querySelector('[data-testid=incomplete-line]')" },
+  { n: "calc-unknown", q: "state=unknown", ready: "document.querySelector('[data-gaps]')" },
   { n: "calc-impossible", q: "state=impossible", ready: "document.querySelector('[data-testid=hero-impossible]')" },
   { n: "calc-firstrun", q: "state=firstRun", ready: "document.querySelector('.fr')" },
   { n: "calc-empty", q: "state=empty", ready: "document.querySelector('.p-button')" },
