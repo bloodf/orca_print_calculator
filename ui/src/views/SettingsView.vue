@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// Settings: one page per group, picked from the list (SettingsPages: list beside the page, or list then page when narrow). Nothing here has a Save button: changes are
+// Settings: one page per group, picked from the list (OuiSettingsPages: list beside the page, or list then page when narrow). Nothing here has a Save button: changes are
 // saved as they are made, and the one bar at the bottom says so (or says that saving failed, with Retry).
 import Button from "primevue/button";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
-import { OuiFormSection, OuiIcon, OuiStatus, type OuiIconData, type OuiTone } from "@orca-plugins/ui-foundation/src/components";
+import { OuiFormSection, OuiIcon, OuiSettingsPages, OuiStatus, type OuiIconData, type OuiTone } from "@orca-plugins/ui-foundation/src/components";
 import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { t } from "../i18n";
 import { SETTINGS_TABS, settingsLinked, settingsTab, type SettingsTab } from "../state/settingsTab";
@@ -14,7 +14,6 @@ import GeneralSettings from "../components/settings/GeneralSettings.vue";
 import PricingDefaults from "../components/settings/PricingDefaults.vue";
 import PrinterProfiles from "../components/settings/PrinterProfiles.vue";
 import SheetSettings from "../components/settings/SheetSettings.vue";
-import SettingsPages from "../components/settings/SettingsPages.vue";
 import SpoolmanSettings from "../components/settings/SpoolmanSettings.vue";
 
 const COMPS = {
@@ -45,7 +44,7 @@ watch([settingsTab, settingsLinked], follow); // asked for again while Settings 
 <template>
   <main class="settings" :aria-label="t('settings.title')" tabindex="-1">
     <h2 class="oui-sr" tabindex="-1" data-view-title>{{ t("settings.title") }}</h2>
-    <SettingsPages ref="settingsRef" :sections="sections" :nav-label="t('settings.nav')" :back-label="t('sheet.back')" :error-label="t('settings.hasError')">
+    <OuiSettingsPages ref="settingsRef" :sections="sections" :nav-label="t('settings.nav')" :back-label="t('sheet.back')" :error-label="t('settings.hasError')">
       <div v-for="(col, i) in COLUMNS" :key="i" class="oui-stack">
         <OuiFormSection v-for="id in col" :id="`settings-${id}`" :key="id" class="grp" :title="t(`settings.group.${id}`)" :icon="LOOK[id].icon" :tone="LOOK[id].tone" :description="HELP[id] ? t(HELP[id]!) : undefined" :data-group="id">
           <div class="grp-body"><component :is="COMPS[id]" /></div>
@@ -61,7 +60,7 @@ watch([settingsTab, settingsLinked], follow); // asked for again while Settings 
         </span>
         <span class="oui-meta">{{ t("settings.autosave") }}</span>
       </template>
-    </SettingsPages>
+    </OuiSettingsPages>
   </main>
 </template>
 

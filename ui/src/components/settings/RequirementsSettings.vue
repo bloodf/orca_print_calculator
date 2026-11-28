@@ -1,13 +1,13 @@
 <script setup lang="ts">
 // The two things this plugin can connect to, at the top of Settings › Connections. Both are optional: the calculator works
 // without them (filament prices then come from the Orca presets), so one that is absent is not a warning. One "Check again"
-// looks for both. Where the host looked for Spooler (file names, the data folder) is for the log, not for the page.
+// (the list's) looks for both. Where the host looked for Spooler (file names, the data folder) is for the log, not for the page.
 import Button from "primevue/button";
 import { computed, ref } from "vue";
 import { copyText } from "../../clipboard";
 import { t } from "../../i18n";
 import { checkRequirements, store } from "../../state/store";
-import { OuiIcon, OuiRequirement, showToast } from "@orca-plugins/ui-foundation/src/components";
+import { OuiIcon, OuiRequirement, OuiRequirementList, showToast } from "@orca-plugins/ui-foundation/src/components";
 import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { spoolmanErrorMessage } from "./spoolmanError";
 
@@ -43,33 +43,20 @@ async function copyLink(url: string): Promise<void> {
 </script>
 
 <template>
-  <div class="reqs" data-reqs>
+  <OuiRequirementList class="reqs" :check-label="t('req.checkAgain')" :checking="busy" data-reqs @check="again">
     <div v-for="r in [{ id: 'spoolman', name: 'Spoolman', row: spoolman, url: SPOOLMAN_URL }, { id: 'spooler', name: 'Spooler', row: spooler, url: SPOOLER_URL }]" :key="r.id" class="req">
-      <OuiRequirement
-        :name="r.name" :why="t(`req.${r.id}.why`)" :status="r.row.status" :status-label="r.row.label" :detail="r.row.detail"
-        :check-label="t('req.checkAgain')" :checking="busy" :data-req="r.id" :data-absent="r.row.absent ? '' : undefined" @check="again"
-      />
+      <OuiRequirement :name="r.name" :why="t(`req.${r.id}.why`)" :status="r.row.status" :status-label="r.row.label" :detail="r.row.detail" :data-req="r.id" />
+      <!-- ui-foundation 5.14.0 shows how to get something only on an amber "missing" row; from 5.14.1 (`optional`) this line is the row's own -->
       <p v-if="r.row.absent" class="req-how sm oui-muted" :data-req-how="r.id">
         <span>{{ t(`req.${r.id}.how`) }}</span>
         <Button text size="small" type="button" class="req-link" :data-req-link="r.id" @click="copyLink(r.url)"><OuiIcon :icon="I.copy" :size="13" /><span>{{ t(`req.${r.id}.link`) }}</span></Button>
       </p>
     </div>
-    <div class="req-foot">
-      <Button severity="secondary" size="small" type="button" :aria-busy="busy ? 'true' : undefined" :aria-disabled="busy ? 'true' : undefined" data-req-check @click="!busy && again()">
-        <OuiIcon :icon="I.refresh" :size="14" /><span>{{ t("req.checkAgain") }}</span>
-      </Button>
-    </div>
-  </div>
+  </OuiRequirementList>
 </template>
 
 <style scoped>
 .reqs { border: 1px solid var(--oui-border); border-radius: var(--oui-radius-lg); }
-.req + .req, .req-foot { border-top: 1px solid var(--oui-border); }
 .req-how { display: flex; flex-wrap: wrap; align-items: center; gap: 2px var(--oui-s2); padding: 0 var(--oui-s4) var(--oui-s3); }
 .req-how :deep(.req-link) { gap: 4px; padding-inline: 6px; }
-.req-foot { display: flex; justify-content: flex-end; padding: var(--oui-s2) var(--oui-s4); }
-/* ui-foundation workarounds, to drop with v5.14.0: one "Check again" for the list (each row brings its own), and a detail that
-   is a sentence set as running text (the component sets every detail in monospace, as it would a file path) */
-.reqs :deep(.oui-req-check) { display: none; }
-.reqs :deep(.oui-req-detail) { font-family: inherit; font-size: var(--oui-text-sm); }
 </style>

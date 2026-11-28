@@ -88,8 +88,8 @@ describe("Settings › Connections", () => {
       spoolman_fetch: () => ({ currency: "EUR", filaments: [], spools: [{}, {}] }),
     });
     const root = mountComponent(RequirementsSettings);
-    expect(root.querySelectorAll("[data-req-check]")).toHaveLength(1);
-    root.querySelector<HTMLElement>("[data-req-check]")!.click();
+    expect(root.querySelectorAll("[data-test=req-check]")).toHaveLength(1);
+    root.querySelector<HTMLElement>("[data-test=req-check]")!.click();
     await flush();
     await flush(); // the Spooler re-read, then the Spoolman reconnect
     expect(calls.map((c) => c.cmd)).toEqual(["check_requirements", "spoolman_fetch"]);
@@ -103,7 +103,7 @@ describe("Settings › Connections", () => {
     installHost({ check_requirements: () => ({ spooler: null, spoolerLooked: ["C:\\Users\\me\\AppData\\Roaming\\OrcaSlicer\\spooler"] }) });
     const root = mountComponent(RequirementsSettings);
     expect(row(root, "spooler").textContent).toContain(t("req.spooler.noFolder"));
-    root.querySelector<HTMLElement>("[data-req-check]")!.click();
+    root.querySelector<HTMLElement>("[data-test=req-check]")!.click();
     await flush();
     expect(store.spoolerLooked).toHaveLength(1);
     expect(row(root, "spooler").textContent).toContain(t("req.spooler.notFound"));
@@ -114,7 +114,7 @@ describe("Settings › Connections", () => {
     store.spooler = null;
     const calls = installHost({ check_requirements: () => ({ spooler: null }) });
     const root = mountComponent(RequirementsSettings);
-    root.querySelector<HTMLElement>("[data-req-check]")!.click();
+    root.querySelector<HTMLElement>("[data-test=req-check]")!.click();
     await flush();
     expect(calls.map((c) => c.cmd)).toEqual(["check_requirements"]);
   });
