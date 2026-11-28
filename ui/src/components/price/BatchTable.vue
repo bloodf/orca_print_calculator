@@ -38,33 +38,33 @@ const saveDefaults = (): void => {
 
 <template>
   <Section id="batch" :title="t('batch.title')" variant="flush" :open="open" @update:open="(v) => (open = v)">
-    <div class="opc-table-wrap">
-      <table class="opc-table dense batch">
+    <div class="oui-table-wrap">
+      <table data-dense class="oui-table batch">
         <caption class="oui-sr">{{ t("batch.caption", { channel: selectedName }) }}</caption>
         <thead>
           <tr>
-            <th scope="col" class="r" :title="compact ? t('batch.quantity') : undefined"><span :aria-hidden="compact ? 'true' : undefined">{{ t(compact ? "batch.quantityShort" : "batch.quantity") }}</span><span v-if="compact" class="oui-sr">{{ t("batch.quantity") }}</span></th>
-            <th scope="col" class="r">{{ t("batch.discount") }}</th>
-            <th v-if="!compact" scope="col" class="r">{{ t("batch.unitCost") }}</th>
-            <th scope="col" class="r" :title="compact ? t('batch.unitPrice') : undefined"><span :aria-hidden="compact ? 'true' : undefined">{{ t(compact ? "batch.unitPriceShort" : "batch.unitPrice") }}</span><span v-if="compact" class="oui-sr">{{ t("batch.unitPrice") }}</span></th>
-            <th v-if="!compact" scope="col" class="r">{{ t("batch.orderTotal") }}</th>
-            <th scope="col" class="r" :title="compact ? t('batch.orderProfit') : undefined"><span :aria-hidden="compact ? 'true' : undefined">{{ t(compact ? "batch.orderProfitShort" : "batch.orderProfit") }}</span><span v-if="compact" class="oui-sr">{{ t("batch.orderProfit") }}</span></th>
-            <th scope="col" class="r">{{ t("compare.margin") }}</th>
+            <th scope="col" class="oui-num" :title="compact ? t('batch.quantity') : undefined"><span :aria-hidden="compact ? 'true' : undefined">{{ t(compact ? "batch.quantityShort" : "batch.quantity") }}</span><span v-if="compact" class="oui-sr">{{ t("batch.quantity") }}</span></th>
+            <th scope="col" class="oui-num">{{ t("batch.discount") }}</th>
+            <th v-if="!compact" scope="col" class="oui-num">{{ t("batch.unitCost") }}</th>
+            <th scope="col" class="oui-num" :title="compact ? t('batch.unitPrice') : undefined"><span :aria-hidden="compact ? 'true' : undefined">{{ t(compact ? "batch.unitPriceShort" : "batch.unitPrice") }}</span><span v-if="compact" class="oui-sr">{{ t("batch.unitPrice") }}</span></th>
+            <th v-if="!compact" scope="col" class="oui-num">{{ t("batch.orderTotal") }}</th>
+            <th scope="col" class="oui-num" :title="compact ? t('batch.orderProfit') : undefined"><span :aria-hidden="compact ? 'true' : undefined">{{ t(compact ? "batch.orderProfitShort" : "batch.orderProfit") }}</span><span v-if="compact" class="oui-sr">{{ t("batch.orderProfit") }}</span></th>
+            <th scope="col" class="oui-num">{{ t("compare.margin") }}</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="row in rows" :key="row.q" :class="{ cur: row.q === store.draft.quantity }" :data-q="row.q">
-            <td class="r num"><Button type="button" text size="small" class="qbtn num" @click="patchDraft({ quantity: row.q })">{{ row.q }}</Button><span v-if="row.q === store.draft.quantity" class="oui-sr">{{ ` ${t("batch.current")}` }}</span></td>
+            <td class="oui-num num"><Button type="button" text size="small" class="qbtn num" @click="patchDraft({ quantity: row.q })">{{ row.q }}</Button><span v-if="row.q === store.draft.quantity" class="oui-sr">{{ ` ${t("batch.current")}` }}</span></td>
             <template v-if="row.ch && row.ch.ok">
-              <td class="r num disc" data-cell="discount">
+              <td class="oui-num num disc" data-cell="discount">
                 <span class="eff">{{ row.ch.effectiveDiscountBp > 0 ? pct(row.ch.effectiveDiscountBp) : "—" }}</span>
                 <span v-if="tierDiffers(row.ch)" class="sm oui-muted nominal">{{ t("batch.nominal", { pct: pct(row.ch.discountBp) }) }}</span>
               </td>
-              <td v-if="!compact" class="r num">{{ m(row.cost) }}</td>
-              <td class="r num" :title="compact ? `${t('common.labelValue', { label: t('batch.unitCost'), value: m(row.cost) })} · ${t('common.labelValue', { label: t('batch.orderTotal'), value: m(row.ch.grandTotal) })}` : undefined">{{ m(row.ch.price) }}</td>
-              <td v-if="!compact" class="r num">{{ m(row.ch.grandTotal) }}</td>
-              <td class="r num" :class="{ bad: loss(row.ch) }" data-cell="orderProfit">{{ signed(row.ch.orderProfit) }}<span v-if="loss(row.ch)" class="oui-sr">{{ ` ${t("batch.loss")}` }}</span></td>
-              <td class="r num" :class="{ bad: loss(row.ch) }" data-cell="margin">
+              <td v-if="!compact" class="oui-num num">{{ m(row.cost) }}</td>
+              <td class="oui-num num" :title="compact ? `${t('common.labelValue', { label: t('batch.unitCost'), value: m(row.cost) })} · ${t('common.labelValue', { label: t('batch.orderTotal'), value: m(row.ch.grandTotal) })}` : undefined">{{ m(row.ch.price) }}</td>
+              <td v-if="!compact" class="oui-num num">{{ m(row.ch.grandTotal) }}</td>
+              <td class="oui-num num" :class="{ bad: loss(row.ch) }" data-cell="orderProfit">{{ signed(row.ch.orderProfit) }}<span v-if="loss(row.ch)" class="oui-sr">{{ ` ${t("batch.loss")}` }}</span></td>
+              <td class="oui-num num" :class="{ bad: loss(row.ch) }" data-cell="margin">
                 <span v-if="underTarget(row.ch)" class="tgt" :title="belowTargetText(row.ch, derived.quoteInput, pct)" data-icon="belowTarget"><OuiIcon :icon="I.info" /></span>{{ pct(row.ch.marginBp) }}<span v-if="loss(row.ch)" class="oui-sr">{{ ` ${t("batch.loss")}` }}</span>
               </td>
             </template>

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import Button from "primevue/button";
-// Selectable text plus a Copy button. URLs never render as links (docs/ux.md §7.10).
+// An address as selectable text plus a "Copy link" button. URLs never render as links (docs/ux.md §7.10).
 import { onBeforeUnmount, ref } from "vue";
 import { copyText } from "../../clipboard";
 import { t } from "../../i18n";
 import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
 import * as I from "@orca-plugins/ui-foundation/src/icons";
 
-const props = defineProps<{ value: string; label: string }>();
+const props = defineProps<{ value: string }>();
 const copied = ref(false); // a copy was attempted
 const ok = ref(false);
 let timer: ReturnType<typeof setTimeout> | undefined;
@@ -24,7 +24,7 @@ async function copy(): Promise<void> {
 <template>
   <div class="cv row">
     <span class="cv-text num sm">{{ value }}</span>
-    <Button text severity="secondary" type="button" class="icon-btn" :aria-label="t('common.copyLabel', { label })" :title="t('common.copy')" @click="copy">
+    <Button text severity="secondary" type="button" class="icon-btn" :aria-label="t('common.copyLink')" :title="t('common.copyLink')" @click="copy">
       <OuiIcon :icon="copied && ok ? I.check : I.copy" />
     </Button>
     <span class="sm oui-muted" role="status">{{ copied ? t(ok ? "common.copied" : "common.copyFailed") : "" }}</span>

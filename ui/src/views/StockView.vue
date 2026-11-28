@@ -54,19 +54,19 @@ const off = computed(() => lead(t("stock.offline", { url: store.settings.spoolma
             <template #actions><Button severity="secondary" size="small" type="button" @click="gotoSettings('settings-spoolman')">{{ t("stock.connect") }}</Button></template>
           </OuiEmpty>
           <OuiEmpty v-else-if="!filaments.length" compact :icon="I.spool" tone="magenta" :title="t('stock.noFilaments')" />
-          <div v-else class="opc-table-wrap list">
-            <table class="opc-table" aria-labelledby="stock-filament-h" data-testid="filament-table">
+          <div v-else class="oui-table-wrap list">
+            <table class="oui-table" aria-labelledby="stock-filament-h" data-testid="filament-table">
               <thead>
                 <tr>
                   <th scope="col">{{ t("stock.col.name") }}</th><th scope="col">{{ t("stock.col.type") }}</th>
-                  <th scope="col" class="r">{{ t("stock.col.spools") }}</th><th scope="col" class="r">{{ t("stock.col.remaining") }}</th>
+                  <th scope="col" class="oui-num">{{ t("stock.col.spools") }}</th><th scope="col" class="oui-num">{{ t("stock.col.remaining") }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="f in filaments" :key="f.id">
                   <td><span class="fil"><OuiSpool :color="f.color" :fraction="f.fill" :size="28" /><span class="oui-strong">{{ f.name }}</span></span></td>
                   <td><span class="fil"><span v-if="f.material" class="oui-chip" :data-tone="materialTone(f.material)">{{ f.material }}</span><span class="oui-muted">{{ f.vendor }}</span></span></td>
-                  <td class="num r">{{ f.spools }}</td><td class="num r oui-strong">{{ f.remaining }}</td>
+                  <td class="num oui-num">{{ f.spools }}</td><td class="num oui-num oui-strong">{{ f.remaining }}</td>
                 </tr>
               </tbody>
             </table>

@@ -122,7 +122,7 @@ describe("filament stock: what the quote prints against what Spoolman says is le
     // spool 11 holds 50.5 g and its slot prints 80 g; the other 30 g of filament 1 count against all of its spools (150.5 g)
     expect(filamentShortages(input, pinned, data)).toEqual([{ filamentId: 1, name: "Galaxy PLA", needG: 80, haveG: 50.5, spoolId: 11 }]);
     const f = buildFlags({ selected: null, notCounted: [], skippedChannels: [], slotMatches: {}, fieldErrors: {}, quoteInput: { plates: [] } } as unknown as Derived,
-      { m: String, pct: String }, { stale: false, short: filamentShortages(input, pinned, data) });
+      { m: String, pct: String }, { short: filamentShortages(input, pinned, data) });
     expect(f).toEqual([{ id: "spoolShort-11", tone: "info", text: "Spoolman shows 51 g of Galaxy PLA, spool #11 left; this quote prints 80 g." }]);
   });
   test("a pinned spool's grams are not counted again for the filament's other slots", () => {
@@ -134,7 +134,7 @@ describe("filament stock: what the quote prints against what Spoolman says is le
   test("the preset-price flag offers Pick spool only while Spoolman is connected", () => {
     const d = { selected: null, notCounted: [], skippedChannels: [], fieldErrors: {}, quoteInput: { plates: [{ index: 0, include: true }] },
       slotMatches: { 0: [{ plateIndex: 0, slot: { n: 2 }, priceSource: "preset", pricePerKg: 20 }] } } as unknown as Derived;
-    const flag = (spoolman: boolean) => buildFlags(d, { m: String, pct: String }, { stale: false, spoolman }).find((f) => f.id === "presetPrices");
+    const flag = (spoolman: boolean) => buildFlags(d, { m: String, pct: String }, { spoolman }).find((f) => f.id === "presetPrices");
     expect(flag(true)?.action).toMatchObject({ kind: "spool", plate: 0, slot: 2 });
     expect(flag(false)?.action).toBeUndefined();
   });
@@ -144,11 +144,11 @@ describe("filament stock: what the quote prints against what Spoolman says is le
   });
   test("the price panel names the filament, the weight needed and the weight left", () => {
     const f = buildFlags({ selected: null, notCounted: [], skippedChannels: [], slotMatches: {}, fieldErrors: {}, quoteInput: { plates: [] } } as unknown as Derived,
-      { m: String, pct: String }, { stale: false, short: [{ filamentId: 1, name: "Galaxy PLA", needG: 210, haveG: 150.5 }] });
+      { m: String, pct: String }, { short: [{ filamentId: 1, name: "Galaxy PLA", needG: 210, haveG: 150.5 }] });
     expect(f).toEqual([{ id: "filamentShort-1", tone: "info", text: "Spoolman shows 151 g of Galaxy PLA left; this quote prints 210 g." }]);
     setLocale("pt-BR");
     expect(buildFlags({ selected: null, notCounted: [], skippedChannels: [], slotMatches: {}, fieldErrors: {}, quoteInput: { plates: [] } } as unknown as Derived,
-      { m: String, pct: String }, { stale: false, short: [{ filamentId: 1, name: "Galaxy PLA", needG: 1210, haveG: 150.5 }] })[0]!.text)
+      { m: String, pct: String }, { short: [{ filamentId: 1, name: "Galaxy PLA", needG: 1210, haveG: 150.5 }] })[0]!.text)
       .toBe("O Spoolman mostra 151 g de Galaxy PLA; este orçamento imprime 1,21 kg.");
   });
   test("live: a quote that prints more than the spools hold gets the note, a smaller one does not", async () => {

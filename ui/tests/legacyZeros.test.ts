@@ -143,9 +143,10 @@ describe("GapList", () => {
     expect(qa.root.querySelector<HTMLButtonElement>("[data-testid=csv]")!.disabled).toBe(true); // no export while blocked
     const m = mount(GapList); mounted.push(m); await flush();
     expect(txt(m.root)).toContain("Not ready to send: 1 thing to fix.");
-    expect(txt(m.root)).toContain("Plate 1, slot 1: weight was saved as 0 g");
+    expect(txt(m.root)).toContain("Plate 1, filament 1: weight was saved as 0 g");
     const btn = m.root.querySelector<HTMLButtonElement>("[data-gap-confirm]")!;
-    expect(btn.getAttribute("aria-label")).toBe("Confirm 0 g for slot 1 on plate 1");
+    expect(btn.getAttribute("aria-label")).toBe("Confirm 0 g for filament 1 on plate 1");
+    expect(btn.textContent).toBe("Confirm 0 g"); // the button says what it confirms
     expect(txt(m.root)).toContain("Use current slice");
     document.body.focus();
     btn.click(); await flush();

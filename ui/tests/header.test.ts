@@ -78,6 +78,8 @@ describe("SpoolmanStatus", () => {
     call.mockResolvedValue({ currency: "BRL", filaments: [], spools: [] });
     const ok = mount(SpoolmanStatus, { state: "ok", spools: 3 });
     await click(ok.querySelector("button"));
+    expect(document.querySelector("[role=dialog]")).not.toBeNull(); // green opens the popover; Refresh is in it
+    await click([...document.querySelectorAll("[role=dialog] button")].find((b) => b.textContent === t("plates.refresh"))!);
     await vi.advanceTimersByTimeAsync(10);
     expect(call).toHaveBeenCalledWith("spoolman_fetch", expect.anything());
     const off = mount(SpoolmanStatus, { state: "offline", error: "unreachable" });

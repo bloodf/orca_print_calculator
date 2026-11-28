@@ -87,7 +87,7 @@ describe.each(LANGS)("the page in %s", (lang) => {
     expect(document.body.textContent).toContain(d["breakdown.title"]);
     expect(document.body.textContent).toContain(d["quote.save"]);
     expect(leftovers(lang)).toEqual([]);
-    for (const [name, mark] of [["nav.quotes", "quotes.search"], ["nav.stock", "stock.col.spools"], ["nav.settings", "settings.group.language"]] as const) {
+    for (const [name, mark] of [["nav.quotes", "quotes.search"], ["nav.stock", "stock.col.spools"], ["nav.settings", "settings.group.general"]] as const) {
       tab(d[name]).click();
       await tick(50);
       expect(shownText(), name).toContain(d[mark]);
@@ -176,7 +176,7 @@ describe("sentences built from parts", () => {
   });
   test("a banner takes its title from the first sentence, also with a Chinese full stop", () => {
     setLocale("zh-CN");
-    expect(lead(t("plates.staleAlert"))).toEqual(["盘的数据可能已过期。", "上次切片后 OrcaSlicer 中有改动，但它没有说明是哪个盘。请重新切片以刷新。"]);
+    expect(lead(t("plates.staleAlert"))).toEqual(["盘的数据可能已过期。", "请在 OrcaSlicer 中重新切片以刷新。"]);
     expect(lead(t("plates.newSlice"))).toEqual(["OrcaSlicer 有新的切片。", ""]);
     expect(lead(t("spoolman.offlineAlert", { url: "http://spool.example:7912" }))[0]).toBe("Spoolman 在 http://spool.example:7912 无响应。");
     setLocale("de");

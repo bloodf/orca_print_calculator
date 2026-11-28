@@ -20,7 +20,8 @@ const label = computed(() => t("a11y.chip", { preset: chipLabel(props.match), gr
     <OuiSwatch :color="swatch" />
     <span class="name oui-strong oui-truncate" aria-hidden="true">{{ chipLabel(match) }}</span>
     <span class="num" :class="g ? 'oui-muted' : 'gap'" aria-hidden="true">{{ g ?? t("a11y.unknown") }}</span>
-    <span v-if="sourceTone(match) !== 'neutral'" class="oui-chip src" :data-tone="sourceTone(match) === 'bad' ? 'danger' : 'warn'" aria-hidden="true">{{ sourceText(match) }}</span>
+    <span v-if="match.source === 'preset' && sourceTone(match) === 'neutral'" class="oui-muted src" data-source="preset" aria-hidden="true">· {{ sourceText(match) }}</span>
+    <span v-else-if="sourceTone(match) !== 'neutral'" class="oui-chip src" :data-tone="sourceTone(match) === 'bad' ? 'danger' : 'warn'" aria-hidden="true">{{ sourceText(match) }}</span>
   </Button>
 </template>
 

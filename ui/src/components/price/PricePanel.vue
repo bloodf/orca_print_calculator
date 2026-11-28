@@ -4,7 +4,7 @@
 // The price itself is announced by the shared live region in App.vue (debounced), so the visible number is not live.
 import Button from "primevue/button";
 import { computed } from "vue";
-import { OuiIcon, OuiPanel, OuiReadout, OuiStatus } from "@orca-plugins/ui-foundation/src/components";
+import { OuiIcon, OuiPanel, OuiReadout } from "@orca-plugins/ui-foundation/src/components";
 import * as I from "@orca-plugins/ui-foundation/src/icons";
 import { computeQuote } from "../../engine/quote";
 import { t } from "../../i18n";
@@ -30,6 +30,9 @@ const sentence = computed(() => (hero.value.kind === "sentence" ? hero.value : n
 const q = computed(() => store.draft.quantity);
 const source = computed(() => t(currencySource.value === "spoolman" ? "header.currencyFromSpoolman" : "header.currencyFromSettings"));
 const gapBlock = computed(() => { const b = exportBlock(); return b === "quote.blockedUnknown" || b === "quote.blockedIncomplete"; });
+// The list of what is missing, right under the hero. While it shows, the amber hero and the list say "incomplete" between them:
+// the one-line note that points at the list is only for a partial price with no such list (an unset rate, say).
+const gapList = computed(() => hasPlates() && gapBlock.value);
 // The price before rounding, from the same engine with rounding off (the engine does not report it).
 const exactPrice = computed<number | null>(() => {
   const input = derived.value.quoteInput;
@@ -60,9 +63,8 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
 <template>
   <OuiPanel class="panel" :icon="I.tag" tone="lime" data-price-panel>
     <template #title><span id="price-title">{{ t("price.title") }}</span></template>
-    <template v-if="sel && incomplete" #meta><OuiStatus state="warn">{{ t("price.incompleteStatus") }}</OuiStatus></template>
     <template #actions>
-      <Button severity="secondary" text size="small" type="button" class="cur num" :title="source" :aria-label="t('a11y.currency', { currency, source })" @click="gotoSettings('settings-language')">{{ currency }}</Button>
+      <Button severity="secondary" text size="small" type="button" class="cur num" :title="source" :aria-label="t('a11y.currency', { currency, source })" @click="gotoSettings('settings-general')">{{ currency }}</Button>
     </template>
 
     <div class="summary">
@@ -92,7 +94,7 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
         </div>
       </div>
       <!-- a hero holds no buttons: what it offers sits under it -->
-      <p v-if="sel && incomplete" class="inc-line" data-testid="incomplete-line">
+      <p v-if="sel && incomplete && !gapList" class="inc-line" data-testid="incomplete-line">
         <OuiIcon :icon="I.warning" :size="14" tone="warn" /><span class="inc-tx">{{ t("price.incomplete", { n: missingCount }) }}</span>
         <Button text severity="secondary" size="small" type="button" class="inc-act" data-testid="see-missing" @click="focusMissing">{{ t("price.seeMissing") }}</Button>
       </p>
@@ -102,16 +104,18 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
       </div>
       <div v-else-if="sentence?.fees" class="oui-row acts" data-testid="hero-actions"><Button severity="secondary" size="small" type="button" @click="editChannelFees()">{{ t("field.editChannelFees") }}</Button></div>
 
-      <GapList v-if="hasPlates() && gapBlock" />
+      <GapList v-if="gapList" />
       <PriceFlags class="flags" />
-      <OrderControls />
-      <QuoteFields v-if="hasPlates()" />
+      <!-- nothing to price yet: no channel, pieces or markup to set either -->
+      <OrderControls v-if="hasPlates()" />
     </div>
     <div v-if="hasDetails" class="details">
       <template v-if="hero.kind === 'price'"><BreakdownBars /></template>
       <ChannelComparison />
       <template v-if="hero.kind === 'price'"><BatchTable /></template>
     </div>
+    <!-- what names the quote sits last, next to Save: when the panel is taller than the window, the price and what it depends on stay in view -->
+    <QuoteFields v-if="hasPlates()" class="naming" />
     <template v-if="hasPlates()" #footer><QuoteActions /></template>
   </OuiPanel>
 </template>
@@ -127,5 +131,6 @@ const hasDetails = computed(() => hero.value.kind === "price" || (result.value.o
 .inc-line { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 6px; font-weight: 600; color: var(--oui-warning); }
 .inc-act { margin-inline-start: auto; }
 .details { display: grid; margin-top: var(--oui-s4); min-width: 0; }
-.cur { font-weight: 650; }
+.naming { margin-top: var(--oui-s3); padding-top: var(--oui-s3); border-top: 1px solid var(--oui-border); }
+.cur { font-weight: 650; border: 1px solid var(--oui-border); }
 </style>

@@ -30,18 +30,18 @@ const select = (id: string): void => patchDraft({ channelId: id });
 
 <template>
   <Section v-if="show" id="compare" :title="t('compare.title')" variant="flush" :open="open" @update:open="(v) => (stored = v)">
-    <div class="opc-table-wrap">
-      <table class="opc-table dense cmp">
+    <div class="oui-table-wrap">
+      <table data-dense class="oui-table cmp">
         <caption class="oui-sr">{{ t("compare.caption") }}</caption>
         <thead>
           <tr>
             <th scope="col">{{ t("compare.channel") }}</th>
-            <th scope="col" class="r">{{ t("compare.price") }}</th>
-            <th v-if="!compact" scope="col" class="r">{{ t("compare.fees") }}</th>
-            <th v-if="!compact" scope="col" class="r">{{ t("compare.net") }}</th>
-            <th scope="col" class="r">{{ t("compare.profit") }}</th>
-            <th scope="col" class="r">{{ t("compare.margin") }}</th>
-            <th v-if="!compact" scope="col" class="r">{{ t("compare.breakEven") }}</th>
+            <th scope="col" class="oui-num">{{ t("compare.price") }}</th>
+            <th v-if="!compact" scope="col" class="oui-num">{{ t("compare.fees") }}</th>
+            <th v-if="!compact" scope="col" class="oui-num">{{ t("compare.net") }}</th>
+            <th scope="col" class="oui-num">{{ t("compare.profit") }}</th>
+            <th scope="col" class="oui-num">{{ t("compare.margin") }}</th>
+            <th v-if="!compact" scope="col" class="oui-num">{{ t("compare.breakEven") }}</th>
           </tr>
         </thead>
         <tbody>
@@ -52,12 +52,12 @@ const select = (id: string): void => patchDraft({ channelId: id });
               <span v-if="c.ok && c.deadZones.length" class="zone" :title="stepText(c)"><OuiIcon :icon="I.info" /><span class="oui-sr">{{ stepText(c) }}</span></span>
             </td>
             <template v-if="c.ok">
-              <td class="r num px">{{ m(c.price) }}</td>
-              <td v-if="!compact" class="r num">{{ m(c.fees) }}</td>
-              <td v-if="!compact" class="r num">{{ m(c.net) }}</td>
-              <td class="r num" :class="{ bad: c.profit < 0 }">{{ signed(c.profit) }}</td>
-              <td class="r num" :class="{ bad: c.marginBp < 0 }">{{ pct(c.marginBp) }}</td>
-              <td v-if="!compact" class="r num">{{ m(c.breakEven) }}</td>
+              <td class="oui-num num px">{{ m(c.price) }}</td>
+              <td v-if="!compact" class="oui-num num">{{ m(c.fees) }}</td>
+              <td v-if="!compact" class="oui-num num">{{ m(c.net) }}</td>
+              <td class="oui-num num" :class="{ bad: c.profit < 0 }">{{ signed(c.profit) }}</td>
+              <td class="oui-num num" :class="{ bad: c.marginBp < 0 }">{{ pct(c.marginBp) }}</td>
+              <td v-if="!compact" class="oui-num num">{{ m(c.breakEven) }}</td>
             </template>
             <td v-else :colspan="compact ? 3 : 6" class="oui-muted sm prob">{{ channelProblemSentence(c) }}</td>
           </tr>

@@ -53,16 +53,18 @@ const canReload = computed(() => ready.value && props.view === "calc" && !store.
 </template>
 
 <style>
-/* Layout of this bar's own parts; the band, the tabs and the buttons on it come from the shared app bar. */
+/* Layout of this bar's own parts; the band, the tabs and the buttons on it come from the shared app bar, which also moves the
+   tabs to a line of their own when the bar cannot hold them beside the rest (a tab name is never cut). */
 .app-header .proj { flex: 0 2 auto; min-width: 4em; font-weight: 650; }
 .app-header .oui-appbar-status > :not(.proj) { min-width: 0; }
-/* the tabs are never cut while they share the bar's line with the rest: the project and the printer give way instead */
-@container oui-appbar (min-width: 1100px) { .app-header .oui-appbar-tabs { flex-shrink: 0; } }
 .app-header .ah-act { gap: 6px; }
-/* what gives way as the bar narrows: the Spoolman text, then the action labels (their names stay as title and accessible name) */
-@container oui-appbar (max-width: 1499px) { .app-header .sm-text { display: none; } .app-header .sp-chip .oui-status { gap: 0; padding-inline: 7px; } }
-@container oui-appbar (max-width: 1099px) { .app-header .ah-label { display: none; } .app-header .ah-act { padding-inline: 8px; } }
-/* German, Spanish and Polish tab names are longer: their action labels give way sooner, so the project and printer keep their room */
+/* What gives way as the bar narrows, each step at a narrower width than the one before, so the bar never asks for more room as
+   it shrinks: the Spoolman count shortens to the one word "Spoolman", then to its dot; then the action labels (their names stay
+   as title and accessible name). German, Spanish and Polish tab names are longer: their action labels give way sooner. */
+.app-header .sm-short { display: none; }
+@container oui-appbar (max-width: 1499px) { .app-header .sm-text { display: none; } .app-header .sm-short { display: inline; } }
+@container oui-appbar (max-width: 1439px) { .app-header .sm-short { display: none; } .app-header .sp-chip .oui-status { gap: 0; padding-inline: 7px; } }
 @container oui-appbar (max-width: 1379px) { :lang(de) .app-header .ah-label, :lang(es) .app-header .ah-label, :lang(pl) .app-header .ah-label { display: none; } :lang(de) .app-header .ah-act, :lang(es) .app-header .ah-act, :lang(pl) .app-header .ah-act { padding-inline: 8px; } }
+@container oui-appbar (max-width: 759px) { .app-header .ah-label { display: none; } .app-header .ah-act { padding-inline: 8px; } }
 @container oui-appbar (max-width: 520px) { .app-header .oui-appbar-status { order: 4; flex: 1 0 100%; min-height: 28px; padding-bottom: 4px; } }
 </style>

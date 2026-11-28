@@ -3,6 +3,29 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- **Costs** now adds up. The total was filament plus machine plus labor, but filament had no row and the sales fee was a row the total left out. Filament is the first row now (press it to go to the plates) and the rows add up to "Cost per piece" to the cent. Channel fees and tax moved under the total, in a block named **Selling**: they come out of the price and are not a cost of the piece. No price changes.
+- With more than one piece, each cost line is its exact share of the cost per piece. Each line used to be rounded on its own, so the breakdown, the Costs panel and the CSV could be a cent or two off the total.
+- Between about 760 and 1100 px wide the tabs at the top were cut: at 900 px **Settings** was not visible at all. The tabs now take a line of their own when they do not fit, and a tab name is never cut.
+- On a saved quote with a missing weight the **Confirm 0** button was squeezed and its label cut. It keeps its size and says **Confirm 0 g**.
+- The banner over an open quote that is no longer in the list was titled "Title".
+
+### Changed
+- Smaller, second pass: the green **Spoolman** chip opens the same small popover as the red one (state, **Refresh**, **Settings**) instead of refreshing silently; each plate's cost says "Cost" under the figure; **Round to 3 significant digits** replaces "Round (3 digits)".
+- The interface moved to the shared UI kit 5.14.0: the Settings list, the Connections list with its single **Check again**, the data tables and the back arrow come from the kit; the tab-wrapping rules of this plugin are gone (the kit's bar already keeps a tab name whole from 560 to 1500 px, in every language).
+- **Settings › Requirements** is gone. Spoolman and Spooler head **Settings › Connections** (it was "Spoolman"), with one **Check again** for both. Without Spooler the page no longer prints internal file names and a folder path, and the links are named for where they lead (pressing one copies the address). Both are optional: one that is absent reads "Not connected" in grey, not as an amber warning.
+- **Settings** has seven pages, not nine: **Language and currency** and **About** are now **General**.
+- **Settings › Connections**: the address is not repeated under its field, the permission note shows only while you change the address, and the refresh interval is explained in one line.
+- **Settings › Sales channels**: column headings (**Compare**, **Default**, **Channel**) replace the sentence that explained the checkbox and the round button.
+- "Incomplete" is said once: the amber price block and the list of what is missing under it. The header chip, the extra line and (beside the plates) the page banner are gone.
+- "Preset price" is quiet text, not an amber warning, when you work without Spoolman. It stays amber when Spoolman is set up and not answering.
+- "Plates may be out of date" is one sentence with a **Refresh** button; the fine print moved to the guide.
+- The price panel puts title, customer and note last, next to **Save quote**, and fades its last lines when there is more to scroll.
+- Wording: **Printer and energy** (was "Machine and energy"); "filament 1" where the list of what is missing said "slot 1".
+- Smaller: **Import sliced file** and **Refresh** look alike, the Spoolman dot keeps the word "Spoolman" on a wide window, the stock column is "Material and vendor", a quote also opens from its title, and an empty project no longer offers a channel and markup with nothing to price.
+
 ## [0.10.4] - 2026-11-28
 
 ### Changed

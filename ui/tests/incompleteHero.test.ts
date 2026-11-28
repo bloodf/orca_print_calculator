@@ -8,6 +8,7 @@ import PricePanel from "../src/components/price/PricePanel.vue";
 import OrderControls from "../src/components/price/OrderControls.vue";
 import { setLocale } from "../src/i18n";
 import { derived, patchDraft, store } from "../src/state/store";
+import type { Settings } from "../src/state/types";
 import { clearToasts } from "@orca-plugins/ui-foundation/src/components/toast";
 import { load, mount, txt } from "./priceKit";
 
@@ -20,17 +21,29 @@ beforeEach(() => { setLocale("en"); clearToasts(); });
 afterEach(() => { app?.unmount(); root?.remove(); app = null; root = null; });
 
 describe("incomplete price (C03, B-26)", () => {
-  test("a partial price is neutral, says how many items are missing, and marks profit and margin as partial", async () => {
-    load("unknown");
+  const noRates = (st: Settings): Settings => ({ ...st, defaults: { ...st.defaults, energyPerKwh: null, laborPerHourMinor: null } });
+  test("a partial price is tinted as a warning and marks profit and margin as partial; with no list of gaps, one line says how many items are missing", async () => {
+    load("ok", { settings: noRates });
     const el = await show(PricePanel);
     const price = el.querySelector("[data-testid=hero-price]")!;
     expect(price.classList.contains("partial")).toBe(true);
     const line = txt(el.querySelector("[data-testid=incomplete-line]"));
-    expect(line).toMatch(/^Incomplete: \d+ items? missing/);
+    expect(line).toMatch(/^Incomplete: 2 items missing/);
     expect(txt(el.querySelector(".tiles"))).toMatch(/Profit per piece.* · partial.*Margin.* · partial/);
     // the line sits right under the price block, before the order controls and before the actions
     expect(el.querySelector("[data-price-hero]")!.nextElementSibling?.getAttribute("data-testid")).toBe("incomplete-line");
     expect(el.querySelector(".hero-box")!.getAttribute("data-tone")).toBe("warn"); // the block is tinted as a warning, not as done
+  });
+  test("\"incomplete\" is said once: the amber hero with its label, and the list of what is missing right under it (no header chip, no line pointing at the list)", async () => {
+    load("unknown");
+    const el = await show(PricePanel);
+    expect(el.querySelector(".hero-box")!.getAttribute("data-tone")).toBe("warn");
+    expect(txt(el.querySelector(".hero-box"))).toContain("Suggested price (incomplete)");
+    expect(el.querySelector("[data-price-hero]")!.nextElementSibling?.hasAttribute("data-gaps")).toBe(true);
+    expect(el.querySelector("[data-testid=incomplete-line]")).toBeNull();
+    expect(el.querySelector("[data-testid=see-missing]")).toBeNull();
+    expect(el.querySelector(".oui-panel-head .oui-status")).toBeNull();
+    expect(txt(el).match(/incomplete/gi)).toHaveLength(1);
   });
   test("a complete price sits in the neutral hero (no accent fill) with no incomplete marks", async () => {
     load("ok");
@@ -46,30 +59,27 @@ describe("incomplete price (C03, B-26)", () => {
   });
   test("pt-BR says it in Portuguese with the plural right", async () => {
     setLocale("pt-BR");
-    load("unknown");
+    load("ok", { settings: noRates });
     const el = await show(PricePanel);
-    expect(txt(el.querySelector("[data-testid=incomplete-line]"))).toMatch(/^Incompleto: faltam \d+ itensVer o que falta$/);
+    expect(txt(el.querySelector("[data-testid=incomplete-line]"))).toMatch(/^Incompleto: faltam 2 itensVer o que falta$/);
     expect(txt(el.querySelector(".tiles"))).toContain("· parcial");
   });
-  test("See what's missing moves focus to the gap list (the unknown values stay listed, never a hidden 0)", async () => {
+  test("unknown time and weight stay listed under the price, never a hidden 0", async () => {
     load("unknown");
     const el = await show(PricePanel);
-    el.querySelector<HTMLButtonElement>("[data-testid=see-missing]")!.click();
-    await nextTick(); await nextTick();
     const gaps = el.querySelector<HTMLElement>("[data-gaps]")!;
     expect(gaps).not.toBeNull();
-    expect(document.activeElement).toBe(gaps);
     expect(txt(gaps)).toContain("print time is unknown");
+    expect(txt(gaps)).toContain("filament 2: weight is unknown");
   });
-  test("with only an unpriced filament, the same list names the slot and offers to pick a spool", async () => {
+  test("with only an unpriced filament, the same list names the filament and offers to pick a spool", async () => {
     load("unmatched");
     const el = await show(PricePanel);
-    el.querySelector<HTMLButtonElement>("[data-testid=see-missing]")!.click();
-    await nextTick(); await nextTick();
     const gaps = el.querySelector<HTMLElement>("[data-gaps]")!;
-    expect(document.activeElement).toBe(gaps);
+    expect(txt(gaps)).toMatch(/Plate \d+, filament \d+: no price per kg\./);
     expect(gaps.querySelector("[data-gap^=price]")).not.toBeNull();
     expect(gaps.querySelector("[data-gap-pick]")).not.toBeNull();
+    expect(el.querySelector("[data-testid=see-missing]")).toBeNull();
   });
   test("with only an unset energy price, focus goes to the not-counted note", async () => {
     load("ok", { settings: (s) => ({ ...s, defaults: { ...s.defaults, energyPerKwh: null } }) });

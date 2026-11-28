@@ -28,6 +28,7 @@ async function onShow(): Promise<void> {
         <div>
           <h3>{{ t(`help.${s}.title`) }}</h3>
           <p>{{ t(`help.${s}.body`) }}</p>
+          <p v-if="s === 'plates'" data-help-stale>{{ t("plates.staleBlind") }}</p>
         </div>
       </li>
     </ol>
@@ -43,4 +44,5 @@ async function onShow(): Promise<void> {
 .help .help-n { flex: none; width: 24px; color: var(--oui-primary-text); font-weight: 600; }
 .help .help-steps h3 { margin: 0 0 2px; font-size: inherit; font-weight: 600; }
 .help .help-steps p { margin: 0; color: var(--oui-muted); }
+.help .help-steps p + p { margin-top: 6px; }
 </style>

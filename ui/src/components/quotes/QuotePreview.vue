@@ -49,8 +49,8 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 <template>
   <main class="preview" :aria-label="t('quote.print')">
     <div class="toolbar app-chrome">
-      <Button :ref="(c) => (back = elOf(c))" text type="button" @click="close"><OuiIcon :icon="I.chevronRight" class="back-chev" /><span>{{ t("sheet.back") }}</span></Button>
-      <Segmented v-model="mode" :label="t('quote.print')" :options="[{ value: 'itemized', label: t('sheet.itemized') }, { value: 'summary', label: t('sheet.summary') }]" />
+      <Button :ref="(c) => (back = elOf(c))" text type="button" @click="close"><OuiIcon :icon="I.chevronLeft" /><span>{{ t("sheet.back") }}</span></Button>
+      <Segmented v-model="mode" small :label="t('quote.print')" :options="[{ value: 'itemized', label: t('sheet.itemized') }, { value: 'summary', label: t('sheet.summary') }]" />
       <span class="grow" />
       <span v-if="savedOf()?.sheet" class="sm oui-muted">{{ t("sheet.frozenHint") }}</span>
       <Button text type="button" @click="editDetails"><OuiIcon :icon="I.edit" /><span>{{ t("sheet.editDetails") }}</span></Button>
@@ -71,10 +71,6 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 .toolbar { display: flex; align-items: center; flex-wrap: wrap; min-height: 44px; padding: 6px 12px; background: var(--oui-surface); border-bottom: 1px solid var(--oui-border); margin-bottom: 16px; }
 .toolbar > * + * { margin-left: 8px; }
 .grow { flex: 1; }
-/* foundation-gap: the icon set has no chevronLeft/arrowLeft; 4.0.2 should add one. Until then the right chevron is mirrored, which
-   points back in left-to-right text; in a right-to-left page it is drawn as is, so it still points back. */
-.back-chev { transform: scaleX(-1); }
-:dir(rtl) .back-chev { transform: none; }
 .warn { width: 720px; max-width: calc(100% - 24px); margin: 0 auto 12px; }
 .none { text-align: center; padding: 24px; }
 .preview > .quote-sheet { margin-bottom: 0; }

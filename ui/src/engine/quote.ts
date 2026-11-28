@@ -6,6 +6,7 @@
 // are leftovers whose cost the order carries:
 //   orderCost          = production cost of `runs` runs + orderFixed
 //   unitCostAtQuantity = ceil(orderCost / quantity)   (rounded up: pricing at it never loses money)
+// Each line's perPiece is its share of unitCostAtQuantity (perPieceShares): the lines add up to it exactly.
 // Calc version 2 (EXACT_COST_CALC) rounds each cost line once, on the whole order (computeRunsCost). Quotes saved before
 // it carry no `calc` field and keep version 1, which multiplied a per-piece rounded cost: their numbers never move
 // unless the user reprices them on purpose.
@@ -195,7 +196,22 @@ function atQuantity(i: QuoteInput, { project: p, engine }: Built, q: number) {
   // v2: lines rounded once on the whole order, so they add up to the production cost in orderCost.
   const engineLines: QuoteLine[] = (exact ? exact.lines.map((l) => ({ ...l, perOrder: l.cents, perPiece: mulDivRound(l.cents, 1, q) })) : p.project.lines.map((l) => ({ ...l, perOrder: safe(l.cents * pieces), perPiece: mulDivRound(l.cents, pieces, q) })))
     .map(({ id, perPiece, perOrder, detail }) => ({ id, perPiece, perOrder, ...(detail ? { detail: detail.map((d) => ({ key: d.key, minor: d.cents })) } : {}) }));
-  return { lines: [...engineLines, ...order], orderFixed, orderCost, unitCostAtQuantity, channels: i.channels.map((c) => priceChannel(c, ctx)) };
+  return { lines: perPieceShares([...engineLines, ...order], q, unitCostAtQuantity), orderFixed, orderCost, unitCostAtQuantity, channels: i.channels.map((c) => priceChannel(c, ctx)) };
+}
+
+/**
+ * Each line's share of one piece, so the shares add up to `unitCost` to the minor unit. A line rounded on its own can
+ * leave the column a few minor units off its total (three lines of 100 over 3 pieces: 33 + 33 + 33 against a cost of 100).
+ * Largest remainder: every line gets floor(perOrder / q), and the minor units still owed go one each to the lines with the
+ * largest remainders (the earlier line on a tie). The lines' perOrder add up to the order cost and unitCost is its ceiling
+ * over q, so there are never more units owed than lines with a remainder.
+ */
+export function perPieceShares(lines: QuoteLine[], q: number, unitCost: number): QuoteLine[] {
+  const n = BigInt(q);
+  const parts = lines.map((l, k) => ({ k, floor: Number(BigInt(l.perOrder) / n), rest: Number(BigInt(l.perOrder) % n) }));
+  const owed = unitCost - parts.reduce((s, p) => s + p.floor, 0);
+  const up = new Set(parts.filter((p) => p.rest > 0).sort((a, b) => b.rest - a.rest || a.k - b.k).slice(0, Math.max(0, owed)).map((p) => p.k));
+  return lines.map((l, k) => ({ ...l, perPiece: parts[k]!.floor + (up.has(k) ? 1 : 0) }));
 }
 
 export function computeQuote(i: QuoteInput): QuoteResult {

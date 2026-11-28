@@ -74,13 +74,13 @@ async function toggle(slotN: number): Promise<void> {
       <FilamentChip v-for="m in matches" :key="m.slot.n" :slot="m.slot" :match="m" :aria-expanded="open ? 'true' : 'false'" :aria-controls="open ? id : undefined" @toggle="toggle(m.slot.n)" />
     </div>
     <div class="copies">
-      <span class="oui-meta cp-lbl" aria-hidden="true">{{ t("plate.copiesLabel") }}</span><span class="oui-meta cp-x" aria-hidden="true" :title="t('plate.copiesLabel')">×</span>
+      <span class="oui-meta cp-lbl" aria-hidden="true">{{ t("plate.copiesLabel") }}</span><span class="oui-meta cp-x" aria-hidden="true" :title="t('plate.copiesLabel')">{{ t("plate.copiesShort") }}</span>
       <Stepper :model-value="copies" :min="1" :max="999" :label="t('plate.copies', { n })" @update:model-value="(v) => emit('update:copies', v)" />
     </div>
     <div class="side">
       <p class="cost num"><span v-if="unpriced" class="warn-icon"><OuiIcon :icon="I.error" :size="14" /><span class="oui-sr">{{ t("plate.missingPrice") }} </span></span>
         <span v-if="!include" class="oui-meta">{{ t("plate.excluded") }}</span>
-        <template v-else-if="row"><span class="oui-sr">{{ t("a11y.costPrefix") }} </span><strong>{{ money(row.totalMinor, currency, locale) }}</strong></template>
+        <template v-else-if="row"><span class="oui-meta cost-cap">{{ t("a11y.costPrefix") }}</span><strong>{{ money(row.totalMinor, currency, locale) }}</strong></template>
         <template v-else><span aria-hidden="true">{{ UNKNOWN }}</span><span class="oui-sr">{{ t("a11y.unknown") }}</span></template>
       </p>
       <span v-if="include && partial" class="oui-chip" data-tone="warn">{{ t("price.partial") }}</span>
@@ -117,9 +117,10 @@ async function toggle(slotN: number): Promise<void> {
 .meta { min-width: 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 0 var(--oui-s2); min-width: 0; }
 .copies { display: flex; align-items: center; gap: var(--oui-s1); }
-/* the words fit beside the stepper only on a wide Plates panel; narrower, a × stands in (the stepper's name keeps the words) */
+/* the full words fit beside the stepper only on a wide Plates panel; narrower, the one word "Copies" (the stepper's name keeps the full words) */
 .cp-x { display: none; }
 @container plates (max-width: 899px) { .cp-lbl { display: none; } .cp-x { display: inline; } }
+.cost-cap { display: block; font-size: var(--oui-text-xs); }
 .side { display: grid; justify-items: end; gap: 2px; text-align: end; }
 .warn-icon { display: inline-flex; vertical-align: -2px; margin-inline-end: 4px; color: var(--oui-danger); }
 .card.off .cost strong { font-weight: 400; }

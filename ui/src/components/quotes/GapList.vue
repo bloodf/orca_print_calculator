@@ -54,8 +54,10 @@ async function confirm(g: Gap): Promise<void> {
 <style scoped>
 .gaps { display: grid; gap: 6px; padding: var(--oui-s3); }
 ul { list-style: none; padding: 0; display: grid; gap: 2px; }
-li { display: flex; align-items: center; gap: var(--oui-s2); min-height: 26px; }
-li > :deep(.oui-icon) { flex: none; }
-.tx { flex: 1 1 auto; min-width: 0; }
+/* a sentence that runs to two lines keeps its button whole, on its first line: the text gives way, never the button */
+li { display: flex; align-items: flex-start; gap: var(--oui-s2); min-height: 26px; }
+li > :deep(.oui-icon) { flex: none; margin-top: 6px; }
+li > :deep(.p-button) { flex: none; white-space: nowrap; }
+.tx { flex: 1 1 auto; min-width: 0; padding-block: 3px; }
 .use { justify-self: start; }
 </style>

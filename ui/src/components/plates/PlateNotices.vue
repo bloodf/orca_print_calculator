@@ -11,6 +11,7 @@ import { exportBlock, savedOf } from "../../quoteFlow";
 import { closeQuote, useCurrentSlice } from "../../state/quotes";
 import { dismissSettingsReset, fetchSpoolman, liveCurrency, locale, plateOrigin, setView, spoolmanDown, store, useNewSlice } from "../../state/store";
 import { lead } from "../base/lead";
+import { refresh, refreshing } from "./refresh";
 import { hero, missingCount } from "../price/priceState";
 import { settingLabel } from "../settingLabels";
 
@@ -20,7 +21,7 @@ const fileName = computed(() => store.plates.find((p) => p.source === "file")?.f
 // A quote saved in another currency keeps showing in it; mixing it with today's settings could misread every amount, so it only closes.
 const otherCurrency = computed(() => (frozen.value && store.draft.currency && store.draft.currency !== liveCurrency.value ? store.draft.currency : null));
 const saved = computed(() => (frozen.value ? savedOf() : null));
-const open = computed(() => lead(saved.value ? t("quote.openBanner", { no: quoteNo(saved.value.no, intlLocale()), date: date(saved.value.updatedAt, locale.value) }) : t("quote.title")));
+const open = computed(() => lead(saved.value ? t("quote.openBanner", { no: quoteNo(saved.value.no, intlLocale()), date: date(saved.value.updatedAt, locale.value) }) : t("quote.openDraft")));
 const reset = computed(() => lead(t("settings.reset", { names: store.settingsReset.map(settingLabel).join(", ") })));
 // Files not read only because OrcaSlicer had no storage folder yet get their own words: nothing is wrong with them.
 const notLoaded = computed(() => store.unreadable.filter((f) => store.unloaded.includes(f)));
@@ -30,7 +31,8 @@ const waiting = computed(() => lead(t("host.notLoaded", { files: filesText(notLo
 const off = computed(() => lead(t("spoolman.offlineAlert", { url: store.settings.spoolman.url })));
 const stale = computed(() => lead(t("plates.staleAlert")));
 const origin = computed(() => lead(store.pendingPlates ? t("plates.newSlice") : t("plates.fromFile", { file: fileName.value })));
-// A price on screen that leaves something out: say it once here; the price panel lists the items and the blocked actions point at this.
+// A price that leaves something out. In one column the price is below the fold, so the page says it here; beside the plates
+// the price panel says it itself and CalculatorView hides this banner.
 const incomplete = computed(() => hero.value.kind === "price" && missingCount.value > 0);
 const blocked = computed(() => !!exportBlock());
 // Each notice can be closed; its key names what it is about, so it comes back when that changes, not on every refresh.
@@ -67,7 +69,10 @@ const keys = computed(() => ({
       <Button text severity="secondary" size="small" type="button" @click="setView('settings')">{{ t("nav.settings") }}</Button>
     </template>
   </OuiBanner>
-  <OuiBanner :show="anyStale" tone="warn" :title="stale[0]" data-stale dismissible :dismiss-key="keys.stale" :close-label="close">{{ stale[1] }} {{ t("plates.staleBlind") }}</OuiBanner>
+  <OuiBanner :show="anyStale" tone="warn" :title="stale[0]" data-stale dismissible :dismiss-key="keys.stale" :close-label="close">
+    {{ stale[1] }}
+    <template #actions><Button severity="secondary" size="small" type="button" :aria-busy="refreshing ? 'true' : undefined" data-stale-refresh @click="refresh">{{ t("plates.refresh") }}</Button></template>
+  </OuiBanner>
   <OuiBanner :show="plateOrigin === 'import' && !frozen" tone="info" :title="origin[0]" data-origin dismissible :dismiss-key="keys.origin" :close-label="close">
     {{ origin[1] }}
     <template v-if="store.pendingPlates" #actions><Button severity="secondary" size="small" type="button" @click="useNewSlice">{{ t("plates.useNewSlice") }}</Button></template>

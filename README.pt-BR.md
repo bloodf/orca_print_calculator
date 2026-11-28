@@ -55,7 +55,7 @@ O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://clou
       Cada slot de filamento recebe o preço por kg do carretel do Spoolman correspondente. Sem correspondência, vale um preço digitado por você ou o custo do perfil, e a aba diz qual.
     </td>
     <td width="50%" valign="top">
-      <img src="assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png" alt="Inclua o trabalho de cada impressão: a seção Máquina e energia aberta, com potência média, preço da impressora, vida útil, preço do kWh e taxa de falha" width="100%"><br>
+      <img src="assets/orca-cloud/orca_print_calculator-feature-02-costs-pt-BR.png" alt="Inclua o trabalho de cada impressão: a seção Impressora e energia aberta, com potência média, preço da impressora, vida útil, preço do kWh e taxa de falha" width="100%"><br>
       <b>Máquina, energia e mão de obra</b><br>
       Potência da impressora, preço do kWh, desgaste da impressora, taxa de falha, mão de obra, extras e frete entram no custo de cada peça.
     </td>
@@ -81,15 +81,15 @@ O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://clou
 | | Aviso de desatualizado | Quando algo muda depois de um fatiamento, a aba marca o projeto como "pode estar desatualizado". |
 | | Importar arquivo fatiado | **Importar arquivo fatiado** lê as mesas de um `.gcode.3mf` exportado em Arquivo, Exportar, Exportar todos os arquivos fatiados (até 100 MB). As mesas importadas continuam na tela quando você fatia; um aviso de "Novo fatiamento" oferece "Usar". |
 | | Potência da impressora | Os watts médios são sugeridos pelo modelo da impressora, com o selo "Estimado". Modelos sem entrada recebem 120 W genéricos. O seu valor prevalece. |
-| | Seções de custo | **Máquina e energia** (potência, preço e vida útil da impressora, preço do kWh, manutenção, custo fixo por hora de impressão, taxa de falha), **Mão de obra**, **Extras e acessórios**, **Frete** e **Taxa de venda**. |
+| | Seções de custo | **Impressora e energia** (potência, preço e vida útil da impressora, preço do kWh, manutenção, custo fixo por hora de impressão, taxa de falha), **Mão de obra**, **Extras e acessórios**, **Frete** e **Taxas do canal e imposto**. |
 | | Extras e estoque | Um catálogo de extras com a quantidade em estoque opcional e um resumo somente leitura do filamento no Spoolman. A calculadora avisa quando um orçamento precisa de mais do que você tem. Nada é descontado. |
 | | Canais de venda | Os seus canais, cada um com taxa percentual, taxa fixa, imposto e faixas de preço opcionais. **Comparar canais** mostra todos lado a lado. |
-| | Arredondamento e mínimo | Pedido mínimo e quatro modos de arredondamento: Exato, Arredondar (3 dígitos), Termina em 9, Termina em 0 ou 5. O arredondamento sempre sobe. |
+| | Arredondamento e mínimo | Pedido mínimo e quatro modos de arredondamento: Exato, Arredondar para 3 dígitos significativos, Termina em 9, Termina em 0 ou 5. O arredondamento sempre sobe. |
 | | Preço por lote | Quantidade, faixas de desconto e uma tabela com custo unitário, preço unitário, total do pedido, lucro do pedido e margem por faixa. |
 | | Folha de orçamento | **Imprimir orçamento** abre a folha detalhada ou resumida e a janela de impressão, onde dá para salvar em PDF. A folha leva seu logo, dados da empresa, condições de pagamento e cor de destaque. |
 | | Exportação | Os arquivos CSV e HTML vão para a pasta de dados do plugin, e a aba mostra o caminho. **Exportar lista**, na aba Orçamentos, grava uma linha de CSV por orçamento listado. |
 | | Valores iniciais | Em BRL, USD e EUR todo custo começa com um valor típico (preço do kWh, mão de obra, preço e vida útil da impressora, 5% de falha, 100% de markup). Outras moedas começam vazias. |
-| | Ajustes | Uma página com todos os grupos (Spoolman, custos, preço, canais de venda, impressoras, folha de orçamento, idioma e moeda, sobre) e um índice que leva a cada um. As alterações são salvas sozinhas. |
+| | Ajustes | Uma página com todos os grupos (conexões, custos, preço, canais de venda, impressoras, folha de orçamento, geral) e um índice que leva a cada um. As alterações são salvas sozinhas. |
 | | Moeda e tema | Qualquer moeda, vinda do Spoolman ou definida nos Ajustes. A página foi feita para seguir os temas escuro e claro do OrcaSlicer, em lima com uma barra verde-escura; isso ainda não foi verificado dentro do OrcaSlicer. |
 
 <a id="-como-usar"></a>
@@ -97,10 +97,10 @@ O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://clou
 ## 🛠️ Como usar
 
 1. Abra a aba **Print Calculator**. No primeiro uso, **Configure uma vez** pede três coisas: o preço do filamento (conecte o Spoolman, ou pule e use o preço dos perfis), o preço da energia e o valor da sua hora. Se o Spooler estiver instalado, ele oferece o endereço do Spoolman que o Spooler já usa. **Ajustes › Requisitos** mostra se o Spooler foi encontrado e, se não, a pasta onde procurou (`spooler` dentro da pasta de dados do OrcaSlicer).
-2. Para conectar o Spoolman depois, abra **Ajustes**, digite o **Endereço do Spoolman** (por exemplo `http://localhost:7912`) e use **Testar conexão**. O OrcaSlicer pergunta uma vez se o plugin pode acessar esse endereço.
+2. Para conectar o Spoolman depois, abra **Ajustes › Conexões**, digite o **Endereço do Spoolman** (por exemplo `http://localhost:7912`) e use **Testar conexão**. O OrcaSlicer pergunta uma vez se o plugin pode acessar esse endereço.
 3. Fatie uma mesa, ou use "Fatiar tudo". Cada mesa aparece em **Placas**. Use **Atualizar** se faltar alguma, ou **Importar arquivo fatiado** para um `.gcode.3mf`.
 4. Clique nos filamentos de uma mesa para ver o preço por kg de cada slot e de onde ele veio. **Trocar** escolhe o carretel do Spoolman que está naquele slot (os mais parecidos primeiro), volta para **Automático** ou deixa você digitar um preço por kg.
-5. Abra as seções em **Custos** e preencha o que se aplica: **Máquina e energia**, **Mão de obra**, **Extras e acessórios**, **Frete**, **Taxa de venda**.
+5. Abra as seções em **Custos** e preencha o que se aplica: **Impressora e energia**, **Mão de obra**, **Extras e acessórios**, **Frete**, **Taxas do canal e imposto**.
 6. Em **Preço**, escolha o **Canal de venda**, as **Peças pedidas** e o **Markup**. **Para onde vai o preço** divide o preço por linha de custo, taxas, imposto e lucro.
 7. Use **Salvar orçamento**. Depois, **Imprimir orçamento** para uma folha ou um PDF, ou **CSV** para um arquivo. Os orçamentos salvos ficam na aba **Orçamentos**.
 

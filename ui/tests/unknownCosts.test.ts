@@ -67,7 +67,7 @@ describe("unknown cost lines", () => {
     const el = await show(MachineSection);
     const sum = txt(el.querySelector(".sec-sum"));
     expect(sum).toContain("Energy —");
-    expect(sum).toContain("Machine —");
+    expect(sum).toContain("Printer —");
     expect(sum).toContain("Failures");
   });
 });

@@ -57,24 +57,24 @@ const skipped = computed(() => lead(t("quotes.skipped", { n: store.skippedQuotes
         <template #actions><Button type="button" @click="goCalc"><OuiIcon :icon="I.calculator" :size="14" /><span>{{ t("empty.quote.action") }}</span></Button></template>
       </OuiEmpty>
       <div v-else-if="!shown.length" class="none" role="status"><OuiEmpty compact :icon="I.search" tone="neutral" :title="t('quotes.noMatch', { q: q.trim() })" /></div>
-      <div v-else class="opc-table-wrap list">
-        <table class="opc-table" aria-labelledby="quotes-title">
+      <div v-else class="oui-table-wrap list">
+        <table class="oui-table" aria-labelledby="quotes-title">
           <thead>
             <tr>
               <th scope="col">{{ t("quotes.col.no") }}</th><th scope="col">{{ t("quotes.col.title") }}</th>
-              <th scope="col" class="opt2">{{ t("quotes.col.date") }}</th><th scope="col" class="r opt2">{{ t("quotes.col.qty") }}</th><th scope="col" class="opt">{{ t("quotes.col.channel") }}</th>
-              <th scope="col" class="r">{{ t("quotes.col.total") }}</th><th scope="col" class="r opt">{{ t("quotes.col.margin") }}</th><th scope="col"><span class="oui-sr">{{ t("quotes.col.actions") }}</span></th>
+              <th scope="col" class="opt2">{{ t("quotes.col.date") }}</th><th scope="col" class="oui-num opt2">{{ t("quotes.col.qty") }}</th><th scope="col" class="opt">{{ t("quotes.col.channel") }}</th>
+              <th scope="col" class="oui-num">{{ t("quotes.col.total") }}</th><th scope="col" class="oui-num opt">{{ t("quotes.col.margin") }}</th><th scope="col"><span class="oui-sr">{{ t("quotes.col.actions") }}</span></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="x in shown" :key="x.id">
               <td class="num no">{{ quoteNo(x.no, loc) }}</td>
-              <td><div class="what"><span class="oui-strong oui-truncate title" :title="x.title">{{ x.title }}</span><span class="oui-meta oui-truncate cust">{{ x.customer || "—" }}</span></div></td>
+              <td><div class="what"><Button text severity="secondary" type="button" class="title" :title="x.title" data-quote-title @click="openQuote(x.id)"><span class="oui-strong oui-truncate">{{ x.title }}</span></Button><span class="oui-meta oui-truncate cust">{{ x.customer || "—" }}</span></div></td>
               <td class="num opt2">{{ date(x.updatedAt, loc) }}</td>
-              <td class="num r opt2">{{ count(x.summary.quantity, loc) }}</td>
+              <td class="num oui-num opt2">{{ count(x.summary.quantity, loc) }}</td>
               <td class="opt"><span class="oui-chip chan">{{ x.summary.channelName }}</span></td>
-              <td class="num r oui-strong">{{ money(x.summary.grandTotal, x.currency, loc) }}</td>
-              <td class="num r oui-muted opt">{{ percent(x.summary.marginBp, loc) }}</td>
+              <td class="num oui-num oui-strong">{{ money(x.summary.grandTotal, x.currency, loc) }}</td>
+              <td class="num oui-num oui-muted opt">{{ percent(x.summary.marginBp, loc) }}</td>
               <td class="acts">
                 <Button severity="secondary" size="small" type="button" @click="openQuote(x.id)">{{ t("quotes.open") }}</Button>
                 <Button text severity="secondary" type="button" class="icon-btn-sm" :aria-label="t('quotes.more', { no: quoteNo(x.no, loc) })" aria-haspopup="menu" @click="openMenu(x, $event)"><OuiIcon :icon="I.more" /></Button>
@@ -98,6 +98,10 @@ const skipped = computed(() => lead(t("quotes.skipped", { n: store.skippedQuotes
 .skipped { width: 100%; max-width: 1280px; margin-inline: auto; }
 .what { display: grid; gap: 1px; max-width: 340px; min-width: 0; }
 .what > * { display: block; }
+/* the title opens the quote too (the Open button stays for clarity): it reads as the title it is, underlined on hover */
+.what :deep(.title) { display: block; height: auto; min-height: 0; padding: 0; border: 0; max-width: 100%; color: inherit; font: inherit; line-height: inherit; text-align: start; }
+.what :deep(.title:hover) { background: none; text-decoration: underline; }
+.what :deep(.title > span) { display: block; }
 .acts { text-align: end; white-space: nowrap; }
 .acts > * + * { margin-inline-start: 4px; }
 .list tbody tr:hover { background: var(--oui-raised); }

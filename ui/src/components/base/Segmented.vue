@@ -6,7 +6,7 @@ import { ref } from "vue";
 import { OuiIcon, type OuiIconData } from "@orca-plugins/ui-foundation/src/components";
 
 export type SegOption<T extends string> = { value: T; label: string; icon?: OuiIconData };
-const props = defineProps<{ options: SegOption<V>[]; modelValue: V; label: string }>();
+const props = defineProps<{ options: SegOption<V>[]; modelValue: V; label: string; /** The compact size, for a toolbar; in a form it is the size of the fields around it. */ small?: boolean }>();
 const emit = defineEmits<{ "update:modelValue": [value: V] }>();
 const btns = ref<HTMLElement[]>([]);
 
@@ -31,7 +31,7 @@ const el = (c: unknown): HTMLElement | undefined => (c as { $el?: HTMLElement } 
 <template>
   <div class="seg" role="radiogroup" :aria-label="label">
     <Button
-      v-for="(o, i) in options" :key="o.value" :ref="(c) => { const n = el(c); if (n) btns[i] = n; }" type="button" role="radio" size="small"
+      v-for="(o, i) in options" :key="o.value" :ref="(c) => { const n = el(c); if (n) btns[i] = n; }" type="button" role="radio" :size="small ? 'small' : undefined"
       :severity="o.value === modelValue ? undefined : 'secondary'"
       class="seg-opt" :aria-checked="o.value === modelValue" :tabindex="o.value === modelValue ? 0 : -1" @click="emit('update:modelValue', o.value)" @keydown="onKey($event, i)"
     >

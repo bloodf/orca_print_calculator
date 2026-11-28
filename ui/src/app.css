@@ -49,14 +49,5 @@ img { max-width: 100%; }
 /* narrow layout: the sticky price bar owns the bottom edge, so the toast stack sits above it */
 @media (max-width: 899px) { :root { --oui-toast-bottom: 80px; } }
 
-/* ---- foundation-gap: no shared read-only table style (4.0.2 should add .oui-table); the foundation points at PrimeVue DataTable,
-   which adds about 240 kB here. Semantic data tables (batch, channel comparison, saved quotes, stock): read-only grids on the palette tokens. PrimeVue's
-   DataTable (sorting, paging, selection) is not needed here and would add about 240 kB of minified JS. ---- */
-.opc-table-wrap { position: relative; max-width: 100%; overflow-x: auto; } /* relative keeps absolutely-positioned .oui-sr cells inside the scroller */
-.opc-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.opc-table th { padding: 6px 12px; text-align: start; font-size: var(--oui-text-xs); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--oui-muted); white-space: nowrap; background: var(--oui-raised); border-bottom: 1px solid var(--oui-border); }
-.opc-table td { padding: 6px 12px; height: 40px; border-bottom: 1px solid var(--oui-border); }
-.opc-table tbody tr:last-child td { border-bottom: 0; }
-.opc-table th.r, .opc-table td.r { text-align: end; }
-.opc-table.dense { font-size: var(--oui-text-sm); }
-.opc-table.dense th, .opc-table.dense td { padding-block: 4px; height: 30px; }
+/* a popup menu marks the item the keys are on; a second ring around the whole list says nothing more */
+.p-menu.opc-menu .p-menu-list:focus-visible { outline: none; box-shadow: none; }

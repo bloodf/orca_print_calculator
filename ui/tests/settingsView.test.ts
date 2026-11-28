@@ -96,11 +96,20 @@ describe("section index", () => {
   const links = () => [...root!.querySelectorAll<HTMLButtonElement>("nav [role=tab]")];
   const groups = () => [...root!.querySelectorAll(".grp")].map((g) => g.id);
   test("one tab per group in reading order, the first selected and the only group shown", () => {
-    expect(groups().sort()).toEqual(["about", "channels", "costs", "language", "pricing", "printers", "requirements", "sheet", "spoolman"].map((id) => `settings-${id}`));
-    expect(links().map((l) => l.textContent?.trim())).toEqual(["Spoolman", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "Language and currency", "Requirements", "About"]);
+    expect(groups().sort()).toEqual(["channels", "costs", "general", "pricing", "printers", "sheet", "spoolman"].map((id) => `settings-${id}`));
+    expect(links().map((l) => l.textContent?.trim())).toEqual(["Connections", "Costs", "Pricing", "Sales channels", "Printers", "Quote sheet", "General"]);
     expect(links().filter((l) => l.getAttribute("aria-selected") === "true").map((l) => l.dataset.section)).toEqual(["settings-spoolman"]);
     expect([...root!.querySelectorAll<HTMLElement>(".grp")].filter((g) => !g.hidden).map((g) => g.id)).toEqual(["settings-spoolman"]);
     expect(root!.querySelector("#settings-extras")).toBeNull();
+  });
+  test("seven pages, none for one control: Connections holds Spoolman and Spooler, General holds language, currency and About", () => {
+    expect(links()).toHaveLength(7);
+    expect(root!.querySelector("#settings-spoolman [data-reqs]")).not.toBeNull();
+    expect(root!.querySelector("#settings-spoolman #settings-spoolman-url")).not.toBeNull();
+    const general = root!.querySelector("#settings-general")!;
+    expect(general.querySelector("[data-about]")?.getAttribute("aria-label")).toBe("About");
+    expect(general.textContent).toContain("Language");
+    expect(general.textContent).toContain("Reset all settings");
   });
   test("a click on a tab shows its group alone and selects it", async () => {
     links().find((l) => l.textContent?.trim() === "Printers")!.click();

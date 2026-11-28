@@ -29,7 +29,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
 
 <template>
   <span class="import">
-    <Button severity="secondary" :text="bar" :size="bar ? 'small' : undefined" type="button" class="ah-act" :aria-busy="busy() ? 'true' : undefined" :aria-disabled="busy() ? 'true' : undefined" :title="t('plates.import')" @click="!busy() && input?.click()">
+    <Button severity="secondary" :size="bar ? 'small' : undefined" type="button" class="ah-act" :aria-busy="busy() ? 'true' : undefined" :aria-disabled="busy() ? 'true' : undefined" :title="t('plates.import')" @click="!busy() && input?.click()">
       <OuiIcon :icon="I.upload" :size="14" />
       <span v-if="importState.phase === 'reading'">{{ t("plates.importing", { name: importState.name, size: bytes(importState.size, locale) }) }}</span>
       <span v-else-if="importState.phase === 'parsing'">{{ t("plates.importParsing", { name: importState.name }) }}</span>

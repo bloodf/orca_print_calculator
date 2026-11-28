@@ -89,6 +89,8 @@ onBeforeUnmount(() => {
   .calc-grid { grid-template-columns: minmax(0, 1fr) minmax(380px, 440px); }
   /* the price stays in view while the plates and costs scroll; when it is taller than the window its own body scrolls, so the
      hero and the actions are never cut off */
+  /* the price panel is beside the plates here and says itself what is missing: the page banner is for one column, where the price is below the fold */
+  .calc :deep([data-incomplete-banner]) { display: none; }
   .right { position: sticky; top: 64px; max-height: calc(100vh - var(--price-top, 64px) - 12px); display: flex; flex-direction: column; }
 }
 @container oui-page (min-width: 1500px) {
