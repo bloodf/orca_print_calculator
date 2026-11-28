@@ -596,7 +596,7 @@ export const messages = {
   "a11y.colorUnknown": ["color unknown", "cor desconhecida"],
   "a11y.unknown": ["unknown", "desconhecido"],
   "pretty.none": ["Exact", "Exato"],
-  "pretty.round": ["Round (3 digits)", "Arredondar (3 dígitos)"],
+  "pretty.round": ["Round to 3 significant digits", "Arredondar para 3 dígitos significativos"],
   "pretty.ending9": ["Ends in 9", "Termina em 9"],
   "summary.machine.energy": ["Energy {energy}", "Energia {energy}"],
   "summary.machine.machine": ["Printer {machine}", "Impressora {machine}"],

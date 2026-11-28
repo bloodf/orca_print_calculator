@@ -80,7 +80,7 @@ async function toggle(slotN: number): Promise<void> {
     <div class="side">
       <p class="cost num"><span v-if="unpriced" class="warn-icon"><OuiIcon :icon="I.error" :size="14" /><span class="oui-sr">{{ t("plate.missingPrice") }} </span></span>
         <span v-if="!include" class="oui-meta">{{ t("plate.excluded") }}</span>
-        <template v-else-if="row"><span class="oui-sr">{{ t("a11y.costPrefix") }} </span><strong>{{ money(row.totalMinor, currency, locale) }}</strong></template>
+        <template v-else-if="row"><span class="oui-meta cost-cap">{{ t("a11y.costPrefix") }}</span><strong>{{ money(row.totalMinor, currency, locale) }}</strong></template>
         <template v-else><span aria-hidden="true">{{ UNKNOWN }}</span><span class="oui-sr">{{ t("a11y.unknown") }}</span></template>
       </p>
       <span v-if="include && partial" class="oui-chip" data-tone="warn">{{ t("price.partial") }}</span>
@@ -120,6 +120,7 @@ async function toggle(slotN: number): Promise<void> {
 /* the full words fit beside the stepper only on a wide Plates panel; narrower, the one word "Copies" (the stepper's name keeps the full words) */
 .cp-x { display: none; }
 @container plates (max-width: 899px) { .cp-lbl { display: none; } .cp-x { display: inline; } }
+.cost-cap { display: block; font-size: var(--oui-text-xs); }
 .side { display: grid; justify-items: end; gap: 2px; text-align: end; }
 .warn-icon { display: inline-flex; vertical-align: -2px; margin-inline-end: 4px; color: var(--oui-danger); }
 .card.off .cost strong { font-weight: 400; }

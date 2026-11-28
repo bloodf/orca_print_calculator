@@ -84,7 +84,7 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
 | | Cost sections | **Printer and energy** (power, printer price and lifetime, price per kWh, maintenance, fixed cost per print hour, failure rate), **Labor**, **Extras and accessories**, **Shipping** and **Channel fees and tax**. |
 | | Extras and stock | A catalogue of extras with an optional count on hand, and a read-only summary of your Spoolman filament. The calculator warns when a quote needs more than you have. Nothing is deducted. |
 | | Sales channels | Your own channels, each with a percent fee, a fixed fee, tax and optional price tiers. **Compare channels** shows them side by side. |
-| | Rounding and minimum | A minimum order amount and four rounding modes: Exact, Round (3 digits), Ends in 9, Ends in 0 or 5. Rounding always goes up. |
+| | Rounding and minimum | A minimum order amount and four rounding modes: Exact, Round to 3 significant digits, Ends in 9, Ends in 0 or 5. Rounding always goes up. |
 | | Batch pricing | Quantity, discount tiers and a table with unit cost, unit price, order total, order profit and margin per tier. |
 | | Quote sheet | **Print quote** opens an itemised or summary sheet and the print dialog, where you can save a PDF. The sheet carries your logo, company details, payment terms and accent colour. |
 | | Export | CSV and HTML files go to the plugin data folder and the tab shows the path. **Export list** in the Quotes tab writes one CSV row per quote shown. |

@@ -13,6 +13,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - The banner over an open quote that is no longer in the list was titled "Title".
 
 ### Changed
+- Smaller, second pass: the green **Spoolman** chip opens the same small popover as the red one (state, **Refresh**, **Settings**) instead of refreshing silently; each plate's cost says "Cost" under the figure; **Round to 3 significant digits** replaces "Round (3 digits)".
 - The interface moved to the shared UI kit 5.14.0: the Settings list, the Connections list with its single **Check again**, the data tables and the back arrow come from the kit; the tab-wrapping rules of this plugin are gone (the kit's bar already keeps a tab name whole from 560 to 1500 px, in every language).
 - **Settings › Requirements** is gone. Spoolman and Spooler head **Settings › Connections** (it was "Spoolman"), with one **Check again** for both. Without Spooler the page no longer prints internal file names and a folder path, and the links are named for where they lead (pressing one copies the address). Both are optional: one that is absent reads "Not connected" in grey, not as an amber warning.
 - **Settings** has seven pages, not nine: **Language and currency** and **About** are now **General**.

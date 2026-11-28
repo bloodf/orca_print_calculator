@@ -23,21 +23,20 @@ const busy = computed(() => props.state === "connecting");
 
 function click(): void {
   if (props.state === "unset") gotoSettings("settings-spoolman");
-  else if (props.state === "offline") open.value = !open.value;
-  else if (props.state === "ok") void fetchSpoolman();
+  else if (props.state === "offline" || props.state === "ok") open.value = !open.value; // one small popover for both: the state, then Refresh / Retry and Settings
 }
 const retry = () => { open.value = false; void fetchSpoolman(); };
 const settings = () => { open.value = false; gotoSettings("settings-spoolman"); };
 </script>
 
 <template>
-  <Button :ref="(c) => (anchor = elOf(c))" severity="secondary" text size="small" type="button" class="chip sp-chip" :aria-label="text" :title="text" :aria-busy="busy ? 'true' : undefined" :aria-haspopup="state === 'offline' ? 'dialog' : undefined" :aria-expanded="state === 'offline' ? open : undefined" @click="click">
+  <Button :ref="(c) => (anchor = elOf(c))" severity="secondary" text size="small" type="button" class="chip sp-chip" :aria-label="text" :title="text" :aria-busy="busy ? 'true' : undefined" :aria-haspopup="state === 'offline' || state === 'ok' ? 'dialog' : undefined" :aria-expanded="state === 'offline' || state === 'ok' ? open : undefined" @click="click">
     <OuiStatus class="dot" :class="state" :state="STATE[state]"><span class="sm-text">{{ text }}</span><span class="sm-short" aria-hidden="true">Spoolman</span></OuiStatus>
   </Button>
-  <Popover :open="open" :anchor="anchor" :label="t('spoolman.offline')" @close="open = false">
-    <p>{{ errorText }}</p>
+  <Popover :open="open" :anchor="anchor" :label="state === 'ok' ? text : t('spoolman.offline')" @close="open = false">
+    <p>{{ state === "ok" ? text : errorText }}</p>
     <div class="oui-row acts">
-      <Button type="button" @click="retry">{{ t("spoolman.retry") }}</Button>
+      <Button type="button" @click="retry">{{ t(state === "ok" ? "plates.refresh" : "spoolman.retry") }}</Button>
       <Button severity="secondary" type="button" @click="settings">{{ t("nav.settings") }}</Button>
     </div>
   </Popover>

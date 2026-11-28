@@ -631,7 +631,7 @@ export const pl: Record<MessageKey | PluralExtraKey, string> = {
   "a11y.colorUnknown": "kolor nieznany",
   "a11y.unknown": "nieznany",
   "pretty.none": "Dokładna",
-  "pretty.round": "Zaokrąglona (3 cyfry)",
+  "pretty.round": "Zaokrąglij do 3 cyfr znaczących",
   "pretty.ending9": "Kończy się na 9",
   "summary.machine.energy": "Energia {energy}",
   "summary.machine.machine": "Drukarka {machine}",

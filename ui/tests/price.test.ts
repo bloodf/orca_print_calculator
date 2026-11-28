@@ -121,7 +121,7 @@ describe("tiles and sub-line", () => {
     load("ok");
     const el = await show(PricePanel);
     expect(txt(el)).toMatch(/Rounded up from R\$\d+\.\d\d/);
-    expect(txt(el)).not.toMatch(/Round \(3 digits\)|Rounded:/);
+    expect(txt(el)).not.toMatch(/Round to 3 significant digits|Rounded:/);
     expect(txt(el)).toMatch(/\/print hour/);
     expect(txt(el)).toContain("Break-even");
   });

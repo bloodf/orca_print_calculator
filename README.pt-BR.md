@@ -84,7 +84,7 @@ O plugin está no Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://clou
 | | Seções de custo | **Impressora e energia** (potência, preço e vida útil da impressora, preço do kWh, manutenção, custo fixo por hora de impressão, taxa de falha), **Mão de obra**, **Extras e acessórios**, **Frete** e **Taxas do canal e imposto**. |
 | | Extras e estoque | Um catálogo de extras com a quantidade em estoque opcional e um resumo somente leitura do filamento no Spoolman. A calculadora avisa quando um orçamento precisa de mais do que você tem. Nada é descontado. |
 | | Canais de venda | Os seus canais, cada um com taxa percentual, taxa fixa, imposto e faixas de preço opcionais. **Comparar canais** mostra todos lado a lado. |
-| | Arredondamento e mínimo | Pedido mínimo e quatro modos de arredondamento: Exato, Arredondar (3 dígitos), Termina em 9, Termina em 0 ou 5. O arredondamento sempre sobe. |
+| | Arredondamento e mínimo | Pedido mínimo e quatro modos de arredondamento: Exato, Arredondar para 3 dígitos significativos, Termina em 9, Termina em 0 ou 5. O arredondamento sempre sobe. |
 | | Preço por lote | Quantidade, faixas de desconto e uma tabela com custo unitário, preço unitário, total do pedido, lucro do pedido e margem por faixa. |
 | | Folha de orçamento | **Imprimir orçamento** abre a folha detalhada ou resumida e a janela de impressão, onde dá para salvar em PDF. A folha leva seu logo, dados da empresa, condições de pagamento e cor de destaque. |
 | | Exportação | Os arquivos CSV e HTML vão para a pasta de dados do plugin, e a aba mostra o caminho. **Exportar lista**, na aba Orçamentos, grava uma linha de CSV por orçamento listado. |

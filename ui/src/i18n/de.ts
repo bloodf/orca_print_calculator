@@ -597,7 +597,7 @@ export const de: Record<MessageKey, string> = {
   "a11y.colorUnknown": "Farbe unbekannt",
   "a11y.unknown": "unbekannt",
   "pretty.none": "Exakt",
-  "pretty.round": "Rund (3 Stellen)",
+  "pretty.round": "Auf 3 signifikante Stellen runden",
   "pretty.ending9": "Endet auf 9",
   "summary.machine.energy": "Energie {energy}",
   "summary.machine.machine": "Drucker {machine}",
