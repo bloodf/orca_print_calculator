@@ -3,6 +3,11 @@
 All notable changes to this project are listed here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.10.3] - 2026-11-28
+
+### Changed
+- Shared UI 5.13.0, Vite 8.4.0 and Vitest 5.1.2.
+
 ## [0.10.2] - 2026-11-26
 
 ### Changed
