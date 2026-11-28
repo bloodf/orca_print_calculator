@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Spoolman status chip (docs/ux.md §5.3): dot + text; click depends on state. Text collapses to the dot below 1100px.
+// Spoolman status chip (docs/ux.md §5.3): dot + text; click depends on state. The text shortens to "Spoolman", then to the dot, as the bar narrows (AppHeader).
 import Button from "primevue/button";
 import { computed, ref } from "vue";
 import { t } from "../i18n";
@@ -32,7 +32,7 @@ const settings = () => { open.value = false; gotoSettings("settings-spoolman"); 
 
 <template>
   <Button :ref="(c) => (anchor = elOf(c))" severity="secondary" text size="small" type="button" class="chip sp-chip" :aria-label="text" :title="text" :aria-busy="busy ? 'true' : undefined" :aria-haspopup="state === 'offline' ? 'dialog' : undefined" :aria-expanded="state === 'offline' ? open : undefined" @click="click">
-    <OuiStatus class="dot" :class="state" :state="STATE[state]"><span class="sm-text">{{ text }}</span></OuiStatus>
+    <OuiStatus class="dot" :class="state" :state="STATE[state]"><span class="sm-text">{{ text }}</span><span class="sm-short" aria-hidden="true">Spoolman</span></OuiStatus>
   </Button>
   <Popover :open="open" :anchor="anchor" :label="t('spoolman.offline')" @close="open = false">
     <p>{{ errorText }}</p>

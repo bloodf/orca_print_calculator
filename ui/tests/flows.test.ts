@@ -143,7 +143,8 @@ describe("incomplete quote", () => {
   test("a draft can be saved but not sent: the price is marked partial, Print and CSV are disabled with the reason, the list refuses with a way to fix it", async () => {
     const el = await boot("unknown");
     expect(el.querySelector("[data-testid=hero-price]")!.classList.contains("partial")).toBe(true);
-    expect(el.querySelector("[data-testid=incomplete-line]")!.textContent).toContain("Incomplete");
+    expect(el.querySelector(".hero-box")!.textContent).toContain("Suggested price (incomplete)");
+    expect(el.querySelector("[data-testid=incomplete-line]")).toBeNull(); // the list under the hero says what is missing: no second line for it
     expect(el.querySelector("[data-gaps]")).not.toBeNull();
     const csv = [...el.querySelectorAll("button")].find((b) => b.textContent?.trim() === "CSV")!;
     expect(csv.disabled).toBe(true);

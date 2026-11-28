@@ -60,3 +60,5 @@ img { max-width: 100%; }
 .opc-table th.r, .opc-table td.r { text-align: end; }
 .opc-table.dense { font-size: var(--oui-text-sm); }
 .opc-table.dense th, .opc-table.dense td { padding-block: 4px; height: 30px; }
+/* a popup menu marks the item the keys are on; a second ring around the whole list says nothing more */
+.p-menu.opc-menu .p-menu-list:focus-visible { outline: none; box-shadow: none; }

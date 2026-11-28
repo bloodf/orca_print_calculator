@@ -67,7 +67,7 @@ const title = (row: Row): string => t(row === "filament" ? "setup.filament" : ro
         <span class="fr-mark" :class="{ on: done[row] }" aria-hidden="true"><OuiIcon v-if="done[row]" :icon="I.check" :size="12" /></span>
         <div class="fr-main">
           <p v-if="collapsed[row] && done[row]" class="fr-line">
-            <span class="fr-title">{{ title(row) }}</span><span class="oui-muted"> · {{ summary(row) }} · </span>
+            <span class="fr-title">{{ title(row) }}</span><span class="oui-muted"> · {{ summary(row) }}</span>
             <Button text type="button" class="fr-edit" @click="reopen(row)">{{ t("setup.edit") }}</Button>
           </p>
           <template v-else>

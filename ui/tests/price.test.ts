@@ -225,13 +225,13 @@ describe("flags", () => {
     expect(txt(flags)).not.toContain("print time of plate 1");
     const gaps = await show(GapList);
     expect(txt(gaps)).toContain("Plate 1: print time is unknown.");
-    expect(txt(gaps)).toContain("Plate 1, slot 2: filament weight is unknown.");
+    expect(txt(gaps)).toContain("Plate 1, filament 2: weight is unknown.");
   });
-  test("stale plates and a skipped channel", async () => {
+  test("stale plates are said by the page banner and each plate's chip, not again under the price; a skipped channel is", async () => {
     load("stale", { settings: (s) => ({ ...s, channels: s.channels.map((c) => (c.id === "store" ? { ...c, taxBp: 99999 } : c)), defaultChannelId: "direct" }) });
     const el = await show(PriceFlags);
     const ids = flagsOf(el).map((x) => x.id);
-    expect(ids).toContain("stale");
+    expect(ids).not.toContain("stale");
     expect(ids).toContain("channelSkipped-store");
     expect(txt(el)).toContain("Online store was skipped: its fees are invalid.");
   });
@@ -256,7 +256,7 @@ describe("flags", () => {
     const build = (s: ReturnType<typeof sel>) => buildFlags({
       selected: s, notCounted: [], skippedChannels: [], slotMatches: {}, fieldErrors: {},
       quoteInput: { plates: [], quantity: 12, targetMarginBp: 3000, minOrderMinor: 9900, discountTiers: [{ minQty: 5, discountBp: 500 }, { minQty: 10, discountBp: 1200 }] },
-    } as unknown as Derived, fmt, { stale: false });
+    } as unknown as Derived, fmt, {});
 
     test("order below break-even replaces nothing when per-piece is fine; belowTarget is suppressed by either loss flag", () => {
       const f = build(sel({ orderBelowBreakEven: true, belowTarget: true }));

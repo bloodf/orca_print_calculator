@@ -4,9 +4,8 @@ import Button from "primevue/button";
 import { computed } from "vue";
 import { t } from "../../i18n";
 import { currency, digits, patchSettings, store } from "../../state/store";
-import { showToast } from "@orca-plugins/ui-foundation/src/components";
+import { OuiEmpty, OuiIcon, showToast } from "@orca-plugins/ui-foundation/src/components";
 import type { CatalogExtra } from "../../state/types";
-import { OuiIcon } from "@orca-plugins/ui-foundation/src/components";
 import * as I from "@orca-plugins/ui-foundation/src/icons";
 import MoneyField from "../base/MoneyField.vue";
 import NumberField from "../base/NumberField.vue";
@@ -33,7 +32,9 @@ function remove(key: string): void {
 
 <template>
   <div class="ec">
-    <p v-if="!items.length" class="oui-muted">{{ t("catalog.empty") }}</p>
+    <OuiEmpty v-if="!items.length" compact :icon="I.parcel" tone="violet" :title="t('catalog.empty')" data-catalog-empty>
+      <template #actions><Button severity="secondary" size="small" type="button" @click="add"><OuiIcon :icon="I.plus" :size="14" /><span>{{ t("catalog.add") }}</span></Button></template>
+    </OuiEmpty>
     <ul v-else class="ec-list">
       <li v-for="x in items" :key="x.key" class="ec-item">
         <div class="ec-grid">
@@ -47,7 +48,7 @@ function remove(key: string): void {
         <span v-if="x.stockE3 === 0" class="oui-chip badge ec-out" data-tone="warn">{{ t("stock.out") }}</span>
       </li>
     </ul>
-    <Button text type="button" @click="add"><OuiIcon :icon="I.plus" /><span>{{ t("catalog.add") }}</span></Button>
+    <Button v-if="items.length" text type="button" @click="add"><OuiIcon :icon="I.plus" /><span>{{ t("catalog.add") }}</span></Button>
   </div>
 </template>
 

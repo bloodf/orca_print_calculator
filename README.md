@@ -55,7 +55,7 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
       Each filament slot is priced per kg from the Spoolman spool it matches. With no match it uses a price you typed or the preset cost, and labels which one.
     </td>
     <td width="50%" valign="top">
-      <img src="assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png" alt="Include the work behind each print: the Machine and energy section open, with average power, printer price, lifetime, price per kWh and failure rate" width="100%"><br>
+      <img src="assets/orca-cloud/orca_print_calculator-feature-02-costs-en.png" alt="Include the work behind each print: the Printer and energy section open, with average power, printer price, lifetime, price per kWh and failure rate" width="100%"><br>
       <b>Machine, energy and labour</b><br>
       Printer power, price per kWh, printer wear, failure rate, labour, extras and shipping are added to every piece.
     </td>
@@ -81,7 +81,7 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
 | | Out-of-date warning | When something changes after a slice, the tab marks the project "may be out of date". |
 | | Sliced file import | **Import sliced file** reads plates from a `.gcode.3mf` exported with File, Export, Export all sliced file (up to 100 MB). Imported plates stay on screen when you slice; a "New slice" notice offers "Use it". |
 | | Printer power | Average watts are suggested from the printer model and marked "Estimated". Models with no entry get a generic 120 W. Your own value wins. |
-| | Cost sections | **Machine and energy** (power, printer price and lifetime, price per kWh, maintenance, fixed cost per print hour, failure rate), **Labor**, **Extras and accessories**, **Shipping** and **Sales fee**. |
+| | Cost sections | **Printer and energy** (power, printer price and lifetime, price per kWh, maintenance, fixed cost per print hour, failure rate), **Labor**, **Extras and accessories**, **Shipping** and **Channel fees and tax**. |
 | | Extras and stock | A catalogue of extras with an optional count on hand, and a read-only summary of your Spoolman filament. The calculator warns when a quote needs more than you have. Nothing is deducted. |
 | | Sales channels | Your own channels, each with a percent fee, a fixed fee, tax and optional price tiers. **Compare channels** shows them side by side. |
 | | Rounding and minimum | A minimum order amount and four rounding modes: Exact, Round (3 digits), Ends in 9, Ends in 0 or 5. Rounding always goes up. |
@@ -89,7 +89,7 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
 | | Quote sheet | **Print quote** opens an itemised or summary sheet and the print dialog, where you can save a PDF. The sheet carries your logo, company details, payment terms and accent colour. |
 | | Export | CSV and HTML files go to the plugin data folder and the tab shows the path. **Export list** in the Quotes tab writes one CSV row per quote shown. |
 | | Starting values | In BRL, USD and EUR every cost starts with a typical value (price per kWh, labour rate, printer price and lifetime, 5% failure rate, 100% markup). Other currencies start empty. |
-| | Settings | One page with every group (Spoolman, costs, pricing, sales channels, printers, quote sheet, language and currency, about) and an index that jumps to each. Changes save on their own. |
+| | Settings | One page with every group (connections, costs, pricing, sales channels, printers, quote sheet, general) and an index that jumps to each. Changes save on their own. |
 | | Currency and theme | Any currency, taken from Spoolman or set in Settings. The page is built to follow OrcaSlicer's dark and light themes, in lime with a deep green bar; this is not verified inside OrcaSlicer yet. |
 
 <a id="-how-to-use"></a>
@@ -97,10 +97,10 @@ The plugin is on Orca Cloud: [cloud.orcaslicer.com/p/521c07cf6de2](https://cloud
 ## 🛠️ How to use
 
 1. Open the **Print Calculator** tab. On the first run, **Set up once** asks for three things: filament prices (connect Spoolman, or skip and use preset prices), the energy price and your hourly rate. If Spooler is installed, it offers the Spoolman address Spooler already uses. **Settings › Requirements** shows whether Spooler was found, and if not, the folder it looked in (`spooler` inside OrcaSlicer's data folder).
-2. To connect Spoolman later, open **Settings**, type the **Spoolman address** (for example `http://localhost:7912`) and press **Test connection**. OrcaSlicer asks once whether the plugin may reach that address.
+2. To connect Spoolman later, open **Settings › Connections**, type the **Spoolman address** (for example `http://localhost:7912`) and press **Test connection**. OrcaSlicer asks once whether the plugin may reach that address.
 3. Slice a plate, or use "Slice all". Each plate appears under **Plates**. Press **Refresh** if one is missing, or use **Import sliced file** for a `.gcode.3mf`.
 4. Click the filament chips of a plate to see the price per kg of each slot and what priced it. **Change** picks the Spoolman spool loaded in that slot (best matches first), goes back to **Auto**, or lets you type a price per kg.
-5. Open the sections under **Costs** and fill in what applies: **Machine and energy**, **Labor**, **Extras and accessories**, **Shipping**, **Sales fee**.
+5. Open the sections under **Costs** and fill in what applies: **Printer and energy**, **Labor**, **Extras and accessories**, **Shipping**, **Channel fees and tax**.
 6. In **Price**, choose the **Sales channel**, the **Pieces ordered** and the **Markup**. **Where the price goes** splits the price by cost line, fees, tax and profit.
 7. Press **Save quote**. Then **Print quote** for a sheet or a PDF, or **CSV** for a file. Saved quotes are in the **Quotes** tab.
 

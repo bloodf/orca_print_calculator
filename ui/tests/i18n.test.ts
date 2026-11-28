@@ -68,16 +68,16 @@ describe("dictionaries", () => {
 });
 
 // Text that is rightly the same as English: names, symbols-only rows and words the language shares with English.
-const NAMES = ["app.name", "app.short", "lang.en", "lang.pt", "lang.es", "lang.de", "lang.zh", "lang.pl", "plates.meta", "quote.csv", "settings.group.spoolman", "channel.feeSummary"];
+const NAMES = ["app.name", "app.short", "lang.en", "lang.pt", "lang.es", "lang.de", "lang.zh", "lang.pl", "plates.meta", "quote.csv", "channel.feeSummary"];
 // Seconds are written "{n} s" in these languages too.
 const SECONDS = ["spoolman.everyOption"];
 const SAME_AS_ENGLISH: Record<(typeof ADDED)[number], string[]> = {
-  es: [...NAMES, ...SECONDS, "summary.labor", "field.margin", "extras.add", "line.extras", "quotes.col.total", "sheet.subtotal", "sheet.total", "setup.timeDone", "common.labelValue"],
+  es: [...NAMES, ...SECONDS, "summary.labor", "field.margin", "extras.add", "line.extras", "quotes.col.total", "sheet.subtotal", "sheet.total", "setup.timeDone", "common.labelValue", "settings.group.general"],
   de: [...NAMES, ...SECONDS, "spoolman.offline", "match.source.name", "summary.labor", "field.extraName", "extras.add", "line.filament", "line.extras", "bar.details", "field.name",
-    "sheet.logo", "sheet.website", "stock.col.name", "about.version", "common.labelValue", "help.filament.title", "req.optional"],
+    "sheet.logo", "sheet.website", "stock.col.name", "about.version", "common.labelValue", "help.filament.title"],
   "zh-CN": NAMES,
   pl: [...NAMES, ...SECONDS, "spoolman.offline", "match.source.name", "match.price.filament", "summary.labor", "line.filament", "stock.col.name", "help.filament.title",
-    "sheet.logo", "common.labelValue"],
+    "sheet.logo", "common.labelValue", "summary.filament.kinds_one"],
 };
 
 describe("Spanish, German, Chinese and Polish leave nothing in English", () => {

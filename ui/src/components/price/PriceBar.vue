@@ -13,7 +13,7 @@ import { hero, m, missingCount, pct, priceFromFallback } from "./priceState";
 defineProps<{ hidden: boolean }>();
 
 const sel = computed(() => (hero.value.kind === "price" ? hero.value.sel : null));
-const badCount = computed(() => buildFlags(derived.value, { m, pct }, { stale: false }).filter((f) => f.tone === "bad").length);
+const badCount = computed(() => buildFlags(derived.value, { m, pct }, {}).filter((f) => f.tone === "bad").length);
 const text = computed(() => (hero.value.kind === "price" ? "" : hero.value.kind === "impossible" ? t("price.impossibleTitle", { channel: hero.value.channel }) : hero.value.text));
 
 function toDetails(): void {

@@ -69,7 +69,7 @@ const skipped = computed(() => lead(t("quotes.skipped", { n: store.skippedQuotes
           <tbody>
             <tr v-for="x in shown" :key="x.id">
               <td class="num no">{{ quoteNo(x.no, loc) }}</td>
-              <td><div class="what"><span class="oui-strong oui-truncate title" :title="x.title">{{ x.title }}</span><span class="oui-meta oui-truncate cust">{{ x.customer || "—" }}</span></div></td>
+              <td><div class="what"><Button text severity="secondary" type="button" class="title" :title="x.title" data-quote-title @click="openQuote(x.id)"><span class="oui-strong oui-truncate">{{ x.title }}</span></Button><span class="oui-meta oui-truncate cust">{{ x.customer || "—" }}</span></div></td>
               <td class="num opt2">{{ date(x.updatedAt, loc) }}</td>
               <td class="num r opt2">{{ count(x.summary.quantity, loc) }}</td>
               <td class="opt"><span class="oui-chip chan">{{ x.summary.channelName }}</span></td>
@@ -98,6 +98,10 @@ const skipped = computed(() => lead(t("quotes.skipped", { n: store.skippedQuotes
 .skipped { width: 100%; max-width: 1280px; margin-inline: auto; }
 .what { display: grid; gap: 1px; max-width: 340px; min-width: 0; }
 .what > * { display: block; }
+/* the title opens the quote too (the Open button stays for clarity): it reads as the title it is, underlined on hover */
+.what :deep(.title) { display: block; height: auto; min-height: 0; padding: 0; border: 0; max-width: 100%; color: inherit; font: inherit; line-height: inherit; text-align: start; }
+.what :deep(.title:hover) { background: none; text-decoration: underline; }
+.what :deep(.title > span) { display: block; }
 .acts { text-align: end; white-space: nowrap; }
 .acts > * + * { margin-inline-start: 4px; }
 .list tbody tr:hover { background: var(--oui-raised); }

@@ -178,7 +178,7 @@ describe("StockView", () => {
   test("not connected: a muted sentence and a button to the Spoolman settings tab", async () => {
     seed();
     store.spoolman = { state: "unset", error: null, data: { currency: null, filaments: [], spools: [] } };
-    settingsTab.value = "about";
+    settingsTab.value = "general";
     const root = mount(StockView);
     await flush();
     expect(root.querySelector("[data-testid=filament-table]")).toBeNull();

@@ -39,7 +39,7 @@ function reset(): void {
     <p class="sm oui-muted perm">{{ t("setup.permission") }}</p>
     <div>
       <p class="sm oui-muted lbl">{{ t("about.readme") }}</p>
-      <CopyValue :value="README_URL" :label="t('about.readme')" />
+      <CopyValue :value="README_URL" />
     </div>
     <Button severity="danger" outlined type="button" :aria-live="armed ? 'polite' : undefined" @click="reset">{{ armed ? t("about.resetConfirm") : t("about.resetAll") }}</Button>
   </div>

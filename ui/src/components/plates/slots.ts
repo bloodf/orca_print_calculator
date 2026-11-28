@@ -2,7 +2,7 @@
 import { money } from "../../format";
 import { t } from "../../i18n";
 import { isFallback, slotSpoolFor, slotSpoolKey } from "../../state/derive";
-import { digits, currency, locale, patchSettings, store } from "../../state/store";
+import { digits, currency, locale, patchSettings, spoolmanDown, store } from "../../state/store";
 import type { SlotMatchView, SlotSpool } from "../../state/types";
 
 export const UNKNOWN = "—";
@@ -22,7 +22,11 @@ export function chipLabel(m: SlotMatchView): string {
 
 export const sourceText = (m: SlotMatchView): string =>
   m.source === "name" ? (m.filamentId === null ? t("match.source.nameBare") : t("match.source.name", { id: m.filamentId })) : t(`match.source.${m.source}`);
-export const sourceTone = (m: SlotMatchView): "neutral" | "warn" | "bad" => (m.source === "preset" ? "warn" : m.source === "none" ? "bad" : "neutral");
+/**
+ * A warning only where something needs doing: no price at all, or a preset price standing in for a Spoolman that is set up and
+ * not answering. A preset price with no Spoolman is a normal way to use the plugin.
+ */
+export const sourceTone = (m: SlotMatchView): "neutral" | "warn" | "bad" => (m.source === "none" ? "bad" : m.source === "preset" && spoolmanDown.value ? "warn" : "neutral");
 
 export const priceSourceText = (m: SlotMatchView): string =>
   m.priceSource ? t(`match.price.${m.priceSource}`, { id: m.spoolId ?? "" }) : "";

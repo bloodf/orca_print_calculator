@@ -55,7 +55,7 @@ describe("settings pages", () => {
   });
 
   test("a link from elsewhere opens its page, focused, also on a page other than the remembered one", async () => {
-    link("about").click();
+    link("general").click();
     await settle();
     openSettingsTab("settings-costs");
     await settle();
@@ -67,11 +67,11 @@ describe("settings pages", () => {
 
   test("a link made before Settings is shown opens that page when it is shown", async () => {
     unmount();
-    openSettingsTab("settings-language");
+    openSettingsTab("settings-language"); // the page it was before it became General
     await mount();
-    expect(selected()).toBe("settings-language");
+    expect(selected()).toBe("settings-general");
     expect(isOpen()).toBe(true);
-    expect(document.activeElement).toBe(heading("language"));
+    expect(document.activeElement).toBe(heading("general"));
   });
 
   test("the last page is kept for the next visit, and an old link does not override it", async () => {

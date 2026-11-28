@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // A disclosure row. `box` is a row of the Costs panel: icon tile in the hue of its subject, name over a one-line summary,
 // the amount, the chevron. `flush` is a quiet heading inside the price panel (breakdown, channels, batch).
+// `jump` is a row with nothing to open: its values are edited somewhere else on the page, and pressing it goes there.
 import Button from "primevue/button";
 import { computed } from "vue";
 import { OuiIcon, type OuiIconData, type OuiTone } from "@orca-plugins/ui-foundation/src/components";
@@ -10,21 +11,24 @@ import { openHelp, type HelpStep } from "../../state/help";
 
 const props = withDefaults(
   defineProps<{
-    id: string; title: string; summary?: string; open: boolean; variant?: "box" | "flush"; overridden?: boolean; invalid?: boolean; help?: HelpStep;
+    id: string; title: string; summary?: string; open?: boolean; variant?: "box" | "flush"; overridden?: boolean; invalid?: boolean; help?: HelpStep;
     icon?: OuiIconData; tone?: OuiTone;
     /** The section's amount per piece, already formatted. `null` is not known yet (a dash); leave it out for no amount column. */
     amount?: string | null; partial?: boolean;
+    /** Where the row's values are edited ("Edit under Plates"), read after the row's name. With it the row opens nothing and emits `jump`. */
+    jump?: string;
   }>(),
-  { summary: undefined, help: undefined, variant: "box", overridden: false, invalid: false, icon: undefined, tone: undefined, amount: undefined, partial: false },
+  { summary: undefined, help: undefined, variant: "box", overridden: false, invalid: false, icon: undefined, tone: undefined, amount: undefined, partial: false, jump: undefined, open: false },
 );
-const emit = defineEmits<{ "update:open": [open: boolean] }>();
-const isOpen = computed(() => props.open || props.invalid);
+const emit = defineEmits<{ "update:open": [open: boolean]; jump: [] }>();
+const isOpen = computed(() => !props.jump && (props.open || props.invalid));
+const press = (): void => { if (props.jump) emit("jump"); else emit("update:open", !isOpen.value); };
 </script>
 
 <template>
   <section class="sec" :class="[variant, { open: isOpen }]" :data-section="id">
     <h3 class="sec-h">
-      <Button type="button" text severity="secondary" class="sec-btn" :aria-expanded="isOpen" :aria-controls="`${id}-body`" @click="emit('update:open', !isOpen)">
+      <Button type="button" text severity="secondary" class="sec-btn" :aria-expanded="jump ? undefined : isOpen" :aria-controls="jump ? undefined : `${id}-body`" :title="jump" @click="press">
         <OuiIcon v-if="icon" :icon="icon" :size="16" tile :tone="tone" />
         <span v-else class="chev" :class="{ on: isOpen }"><OuiIcon :icon="I.chevronRight" :size="14" /></span>
         <span class="sec-id">
@@ -43,6 +47,7 @@ const isOpen = computed(() => props.open || props.invalid);
           <!-- partial is said in words too, not by the amber colour alone -->
           <span v-if="amount !== null && partial" class="oui-chip sec-part" data-tone="warn" data-partial><span class="oui-sr">· </span>{{ t("price.partial") }}</span>
         </span>
+        <span v-if="jump" class="oui-sr">. {{ jump }}</span>
         <span v-if="icon" class="chev" :class="{ on: isOpen }"><OuiIcon :icon="I.chevronRight" :size="14" /></span>
       </Button>
       <Button v-if="help" type="button" text severity="secondary" class="icon-btn-sm sec-help" :title="t('help.about', { name: title })" :aria-label="t('help.about', { name: title })" aria-haspopup="dialog" @click="openHelp(help)"><OuiIcon :icon="I.info" :size="14" /></Button>

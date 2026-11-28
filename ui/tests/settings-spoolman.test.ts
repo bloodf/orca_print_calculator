@@ -53,13 +53,29 @@ describe("Spoolman test connection", () => {
     expect(urlProblem("")).toBeNull();
   });
 
-  test("saved URL is selectable text with a copy button, never a link", async () => {
+  test("the saved address is in its field once, never repeated as a chip or a link; the permission note shows only while the address is being changed", async () => {
     store.settings = { ...store.settings, spoolman: { url: "http://10.0.0.1:7912" } };
     installHost();
     const root = mountComponent(SpoolmanSettings);
-    expect(root.querySelector(".cv-text")?.textContent).toBe("http://10.0.0.1:7912");
+    const input = root.querySelector<HTMLInputElement>("#settings-spoolman-url")!;
+    expect(input.value).toBe("http://10.0.0.1:7912");
+    expect(root.querySelector(".cv-text")).toBeNull();
     expect(root.querySelector('a[href*="10.0.0.1"]')).toBeNull();
-    expect(root.querySelector("button[aria-label='Copy Spoolman address']")).not.toBeNull();
+    expect(root.textContent!.split("http://10.0.0.1:7912")).toHaveLength(1); // not printed anywhere else on the page
+    expect(root.querySelector("[data-save-hint]")).toBeNull();
+    expect(input.hasAttribute("aria-describedby")).toBe(false);
+    input.value = "http://10.0.0.2:7912";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    await flush();
+    expect(root.querySelector("[data-save-hint]")?.textContent).toBe(t("spoolman.saveHint"));
+    expect(input.getAttribute("aria-describedby")).toBe("settings-spoolman-hint");
+  });
+  test("the refresh interval explains itself in one line, not in the scheduler's design notes", () => {
+    installHost();
+    const root = mountComponent(SpoolmanSettings);
+    const help = root.querySelector("#settings-spoolman-every-hint")!.textContent!;
+    expect(help).toBe("How often stock and prices are re-read while this tab is open.");
+    expect(root.textContent).not.toMatch(/5 minutes|Paused while hidden|picker or dialog/);
   });
 
   test("detected Spooler address is offered and applied", async () => {

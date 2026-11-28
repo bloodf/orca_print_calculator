@@ -82,8 +82,8 @@ describe("auto-save", () => {
     expect(root.querySelector(".status[role=status]")?.textContent).toContain("Saved");
     expect(byText(root, "button", "Save")).toBeUndefined();
     // the tabs select the groups; nothing leaves the page
-    expect([...root.querySelectorAll<HTMLElement>("[role=tab]")].map((a) => a.dataset.section)).toEqual(["spoolman", "costs", "pricing", "channels", "printers", "sheet", "language", "requirements", "about"].map((id) => `settings-${id}`));
-    expect(root.querySelectorAll(".grp")).toHaveLength(9); // every group is there, one shown at a time
+    expect([...root.querySelectorAll<HTMLElement>("[role=tab]")].map((a) => a.dataset.section)).toEqual(["spoolman", "costs", "pricing", "channels", "printers", "sheet", "general"].map((id) => `settings-${id}`));
+    expect(root.querySelectorAll(".grp")).toHaveLength(7); // every group is there, one shown at a time
     expect(root.querySelectorAll("[data-stub]")).toHaveLength(0);
   });
 });
@@ -92,14 +92,17 @@ describe("anchors", () => {
   test("every settings anchor selects its group and the group keeps the settings-<id> id", async () => {
     installHost();
     const root = mountComponent(SettingsView);
-    for (const id of ["spoolman", "costs", "pricing", "channels", "printers", "sheet", "language", "requirements", "about"]) {
+    for (const id of ["spoolman", "costs", "pricing", "channels", "printers", "sheet", "general"]) {
       openSettingsTab(`settings-${id}`);
       await nextTick();
       expect(settingsTab.value, id).toBe(id);
       expect(root.querySelector(`#settings-${id}`), id).not.toBeNull();
     }
+    // Language and About became General: the links made for them still land
+    for (const old of ["language", "about"]) { openSettingsTab("settings-costs"); openSettingsTab(`settings-${old}`); expect(settingsTab.value, old).toBe("general"); }
     openSettingsTab("settings-extras"); // moved to its own top-level tab: leaves Settings where it was
-    expect(settingsTab.value).toBe("about");
+    openSettingsTab("settings-requirements"); // folded into Connections: no page of its own
+    expect(settingsTab.value).toBe("general");
   });
 });
 

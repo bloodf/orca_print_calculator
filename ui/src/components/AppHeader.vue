@@ -56,13 +56,27 @@ const canReload = computed(() => ready.value && props.view === "calc" && !store.
 /* Layout of this bar's own parts; the band, the tabs and the buttons on it come from the shared app bar. */
 .app-header .proj { flex: 0 2 auto; min-width: 4em; font-weight: 650; }
 .app-header .oui-appbar-status > :not(.proj) { min-width: 0; }
-/* the tabs are never cut while they share the bar's line with the rest: the project and the printer give way instead */
-@container oui-appbar (min-width: 1100px) { .app-header .oui-appbar-tabs { flex-shrink: 0; } }
+/* A tab name is never cut. The tabs keep their full width; beside them the project and the printer give way, and where the
+   bar cannot hold the tabs next to the rest they take a line of their own, which leaves the first line to the project,
+   the printer and the actions. (ui-foundation's bar only did this from 760 px down: between there and 1100 px it cut the tabs.) */
+.app-header .oui-appbar-tabs { flex-shrink: 0; }
+@container oui-appbar (max-width: 1099px) {
+  .app-header .oui-appbar-row { flex-wrap: wrap; }
+  .app-header .oui-appbar-id, .app-header .oui-appbar-status, .app-header .oui-appbar-actions { min-height: 40px; }
+  .app-header .oui-appbar-tabs { order: 5; flex: 1 0 100%; min-height: 36px; margin-inline: -10px; overflow-x: auto; box-shadow: inset 0 1px 0 var(--oui-border); }
+  /* the project and the printer take what the first line has left and shorten inside it: a long project name never pushes the actions to a third line */
+  .app-header .oui-appbar-row > .oui-spacer { display: none; }
+  .app-header .oui-appbar-status { flex: 1 1 0; justify-content: flex-end; }
+}
 .app-header .ah-act { gap: 6px; }
-/* what gives way as the bar narrows: the Spoolman text, then the action labels (their names stay as title and accessible name) */
-@container oui-appbar (max-width: 1499px) { .app-header .sm-text { display: none; } .app-header .sp-chip .oui-status { gap: 0; padding-inline: 7px; } }
-@container oui-appbar (max-width: 1099px) { .app-header .ah-label { display: none; } .app-header .ah-act { padding-inline: 8px; } }
-/* German, Spanish and Polish tab names are longer: their action labels give way sooner, so the project and printer keep their room */
-@container oui-appbar (max-width: 1379px) { :lang(de) .app-header .ah-label, :lang(es) .app-header .ah-label, :lang(pl) .app-header .ah-label { display: none; } :lang(de) .app-header .ah-act, :lang(es) .app-header .ah-act, :lang(pl) .app-header .ah-act { padding-inline: 8px; } }
+/* What gives way where the tabs share the line (1100 px up): the Spoolman count shortens to the one word "Spoolman", then to its dot.
+   German, Spanish and Polish tab names are longer: there the action labels give way too, so the project and printer keep their room. */
+.app-header .sm-short { display: none; }
+@container oui-appbar (min-width: 1100px) and (max-width: 1499px) { .app-header .sm-text { display: none; } .app-header .sm-short { display: inline; } }
+@container oui-appbar (min-width: 1100px) and (max-width: 1439px) { .app-header .sm-short { display: none; } .app-header .sp-chip .oui-status { gap: 0; padding-inline: 7px; } }
+@container oui-appbar (min-width: 1100px) and (max-width: 1379px) { :lang(de) .app-header .ah-label, :lang(es) .app-header .ah-label, :lang(pl) .app-header .ah-label { display: none; } :lang(de) .app-header .ah-act, :lang(es) .app-header .ah-act, :lang(pl) .app-header .ah-act { padding-inline: 8px; } }
+/* With the tabs on their own line the first line has room for the words again, down to about 1000 px; under that, the dot and the icons
+   (their names stay as title and accessible name). */
+@container oui-appbar (max-width: 999px) { .app-header .sm-text, .app-header .ah-label { display: none; } .app-header .sp-chip .oui-status { gap: 0; padding-inline: 7px; } .app-header .ah-act { padding-inline: 8px; } }
 @container oui-appbar (max-width: 520px) { .app-header .oui-appbar-status { order: 4; flex: 1 0 100%; min-height: 28px; padding-bottom: 4px; } }
 </style>

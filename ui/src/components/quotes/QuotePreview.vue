@@ -50,7 +50,7 @@ onBeforeUnmount(() => document.removeEventListener("keydown", onKey));
   <main class="preview" :aria-label="t('quote.print')">
     <div class="toolbar app-chrome">
       <Button :ref="(c) => (back = elOf(c))" text type="button" @click="close"><OuiIcon :icon="I.chevronRight" class="back-chev" /><span>{{ t("sheet.back") }}</span></Button>
-      <Segmented v-model="mode" :label="t('quote.print')" :options="[{ value: 'itemized', label: t('sheet.itemized') }, { value: 'summary', label: t('sheet.summary') }]" />
+      <Segmented v-model="mode" small :label="t('quote.print')" :options="[{ value: 'itemized', label: t('sheet.itemized') }, { value: 'summary', label: t('sheet.summary') }]" />
       <span class="grow" />
       <span v-if="savedOf()?.sheet" class="sm oui-muted">{{ t("sheet.frozenHint") }}</span>
       <Button text type="button" @click="editDetails"><OuiIcon :icon="I.edit" /><span>{{ t("sheet.editDetails") }}</span></Button>
